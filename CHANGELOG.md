@@ -2,6 +2,19 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.5] - 2026-10-19
+
+### Fixed
+- **Installs again.** Android blocked installing 0.1.3 and 0.1.4 with no way to continue: phones block apps from outside the Play Store that ask to control the phone through Accessibility. Linksy no longer asks for that.
+- Linksy no longer asks for access to your photos, videos, music or storage. Sending uses Android's own file picker, and received files open without any extra permission.
+- The phone could appear twice to your computer after Android restarted the app's screen.
+
+### Changed
+- **Smaller and lighter**: about a third smaller to download (9.6 MB on most phones), with no Google services or background reporting inside. QR codes are read on the phone itself.
+
+### Removed
+- Controlling the phone from your computer. Your computer now hears that this phone can't do it.
+
 ## [0.1.4] - 2026-10-19
 
 ### Fixed
