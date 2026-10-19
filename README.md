@@ -25,6 +25,22 @@ core is bridged in. Settings → Demo triggers the flows that start on the other
 | Open received files from the timeline | |
 | Signal design: simple home, device timelines, light and dark, edge-to-edge, predictive back, reduced motion respected | |
 
+## Releases
+
+Downloads are public at
+[LinkSy-mg/linksy-releases](https://github.com/LinkSy-mg/linksy-releases/releases/latest)
+(APKs and notes only; this repo stays private). To release:
+
+1. Add the version's section to `CHANGELOG.md` (user-facing: it becomes the public
+   release notes) and bump `version: X.Y.Z+N` in `pubspec.yaml`.
+2. Commit as `chore(release): vX.Y.Z`.
+3. Run `tool/release.sh`: it checks, builds the universal APK and one per ABI, tags,
+   publishes the release here, then `tool/publish_public.sh` puts the APKs on the public
+   repo under unversioned names (`…/releases/latest/download/linksy.apk`).
+
+The release key lives outside the repo in `~/Axel/linksy-mobile-keys/`;
+`android/key.properties` (ignored) points to it.
+
 ## Run
 
 ```sh
