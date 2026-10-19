@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'app/activity.dart';
 import 'app/app.dart';
@@ -19,11 +18,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  final support = await getApplicationSupportDirectory();
-  final storage =
-      await getExternalStorageDirectory() ??
-      await getApplicationDocumentsDirectory();
-  final received = Directory('${storage.path}/Received')
+  final paths = (await LinksyPlatform.paths())!;
+  final support = Directory(paths.support);
+  final received = Directory('${paths.external ?? paths.support}/Received')
     ..createSync(recursive: true);
   final name = await LinksyPlatform.deviceName();
 

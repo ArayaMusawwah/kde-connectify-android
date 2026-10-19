@@ -9,9 +9,12 @@ abstract final class LinksyPlatform {
   static final _displaySizes =
       StreamController<(String, double, double)>.broadcast();
   static final _displaysEnded = StreamController<String>.broadcast();
+  static final _qrCodes = StreamController<String>.broadcast();
+  static final _scannerErrors = StreamController<String>.broadcast();
   static var _listening = false;
 
-  /// Calls from Android: pairing links, and second-display size and end.
+  /// Calls from Android: pairing links, second-display size and end, and
+  /// the QR scanner's results.
   static void _listen() {
     if (_listening) return;
     _listening = true;
@@ -28,6 +31,10 @@ abstract final class LinksyPlatform {
           ));
         case 'displayEnded' when call.arguments is String:
           _displaysEnded.add(call.arguments as String);
+        case 'qrCode' when call.arguments is String:
+          _qrCodes.add(call.arguments as String);
+        case 'scannerError' when call.arguments is String:
+          _scannerErrors.add(call.arguments as String);
       }
     });
   }
@@ -81,16 +88,13 @@ abstract final class LinksyPlatform {
   static Future<void> stopShare(String session) =>
       _call<void>('stopShare', {'session': session});
 
-  /// What's allowed now: (notifications, camera, remote control). Null
-  /// without an Android side (tests).
-  static Future<({bool notifications, bool camera, bool control})?>
-  permissions() async {
+  /// What's allowed now. Null without an Android side (tests).
+  static Future<({bool notifications, bool camera})?> permissions() async {
     final m = await _call<Map<Object?, Object?>>('permissions');
     if (m == null) return null;
     return (
       notifications: m['notifications'] == true,
       camera: m['camera'] == true,
-      control: m['control'] == true,
     );
   }
 
@@ -104,14 +108,55 @@ abstract final class LinksyPlatform {
   static Future<bool> requestPermission(String name) async =>
       await _call<bool>('requestPermission', {'name': name}) ?? false;
 
-  /// Whether remote control is switched on (Settings → Accessibility).
-  static Future<bool> controlEnabled() async =>
-      await _call<bool>('controlEnabled') ?? false;
+  /// App-private storage (identity, history) and the app's own external
+  /// folder (received files). The same folders path_provider gave before.
+  static Future<({String support, String? external})?> paths() async {
+    final m = await _call<Map<Object?, Object?>>('paths');
+    if (m == null) return null;
+    return (
+      support: m['support'] as String,
+      external: m['external'] as String?,
+    );
+  }
 
-  /// Linksy's page in Android's Accessibility settings (there's no dialog
-  /// for this one).
-  static Future<void> openAccessibilitySettings() =>
-      _call<void>('openAccessibilitySettings');
+  /// Android's document picker; returns copies' paths (empty if cancelled).
+  static Future<List<String>> pickFiles() async =>
+      (await _call<List<Object?>>('pickFiles'))?.cast<String>() ?? const [];
+
+  /// Opens a received file in another app: `done`, `missing` or `noApp`.
+  static Future<String> openFile(String path) async =>
+      await _call<String>('openFile', {'path': path}) ?? 'noApp';
+
+  /// Starts the pairing QR scanner: its preview texture, the camera's frame
+  /// size and how far the camera is turned from upright.
+  static Future<({int texture, double width, double height, int rotation})?>
+  startScanner() async {
+    final m = await _call<Map<Object?, Object?>>('startScanner');
+    if (m == null) return null;
+    return (
+      texture: m['texture'] as int,
+      width: (m['width'] as num).toDouble(),
+      height: (m['height'] as num).toDouble(),
+      rotation: m['rotation'] as int,
+    );
+  }
+
+  static Future<void> stopScanner() => _call<void>('stopScanner');
+
+  static Future<void> scannerTorch(bool on) =>
+      _call<void>('scannerTorch', {'on': on});
+
+  /// Text of each QR code the scanner reads.
+  static Stream<String> get qrCodes {
+    _listen();
+    return _qrCodes.stream;
+  }
+
+  /// The scanner's camera failing.
+  static Stream<String> get scannerErrors {
+    _listen();
+    return _scannerErrors.stream;
+  }
 
   /// Decodes a second-display session; returns the texture id to show.
   static Future<int?> startDisplay(String session) =>

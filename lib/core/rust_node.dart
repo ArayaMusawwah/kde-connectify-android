@@ -16,10 +16,14 @@ class RustNode implements LinksyNode {
         .map((raw) {
           final j = jsonDecode(raw) as Json;
           final event = eventFromJson(j);
-          // A kind this app doesn't know: say "can't" straight away rather
-          // than leave the other device waiting.
-          if (event == null && j['type'] == 'session_request') {
+          // Being controlled needs an accessibility service on Android, which
+          // gets sideloaded apps blocked at install; this phone doesn't offer
+          // it. That, or a kind this app doesn't know: say "can't" straight
+          // away rather than leave the other device waiting.
+          if (j['type'] == 'session_request' &&
+              (event == null || j['kind'] == 'control')) {
             _node.declineUnsupported(request: j['request'] as String);
+            return null;
           }
           return event;
         })

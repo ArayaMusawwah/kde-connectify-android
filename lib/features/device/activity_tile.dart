@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:open_filex/open_filex.dart';
 
 import '../../app/activity.dart';
+import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../ui/components.dart';
 import '../../ui/format.dart';
@@ -287,15 +287,15 @@ class TimelineEntry extends StatelessWidget {
   static Future<void> _openFile(BuildContext context, String path) async {
     final messenger = ScaffoldMessenger.of(context);
     final name = path.split('/').last;
-    final result = await OpenFilex.open(path);
-    if (result.type == ResultType.done) return;
+    final result = await LinksyPlatform.openFile(path);
+    if (result == 'done') return;
     messenger.showSnackBar(
       SnackBar(
-        content: Text(switch (result.type) {
-          ResultType.fileNotFound => '$name isn’t there anymore.',
-          ResultType.noAppToOpen => 'No app on this phone opens $name.',
-          _ => 'Couldn’t open $name.',
-        }),
+        content: Text(
+          result == 'missing'
+              ? '$name isn’t there anymore.'
+              : 'No app on this phone opens $name.',
+        ),
       ),
     );
   }

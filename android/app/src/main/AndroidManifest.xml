@@ -47,18 +47,12 @@
                 <data android:scheme="linksy" android:host="pair"/>
             </intent-filter>
         </activity>
-        <service
-            android:name=".media.ControlService"
-            android:label="@string/control_service_label"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/linksy_control"/>
-        </service>
+        <!-- Opens received files in other apps, read-only, without any storage permission. -->
+        <provider
+            android:name=".ReceivedFiles"
+            android:authorities="app.linksy.files"
+            android:exported="false"
+            android:grantUriPermissions="true"/>
         <service
             android:name=".media.ShareService"
             android:exported="false"

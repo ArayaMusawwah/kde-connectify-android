@@ -27,8 +27,7 @@ keyframes, size, frame rate and rotation; input checked both ways).
 | Settings: name, auto-accept, stay connected | NsdManager discovery fallback for phones that filter multicast |
 | History kept on the phone (500 entries, clipboard text never on disk) | Watching the desktop's screen on the phone; front/back camera switch |
 | Sharing this phone's screen ("View Screen", exact shape, follows rotation) and camera ("Use as Webcam"), in a foreground service with a Stop notification | Second display at the phone's own size (the desktop sends 1920×1080 for now) |
-| Remote control (`control`) through an accessibility service the user turns on once; declined as unsupported until then | |
-| Permissions sheet (first launch, and Settings → Permissions): Android's own dialogs for notifications and camera, app settings once Android stops asking, Accessibility settings for remote control | |
+| Permissions sheet (first launch, and Settings → Permissions): Android's own dialogs for notifications and camera, app settings once Android stops asking | Remote control (`control`): declined as unsupported. Android allows it only through an accessibility service, and Google's fraud protection blocks sideloaded apps that declare one at install, with no way to skip |
 | Second display (`display`): the desktop's virtual monitor full screen in landscape, touch as mouse, two-finger scroll | |
 | Signal design, light and dark, edge-to-edge, predictive back, reduced motion respected | |
 
@@ -94,6 +93,21 @@ Linksy has its own look, "Signal", rather than stock Material:
 - **Home stays simple.** A plain header (logo, name, settings) and the device list. No
   decorative hero.
 
+## Lean on purpose
+
+What ships is only what runs. Dependencies are Flutter and `flutter_rust_bridge`, plus
+ZXing core (Java, offline) for reading QR codes. Everything else is the platform's own:
+Android's document picker for sending, a read-only `ReceivedFiles` provider for opening
+received files, Camera2 for the scanner and sharing, and folder paths over the
+platform channel. No Google Play services, ML Kit, telemetry or storage permissions.
+
+The APK declares: network and Wi-Fi multicast, camera, notifications, and foreground
+services for screen capture and camera (only while sharing). Check a build with
+`aapt2 dump permissions <apk>` before releasing.
+
+The Rust library is built for size (`opt-level = "z"`, fat LTO) except the hot paths,
+QUIC, TLS and BLAKE3, which stay at `opt-level = 3`.
+
 ## The Rust bridge
 
 Per `docs/protocol.md` §3 the protocol is **not** reimplemented in Dart (QUIC, mutual TLS with
@@ -115,10 +129,6 @@ self-signed certificates, the TLS exporter behind the pairing code). Instead:
   screen at its exact shape within 1920×1080 at ≤ 30 fps, restarted on rotation; camera
   1280×720 at 30 fps). Video and input cross through JNI (`rust/src/sessions.rs`, one
   task per session owning its streams), not through Dart.
-- Remote control: `ControlService` (an accessibility service the user enables once)
-  plays `control` input with `ControlInput`: left button + pointer moves = one stroke
-  (tap or drag), wheel = swipe, Escape/right click = Back, Home/Super = Home, text into
-  the focused field. Off: requests are declined with `decline_unsupported`.
 - Second display: `DisplayReceiver` decodes the desktop's stream into a Flutter texture
   (`TextureRegistry.SurfaceProducer`); `DisplayScreen` sends touches back as framed
   `pointer`/`button`/`scroll` messages.

@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+
+import '../../app/platform.dart';
 
 import '../../core/invite.dart';
 import '../../ui/components.dart';
@@ -14,31 +17,98 @@ class ScanScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<ScanScreen> {
-  final _scanner = MobileScannerController(
-    formats: const [BarcodeFormat.qrCode],
-  );
+  ({int texture, double width, double height, int rotation})? _camera;
+  final _subs = <StreamSubscription<String>>[];
   bool _done = false;
   bool _wrongCode = false;
   bool _torch = false;
 
+  /// Why the camera isn't showing, if it isn't.
+  String? _problem;
+
+  @override
+  void initState() {
+    super.initState();
+    _subs
+      ..add(LinksyPlatform.qrCodes.listen(_onCode))
+      ..add(
+        LinksyPlatform.scannerErrors.listen((m) {
+          if (mounted) setState(() => _problem = m);
+        }),
+      );
+    _start();
+  }
+
+  Future<void> _start() async {
+    if (!await LinksyPlatform.requestPermission('camera')) {
+      if (mounted) {
+        setState(
+          () => _problem =
+              'Linksy needs the camera to scan the pairing code. Allow it, '
+              'or pair by address.',
+        );
+      }
+      return;
+    }
+    final camera = await LinksyPlatform.startScanner();
+    if (!mounted) {
+      LinksyPlatform.stopScanner();
+      return;
+    }
+    setState(() {
+      _camera = camera;
+      _problem = camera == null ? 'The camera isn’t available.' : null;
+    });
+  }
+
   @override
   void dispose() {
-    _scanner.dispose();
+    for (final s in _subs) {
+      s.cancel();
+    }
+    LinksyPlatform.stopScanner();
     super.dispose();
   }
 
-  void _onDetect(BarcodeCapture capture) {
-    if (_done) return;
-    for (final code in capture.barcodes) {
-      final value = code.rawValue;
-      if (value == null) continue;
-      if (Invite.tryParse(value) != null) {
-        _done = true;
-        Navigator.of(context).pop(value);
-        return;
-      }
-      if (!_wrongCode) setState(() => _wrongCode = true);
+  void _onCode(String value) {
+    if (_done || !mounted) return;
+    if (Invite.tryParse(value) != null) {
+      _done = true;
+      Navigator.of(context).pop(value);
+      return;
     }
+    if (!_wrongCode) setState(() => _wrongCode = true);
+  }
+
+  /// The camera's picture, turned upright and filling the screen.
+  Widget _preview() {
+    final camera = _camera;
+    if (camera == null) {
+      return _problem == null
+          ? const SizedBox.shrink()
+          : _CameraError(_problem!);
+    }
+    final turns = camera.rotation ~/ 90;
+    final (w, h) = turns.isOdd
+        ? (camera.height, camera.width)
+        : (camera.width, camera.height);
+    return ClipRect(
+      child: FittedBox(
+        fit: BoxFit.cover,
+        child: SizedBox(
+          width: w,
+          height: h,
+          child: RotatedBox(
+            quarterTurns: turns,
+            child: SizedBox(
+              width: camera.width,
+              height: camera.height,
+              child: Texture(textureId: camera.texture),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -69,8 +139,8 @@ class _ScanScreenState extends State<ScanScreen> {
             tooltip: 'Flashlight',
             onDark: true,
             onTap: () {
-              _scanner.toggleTorch();
               setState(() => _torch = !_torch);
+              LinksyPlatform.scannerTorch(_torch);
             },
           ),
           const SizedBox(width: 16),
@@ -79,11 +149,7 @@ class _ScanScreenState extends State<ScanScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          MobileScanner(
-            controller: _scanner,
-            onDetect: _onDetect,
-            errorBuilder: (context, error) => _CameraError(error),
-          ),
+          _preview(),
           const CustomPaint(painter: _Viewfinder(window)),
           Align(
             alignment: const Alignment(0, -0.62),
@@ -202,13 +268,12 @@ class _Viewfinder extends CustomPainter {
 }
 
 class _CameraError extends StatelessWidget {
-  const _CameraError(this.error);
+  const _CameraError(this.message);
 
-  final MobileScannerException error;
+  final String message;
 
   @override
   Widget build(BuildContext context) {
-    final denied = error.errorCode == MobileScannerErrorCode.permissionDenied;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -218,10 +283,7 @@ class _CameraError extends StatelessWidget {
             const Icon(Ph.cameraSlash, color: Colors.white70, size: 48),
             const SizedBox(height: 16),
             Text(
-              denied
-                  ? 'Linksy needs the camera to scan the pairing code. '
-                        'Allow it in the system settings, or pair by address.'
-                  : 'The camera isn’t available.',
+              message,
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.white),
             ),

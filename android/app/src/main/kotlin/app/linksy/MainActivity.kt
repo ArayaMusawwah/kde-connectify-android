@@ -11,9 +11,9 @@ import android.provider.Settings
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-import app.linksy.media.ControlService
 import app.linksy.media.DisplayReceiver
 import app.linksy.media.NativeSession
+import app.linksy.media.QrScanner
 import app.linksy.media.ShareService
 import java.util.concurrent.Executors
 
@@ -69,7 +69,6 @@ class MainActivity : FlutterActivity() {
                         mapOf(
                             "notifications" to (Build.VERSION.SDK_INT < 33 || granted(Manifest.permission.POST_NOTIFICATIONS)),
                             "camera" to granted(Manifest.permission.CAMERA),
-                            "control" to ControlService.enabled(this@MainActivity),
                         ),
                     )
                     "startShare" -> {
@@ -81,9 +80,20 @@ class MainActivity : FlutterActivity() {
                         )
                         result.success(null)
                     }
-                    "controlEnabled" -> result.success(ControlService.enabled(this@MainActivity))
-                    "openAccessibilitySettings" -> {
-                        openControlSettings()
+                    // Where the node and history live, and where received files go.
+                    "paths" -> result.success(
+                        mapOf("support" to filesDir.path, "external" to getExternalFilesDir(null)?.path),
+                    )
+                    "pickFiles" -> pickFiles(result)
+                    "openFile" -> result.success(openFile(call.argument<String>("path")!!))
+                    "startScanner" -> result.success(startScanner())
+                    "stopScanner" -> {
+                        scanner?.stop()
+                        scanner = null
+                        result.success(null)
+                    }
+                    "scannerTorch" -> {
+                        scanner?.setTorch(call.argument<Boolean>("on") == true)
                         result.success(null)
                     }
                     "startDisplay" -> result.success(startDisplay(call.argument<String>("session")!!))
@@ -145,6 +155,7 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
+        scanner?.stop()
         displays.values.forEach { it.stop() }
         displays.clear()
         inputWriter.shutdown()
@@ -199,24 +210,83 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    /// Remote control has no dialog: Android only lets apps open its
-    /// Accessibility settings (the page for one service is for system apps).
-    /// The extras ask Settings to scroll to and highlight Linksy's row;
-    /// phones that don't know them just show the list.
-    private fun openControlSettings() {
-        val component = android.content.ComponentName(this, ControlService::class.java).flattenToString()
-        val args = android.os.Bundle().apply { putString(":settings:fragment_args_key", component) }
-        startActivity(
-            Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                .putExtra(":settings:fragment_args_key", component)
-                .putExtra(":settings:show_fragment_args", args),
+    private var scanner: QrScanner? = null
+    private var pendingPick: MethodChannel.Result? = null
+
+    /// The pairing QR scanner, previewed into a new Flutter texture.
+    private fun startScanner(): Map<String, Any>? {
+        scanner?.stop()
+        val producer = engine?.renderer?.createSurfaceProducer() ?: return null
+        val s = QrScanner(
+            this, producer,
+            onCode = { text -> runOnUiThread { channel?.invokeMethod("qrCode", text) } },
+            onError = { message -> runOnUiThread { channel?.invokeMethod("scannerError", message) } },
         )
+        scanner = s
+        return mapOf("texture" to producer.id(), "width" to s.size.width, "height" to s.size.height, "rotation" to s.rotation)
+    }
+
+    /// Android's document picker. The node sends from paths, so the picks are
+    /// copied into the app's cache first (docs/protocol.md §7: no reader API yet).
+    private fun pickFiles(result: MethodChannel.Result) {
+        pendingPick?.success(emptyList<String>())
+        pendingPick = result
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+            .addCategory(Intent.CATEGORY_OPENABLE)
+            .setType("*/*")
+            .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        @Suppress("DEPRECATION")
+        startActivityForResult(intent, REQUEST_PICK)
+    }
+
+    private fun copyPicks(uris: List<android.net.Uri>): List<String> {
+        val dir = java.io.File(cacheDir, "picked").apply { deleteRecursively(); mkdirs() }
+        return uris.mapIndexedNotNull { i, uri ->
+            runCatching {
+                val name = contentResolver.query(uri, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME), null, null, null)
+                    ?.use { c -> if (c.moveToFirst()) c.getString(0) else null }
+                    ?.replace('/', '_') ?: "file-$i"
+                // Each in its own folder, so two picks with one name both keep it.
+                val file = java.io.File(java.io.File(dir, "$i").apply { mkdirs() }, name)
+                contentResolver.openInputStream(uri)!!.use { input -> file.outputStream().use { input.copyTo(it) } }
+                file.path
+            }.getOrNull()
+        }
+    }
+
+    /// Opens a received file in another app: "done", "missing" or "noApp".
+    private fun openFile(path: String): String {
+        val file = java.io.File(path)
+        if (!file.isFile) return "missing"
+        val root = java.io.File(getExternalFilesDir(null), "Received").canonicalPath
+        val relative = file.canonicalPath.removePrefix(root).trimStart('/')
+        val uri = android.net.Uri.Builder().scheme("content").authority(ReceivedFiles.AUTHORITY)
+            .encodedPath("/" + relative.split('/').joinToString("/") { android.net.Uri.encode(it) }).build()
+        val view = Intent(Intent.ACTION_VIEW).setDataAndType(uri, ReceivedFiles.mime(file.name))
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        return try {
+            startActivity(Intent.createChooser(view, null).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION))
+            "done"
+        } catch (e: android.content.ActivityNotFoundException) {
+            "noApp"
+        }
     }
 
     @Deprecated("Deprecated in Android")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         @Suppress("DEPRECATION")
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_PICK) {
+            val result = pendingPick ?: return
+            pendingPick = null
+            val uris = buildList {
+                data?.clipData?.let { clip -> for (i in 0 until clip.itemCount) add(clip.getItemAt(i).uri) }
+                if (isEmpty()) data?.data?.let(::add)
+            }
+            if (resultCode != RESULT_OK || uris.isEmpty()) return result.success(emptyList<String>())
+            Thread { val paths = copyPicks(uris); runOnUiThread { result.success(paths) } }.start()
+            return
+        }
         if (requestCode != REQUEST_CAPTURE) return
         val (session, result) = pendingCapture ?: return
         pendingCapture = null
@@ -247,5 +317,6 @@ class MainActivity : FlutterActivity() {
         const val REQUEST_CAPTURE = 41
         const val REQUEST_CAMERA = 42
         const val REQUEST_NOTIFICATIONS = 43
+        const val REQUEST_PICK = 44
     }
 }

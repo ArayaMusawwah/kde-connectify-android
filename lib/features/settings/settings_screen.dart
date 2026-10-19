@@ -371,23 +371,19 @@ class _PermissionsState extends State<_Permissions>
     final p = await LinksyPlatform.permissions();
     if (!mounted || p == null) return;
     setState(
-      () => _allowed = [
-        p.notifications,
-        p.camera,
-        p.control,
-      ].where((x) => x).length,
+      () => _allowed = [p.notifications, p.camera].where((x) => x).length,
     );
   }
 
   @override
   Widget build(BuildContext context) => _Row(
     icon: Ph.shieldCheck,
-    title: 'Notifications, camera, remote control',
+    title: 'Notifications and camera',
     caption: _allowed == null
         ? 'What Linksy asks Android for, and why.'
-        : _allowed == 3
-        ? 'All allowed.'
-        : '$_allowed of 3 allowed. Tap to allow the rest.',
+        : _allowed == 2
+        ? 'Both allowed.'
+        : '$_allowed of 2 allowed. Tap to allow the rest.',
     onTap: () async {
       await showPermissions(context);
       await _read();

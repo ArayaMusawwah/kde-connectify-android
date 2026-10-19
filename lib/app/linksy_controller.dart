@@ -177,34 +177,16 @@ class LinksyController extends ChangeNotifier {
         if (displays.remove(session) != null) {
           _update(session, (a) => a.status = ActivityStatus.done);
         }
-      case SessionRequest(
-        :final from,
-        :final request,
-        kind: SessionKind.control,
-      ):
-        // Answered here when remote control isn't switched on: the desktop
-        // then says this phone can't be controlled yet.
-        LinksyPlatform.controlEnabled().then((on) {
-          if (on) {
-            _prompts.add(e);
-          } else {
-            node.declineUnsupported(request);
-            _prompts.add(ControlUnavailable(from));
-          }
-        });
-        return;
       case PairingRequest() ||
           PairingFailed() ||
           SessionRequest() ||
-          SessionStarted() ||
-          ControlUnavailable():
+          SessionStarted():
         break;
     }
     switch (e) {
       case PairingRequest() ||
           PairingFailed() ||
           SessionRequest() ||
-          ControlUnavailable() ||
           Paired() ||
           TransferRequest() ||
           NotificationReceived() ||

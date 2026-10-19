@@ -1,8 +1,8 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../app/activity.dart';
+import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
@@ -13,8 +13,7 @@ import 'activity_tile.dart';
 /// Picks files and sends them to a device, reporting any error.
 Future<void> pickAndSend(BuildContext context, String deviceId) async {
   final c = LinksyScope.read(context);
-  final picked = await FilePicker.pickFiles();
-  final paths = [for (final f in picked) ?f.path];
+  final paths = await LinksyPlatform.pickFiles();
   if (context.mounted) await report(context, c.sendFiles(deviceId, paths));
 }
 

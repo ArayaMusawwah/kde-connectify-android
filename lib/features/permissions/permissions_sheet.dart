@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../app/platform.dart';
-import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../../ui/sig.dart';
 
@@ -32,7 +31,7 @@ class _PermissionsSheet extends StatefulWidget {
 
 class _PermissionsSheetState extends State<_PermissionsSheet>
     with WidgetsBindingObserver {
-  ({bool notifications, bool camera, bool control})? _state;
+  ({bool notifications, bool camera})? _state;
 
   @override
   void initState() {
@@ -101,18 +100,6 @@ class _PermissionsSheetState extends State<_PermissionsSheet>
               allowed: state?.camera,
               action: 'Allow',
               onTap: () => _request('camera'),
-            ),
-            const SizedBox(height: 10),
-            _Permission(
-              icon: Ph.cursorClick,
-              title: 'Remote control',
-              why:
-                  'Lets a computer you allow tap, swipe and type on this phone '
-                  'while it watches the screen. Android has no pop-up for '
-                  'this: turn on “Linksy remote control” on the next screen.',
-              allowed: state?.control,
-              action: 'Open settings',
-              onTap: LinksyPlatform.openAccessibilitySettings,
             ),
             const SizedBox(height: 20),
             SigButton(
@@ -193,65 +180,6 @@ class _Permission extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// A computer asked to control this phone while remote control is off: the
-/// request was declined as unsupported; this says how to turn it on.
-class ControlSetupDialog extends StatelessWidget {
-  const ControlSetupDialog({super.key, required this.from});
-
-  final DeviceInfo from;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    return Dialog(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 28, 24, 14),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Center(
-              child: IconCircle(
-                icon: Ph.cursorClick,
-                color: Sig.blue,
-                size: 64,
-              ),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              '${from.name} wants to control this phone',
-              textAlign: TextAlign.center,
-              style: sora(21, color: s.ink, height: 1.2),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Turn on “Linksy remote control” first: Android lets you do it '
-              'only in its settings. Then ask again from ${from.name}.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: s.muted, height: 1.4),
-            ),
-            const SizedBox(height: 24),
-            SigButton(
-              label: 'Open settings',
-              expand: true,
-              onTap: () {
-                Navigator.of(context).pop();
-                LinksyPlatform.openAccessibilitySettings();
-              },
-            ),
-            SigButton(
-              label: 'Not now',
-              kind: SigButtonKind.quiet,
-              expand: true,
-              onTap: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
       ),
     );
   }

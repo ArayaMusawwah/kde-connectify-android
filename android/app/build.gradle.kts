@@ -71,3 +71,8 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Decodes the pairing QR code on the phone (no Google services).
+    implementation("com.google.zxing:core:3.5.3")
+}

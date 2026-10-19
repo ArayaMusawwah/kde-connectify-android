@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../core/models.dart';
 import 'format.dart';
@@ -392,27 +391,79 @@ class LinksyMark extends StatelessWidget {
   final bool onBlue;
 
   @override
-  Widget build(BuildContext context) => SvgPicture.asset(
-    onBlue ? 'assets/brand/mark-on-blue.svg' : 'assets/brand/mark.svg',
-    width: size,
-    height: size,
-    semanticsLabel: 'Linksy',
+  Widget build(BuildContext context) => Semantics(
+    label: 'Linksy',
+    image: true,
+    child: CustomPaint(
+      size: Size.square(size),
+      painter: _Mark(
+        sender: onBlue ? Colors.white : Sig.blue,
+        receiver: onBlue ? Sig.cyanLight : Sig.cyan,
+      ),
+    ),
   );
 }
 
-/// The app icon: the mark on its rounded blue tile.
+/// The app icon, flat: the mark in white and light cyan on a rounded blue
+/// tile (data/icons in linksy-desktop).
 class AppIcon extends StatelessWidget {
   const AppIcon({super.key, this.size = 64});
 
   final double size;
 
   @override
-  Widget build(BuildContext context) => SvgPicture.asset(
-    'assets/brand/app-icon.svg',
+  Widget build(BuildContext context) => Container(
     width: size,
     height: size,
-    semanticsLabel: 'Linksy',
+    padding: EdgeInsets.all(size * 0.16),
+    decoration: BoxDecoration(
+      color: Sig.blue,
+      borderRadius: BorderRadius.circular(size * 0.23),
+    ),
+    child: LinksyMark(size: size * 0.68, onBlue: true),
   );
+}
+
+/// The "Sender" mark on its 100-unit grid (brand/README.md): sender dot r12
+/// at (25,75) with an arc r28, receiver dot r8 at (78,22) with an arc r20.
+class _Mark extends CustomPainter {
+  const _Mark({required this.sender, required this.receiver});
+
+  final Color sender;
+  final Color receiver;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.scale(size.width / 100, size.height / 100);
+    final dot = Paint();
+    final arc = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    canvas.drawCircle(const Offset(25, 75), 12, dot..color = sender);
+    canvas.drawArc(
+      Rect.fromCircle(center: const Offset(25, 75), radius: 28),
+      -pi / 2,
+      pi / 2,
+      false,
+      arc
+        ..color = sender
+        ..strokeWidth = 9.5,
+    );
+    canvas.drawArc(
+      Rect.fromCircle(center: const Offset(78, 22), radius: 20),
+      pi / 2,
+      pi / 2,
+      false,
+      arc
+        ..color = receiver
+        ..strokeWidth = 8,
+    );
+    canvas.drawCircle(const Offset(78, 22), 8, dot..color = receiver);
+  }
+
+  @override
+  bool shouldRepaint(_Mark old) =>
+      old.sender != sender || old.receiver != receiver;
 }
 
 /// Mark plus the "Linksy" name.

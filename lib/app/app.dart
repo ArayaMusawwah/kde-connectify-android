@@ -99,11 +99,6 @@ class _LinksyAppState extends State<LinksyApp> {
         );
       case Paired(:final device):
         _say('Paired with ${device.name}');
-      case ControlUnavailable(:final from):
-        showDialog<void>(
-          context: context,
-          builder: (_) => ControlSetupDialog(from: from),
-        );
       case SessionStarted(kind: SessionKind.display):
         _navigator.currentState?.push(
           MaterialPageRoute<void>(builder: (_) => DisplayScreen(session: e)),

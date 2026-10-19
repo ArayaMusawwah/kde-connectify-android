@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 /// Decimal units, like the desktop: "2.1 MB".
 String formatBytes(int bytes) {
   if (bytes < 1000) return '$bytes bytes';
@@ -28,7 +26,32 @@ String formatTimeLeft(int remaining, double bytesPerSecond) {
   return h == 1 ? 'about 1 hour left' : 'about $h hours left';
 }
 
-String formatClock(DateTime t) => DateFormat.Hm().format(t);
+String formatClock(DateTime t) =>
+    '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+
+const _weekdays = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
+const _months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 
 /// "Today", "Yesterday", "Monday 12 October", with the year when it isn't
 /// this year.
@@ -39,8 +62,8 @@ String formatDay(DateTime t, {DateTime? now}) {
   if (diff == 0) return 'Today';
   if (diff == 1) return 'Yesterday';
   return day.year == today.year
-      ? DateFormat('EEEE d MMMM').format(day)
-      : DateFormat('d MMMM y').format(day);
+      ? '${_weekdays[day.weekday - 1]} ${day.day} ${_months[day.month - 1]}'
+      : '${day.day} ${_months[day.month - 1]} ${day.year}';
 }
 
 DateTime _date(DateTime t) => DateTime(t.year, t.month, t.day);
