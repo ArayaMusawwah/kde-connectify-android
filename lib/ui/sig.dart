@@ -49,7 +49,7 @@ class Sig extends ThemeExtension<Sig> {
   /// Under solid cards; no borders.
   final Color shadow;
 
-  /// The blue panel behind the orbit and device headers, as on the app icon.
+  /// The blue panel behind device headers, as on the app icon.
   final Color heroTop;
   final Color heroBottom;
 
