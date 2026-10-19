@@ -2,6 +2,11 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.4] - 2026-10-19
+
+### Fixed
+- The permissions guide now shows on first launch as intended (in 0.1.3 it only opened from Settings → Permissions).
+
 ## [0.1.3] - 2026-10-19
 
 ### Added
