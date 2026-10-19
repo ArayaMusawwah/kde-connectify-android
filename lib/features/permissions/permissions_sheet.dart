@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../app/platform.dart';
 import '../../core/models.dart';
@@ -18,10 +17,9 @@ Future<void> showPermissions(BuildContext context) =>
 
 /// Once, on a first launch on a real phone.
 Future<void> showPermissionsOnce(BuildContext context) async {
-  if (await LinksyPlatform.permissions() == null) return;
-  final prefs = await SharedPreferences.getInstance();
-  if (prefs.getBool('permissions_shown') ?? false) return;
-  await prefs.setBool('permissions_shown', true);
+  // Kept on the Android side: the shared_preferences plugin's Android code
+  // is reached through JNI and R8 strips it from release builds.
+  if (!await LinksyPlatform.firstPermissionsVisit()) return;
   if (context.mounted) await showPermissions(context);
 }
 

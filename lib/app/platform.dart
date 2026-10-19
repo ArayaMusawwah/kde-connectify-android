@@ -94,6 +94,11 @@ abstract final class LinksyPlatform {
     );
   }
 
+  /// True the first time it's asked on this install (then false), for the
+  /// permissions sheet shown on first launch.
+  static Future<bool> firstPermissionsVisit() async =>
+      await _call<bool>('firstPermissionsVisit') ?? false;
+
   /// Android's own permission dialog for `camera` or `notifications` (or
   /// Linksy's app settings once Android stops showing it). True if granted.
   static Future<bool> requestPermission(String name) async =>

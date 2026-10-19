@@ -58,6 +58,13 @@ class MainActivity : FlutterActivity() {
                         }
                         else -> result.notImplemented()
                     }
+                    // True once per install: whether to show the permissions sheet.
+                    "firstPermissionsVisit" -> {
+                        val prefs = getSharedPreferences("permissions", MODE_PRIVATE)
+                        val first = !prefs.getBoolean("sheet_shown", false)
+                        if (first) prefs.edit().putBoolean("sheet_shown", true).apply()
+                        result.success(first)
+                    }
                     "permissions" -> result.success(
                         mapOf(
                             "notifications" to (Build.VERSION.SDK_INT < 33 || granted(Manifest.permission.POST_NOTIFICATIONS)),
