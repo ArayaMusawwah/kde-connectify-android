@@ -65,7 +65,8 @@ class _PressableState extends State<Pressable> {
   }
 }
 
-/// White (or ink) surface with a hairline border.
+/// A solid surface: white with a soft blue-tinted shadow in light, a step up
+/// from the page in dark. No borders.
 class SigCard extends StatelessWidget {
   const SigCard({
     super.key,
@@ -90,7 +91,7 @@ class SigCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color ?? s.card,
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: s.line),
+        boxShadow: color == null ? cardShadow(s) : null,
       ),
       child: child,
     );
@@ -123,7 +124,7 @@ class SigButton extends StatelessWidget {
     final s = Sig.of(context);
     final fg = switch (kind) {
       SigButtonKind.primary || SigButtonKind.danger => Colors.white,
-      SigButtonKind.secondary => s.ink,
+      SigButtonKind.secondary => Sig.blue,
       SigButtonKind.quiet => Sig.blue,
     };
     final decoration = switch (kind) {
@@ -143,9 +144,8 @@ class SigButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(99),
       ),
       SigButtonKind.secondary => BoxDecoration(
-        color: s.card,
+        color: Sig.blue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(99),
-        border: Border.all(color: s.line, width: 1.5),
       ),
       SigButtonKind.quiet => const BoxDecoration(),
     };
@@ -188,7 +188,7 @@ class SigButton extends StatelessWidget {
   }
 }
 
-/// A round hairline button for top bars.
+/// A round button for top bars.
 class RoundButton extends StatelessWidget {
   const RoundButton({
     super.key,
@@ -202,7 +202,7 @@ class RoundButton extends StatelessWidget {
   final VoidCallback? onTap;
   final String tooltip;
 
-  /// White on the ink hero panels.
+  /// White on the blue hero panels.
   final bool onDark;
 
   @override
@@ -219,10 +219,8 @@ class RoundButton extends StatelessWidget {
           height: 44,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: onDark ? Colors.white.withValues(alpha: 0.1) : s.card,
-            border: Border.all(
-              color: onDark ? Colors.white.withValues(alpha: 0.14) : s.line,
-            ),
+            color: onDark ? Colors.white.withValues(alpha: 0.16) : s.card,
+            boxShadow: onDark ? null : cardShadow(s),
           ),
           child: Icon(icon, size: 20, color: onDark ? Colors.white : s.ink),
         ),
@@ -263,10 +261,16 @@ class SectionLabel extends StatelessWidget {
   }
 }
 
-Color presenceColor(Sig s, Presence p) => switch (p) {
-  Presence.connected => Sig.cyan,
-  Presence.nearby => s.mint,
-  Presence.notNearby => s.faint,
+List<BoxShadow> cardShadow(Sig s) => [
+  BoxShadow(color: s.shadow, blurRadius: 18, offset: const Offset(0, 6)),
+];
+
+/// Connected is the receiver's cyan, nearby the sender's blue, away grey.
+/// On the blue hero, nearby turns white so it still shows.
+Color presenceColor(Sig s, Presence p, {bool onBlue = false}) => switch (p) {
+  Presence.connected => onBlue ? Sig.cyanLight : Sig.cyan,
+  Presence.nearby => onBlue ? Colors.white : Sig.blue,
+  Presence.notNearby => onBlue ? Colors.white54 : s.faint,
 };
 
 String presenceLabel(Presence p) => switch (p) {
@@ -275,9 +279,9 @@ String presenceLabel(Presence p) => switch (p) {
   Presence.notNearby => 'Not nearby',
 };
 
-/// A device as a glowing orb in its own hue, initials in Sora. Its presence
-/// is the ring: cyan when connected, mint when nearby, none when away (and
-/// the orb dims).
+/// A device as a disc in one of the brand's colors (blue, deep or cyan),
+/// initials in Sora. Its presence is the ring: cyan when connected, blue when
+/// nearby, none when away (and the disc dims).
 class Orb extends StatelessWidget {
   const Orb({
     super.key,
@@ -285,6 +289,7 @@ class Orb extends StatelessWidget {
     this.size = 52,
     this.presence,
     this.glow = false,
+    this.onBlue = false,
   });
 
   final DeviceInfo device;
@@ -292,15 +297,17 @@ class Orb extends StatelessWidget {
   final Presence? presence;
   final bool glow;
 
+  /// Sits on a blue hero: a white edge keeps it apart from the background.
+  final bool onBlue;
+
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
-    final hue = deviceHue(device.id);
+    final colors = devicePalette(device.id);
     final away = presence == Presence.notNearby;
-    final hsl = HSLColor.fromColor(hue);
-    final light = hsl.withLightness(min(1, hsl.lightness + 0.14)).toColor();
-    final dark = hsl.withLightness(max(0, hsl.lightness - 0.2)).toColor();
-    final ring = presence == null || away ? null : presenceColor(s, presence!);
+    final ring = presence == null || away
+        ? null
+        : presenceColor(s, presence!, onBlue: onBlue);
     final ringWidth = max(2.0, size * 0.045);
 
     Widget orb = Container(
@@ -309,16 +316,18 @@ class Orb extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: RadialGradient(
-          center: const Alignment(-0.35, -0.45),
-          radius: 1.05,
-          colors: [light, hue, dark],
-          stops: const [0, 0.55, 1],
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: colors,
         ),
+        border: onBlue
+            ? Border.all(color: Colors.white.withValues(alpha: 0.85), width: 2)
+            : null,
         boxShadow: glow && !away
             ? [
                 BoxShadow(
-                  color: hue.withValues(alpha: 0.5),
+                  color: colors.first.withValues(alpha: 0.5),
                   blurRadius: size * 0.5,
                   spreadRadius: -size * 0.05,
                 ),
@@ -335,20 +344,7 @@ class Orb extends StatelessWidget {
         ),
       ),
     );
-    if (away) {
-      orb = Opacity(
-        opacity: 0.45,
-        child: ColorFiltered(
-          colorFilter: const ColorFilter.matrix([
-            0.5, 0.4, 0.1, 0, 0, //
-            0.3, 0.6, 0.1, 0, 0, //
-            0.3, 0.4, 0.3, 0, 0, //
-            0, 0, 0, 1, 0, //
-          ]),
-          child: orb,
-        ),
-      );
-    }
+    if (away) orb = Opacity(opacity: 0.45, child: orb);
     if (ring == null) return orb;
     return Container(
       padding: EdgeInsets.all(ringWidth + 1.5),
@@ -415,39 +411,56 @@ IconData fileIcon(String name) {
   };
 }
 
-/// The "Sender" mark in Signal colors.
+/// The "Sender" mark: Signal blue and cyan, or white and light cyan on blue
+/// (as on the app icon).
 class LinksyMark extends StatelessWidget {
-  const LinksyMark({super.key, this.size = 48});
+  const LinksyMark({super.key, this.size = 48, this.onBlue = false});
 
   final double size;
+  final bool onBlue;
 
   @override
   Widget build(BuildContext context) => SvgPicture.asset(
-    'assets/brand/linksy-mark--signal.svg',
+    onBlue ? 'assets/brand/mark-on-blue.svg' : 'assets/brand/mark.svg',
     width: size,
     height: size,
     semanticsLabel: 'Linksy',
   );
 }
 
-/// Mark plus the "Linksy" wordmark.
-class Wordmark extends StatelessWidget {
-  const Wordmark({super.key, this.color});
+/// The app icon: the mark on its rounded blue tile.
+class AppIcon extends StatelessWidget {
+  const AppIcon({super.key, this.size = 64});
 
-  final Color? color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => SvgPicture.asset(
+    'assets/brand/app-icon.svg',
+    width: size,
+    height: size,
+    semanticsLabel: 'Linksy',
+  );
+}
+
+/// Mark plus the "Linksy" name.
+class Wordmark extends StatelessWidget {
+  const Wordmark({super.key, this.onBlue = false});
+
+  final bool onBlue;
 
   @override
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      const LinksyMark(size: 30),
+      LinksyMark(size: 30, onBlue: onBlue),
       const SizedBox(width: 8),
       Text(
         'Linksy',
         style: sora(
           24,
           weight: FontWeight.w700,
-          color: color ?? Sig.of(context).ink,
+          color: onBlue ? Colors.white : Sig.of(context).ink,
           spacing: -0.8,
         ),
       ),

@@ -136,7 +136,7 @@ class _Hero extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Wordmark(color: Colors.white),
+              const Wordmark(onBlue: true),
               const Spacer(),
               RoundButton(
                 icon: Ph.gearSix,
@@ -153,7 +153,7 @@ class _Hero extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              PulseDot(color: Sig.cyan, size: 7),
+              PulseDot(color: Sig.cyanLight, size: 7),
               const SizedBox(width: 4),
               Expanded(
                 child: Text.rich(
@@ -166,7 +166,7 @@ class _Hero extends StatelessWidget {
                       TextSpan(
                         text: ' is visible on this Wi-Fi',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: Colors.white.withValues(alpha: 0.75),
                         ),
                       ),
                     ],
@@ -205,7 +205,7 @@ class _Stat extends StatelessWidget {
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
     decoration: BoxDecoration(
       color: accent
-          ? Sig.cyan.withValues(alpha: 0.16)
+          ? Sig.cyanLight.withValues(alpha: 0.2)
           : Colors.white.withValues(alpha: 0.08),
       borderRadius: BorderRadius.circular(99),
     ),
@@ -222,7 +222,7 @@ class _Stat extends StatelessWidget {
       style: TextStyle(
         fontFamily: Sig.body,
         fontSize: 12,
-        color: accent ? Sig.cyan : Colors.white.withValues(alpha: 0.75),
+        color: accent ? Sig.cyanLight : Colors.white.withValues(alpha: 0.85),
       ),
     ),
   );

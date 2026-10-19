@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- The "Sender" mark in Signal colors, with inline attributes (flutter_svg ignores <style>). -->
+  <g fill="none" stroke-linecap="round">
+    <circle cx="25" cy="75" r="12" fill="#2563FF"/>
+    <path d="M25 47 A28 28 0 0 1 53 75" stroke="#2563FF" stroke-width="9.5"/>
+    <path d="M78 42 A20 20 0 0 1 58 22" stroke="#22C3E6" stroke-width="8"/>
+    <circle cx="78" cy="22" r="8" fill="#22C3E6"/>
+  </g>
+</svg>

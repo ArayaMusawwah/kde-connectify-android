@@ -124,7 +124,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 40),
-                  const Center(child: LinksyMark(size: 34)),
+                  const Center(child: AppIcon(size: 52)),
                   const SizedBox(height: 10),
                   Text(
                     'Your devices, connected.\nNo account, no cloud.',

@@ -14,8 +14,8 @@ class Sig extends ThemeExtension<Sig> {
     required this.ink,
     required this.muted,
     required this.faint,
-    required this.mint,
     required this.red,
+    required this.shadow,
     required this.heroTop,
     required this.heroBottom,
   });
@@ -23,6 +23,12 @@ class Sig extends ThemeExtension<Sig> {
   static const blue = Color(0xFF2563FF);
   static const cyan = Color(0xFF22C3E6);
   static const deep = Color(0xFF1438B8);
+
+  /// The app icon's tile and receiver tint (data/icons in linksy-desktop).
+  static const tileTop = Color(0xFF3B78FF);
+  static const tileBottom = Color(0xFF1A45C8);
+  static const tileShade = Color(0xFF12309A);
+  static const cyanLight = Color(0xFF9FE6F5);
 
   /// Outgoing and incoming, by the brand's sender/receiver roles.
   static const outgoing = blue;
@@ -38,10 +44,12 @@ class Sig extends ThemeExtension<Sig> {
   final Color ink;
   final Color muted;
   final Color faint;
-  final Color mint;
   final Color red;
 
-  /// The ink panel behind the orbit and device headers.
+  /// Under solid cards; no borders.
+  final Color shadow;
+
+  /// The blue panel behind the orbit and device headers, as on the app icon.
   final Color heroTop;
   final Color heroBottom;
 
@@ -53,24 +61,24 @@ class Sig extends ThemeExtension<Sig> {
     ink: Color(0xFF0A1024),
     muted: Color(0xFF5A6378),
     faint: Color(0xFF98A1B3),
-    mint: Color(0xFF0FB37F),
     red: Color(0xFFE5384F),
-    heroTop: Color(0xFF0B1230),
-    heroBottom: Color(0xFF14257A),
+    shadow: Color(0x141438B8),
+    heroTop: tileTop,
+    heroBottom: tileBottom,
   );
 
   static const dark = Sig(
-    bg: Color(0xFF060A14),
-    card: Color(0xFF0E1424),
-    raised: Color(0xFF161D31),
-    line: Color(0xFF1E2741),
+    bg: Color(0xFF080D1F),
+    card: Color(0xFF111A3A),
+    raised: Color(0xFF1A2550),
+    line: Color(0xFF1E2A55),
     ink: Color(0xFFEEF2FA),
-    muted: Color(0xFF8C95AB),
-    faint: Color(0xFF545D74),
-    mint: Color(0xFF2FD99E),
+    muted: Color(0xFF94A0C0),
+    faint: Color(0xFF56628A),
     red: Color(0xFFFF5C72),
-    heroTop: Color(0xFF070C1F),
-    heroBottom: Color(0xFF0F1D5C),
+    shadow: Color(0x00000000),
+    heroTop: deep,
+    heroBottom: tileShade,
   );
 
   static Sig of(BuildContext context) => Theme.of(context).extension<Sig>()!;
@@ -82,9 +90,9 @@ class Sig extends ThemeExtension<Sig> {
   );
 
   static const sendGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFF3B74FF), deep],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [tileTop, tileBottom],
   );
 
   @override
@@ -102,8 +110,8 @@ class Sig extends ThemeExtension<Sig> {
       ink: l(ink, other.ink),
       muted: l(muted, other.muted),
       faint: l(faint, other.faint),
-      mint: l(mint, other.mint),
       red: l(red, other.red),
+      shadow: l(shadow, other.shadow),
       heroTop: l(heroTop, other.heroTop),
       heroBottom: l(heroBottom, other.heroBottom),
     );
@@ -281,8 +289,13 @@ SystemUiOverlayStyle overlayFor(Brightness brightness) => SystemUiOverlayStyle(
   statusBarBrightness: brightness,
 );
 
-/// Each device's own hue, from its id, so it keeps one color across renames.
-Color deviceHue(String id) {
-  final h = (int.tryParse(id.substring(0, 4), radix: 16) ?? 0) % 360;
-  return HSLColor.fromAHSL(1, h.toDouble(), 0.75, 0.58).toColor();
+/// Each device's color, from its id so it survives renames, and only ever
+/// one of the brand's: blue, deep or cyan.
+List<Color> devicePalette(String id) {
+  const palettes = [
+    [Sig.tileTop, Sig.tileBottom],
+    [Color(0xFF2B4FD6), Sig.tileShade],
+    [Color(0xFF3FD0EE), Color(0xFF1494B8)],
+  ];
+  return palettes[(int.tryParse(id.substring(0, 2), radix: 16) ?? 0) % 3];
 }

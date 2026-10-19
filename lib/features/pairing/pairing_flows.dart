@@ -393,9 +393,8 @@ class _Digit extends StatelessWidget {
       height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: s.bg,
+        color: Sig.blue.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(Radii.sm),
-        border: Border.all(color: s.line, width: 1.5),
       ),
       child: Text(
         digit,

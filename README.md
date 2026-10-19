@@ -43,22 +43,27 @@ Android only for now (application id `app.linksy`). iOS comes later.
 | `lib/app/` | `LinksyController` (devices, settings, activity), history store, app shell that shows prompts |
 | `lib/features/` | Screens: devices, device page, pairing, incoming transfer, settings |
 | `lib/ui/` | The Signal design system: tokens and theme (`sig.dart`), components, the orbit, icons, formatting |
-| `assets/brand/` | The "Sender" mark from linksy-desktop's `brand/logo/` |
+| `assets/brand/` | The "Sender" mark and the app icon from linksy-desktop, with inline colors |
 | `tool/make_icons.sh` | Renders the launcher icons (adaptive + themed) from the mark |
 
 ## Design
 
 Linksy has its own look, "Signal", rather than stock Material:
 
-- **Color has a meaning.** Blue `#2563FF` is the sender, cyan `#22C3E6` the receiver
-  (from the brand mark): outgoing things are blue, incoming things cyan. Deep `#1438B8`
-  and ink panels for heroes. Red for failed or declined, mint for nearby.
+- **Only the brand's colors.** Blue `#2563FF` is the sender, cyan `#22C3E6` the
+  receiver (from the mark): outgoing things are blue, incoming things cyan. Heroes use
+  the app icon's tile gradient (`#3B78FF` → `#1A45C8`, deep `#1438B8` in dark mode) with
+  the mark in white and light cyan `#9FE6F5`. Devices are blue, deep or cyan. Red only
+  for failed or declined.
+- **The real logo.** `assets/brand/` holds the mark and the desktop app icon with inline
+  colors (flutter_svg ignores the `<style>` classes in linksy-desktop's SVGs). The
+  launcher icon is rendered from the same design by `tool/make_icons.sh`.
 - **Type.** Sora for names, titles and numbers; Inter for everything else. Both bundled
   in `assets/fonts/` (OFL).
 - **Icons.** Phosphor (MIT), vendored as fonts in `assets/fonts/phosphor/` with the
   icons in use declared in `lib/ui/icons.dart` (the `phosphor_flutter` package doesn't
   build on current Flutter).
-- **Shapes.** Hairline cards, pill buttons, pressables that shrink instead of rippling.
+- **Shapes.** Solid cards with soft shadows (no borders), pill buttons, pressables that shrink instead of rippling.
 - **The orbit.** Home shows this phone at the center and each device on an orbit by how
   close it is: connected (with a live beam), nearby, away. Unpaired devices are dashed.
 

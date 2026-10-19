@@ -165,13 +165,13 @@ class _Me extends StatelessWidget {
       color: Colors.white,
       boxShadow: [
         BoxShadow(
-          color: Sig.blue.withValues(alpha: 0.7),
-          blurRadius: 30,
+          color: Colors.white.withValues(alpha: 0.45),
+          blurRadius: 32,
           spreadRadius: 2,
         ),
       ],
     ),
-    child: const Center(child: LinksyMark(size: 38)),
+    child: const Center(child: LinksyMark(size: 40)),
   );
 }
 
@@ -202,6 +202,7 @@ class _Body extends StatelessWidget {
                 size: size,
                 presence: view.presence,
                 glow: view.connected,
+                onBlue: true,
               )
             else
               _Unpaired(size: size),
@@ -225,7 +226,7 @@ class _Body extends StatelessWidget {
                   fontFamily: Sig.body,
                   fontSize: 10.5,
                   fontWeight: FontWeight.w500,
-                  color: Sig.cyan.withValues(alpha: 0.9),
+                  color: Sig.cyanLight,
                 ),
               ),
           ],
@@ -242,10 +243,10 @@ class _Unpaired extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CustomPaint(
-    painter: _DashedCircle(color: Sig.cyan.withValues(alpha: 0.8)),
+    painter: _DashedCircle(color: Colors.white.withValues(alpha: 0.85)),
     child: SizedBox.square(
       dimension: size,
-      child: Icon(PhBold.plus, color: Sig.cyan, size: size * 0.4),
+      child: Icon(PhBold.plus, color: Colors.white, size: size * 0.4),
     ),
   );
 }
@@ -305,8 +306,8 @@ class _OrbitPainter extends CustomPainter {
       ry * 0.9,
       Paint()
         ..shader = ui.Gradient.radial(center, ry * 0.9, [
-          Sig.blue.withValues(alpha: 0.35),
-          Sig.blue.withValues(alpha: 0),
+          Sig.cyanLight.withValues(alpha: 0.28),
+          Sig.cyanLight.withValues(alpha: 0),
         ]),
     );
 
@@ -321,7 +322,7 @@ class _OrbitPainter extends CustomPainter {
       final paint = Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1
-        ..color = Colors.white.withValues(alpha: 0.13 - i * 0.03);
+        ..color = Colors.white.withValues(alpha: 0.26 - i * 0.05);
       if (i < _orbits.length - 1) {
         canvas.drawOval(rect, paint);
       } else {
@@ -350,7 +351,7 @@ class _OrbitPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2
-        ..color = Sig.cyan.withValues(alpha: 0.35 * (1 - p)),
+        ..color = Sig.cyanLight.withValues(alpha: 0.5 * (1 - p)),
     );
 
     // Beams to connected devices, a pulse travelling along each.
@@ -370,8 +371,8 @@ class _OrbitPainter extends CustomPainter {
           ..strokeWidth = 2.5
           ..strokeCap = StrokeCap.round
           ..shader = ui.Gradient.linear(center, target, [
-            Sig.blue.withValues(alpha: 0.9),
-            Sig.cyan.withValues(alpha: 0.9),
+            Colors.white,
+            Sig.cyanLight,
           ]),
       );
       final metric = path.computeMetrics().first;
@@ -381,7 +382,7 @@ class _OrbitPainter extends CustomPainter {
         canvas.drawCircle(
           at.position,
           8,
-          Paint()..color = Sig.cyan.withValues(alpha: 0.3),
+          Paint()..color = Sig.cyanLight.withValues(alpha: 0.35),
         );
       }
     }

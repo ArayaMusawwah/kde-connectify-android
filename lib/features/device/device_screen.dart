@@ -105,21 +105,10 @@ class _Hero extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     final d = view.device;
-    final hue = deviceHue(d.id);
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
-        // Starts as the status bar's ink, blooms into the device's hue.
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            s.heroTop,
-            Color.lerp(s.heroBottom, hue, 0.3)!,
-            Color.lerp(s.heroTop, hue, 0.45)!,
-          ],
-          stops: const [0, 0.55, 1],
-        ),
+        gradient: s.hero,
       ),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 64),
       child: Column(
@@ -142,7 +131,7 @@ class _Hero extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Orb(device: d, size: 104, presence: view.presence, glow: true),
+          Orb(device: d, size: 104, presence: view.presence, onBlue: true),
           const SizedBox(height: 18),
           Text(
             d.name,
@@ -156,21 +145,22 @@ class _Hero extends StatelessWidget {
               if (view.presence == Presence.notNearby)
                 Icon(Ph.wifiSlash, size: 15, color: Colors.white54)
               else
-                PulseDot(color: presenceColor(s, view.presence), size: 7),
+                PulseDot(
+                  color: presenceColor(s, view.presence, onBlue: true),
+                  size: 7,
+                ),
               const SizedBox(width: 4),
               Text(
                 presenceLabel(view.presence),
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: view.presence == Presence.notNearby
-                      ? Colors.white54
-                      : presenceColor(s, view.presence),
+                  color: presenceColor(s, view.presence, onBlue: true),
                 ),
               ),
               Text(
                 '   ${d.description}',
-                style: const TextStyle(fontSize: 14, color: Colors.white60),
+                style: const TextStyle(fontSize: 14, color: Colors.white70),
               ),
             ],
           ),
@@ -281,6 +271,7 @@ class _Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = LinksyScope.read(context);
+    final s = Sig.of(context);
     final id = view.device.id;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -291,12 +282,13 @@ class _Actions extends StatelessWidget {
             semanticLabel: 'Send files',
             child: Container(
               padding: const EdgeInsets.fromLTRB(20, 18, 18, 18),
+              // White on the blue header it overlaps; the blue is in the button.
               decoration: BoxDecoration(
-                gradient: Sig.sendGradient,
+                color: s.card,
                 borderRadius: BorderRadius.circular(Radii.lg),
                 boxShadow: [
                   BoxShadow(
-                    color: Sig.blue.withValues(alpha: 0.35),
+                    color: Sig.deep.withValues(alpha: 0.18),
                     blurRadius: 24,
                     offset: const Offset(0, 10),
                   ),
@@ -308,17 +300,11 @@ class _Actions extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Send files',
-                          style: sora(21, color: Colors.white),
-                        ),
+                        Text('Send files', style: sora(21, color: s.ink)),
                         const SizedBox(height: 2),
                         Text(
                           'Photos, documents, anything',
-                          style: TextStyle(
-                            fontSize: 13.5,
-                            color: Colors.white.withValues(alpha: 0.75),
-                          ),
+                          style: TextStyle(fontSize: 13.5, color: s.muted),
                         ),
                       ],
                     ),
@@ -328,7 +314,14 @@ class _Actions extends StatelessWidget {
                     height: 52,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.16),
+                      gradient: Sig.sendGradient,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Sig.blue.withValues(alpha: 0.35),
+                          blurRadius: 14,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
                     child: const Icon(
                       PhFill.paperPlaneTilt,
