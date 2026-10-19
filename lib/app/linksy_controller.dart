@@ -297,6 +297,8 @@ class LinksyController extends ChangeNotifier {
     final error = await _run(() => node.forget(deviceId));
     _activity.removeWhere((a) => a.deviceId == deviceId);
     _changed();
+    // The core announces no event for this: read the list again.
+    await refresh();
     return error;
   }
 
