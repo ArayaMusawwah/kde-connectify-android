@@ -81,10 +81,30 @@ abstract final class LinksyPlatform {
   static Future<void> stopShare(String session) =>
       _call<void>('stopShare', {'session': session});
 
+  /// What's allowed now: (notifications, camera, remote control). Null
+  /// without an Android side (tests).
+  static Future<({bool notifications, bool camera, bool control})?>
+  permissions() async {
+    final m = await _call<Map<Object?, Object?>>('permissions');
+    if (m == null) return null;
+    return (
+      notifications: m['notifications'] == true,
+      camera: m['camera'] == true,
+      control: m['control'] == true,
+    );
+  }
+
+  /// Android's own permission dialog for `camera` or `notifications` (or
+  /// Linksy's app settings once Android stops showing it). True if granted.
+  static Future<bool> requestPermission(String name) async =>
+      await _call<bool>('requestPermission', {'name': name}) ?? false;
+
   /// Whether remote control is switched on (Settings → Accessibility).
   static Future<bool> controlEnabled() async =>
       await _call<bool>('controlEnabled') ?? false;
 
+  /// Linksy's page in Android's Accessibility settings (there's no dialog
+  /// for this one).
   static Future<void> openAccessibilitySettings() =>
       _call<void>('openAccessibilitySettings');
 

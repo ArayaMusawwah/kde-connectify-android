@@ -28,6 +28,7 @@ keyframes, size, frame rate and rotation; input checked both ways).
 | History kept on the phone (500 entries, clipboard text never on disk) | Watching the desktop's screen on the phone; front/back camera switch |
 | Sharing this phone's screen ("View Screen", exact shape, follows rotation) and camera ("Use as Webcam"), in a foreground service with a Stop notification | Second display at the phone's own size (the desktop sends 1920×1080 for now) |
 | Remote control (`control`) through an accessibility service the user turns on once; declined as unsupported until then | |
+| Permissions sheet (first launch, and Settings → Permissions): Android's own dialogs for notifications and camera, app settings once Android stops asking, Accessibility settings for remote control | |
 | Second display (`display`): the desktop's virtual monitor full screen in landscape, touch as mouse, two-finger scroll | |
 | Signal design, light and dark, edge-to-edge, predictive back, reduced motion respected | |
 

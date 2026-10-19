@@ -26,7 +26,8 @@ class MainActivity : FlutterActivity() {
 
     /// Waiting on the system's screen capture prompt: the session and Dart's reply.
     private var pendingCapture: Pair<String, MethodChannel.Result>? = null
-    private var pendingCamera: MethodChannel.Result? = null
+    /// Dart's replies waiting on Android's permission dialogs, by request code.
+    private val pendingPermissions = mutableMapOf<Int, MethodChannel.Result>()
 
     private var engine: FlutterEngine? = null
     /// Second-display sessions on screen, by session.
@@ -47,7 +48,23 @@ class MainActivity : FlutterActivity() {
                         pendingLink = null
                     }
                     "requestScreenCapture" -> requestScreenCapture(call.argument<String>("session")!!, result)
-                    "requestCamera" -> requestCamera(result)
+                    "requestCamera" -> requestPermission(Manifest.permission.CAMERA, REQUEST_CAMERA, result)
+                    "requestPermission" -> when (call.argument<String>("name")) {
+                        "camera" -> requestPermission(Manifest.permission.CAMERA, REQUEST_CAMERA, result)
+                        "notifications" -> if (Build.VERSION.SDK_INT >= 33) {
+                            requestPermission(Manifest.permission.POST_NOTIFICATIONS, REQUEST_NOTIFICATIONS, result)
+                        } else {
+                            result.success(true)
+                        }
+                        else -> result.notImplemented()
+                    }
+                    "permissions" -> result.success(
+                        mapOf(
+                            "notifications" to (Build.VERSION.SDK_INT < 33 || granted(Manifest.permission.POST_NOTIFICATIONS)),
+                            "camera" to granted(Manifest.permission.CAMERA),
+                            "control" to ControlService.enabled(this@MainActivity),
+                        ),
+                    )
                     "startShare" -> {
                         ShareService.start(
                             this@MainActivity,
@@ -59,7 +76,7 @@ class MainActivity : FlutterActivity() {
                     }
                     "controlEnabled" -> result.success(ControlService.enabled(this@MainActivity))
                     "openAccessibilitySettings" -> {
-                        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                        openControlSettings()
                         result.success(null)
                     }
                     "startDisplay" -> result.success(startDisplay(call.argument<String>("session")!!))
@@ -138,24 +155,55 @@ class MainActivity : FlutterActivity() {
         startActivityForResult(manager.createScreenCaptureIntent(), REQUEST_CAPTURE)
     }
 
-    private fun requestCamera(result: MethodChannel.Result) {
-        askNotifications()
-        if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+    private fun granted(permission: String) =
+        checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
+
+    /// Android's own permission dialog. Once the user has refused and Android
+    /// stops showing it, opens Linksy's app settings instead, where it can
+    /// still be turned on. Replies true only if granted now.
+    private fun requestPermission(permission: String, code: Int, result: MethodChannel.Result) {
+        if (granted(permission)) {
             result.success(true)
             return
         }
-        pendingCamera?.success(false)
-        pendingCamera = result
-        requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA)
+        val prefs = getSharedPreferences("permissions", MODE_PRIVATE)
+        if (prefs.getBoolean(permission, false) && !shouldShowRequestPermissionRationale(permission)) {
+            startActivity(
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, android.net.Uri.fromParts("package", packageName, null)),
+            )
+            result.success(false)
+            return
+        }
+        prefs.edit().putBoolean(permission, true).apply()
+        pendingPermissions.remove(code)?.success(false)
+        pendingPermissions[code] = result
+        requestPermissions(arrayOf(permission), code)
     }
 
-    /// The sharing notification (and its Stop button) needs this on Android 13+.
+    /// The sharing notification (and its Stop button) needs this on Android
+    /// 13+; asked in passing, without waiting for the answer.
     private fun askNotifications() {
-        if (Build.VERSION.SDK_INT >= 33 &&
-            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT >= 33 && !granted(Manifest.permission.POST_NOTIFICATIONS) &&
+            !pendingPermissions.containsKey(REQUEST_NOTIFICATIONS)
         ) {
+            getSharedPreferences("permissions", MODE_PRIVATE).edit()
+                .putBoolean(Manifest.permission.POST_NOTIFICATIONS, true).apply()
             requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_NOTIFICATIONS)
         }
+    }
+
+    /// Remote control has no dialog: Android only lets apps open its
+    /// Accessibility settings (the page for one service is for system apps).
+    /// The extras ask Settings to scroll to and highlight Linksy's row;
+    /// phones that don't know them just show the list.
+    private fun openControlSettings() {
+        val component = android.content.ComponentName(this, ControlService::class.java).flattenToString()
+        val args = android.os.Bundle().apply { putString(":settings:fragment_args_key", component) }
+        startActivity(
+            Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                .putExtra(":settings:fragment_args_key", component)
+                .putExtra(":settings:show_fragment_args", args),
+        )
     }
 
     @Deprecated("Deprecated in Android")
@@ -175,10 +223,8 @@ class MainActivity : FlutterActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CAMERA) {
-            pendingCamera?.success(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
-            pendingCamera = null
-        }
+        pendingPermissions.remove(requestCode)
+            ?.success(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
     }
 
     private fun linkFrom(intent: Intent?): String? =

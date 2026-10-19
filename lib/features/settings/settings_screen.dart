@@ -5,6 +5,7 @@ import '../../app/scope.dart';
 import '../../core/demo_node.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
+import '../permissions/permissions_sheet.dart';
 import '../../ui/format.dart';
 import '../../ui/sig.dart';
 
@@ -93,8 +94,8 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SectionLabel('Remote control'),
-                  const _Group(children: [_RemoteControl()]),
+                  const SectionLabel('Permissions'),
+                  const _Group(children: [_Permissions()]),
                   if (demo != null) ...[
                     const SectionLabel('Demo'),
                     _Group(
@@ -335,18 +336,18 @@ class _Row extends StatelessWidget {
   }
 }
 
-/// Whether a computer may tap and type on this phone while it watches the
-/// screen: Android's Accessibility switch for Linksy, read again on return.
-class _RemoteControl extends StatefulWidget {
-  const _RemoteControl();
+/// How many of Linksy's permissions are allowed; opens the sheet that asks
+/// Android for the rest. Read again on return.
+class _Permissions extends StatefulWidget {
+  const _Permissions();
 
   @override
-  State<_RemoteControl> createState() => _RemoteControlState();
+  State<_Permissions> createState() => _PermissionsState();
 }
 
-class _RemoteControlState extends State<_RemoteControl>
+class _PermissionsState extends State<_Permissions>
     with WidgetsBindingObserver {
-  bool? _on;
+  int? _allowed;
 
   @override
   void initState() {
@@ -367,19 +368,29 @@ class _RemoteControlState extends State<_RemoteControl>
   }
 
   Future<void> _read() async {
-    final on = await LinksyPlatform.controlEnabled();
-    if (mounted) setState(() => _on = on);
+    final p = await LinksyPlatform.permissions();
+    if (!mounted || p == null) return;
+    setState(
+      () => _allowed = [
+        p.notifications,
+        p.camera,
+        p.control,
+      ].where((x) => x).length,
+    );
   }
 
   @override
   Widget build(BuildContext context) => _Row(
-    icon: Ph.cursorClick,
-    title: _on == true ? 'On' : 'Off',
-    caption: _on == true
-        ? 'Computers you allow can tap, swipe and type on this phone while '
-              'they watch its screen.'
-        : 'Let computers you allow tap, swipe and type on this phone. Turn on '
-              '“Linksy remote control” in Accessibility.',
-    onTap: LinksyPlatform.openAccessibilitySettings,
+    icon: Ph.shieldCheck,
+    title: 'Notifications, camera, remote control',
+    caption: _allowed == null
+        ? 'What Linksy asks Android for, and why.'
+        : _allowed == 3
+        ? 'All allowed.'
+        : '$_allowed of 3 allowed. Tap to allow the rest.',
+    onTap: () async {
+      await showPermissions(context);
+      await _read();
+    },
   );
 }
