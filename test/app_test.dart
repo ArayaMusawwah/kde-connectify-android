@@ -39,7 +39,7 @@ void main() {
     expect(find.text('Studio Desktop'), findsNWidgets(2));
     expect(find.text('ThinkPad'), findsNWidgets(2));
     expect(find.text('NEARBY, NOT PAIRED'), findsOneWidget);
-    expect(find.text('Tap to pair'), findsOneWidget);
+    expect(find.text('Pair Living Room PC'), findsOneWidget);
     expect(find.text('Pair'), findsOneWidget);
   });
 

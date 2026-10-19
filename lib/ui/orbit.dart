@@ -136,9 +136,9 @@ class _OrbitViewState extends State<OrbitView>
             ),
             for (final (v, p, orbit) in placed)
               Positioned(
-                left: p.dx - 50,
+                left: p.dx - 70,
                 top: p.dy - (orbit == 0 ? 30 : 26),
-                width: 100,
+                width: 140,
                 child: _Body(
                   view: v,
                   onTap: () =>
@@ -207,28 +207,28 @@ class _Body extends StatelessWidget {
             else
               _Unpaired(size: size),
             const SizedBox(height: 6),
-            Text(
-              d.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: sora(
-                12,
-                weight: FontWeight.w600,
-                color: Colors.white.withValues(alpha: away ? 0.45 : 0.95),
-                spacing: 0,
+            // Names on glass, so they read over orbits and beams.
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: away ? 0.06 : 0.16),
+                borderRadius: BorderRadius.circular(99),
               ),
-            ),
-            if (!view.trusted)
-              Text(
-                'Tap to pair',
-                style: TextStyle(
-                  fontFamily: Sig.body,
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w500,
-                  color: Sig.cyanLight,
+              child: Text(
+                view.trusted ? d.name : 'Pair ${d.name}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: sora(
+                  11.5,
+                  weight: FontWeight.w600,
+                  color: view.trusted
+                      ? Colors.white.withValues(alpha: away ? 0.5 : 1)
+                      : Sig.cyanLight,
+                  spacing: 0,
                 ),
               ),
+            ),
           ],
         ),
       ),
@@ -319,10 +319,15 @@ class _OrbitPainter extends CustomPainter {
         width: rx * 2 * f,
         height: ry * 2 * f,
       );
+      // Brighter on top, fading below, for a tilt toward the viewer.
+      final fade = 1 - i * 0.22;
       final paint = Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1
-        ..color = Colors.white.withValues(alpha: 0.26 - i * 0.05);
+        ..strokeWidth = 1.2
+        ..shader = ui.Gradient.linear(rect.topCenter, rect.bottomCenter, [
+          Colors.white.withValues(alpha: 0.4 * fade),
+          Colors.white.withValues(alpha: 0.1 * fade),
+        ]);
       if (i < _orbits.length - 1) {
         canvas.drawOval(rect, paint);
       } else {
@@ -339,8 +344,47 @@ class _OrbitPainter extends CustomPainter {
       }
     }
 
-    // A wave going out from this phone, like the mark's arcs.
     final p = t.value;
+
+    // Signal nodes drifting along each orbit, each orbit at its own pace.
+    for (var i = 0; i < _orbits.length; i++) {
+      final f = _orbits[i];
+      for (var k = 0; k < 3; k++) {
+        final a =
+            k * 2 * pi / 3 +
+            i * 0.9 +
+            p * 2 * pi / (i + 2) * (i.isEven ? 1 : -1);
+        final at = center + Offset(cos(a) * rx * f, sin(a) * ry * f);
+        canvas.drawCircle(
+          at,
+          1.8,
+          Paint()..color = Colors.white.withValues(alpha: 0.55 - i * 0.12),
+        );
+      }
+    }
+
+    // The mark's two arcs turning around this phone: the sender's in white,
+    // the receiver's in light cyan.
+    const ringR = 45.0;
+    final spin = p * 2 * pi;
+    for (final (start, color) in [
+      (spin, Colors.white.withValues(alpha: 0.9)),
+      (spin + pi, Sig.cyanLight),
+    ]) {
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: ringR),
+        start,
+        pi / 2.6,
+        false,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3.5
+          ..strokeCap = StrokeCap.round
+          ..color = color,
+      );
+    }
+
+    // A wave going out from this phone, like the mark's arcs.
     final wave = Rect.fromCenter(
       center: center,
       width: rx * 2 * (0.25 + 0.85 * p),

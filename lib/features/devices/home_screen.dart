@@ -5,12 +5,11 @@ import '../../app/linksy_controller.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
-import '../../ui/orbit.dart';
 import '../../ui/sig.dart';
 import '../device/activity_tile.dart';
 import '../device/device_screen.dart';
 import '../pairing/pairing_flows.dart';
-import '../settings/settings_screen.dart';
+import 'home_hero.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -21,7 +20,6 @@ class HomeScreen extends StatelessWidget {
     final s = Sig.of(context);
     final paired = c.paired;
     final unpaired = c.unpaired;
-    final top = MediaQuery.paddingOf(context).top;
 
     void open(DeviceView v) => Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => DeviceScreen(deviceId: v.device.id)),
@@ -42,11 +40,10 @@ class HomeScreen extends StatelessWidget {
               backgroundColor: s.heroTop,
             ),
             SliverToBoxAdapter(
-              child: _Hero(
+              child: HomeHero(
                 controller: c,
                 onDevice: open,
                 onPair: (v) => report(context, c.pair(v.device.id)),
-                topPadding: top,
               ),
             ),
             if (paired.isEmpty)
@@ -101,131 +98,6 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-class _Hero extends StatelessWidget {
-  const _Hero({
-    required this.controller,
-    required this.onDevice,
-    required this.onPair,
-    required this.topPadding,
-  });
-
-  final LinksyController controller;
-  final ValueChanged<DeviceView> onDevice;
-  final ValueChanged<DeviceView> onPair;
-  final double topPadding;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    final c = controller;
-    final name = c.settings?.name ?? c.node.info.name;
-    final views = [...c.paired, ...c.unpaired];
-    final connected = c.paired.where((d) => d.connected).length;
-    final nearby = c.paired.where((d) => d.nearby).length;
-
-    return Container(
-      decoration: BoxDecoration(
-        gradient: s.hero,
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
-      ),
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 22),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Wordmark(onBlue: true),
-              const Spacer(),
-              RoundButton(
-                icon: Ph.gearSix,
-                tooltip: 'Settings',
-                onDark: true,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          OrbitView(devices: views, onDevice: onDevice, onPair: onPair),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              PulseDot(color: Sig.cyanLight, size: 7),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: name,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      TextSpan(
-                        text: ' is visible on this Wi-Fi',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.75),
-                        ),
-                      ),
-                    ],
-                  ),
-                  style: const TextStyle(
-                    fontFamily: Sig.body,
-                    fontSize: 13.5,
-                    color: Colors.white,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              if (c.paired.isNotEmpty) ...[
-                _Stat(value: nearby, label: 'near'),
-                const SizedBox(width: 6),
-                _Stat(value: connected, label: 'linked', accent: true),
-              ],
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Stat extends StatelessWidget {
-  const _Stat({required this.value, required this.label, this.accent = false});
-
-  final int value;
-  final String label;
-  final bool accent;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-    decoration: BoxDecoration(
-      color: accent
-          ? Sig.cyanLight.withValues(alpha: 0.2)
-          : Colors.white.withValues(alpha: 0.08),
-      borderRadius: BorderRadius.circular(99),
-    ),
-    child: Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: '$value ',
-            style: sora(12.5, weight: FontWeight.w700, spacing: 0),
-          ),
-          TextSpan(text: label),
-        ],
-      ),
-      style: TextStyle(
-        fontFamily: Sig.body,
-        fontSize: 12,
-        color: accent ? Sig.cyanLight : Colors.white.withValues(alpha: 0.85),
-      ),
-    ),
-  );
 }
 
 class _DeviceRow extends StatelessWidget {
