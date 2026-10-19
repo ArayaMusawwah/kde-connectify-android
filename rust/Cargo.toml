@@ -30,7 +30,23 @@ paranoid-android = "0.2.2"
 jni = "0.21.1"
 
 [profile.release]
-lto = "thin"
+# Small by default; the hot paths below (QUIC, TLS, hashing) stay fast.
+lto = "fat"
 codegen-units = 1
 strip = true
+opt-level = "z"
+
+[profile.release.package.ring]
+opt-level = 3
+
+[profile.release.package.blake3]
+opt-level = 3
+
+[profile.release.package.quinn-proto]
+opt-level = 3
+
+[profile.release.package.quinn-udp]
+opt-level = 3
+
+[profile.release.package.rustls]
 opt-level = 3

@@ -76,6 +76,13 @@ pub struct LinksyNode {
 /// `data_dir` (app-private). Prefers the desktop's port 47200 and mDNS; falls
 /// back to a free port, then to no discovery, rather than not starting.
 pub async fn start_node(data_dir: String, download_dir: String, name: String) -> Result<LinksyNode, String> {
+    // Android may recreate the activity, which runs the app's main() again in
+    // the same process: hand back the node that's already running instead of
+    // starting a second one on another port.
+    static RUNNING: std::sync::Mutex<Option<Node>> = std::sync::Mutex::new(None);
+    if let Some(node) = RUNNING.lock().unwrap().clone() {
+        return Ok(LinksyNode { node });
+    }
     let mut last = String::new();
     for (port, discovery) in [(47200, true), (0, true), (47200, false), (0, false)] {
         let mut config = Config::new(PathBuf::from(&data_dir), PathBuf::from(&download_dir), name.clone());
@@ -85,6 +92,7 @@ pub async fn start_node(data_dir: String, download_dir: String, name: String) ->
         match run(Node::start(config)).await {
             Ok(node) => {
                 crate::sessions::collect(&node);
+                *RUNNING.lock().unwrap() = Some(node.clone());
                 return Ok(LinksyNode { node });
             }
             Err(e) => {
