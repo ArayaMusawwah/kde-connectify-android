@@ -2,6 +2,20 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.3] - 2026-10-19
+
+### Added
+- **Control your phone from your computer**: when your computer asks to control this phone, you can let it tap, swipe and type while it shows your screen. Turn on “Linksy remote control” once in Android's Accessibility settings; Linksy takes you there.
+- **Use your phone as a second display**: when your computer asks, the phone shows one of its screens full screen in landscape. Touch to click and drag, scroll with two fingers, go back to stop.
+- **Permissions, explained up front**: on first launch (and any time in Settings → Permissions), Linksy shows what it needs and why, and brings up Android's own prompt for each. If you said no before, it opens Linksy's app settings so you can still turn it on.
+
+### Changed
+- **A flat look**: solid colors, no gradients or shadows.
+- Your computer now hears “this phone can't do that yet” instead of “declined” when it asks for something the phone doesn't support.
+
+### Fixed
+- **No more black bars** around your shared screen: the video keeps your screen's exact shape, and follows when you turn the phone.
+
 ## [0.1.2] - 2026-10-19
 
 ### Added
