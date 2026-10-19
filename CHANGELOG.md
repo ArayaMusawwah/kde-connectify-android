@@ -2,6 +2,18 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.2] - 2026-10-19
+
+### Added
+- **Share your screen**: “View Screen” in Linksy on your computer now works. Your phone asks first, then Android asks you to confirm (choose “Entire screen” to show everything). Your screen keeps showing on the computer while you use other apps.
+- **Use your phone as a webcam**: “Use as Webcam” on your computer turns this phone's back camera into a camera every app on the computer can use. Hold the phone sideways for a wide picture.
+- While sharing, a banner in Linksy and a notification show what's shared and with whom, with a **Stop** button. Stopping on either the phone or the computer ends it for both.
+- Each share appears in the device's timeline.
+
+### Known limits
+- Controlling your phone from the computer and using it as a second display aren't available yet; those requests are declined.
+- The webcam always uses the back camera for now.
+
 ## [0.1.1] - 2026-10-19
 
 Linksy for Android **now works with your real devices**: it runs the same engine as Linksy on your computer, so they find each other on your Wi-Fi and share directly.
