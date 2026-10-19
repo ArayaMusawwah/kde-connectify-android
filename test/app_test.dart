@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:linksy/app/activity.dart';
 import 'package:linksy/app/app.dart';
@@ -34,16 +34,18 @@ void main() {
 
   testWidgets('home lists paired and unpaired devices', (tester) async {
     await pumpApp(tester);
-    expect(find.text('Your devices'), findsOneWidget);
-    expect(find.text('Studio Desktop'), findsOneWidget);
-    expect(find.text('ThinkPad'), findsOneWidget);
-    expect(find.text('Nearby'), findsOneWidget);
-    expect(find.widgetWithText(FilledButton, 'Pair'), findsOneWidget);
+    expect(find.text('YOUR DEVICES'), findsOneWidget);
+    // Each device is on the orbit and in the list.
+    expect(find.text('Studio Desktop'), findsNWidgets(2));
+    expect(find.text('ThinkPad'), findsNWidgets(2));
+    expect(find.text('NEARBY, NOT PAIRED'), findsOneWidget);
+    expect(find.text('Tap to pair'), findsOneWidget);
+    expect(find.text('Pair'), findsOneWidget);
   });
 
   testWidgets('a device page offers the three actions', (tester) async {
     await pumpApp(tester);
-    await tester.tap(find.text('Studio Desktop'));
+    await tester.tap(find.text('Studio Desktop').last);
     await tester.pumpAndSettle();
     expect(find.text('Send files'), findsOneWidget);
     expect(find.text('Clipboard'), findsOneWidget);
@@ -55,10 +57,14 @@ void main() {
     final (_, node) = await pumpApp(tester);
     node.simulateIncomingFiles();
     await frames(tester);
-    expect(find.text('Studio Desktop wants to share'), findsOneWidget);
-    expect(find.text('3 items · 6.3 MB'), findsOneWidget);
+    final title = find.text(
+      'Studio Desktop is sending you 3 files',
+      findRichText: true,
+    );
+    expect(title, findsOneWidget);
+    expect(find.text('6.3 MB in total'), findsOneWidget);
     await tester.tap(find.text('Decline'));
     await frames(tester);
-    expect(find.text('Studio Desktop wants to share'), findsNothing);
+    expect(title, findsNothing);
   });
 }

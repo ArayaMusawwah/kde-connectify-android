@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 
 import '../core/models.dart';
 import '../features/devices/home_screen.dart';
 import '../features/pairing/pairing_flows.dart';
 import '../features/transfer/incoming_sheet.dart';
-import '../ui/theme.dart';
+import '../ui/sig.dart';
 import 'linksy_controller.dart';
 import 'scope.dart';
 
@@ -88,18 +87,16 @@ class _LinksyAppState extends State<LinksyApp> {
   }
 
   @override
-  Widget build(BuildContext context) => DynamicColorBuilder(
-    builder: (light, dark) => LinksyScope(
-      controller: widget.controller,
-      child: MaterialApp(
-        title: 'Linksy',
-        debugShowCheckedModeBanner: false,
-        navigatorKey: _navigator,
-        scaffoldMessengerKey: _messenger,
-        theme: buildTheme(light, Brightness.light),
-        darkTheme: buildTheme(dark, Brightness.dark),
-        home: const HomeScreen(),
-      ),
+  Widget build(BuildContext context) => LinksyScope(
+    controller: widget.controller,
+    child: MaterialApp(
+      title: 'Linksy',
+      debugShowCheckedModeBanner: false,
+      navigatorKey: _navigator,
+      scaffoldMessengerKey: _messenger,
+      theme: buildTheme(Brightness.light),
+      darkTheme: buildTheme(Brightness.dark),
+      home: const HomeScreen(),
     ),
   );
 }

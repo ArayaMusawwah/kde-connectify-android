@@ -4,16 +4,16 @@ import 'package:open_filex/open_filex.dart';
 
 import '../../app/activity.dart';
 import '../../app/scope.dart';
+import '../../ui/components.dart';
 import '../../ui/format.dart';
-import '../../ui/theme.dart';
-import '../../ui/widgets.dart';
+import '../../ui/sig.dart';
 
 IconData activityIcon(Activity a) => switch (a.kind) {
-  ActivityKind.files when a.names.length > 1 => Icons.folder_copy_rounded,
+  ActivityKind.files when a.names.length > 1 => Ph.files,
   ActivityKind.files when a.names.isNotEmpty => fileIcon(a.names.first),
-  ActivityKind.files => Icons.insert_drive_file_rounded,
-  ActivityKind.clipboard => Icons.content_paste_rounded,
-  ActivityKind.ping => Icons.notifications_rounded,
+  ActivityKind.files => Ph.file,
+  ActivityKind.clipboard => Ph.clipboardText,
+  ActivityKind.ping => Ph.bellRinging,
 };
 
 /// File name, "N items", quoted clipboard text or the ping title.
@@ -25,137 +25,174 @@ String activityTitle(Activity a) => switch (a.kind) {
   ActivityKind.ping => a.text ?? 'Ping',
 };
 
-/// "Received · 2.1 MB · 14:03", "Declined · 14:03".
+/// "Received · 2.1 MB", "Declined".
 String activityDetail(Activity a) {
   final verb = switch (a.status) {
     ActivityStatus.declined => 'Declined',
     ActivityStatus.failed => a.reason ?? 'Failed',
     ActivityStatus.waiting || ActivityStatus.active => 'In progress',
-    _ when a.kind == ActivityKind.clipboard && a.incoming => 'Copied',
+    _ when a.kind == ActivityKind.clipboard && a.incoming => 'Copied here',
     _ => a.incoming ? 'Received' : 'Sent',
   };
   return [
     verb,
     if (a.kind == ActivityKind.files && a.total > 0) formatBytes(a.total),
-    formatClock(a.time),
   ].join(' · ');
 }
 
-/// Icon in a tinted circle (green incoming, accent outgoing, red failed or
-/// declined), title and detail; live transfers add progress and cancel.
-/// Received files open on tap.
-class ActivityTile extends StatelessWidget {
-  const ActivityTile({super.key, required this.activity});
+/// One row of a device's timeline: the time, a node on the rail (blue
+/// outgoing, cyan incoming, red failed or declined), and a card.
+class TimelineEntry extends StatelessWidget {
+  const TimelineEntry({
+    super.key,
+    required this.activity,
+    this.first = false,
+    this.last = false,
+  });
 
   final Activity activity;
+  final bool first;
+  final bool last;
 
   @override
   Widget build(BuildContext context) {
     final a = activity;
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final s = Sig.of(context);
     final bad =
         a.status == ActivityStatus.failed ||
         a.status == ActivityStatus.declined;
-    final (fg, bg) = bad
-        ? (scheme.error, scheme.errorContainer)
+    final color = bad
+        ? s.red
         : a.incoming
-        ? (scheme.incoming, scheme.incomingContainer)
-        : (scheme.primary, scheme.primaryContainer);
+        ? Sig.incoming
+        : Sig.outgoing;
     final openable = a.incoming && a.saved.isNotEmpty;
 
-    return InkWell(
-      onTap: openable ? () => _open(context, a) : null,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 14, 8, 14),
-        child: Row(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                IconBadge(
-                  icon: activityIcon(a),
-                  foreground: fg,
-                  background: bg,
-                ),
-                Positioned(
-                  right: -4,
-                  bottom: -4,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: groupFill(scheme),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      a.incoming
-                          ? Icons.south_west_rounded
-                          : Icons.north_east_rounded,
-                      size: 14,
-                      color: fg,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    activityTitle(a),
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  if (a.isLive)
-                    _Live(activity: a)
-                  else
-                    Text(
-                      activityDetail(a),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: bad ? scheme.error : scheme.onSurfaceVariant,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                ],
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            width: 64,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 22, right: 6),
+              child: Text(
+                formatClock(a.time),
+                textAlign: TextAlign.right,
+                style: sora(12.5, weight: FontWeight.w500, color: s.muted),
               ),
             ),
-            ?_trailing(context, a),
-          ],
-        ),
+          ),
+          SizedBox(
+            width: 28,
+            child: CustomPaint(
+              painter: _Rail(
+                color: color,
+                line: s.line,
+                first: first,
+                last: last,
+                live: a.isLive,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(4, 5, 16, 5),
+              child: SigCard(
+                onTap: openable ? () => _open(context, a) : null,
+                padding: const EdgeInsets.fromLTRB(14, 12, 6, 12),
+                radius: Radii.md + 2,
+                child: Row(
+                  children: [
+                    Icon(activityIcon(a), color: color, size: 22),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            activityTitle(a),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: s.ink,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          if (a.isLive)
+                            _Live(activity: a, color: color)
+                          else
+                            Row(
+                              children: [
+                                Icon(
+                                  a.incoming
+                                      ? PhBold.arrowDownLeft
+                                      : PhBold.arrowUpRight,
+                                  size: 12,
+                                  color: color,
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    activityDetail(a),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: bad ? s.red : s.muted,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                    ?_trailing(context, a, s),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget? _trailing(BuildContext context, Activity a) {
+  Widget? _trailing(BuildContext context, Activity a, Sig s) {
+    Widget button(IconData icon, String tip, VoidCallback onTap) => Tooltip(
+      message: tip,
+      child: Pressable(
+        onTap: onTap,
+        scale: 0.85,
+        semanticLabel: tip,
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: Icon(icon, size: 19, color: s.muted),
+        ),
+      ),
+    );
+
     if (a.isLive && (!a.incoming || a.status == ActivityStatus.active)) {
-      return IconButton(
-        tooltip: 'Cancel',
-        icon: const Icon(Icons.close_rounded),
-        onPressed: () =>
-            report(context, LinksyScope.read(context).cancel(a.id)),
+      return button(
+        Ph.x,
+        'Cancel',
+        () => report(context, LinksyScope.read(context).cancel(a.id)),
       );
     }
     if (a.kind == ActivityKind.clipboard && a.text != null) {
-      return IconButton(
-        tooltip: 'Copy again',
-        icon: const Icon(Icons.copy_rounded),
-        onPressed: () async {
-          await Clipboard.setData(ClipboardData(text: a.text!));
-          if (context.mounted) showMessage(context, 'Copied');
-        },
-      );
+      return button(Ph.copy, 'Copy again', () async {
+        await Clipboard.setData(ClipboardData(text: a.text!));
+        if (context.mounted) showMessage(context, 'Copied');
+      });
     }
     if (a.incoming && a.saved.isNotEmpty) {
-      return const Padding(
-        padding: EdgeInsets.only(right: 8),
-        child: Icon(Icons.open_in_new_rounded, size: 20),
+      return Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: Icon(Ph.arrowSquareOut, size: 18, color: s.faint),
       );
     }
     return null;
@@ -165,32 +202,47 @@ class ActivityTile extends StatelessWidget {
     if (a.saved.length == 1) return _openFile(context, a.saved.single);
     await showModalBottomSheet<void>(
       context: context,
-      builder: (sheet) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.only(bottom: 16),
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-              child: Text(
+      builder: (sheet) {
+        final s = Sig.of(sheet);
+        return SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            children: [
+              Text(
                 '${a.saved.length} files',
-                style: Theme.of(sheet).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+                style: sora(20, color: s.ink),
               ),
-            ),
-            Grouped(
-              color: Theme.of(sheet).colorScheme.surfaceContainer,
-              children: [
-                for (final path in a.saved)
-                  ListTile(
-                    leading: Icon(fileIcon(path)),
-                    title: Text(path.split('/').last),
+              const SizedBox(height: 16),
+              for (final path in a.saved)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: SigCard(
                     onTap: () => _openFile(sheet, path),
+                    color: s.bg,
+                    child: Row(
+                      children: [
+                        Icon(fileIcon(path), color: Sig.incoming),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            path.split('/').last,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: s.ink,
+                            ),
+                          ),
+                        ),
+                        Icon(Ph.arrowSquareOut, size: 18, color: s.faint),
+                      ],
+                    ),
                   ),
-              ],
-            ),
-          ],
-        ),
-      ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -211,15 +263,65 @@ class ActivityTile extends StatelessWidget {
   }
 }
 
+/// The rail: a hairline through the day, a node for this entry.
+class _Rail extends CustomPainter {
+  _Rail({
+    required this.color,
+    required this.line,
+    required this.first,
+    required this.last,
+    required this.live,
+  });
+
+  final Color color;
+  final Color line;
+  final bool first;
+  final bool last;
+  final bool live;
+
+  static const _nodeY = 30.0;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final x = size.width / 2;
+    final rail = Paint()
+      ..color = line
+      ..strokeWidth = 2;
+    canvas.drawLine(
+      Offset(x, first ? _nodeY : 0),
+      Offset(x, last ? _nodeY : size.height),
+      rail,
+    );
+    if (live) {
+      canvas.drawCircle(
+        Offset(x, _nodeY),
+        10,
+        Paint()..color = color.withValues(alpha: 0.2),
+      );
+    }
+    canvas.drawCircle(Offset(x, _nodeY), 6, Paint()..color = color);
+    canvas.drawCircle(Offset(x, _nodeY), 2.4, Paint()..color = Colors.white);
+  }
+
+  @override
+  bool shouldRepaint(_Rail old) =>
+      old.color != color ||
+      old.line != line ||
+      old.first != first ||
+      old.last != last ||
+      old.live != live;
+}
+
 class _Live extends StatelessWidget {
-  const _Live({required this.activity});
+  const _Live({required this.activity, required this.color});
 
   final Activity activity;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     final a = activity;
-    final theme = Theme.of(context);
+    final s = Sig.of(context);
     final String text;
     final double? value;
     if (a.status == ActivityStatus.waiting) {
@@ -241,14 +343,15 @@ class _Live extends StatelessWidget {
       children: [
         Text(
           text,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
+          style: TextStyle(fontSize: 12.5, color: s.muted),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 8),
-        LinearProgressIndicator(value: value),
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: LinearProgressIndicator(value: value, color: color),
+        ),
       ],
     );
   }

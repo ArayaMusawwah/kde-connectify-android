@@ -23,7 +23,7 @@ core is bridged in. Settings → Demo triggers the flows that start on the other
 | Settings: name, auto-accept, stay connected | Save received files into MediaStore Downloads |
 | History kept on the phone (500 entries, clipboard text never on disk) | Screen mirroring, Sidecar, phone as webcam (§4.8) |
 | Open received files from the timeline | |
-| Material You (dynamic color, Signal blue seed), light and dark, edge-to-edge, predictive back, reduced motion respected | |
+| Signal design: orbit home, device timelines, light and dark, edge-to-edge, predictive back, reduced motion respected | |
 
 ## Run
 
@@ -42,9 +42,25 @@ Android only for now (application id `app.linksy`). iOS comes later.
 | `lib/core/` | Node interface (`linksy_node.dart`, mirrors `linksy_core::Node`), models and events, invite parsing, `DemoNode` |
 | `lib/app/` | `LinksyController` (devices, settings, activity), history store, app shell that shows prompts |
 | `lib/features/` | Screens: devices, device page, pairing, incoming transfer, settings |
-| `lib/ui/` | Theme, formatting, shared widgets |
+| `lib/ui/` | The Signal design system: tokens and theme (`sig.dart`), components, the orbit, icons, formatting |
 | `assets/brand/` | The "Sender" mark from linksy-desktop's `brand/logo/` |
 | `tool/make_icons.sh` | Renders the launcher icons (adaptive + themed) from the mark |
+
+## Design
+
+Linksy has its own look, "Signal", rather than stock Material:
+
+- **Color has a meaning.** Blue `#2563FF` is the sender, cyan `#22C3E6` the receiver
+  (from the brand mark): outgoing things are blue, incoming things cyan. Deep `#1438B8`
+  and ink panels for heroes. Red for failed or declined, mint for nearby.
+- **Type.** Sora for names, titles and numbers; Inter for everything else. Both bundled
+  in `assets/fonts/` (OFL).
+- **Icons.** Phosphor (MIT), vendored as fonts in `assets/fonts/phosphor/` with the
+  icons in use declared in `lib/ui/icons.dart` (the `phosphor_flutter` package doesn't
+  build on current Flutter).
+- **Shapes.** Hairline cards, pill buttons, pressables that shrink instead of rippling.
+- **The orbit.** Home shows this phone at the center and each device on an orbit by how
+  close it is: connected (with a live beam), nearby, away. Unpaired devices are dashed.
 
 ## Next: the Rust bridge
 

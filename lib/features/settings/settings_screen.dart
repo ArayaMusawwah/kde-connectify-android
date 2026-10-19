@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../app/scope.dart';
 import '../../core/demo_node.dart';
 import '../../core/models.dart';
+import '../../ui/components.dart';
 import '../../ui/format.dart';
-import '../../ui/theme.dart';
-import '../../ui/widgets.dart';
+import '../../ui/sig.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -13,166 +13,126 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = LinksyScope.of(context);
-    final s = c.settings;
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final st = c.settings;
+    final s = Sig.of(context);
     final demo = c.node is DemoNode ? c.node as DemoNode : null;
 
     Future<void> update(NodeSettings next) =>
         report(context, c.updateSettings(next));
 
-    Future<void> rename() async {
-      if (s == null) return;
-      final name = await _askName(context, s.name);
-      if (name != null && name.isNotEmpty && name != s.name) {
-        await update(s.copyWith(name: name));
-      }
-    }
-
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar.large(title: Text('Settings')),
-          if (s != null)
-            SliverList.list(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Material(
-                    color: scheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(Radii.xl),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(Radii.xl),
-                      onTap: rename,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          children: [
-                            IconBadge(
-                              icon: Icons.smartphone_rounded,
-                              size: 56,
-                              foreground: scheme.onPrimary,
-                              background: scheme.primary,
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    s.name,
-                                    style: theme.textTheme.titleLarge?.copyWith(
-                                      color: scheme.onPrimaryContainer,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Android phone · ${c.node.info.shortId}',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: scheme.onPrimaryContainer
-                                          .withValues(alpha: 0.75),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Icon(
-                              Icons.edit_rounded,
-                              color: scheme.onPrimaryContainer,
-                            ),
-                          ],
-                        ),
+      body: SafeArea(
+        bottom: false,
+        child: st == null
+            ? const SizedBox.shrink()
+            : ListView(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+                children: [
+                  Row(
+                    children: [
+                      RoundButton(
+                        icon: Ph.arrowLeft,
+                        tooltip: 'Back',
+                        onTap: () => Navigator.of(context).maybePop(),
                       ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 20, 8, 20),
+                    child: Text(
+                      'Settings',
+                      style: sora(34, weight: FontWeight.w700, color: s.ink),
                     ),
                   ),
-                ),
-                const SectionHeader('Receiving'),
-                Grouped(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.folder_rounded),
-                      title: const Text('Save location'),
-                      subtitle: Text(friendlyPath(s.downloadDir)),
-                    ),
-                    SwitchListTile(
-                      secondary: const Icon(Icons.verified_user_rounded),
-                      title: const Text('Accept from paired devices'),
-                      subtitle: const Text(
-                        'Files from your devices arrive without asking.',
-                      ),
-                      value: s.autoAccept,
-                      onChanged: (v) => update(s.copyWith(autoAccept: v)),
-                    ),
-                  ],
-                ),
-                const SectionHeader('Connection'),
-                Grouped(
-                  children: [
-                    SwitchListTile(
-                      secondary: const Icon(Icons.link_rounded),
-                      title: const Text('Stay connected'),
-                      subtitle: const Text(
-                        'Keeps links to nearby devices open for faster '
-                        'sharing. Uses more battery.',
-                      ),
-                      value: s.stayConnected,
-                      onChanged: (v) => update(s.copyWith(stayConnected: v)),
-                    ),
-                  ],
-                ),
-                if (demo != null) ...[
-                  const SectionHeader('Demo'),
-                  Grouped(
+                  _ThisPhone(
+                    name: st.name,
+                    shortId: c.node.info.shortId,
+                    onRename: () async {
+                      final name = await _askName(context, st.name);
+                      if (name != null && name.isNotEmpty && name != st.name) {
+                        await update(st.copyWith(name: name));
+                      }
+                    },
+                  ),
+                  const SectionLabel('Receiving'),
+                  _Group(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                        child: Text(
-                          'This build runs on a simulated node with made-up '
-                          'devices until the Linksy core is connected. These '
-                          'start what another device would.',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: scheme.onSurfaceVariant,
+                      _Row(
+                        icon: Ph.folderSimple,
+                        title: 'Save location',
+                        caption: friendlyPath(st.downloadDir),
+                      ),
+                      _Row(
+                        icon: Ph.shieldCheck,
+                        title: 'Accept from my devices',
+                        caption:
+                            'Files from paired devices arrive without '
+                            'asking.',
+                        trailing: Switch(
+                          value: st.autoAccept,
+                          onChanged: (v) => update(st.copyWith(autoAccept: v)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SectionLabel('Connection'),
+                  _Group(
+                    children: [
+                      _Row(
+                        icon: Ph.lightning,
+                        title: 'Stay connected',
+                        caption:
+                            'Faster sharing with nearby devices. Uses '
+                            'more battery.',
+                        trailing: Switch(
+                          value: st.stayConnected,
+                          onChanged: (v) =>
+                              update(st.copyWith(stayConnected: v)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (demo != null) ...[
+                    const SectionLabel('Demo'),
+                    _Group(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(
+                            'Simulated devices until the Linksy core is '
+                            'connected. These start what another device '
+                            'would.',
+                            style: TextStyle(color: s.muted, height: 1.4),
                           ),
                         ),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.download_rounded),
-                        title: const Text('Receive files'),
-                        onTap: demo.simulateIncomingFiles,
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.handshake_rounded),
-                        title: const Text('Receive a pairing request'),
-                        onTap: demo.simulateIncomingPairing,
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.content_paste_rounded),
-                        title: const Text('Receive clipboard text'),
-                        onTap: demo.simulateClipboard,
-                      ),
-                    ],
+                        _Row(
+                          icon: Ph.downloadSimple,
+                          title: 'Receive files',
+                          onTap: demo.simulateIncomingFiles,
+                        ),
+                        _Row(
+                          icon: Ph.handshake,
+                          title: 'Receive a pairing request',
+                          onTap: demo.simulateIncomingPairing,
+                        ),
+                        _Row(
+                          icon: Ph.clipboardText,
+                          title: 'Receive clipboard text',
+                          onTap: demo.simulateClipboard,
+                        ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 40),
+                  const Center(child: LinksyMark(size: 34)),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Your devices, connected.\nNo account, no cloud.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: s.faint, fontSize: 13, height: 1.5),
                   ),
                 ],
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
-                  child: Column(
-                    children: [
-                      const LinksyMark(size: 32),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Linksy · Your devices, connected.\n'
-                        'No account, no cloud. Everything stays on your '
-                        'network.',
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-        ],
+              ),
       ),
     );
   }
@@ -181,29 +141,193 @@ class SettingsScreen extends StatelessWidget {
     final text = TextEditingController(text: current);
     return showDialog<String>(
       context: context,
-      builder: (dialog) => AlertDialog(
-        icon: const Icon(Icons.badge_rounded),
-        title: const Text('Device name'),
-        content: TextField(
-          controller: text,
-          autofocus: true,
-          maxLength: 48,
-          decoration: const InputDecoration(
-            helperText: 'Your other devices see this name.',
+      builder: (dialog) {
+        final s = Sig.of(dialog);
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Name this phone',
+                  textAlign: TextAlign.center,
+                  style: sora(21, color: s.ink),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Your other devices see this name.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: s.muted),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: text,
+                  autofocus: true,
+                  maxLength: 48,
+                  style: sora(18, weight: FontWeight.w500, color: s.ink),
+                  onSubmitted: (v) => Navigator.of(dialog).pop(v.trim()),
+                ),
+                const SizedBox(height: 8),
+                SigButton(
+                  label: 'Save',
+                  expand: true,
+                  onTap: () => Navigator.of(dialog).pop(text.text.trim()),
+                ),
+                SigButton(
+                  label: 'Cancel',
+                  kind: SigButtonKind.quiet,
+                  expand: true,
+                  onTap: () => Navigator.of(dialog).pop(),
+                ),
+              ],
+            ),
           ),
-          onSubmitted: (v) => Navigator.of(dialog).pop(v.trim()),
+        );
+      },
+    ).whenComplete(text.dispose);
+  }
+}
+
+class _ThisPhone extends StatelessWidget {
+  const _ThisPhone({
+    required this.name,
+    required this.shortId,
+    required this.onRename,
+  });
+
+  final String name;
+  final String shortId;
+  final VoidCallback onRename;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    return Pressable(
+      onTap: onRename,
+      semanticLabel: 'Rename $name',
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: s.hero,
+          borderRadius: BorderRadius.circular(Radii.xl),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialog).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(dialog).pop(text.text.trim()),
-            child: const Text('Save'),
-          ),
+        child: Row(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+              child: const Center(child: LinksyMark(size: 32)),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: sora(21, color: Colors.white)),
+                  const SizedBox(height: 2),
+                  Text(
+                    'This phone · $shortId',
+                    style: sora(
+                      12.5,
+                      weight: FontWeight.w500,
+                      color: Colors.white60,
+                      spacing: 0.3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Ph.pencilSimple, color: Colors.white70),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Group extends StatelessWidget {
+  const _Group({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    return SigCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          for (var i = 0; i < children.length; i++) ...[
+            if (i > 0) Divider(height: 1, thickness: 1, color: s.line),
+            children[i],
+          ],
         ],
       ),
-    ).whenComplete(text.dispose);
+    );
+  }
+}
+
+class _Row extends StatelessWidget {
+  const _Row({
+    required this.icon,
+    required this.title,
+    this.caption,
+    this.trailing,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String? caption;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final row = Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+      child: Row(
+        children: [
+          Icon(icon, color: Sig.blue, size: 22),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w600,
+                    color: s.ink,
+                  ),
+                ),
+                if (caption != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    caption!,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: s.muted,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (trailing != null) ...[const SizedBox(width: 10), trailing!],
+          if (onTap != null) Icon(Ph.caretRight, color: s.faint, size: 18),
+        ],
+      ),
+    );
+    return onTap == null ? row : Pressable(onTap: onTap, child: row);
   }
 }

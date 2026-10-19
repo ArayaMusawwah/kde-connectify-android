@@ -34,7 +34,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  dynamic_color: ^1.8.1
   mobile_scanner: ^7.4.2
   flutter_svg: ^2.3.0
   file_picker: ^13.1.0
@@ -42,7 +41,6 @@ dependencies:
   shared_preferences: ^2.5.6
   intl: ^0.20.3
   open_filex: ^5.0.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -67,6 +65,33 @@ flutter:
 
   assets:
     - assets/brand/
+
+  fonts:
+    - family: Sora
+      fonts:
+        - asset: assets/fonts/Sora-500.ttf
+          weight: 500
+        - asset: assets/fonts/Sora-600.ttf
+          weight: 600
+        - asset: assets/fonts/Sora-700.ttf
+          weight: 700
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-400.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-500.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-600.ttf
+          weight: 600
+    - family: PhosphorRegular
+      fonts:
+        - asset: assets/fonts/phosphor/Phosphor.ttf
+    - family: PhosphorBold
+      fonts:
+        - asset: assets/fonts/phosphor/Phosphor-Bold.ttf
+    - family: PhosphorFill
+      fonts:
+        - asset: assets/fonts/phosphor/Phosphor-Fill.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

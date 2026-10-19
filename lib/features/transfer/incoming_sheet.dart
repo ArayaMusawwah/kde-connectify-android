@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../app/scope.dart';
 import '../../core/models.dart';
+import '../../ui/components.dart';
 import '../../ui/format.dart';
-import '../../ui/widgets.dart';
+import '../../ui/sig.dart';
 
-/// "Studio Desktop wants to share": names, count and size, Accept / Decline.
+/// "Studio Desktop is sending you 3 files": names, sizes, Accept / Decline.
 class IncomingFilesSheet extends StatelessWidget {
   const IncomingFilesSheet({super.key, required this.request});
 
@@ -15,125 +16,121 @@ class IncomingFilesSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final s = Sig.of(context);
     final files = request.files;
-    final count = files.length == 1 ? '1 item' : '${files.length} items';
+    final what = files.length == 1 ? 'a file' : '${files.length} files';
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(
-              child: Stack(
-                clipBehavior: Clip.none,
+            Row(
+              children: [
+                Orb(device: request.from, size: 56, glow: true),
+                const SizedBox(width: 6),
+                const Icon(PhBold.arrowRight, color: Sig.incoming, size: 18),
+                const SizedBox(width: 6),
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Sig.incoming.withValues(alpha: 0.14),
+                  ),
+                  child: const Icon(
+                    Ph.deviceMobile,
+                    color: Sig.incoming,
+                    size: 26,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Text.rich(
+              TextSpan(
                 children: [
-                  DeviceAvatar(device: request.from, size: 72),
-                  Positioned(
-                    right: -6,
-                    bottom: -6,
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        color: scheme.surfaceContainerLow,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconBadge(
-                        icon: Icons.south_rounded,
-                        size: 28,
-                        foreground: scheme.onPrimary,
-                        background: scheme.primary,
-                      ),
-                    ),
+                  TextSpan(text: request.from.name),
+                  TextSpan(
+                    text: ' is sending you $what',
+                    style: TextStyle(color: s.muted),
                   ),
                 ],
               ),
+              style: sora(23, color: s.ink, height: 1.2),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 6),
             Text(
-              '${request.from.name} wants to share',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.headlineSmall,
+              '${formatBytes(request.total)} in total',
+              style: TextStyle(fontSize: 14, color: s.muted),
             ),
-            const SizedBox(height: 4),
-            Text(
-              '$count · ${formatBytes(request.total)}',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: scheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Grouped(
-              padding: EdgeInsets.zero,
-              color: scheme.surfaceContainer,
-              children: [
-                for (final f in files.take(_shown))
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(fileIcon(f.name), color: scheme.primary),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Text(
-                            f.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          formatBytes(f.size),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
+            const SizedBox(height: 18),
+            for (final f in files.take(_shown))
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: SigCard(
+                  color: s.bg,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
                   ),
-                if (files.length > _shown)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    child: Text(
-                      'and ${files.length - _shown} more',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
+                  child: Row(
+                    children: [
+                      Icon(fileIcon(f.name), color: Sig.incoming, size: 22),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          f.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: s.ink,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 12),
+                      Text(
+                        formatBytes(f.size),
+                        style: sora(
+                          13,
+                          weight: FontWeight.w500,
+                          color: s.muted,
+                        ),
+                      ),
+                    ],
                   ),
-              ],
-            ),
-            const SizedBox(height: 24),
+                ),
+              ),
+            if (files.length > _shown)
+              Padding(
+                padding: const EdgeInsets.only(left: 4, bottom: 8),
+                child: Text(
+                  '+ ${files.length - _shown} more',
+                  style: TextStyle(color: s.muted),
+                ),
+              ),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(56),
-                    ),
-                    onPressed: () => _answer(context, false),
-                    child: const Text('Decline'),
+                  child: SigButton(
+                    label: 'Decline',
+                    kind: SigButtonKind.secondary,
+                    expand: true,
+                    height: 56,
+                    onTap: () => _answer(context, false),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(56),
-                    ),
-                    onPressed: () => _answer(context, true),
-                    icon: const Icon(Icons.download_rounded),
-                    label: const Text('Accept'),
+                  child: SigButton(
+                    label: 'Accept',
+                    icon: PhBold.downloadSimple,
+                    expand: true,
+                    height: 56,
+                    onTap: () => _answer(context, true),
                   ),
                 ),
               ],

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -5,60 +7,49 @@ import '../../app/scope.dart';
 import '../../core/invite.dart';
 import '../../core/linksy_node.dart';
 import '../../core/models.dart';
-import '../../ui/theme.dart';
-import '../../ui/widgets.dart';
+import '../../ui/components.dart';
+import '../../ui/sig.dart';
 import 'scan_screen.dart';
 
-/// "Add device": the QR scanner first, pairing by address as the fallback.
+/// "Add a device": the QR scanner first, pairing by address as the fallback.
 Future<void> showAddDevice(BuildContext context) => showModalBottomSheet<void>(
   context: context,
   builder: (sheet) {
-    final theme = Theme.of(sheet);
+    final s = Sig.of(sheet);
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text('Add a device', style: sora(24, color: s.ink)),
+            const SizedBox(height: 6),
             Text(
-              'Add a device',
-              style: theme.textTheme.headlineSmall,
-              textAlign: TextAlign.center,
+              'On the other device, open Linksy and choose “Pair with QR '
+              'Code”.',
+              style: TextStyle(color: s.muted, fontSize: 14.5, height: 1.4),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'On the other device, open Linksy and choose “Pair with QR Code”.',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+            const SizedBox(height: 22),
+            _Option(
+              icon: PhBold.scan,
+              title: 'Scan QR code',
+              caption: 'Fastest. Nothing to type.',
+              primary: true,
+              onTap: () {
+                Navigator.of(sheet).pop();
+                scanAndPair(context);
+              },
             ),
-            const SizedBox(height: 24),
-            Grouped(
-              padding: EdgeInsets.zero,
-              color: theme.colorScheme.surfaceContainer,
-              children: [
-                _Option(
-                  icon: Icons.qr_code_scanner_rounded,
-                  title: 'Scan QR code',
-                  subtitle: 'Fastest. Nothing to type.',
-                  highlighted: true,
-                  onTap: () {
-                    Navigator.of(sheet).pop();
-                    scanAndPair(context);
-                  },
-                ),
-                _Option(
-                  icon: Icons.lan_rounded,
-                  title: 'Pair by address',
-                  subtitle: 'When the other device can’t be found.',
-                  onTap: () {
-                    Navigator.of(sheet).pop();
-                    pairByAddress(context);
-                  },
-                ),
-              ],
+            const SizedBox(height: 10),
+            _Option(
+              icon: Ph.network,
+              title: 'Pair by address',
+              caption: 'When the other device can’t be found.',
+              onTap: () {
+                Navigator.of(sheet).pop();
+                pairByAddress(context);
+              },
             ),
           ],
         ),
@@ -71,54 +62,67 @@ class _Option extends StatelessWidget {
   const _Option({
     required this.icon,
     required this.title,
-    required this.subtitle,
+    required this.caption,
     required this.onTap,
-    this.highlighted = false,
+    this.primary = false,
   });
 
   final IconData icon;
   final String title;
-  final String subtitle;
+  final String caption;
   final VoidCallback onTap;
-  final bool highlighted;
+  final bool primary;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            IconBadge(
-              icon: icon,
-              size: 52,
-              foreground: highlighted ? scheme.onPrimary : scheme.primary,
-              background: highlighted
-                  ? scheme.primary
-                  : scheme.primaryContainer,
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: theme.textTheme.titleMedium),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right_rounded, color: scheme.outline),
-          ],
+    final s = Sig.of(context);
+    final fg = primary ? Colors.white : s.ink;
+    final content = Row(
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: primary
+                ? Colors.white.withValues(alpha: 0.16)
+                : Sig.blue.withValues(alpha: 0.1),
+          ),
+          child: Icon(icon, color: primary ? Colors.white : Sig.blue),
         ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: sora(17, color: fg)),
+              Text(
+                caption,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: primary
+                      ? Colors.white.withValues(alpha: 0.75)
+                      : s.muted,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Icon(Ph.caretRight, color: primary ? Colors.white70 : s.faint),
+      ],
+    );
+    if (!primary) {
+      return SigCard(onTap: onTap, color: s.bg, child: content);
+    }
+    return Pressable(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: Sig.sendGradient,
+          borderRadius: BorderRadius.circular(Radii.lg),
+        ),
+        child: content,
       ),
     );
   }
@@ -171,42 +175,63 @@ class _AddressDialogState extends State<_AddressDialog> {
   void _submit() => Navigator.of(context).pop(_text.text.trim());
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-    icon: const Icon(Icons.lan_rounded),
-    title: const Text('Pair by address'),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Find the address in Linksy’s Preferences on the other device.',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: _text,
-          autofocus: true,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[0-9a-fA-F.:\[\]]')),
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Center(
+              child: IconCircle(icon: Ph.network, color: Sig.blue, size: 56),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Pair by address',
+              textAlign: TextAlign.center,
+              style: sora(21, color: s.ink),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'It’s in Linksy’s Preferences on the other device.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: s.muted),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _text,
+              autofocus: true,
+              style: sora(18, weight: FontWeight.w500, color: s.ink),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9a-fA-F.:\[\]]')),
+              ],
+              decoration: const InputDecoration(hintText: '192.168.1.20'),
+              onSubmitted: (_) => _submit(),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 8, 4, 20),
+              child: Text(
+                'Port $defaultPort unless you add another.',
+                style: TextStyle(fontSize: 12.5, color: s.faint),
+              ),
+            ),
+            SigButton(label: 'Pair', expand: true, onTap: _submit),
+            SigButton(
+              label: 'Cancel',
+              kind: SigButtonKind.quiet,
+              expand: true,
+              onTap: () => Navigator.of(context).pop(),
+            ),
           ],
-          decoration: const InputDecoration(
-            hintText: '192.168.1.20',
-            prefixIcon: Icon(Icons.router_rounded),
-            helperText: 'Port $defaultPort unless you add another.',
-          ),
-          onSubmitted: (_) => _submit(),
         ),
-      ],
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.of(context).pop(),
-        child: const Text('Cancel'),
       ),
-      FilledButton(onPressed: _submit, child: const Text('Pair')),
-    ],
-  );
+    );
+  }
 }
 
 /// Both screens show the same code; both users confirm (§4.3, §4.4).
@@ -217,50 +242,71 @@ class PairingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final s = Sig.of(context);
     final name = request.device.name;
     final digits = request.code.padLeft(6, '0');
-    return AlertDialog(
-      icon: DeviceAvatar(device: request.device, size: 64),
-      title: Text(request.incoming ? '$name wants to pair' : 'Pair with $name'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Check that $name shows the same code.',
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+    final me = LinksyScope.read(context).node.info;
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(22, 28, 22, 14),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _Handshake(me: me, other: request.device),
+            const SizedBox(height: 20),
+            Text(
+              request.incoming ? '$name wants to pair' : 'Pair with $name',
+              textAlign: TextAlign.center,
+              style: sora(21, color: s.ink),
             ),
-          ),
-          const SizedBox(height: 24),
-          Semantics(
-            label: 'Code ${formatPairingCode(digits)}',
-            excludeSemantics: true,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (var i = 0; i < 6; i++) ...[
-                  if (i == 3) const SizedBox(width: 14),
-                  if (i != 0 && i != 3) const SizedBox(width: 6),
-                  _Digit(digits[i]),
+            const SizedBox(height: 6),
+            Text(
+              'Both screens should show this code.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: s.muted),
+            ),
+            const SizedBox(height: 22),
+            Semantics(
+              label: 'Code ${formatPairingCode(digits)}',
+              excludeSemantics: true,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < 6; i++) ...[
+                    if (i == 3)
+                      Container(
+                        width: 10,
+                        height: 3,
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: BoxDecoration(
+                          color: s.line,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      )
+                    else if (i != 0)
+                      const SizedBox(width: 6),
+                    _Digit(digits[i]),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 26),
+            SigButton(
+              label: 'Codes match',
+              icon: PhBold.check,
+              expand: true,
+              onTap: () => _answer(context, true),
+            ),
+            SigButton(
+              label: 'Decline',
+              kind: SigButtonKind.quiet,
+              expand: true,
+              onTap: () => _answer(context, false),
+            ),
+          ],
+        ),
       ),
-      actionsAlignment: MainAxisAlignment.spaceBetween,
-      actions: [
-        TextButton(
-          onPressed: () => _answer(context, false),
-          child: const Text('Decline'),
-        ),
-        FilledButton(
-          onPressed: () => _answer(context, true),
-          child: const Text('Codes match'),
-        ),
-      ],
     );
   }
 
@@ -271,6 +317,69 @@ class PairingDialog extends StatelessWidget {
   }
 }
 
+/// This phone and the other device, joined by the mark's two arcs.
+class _Handshake extends StatelessWidget {
+  const _Handshake({required this.me, required this.other});
+
+  final DeviceInfo me;
+  final DeviceInfo other;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 64,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 56,
+          height: 56,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: Sig.sendGradient,
+          ),
+          child: const Icon(Ph.deviceMobile, color: Colors.white, size: 26),
+        ),
+        const SizedBox(
+          width: 70,
+          height: 40,
+          child: CustomPaint(painter: _Arcs()),
+        ),
+        Orb(device: other, size: 56),
+      ],
+    ),
+  );
+}
+
+class _Arcs extends CustomPainter {
+  const _Arcs();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final c = size.center(Offset.zero);
+    for (final (r, color, start) in [
+      (14.0, Sig.blue, pi),
+      (9.0, Sig.cyan, 0.0),
+    ]) {
+      final paint = Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3.5
+        ..strokeCap = StrokeCap.round;
+      final dx = start == 0 ? 8.0 : -8.0;
+      canvas.drawArc(
+        Rect.fromCircle(center: c + Offset(dx, 0), radius: r),
+        start - pi / 3.2,
+        pi / 1.6,
+        false,
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_Arcs old) => false;
+}
+
 class _Digit extends StatelessWidget {
   const _Digit(this.digit);
 
@@ -278,22 +387,23 @@ class _Digit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final s = Sig.of(context);
     return Container(
-      width: 34,
-      height: 48,
+      width: 36,
+      height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(Radii.sm + 2),
+        color: s.bg,
+        borderRadius: BorderRadius.circular(Radii.sm),
+        border: Border.all(color: s.line, width: 1.5),
       ),
       child: Text(
         digit,
-        style: theme.textTheme.headlineSmall?.copyWith(
-          color: theme.colorScheme.onPrimaryContainer,
-          fontWeight: FontWeight.w700,
-          fontFeatures: const [FontFeature.tabularFigures()],
-        ),
+        style: sora(
+          26,
+          weight: FontWeight.w700,
+          color: s.ink,
+        ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
       ),
     );
   }

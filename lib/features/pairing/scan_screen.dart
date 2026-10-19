@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../core/invite.dart';
-import '../../ui/theme.dart';
+import '../../ui/components.dart';
+import '../../ui/sig.dart';
 
 /// Full-screen camera that pops with the first valid Linksy invite link.
 class ScanScreen extends StatefulWidget {
@@ -42,7 +43,6 @@ class _ScanScreenState extends State<ScanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     const window = 264.0;
     return Scaffold(
       backgroundColor: Colors.black,
@@ -50,25 +50,30 @@ class _ScanScreenState extends State<ScanScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
-        leading: IconButton(
-          tooltip: 'Close',
-          icon: const Icon(Icons.close_rounded),
-          onPressed: () => Navigator.of(context).pop(),
+        automaticallyImplyLeading: false,
+        leadingWidth: 72,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Center(
+            child: RoundButton(
+              icon: Ph.x,
+              tooltip: 'Close',
+              onDark: true,
+              onTap: () => Navigator.of(context).pop(),
+            ),
+          ),
         ),
         actions: [
-          IconButton(
+          RoundButton(
+            icon: _torch ? PhFill.flashlight : Ph.flashlight,
             tooltip: 'Flashlight',
-            onPressed: () {
+            onDark: true,
+            onTap: () {
               _scanner.toggleTorch();
               setState(() => _torch = !_torch);
             },
-            icon: Icon(
-              _torch
-                  ? Icons.flashlight_off_rounded
-                  : Icons.flashlight_on_rounded,
-            ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 16),
         ],
       ),
       body: Stack(
@@ -84,9 +89,7 @@ class _ScanScreenState extends State<ScanScreen> {
             alignment: const Alignment(0, -0.62),
             child: Text(
               'Scan the code',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                color: Colors.white,
-              ),
+              style: sora(26, weight: FontWeight.w700, color: Colors.white),
             ),
           ),
           Positioned(
@@ -105,19 +108,15 @@ class _ScanScreenState extends State<ScanScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: _wrongCode
-                        ? theme.colorScheme.errorContainer
+                        ? Sig.of(context).red
                         : Colors.white.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(Radii.lg),
                   ),
                   child: Row(
                     children: [
                       Icon(
-                        _wrongCode
-                            ? Icons.error_outline_rounded
-                            : Icons.desktop_windows_rounded,
-                        color: _wrongCode
-                            ? theme.colorScheme.onErrorContainer
-                            : Colors.white,
+                        _wrongCode ? Ph.warningCircle : Ph.desktop,
+                        color: Colors.white,
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -127,10 +126,10 @@ class _ScanScreenState extends State<ScanScreen> {
                                     'open Linksy → Pair with QR Code.'
                               : 'On your computer, open Linksy and choose '
                                     '“Pair with QR Code”.',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: _wrongCode
-                                ? theme.colorScheme.onErrorContainer
-                                : Colors.white,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            height: 1.35,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -170,7 +169,7 @@ class _Viewfinder extends CustomPainter {
     );
 
     final corner = Paint()
-      ..color = Colors.white
+      ..color = Sig.cyan
       ..style = PaintingStyle.stroke
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
@@ -216,11 +215,7 @@ class _CameraError extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.no_photography_rounded,
-              color: Colors.white70,
-              size: 48,
-            ),
+            const Icon(Ph.cameraSlash, color: Colors.white70, size: 48),
             const SizedBox(height: 16),
             Text(
               denied

@@ -1,14 +1,25 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../app/activity.dart';
 import '../../app/scope.dart';
+import '../../core/models.dart';
+import '../../ui/components.dart';
 import '../../ui/format.dart';
-import '../../ui/theme.dart';
-import '../../ui/widgets.dart';
+import '../../ui/sig.dart';
 import 'activity_tile.dart';
 
-/// A device's page: big actions, then everything shared with it by day.
+/// Picks files and sends them to a device, reporting any error.
+Future<void> pickAndSend(BuildContext context, String deviceId) async {
+  final c = LinksyScope.read(context);
+  final picked = await FilePicker.pickFiles();
+  final paths = [for (final f in picked) ?f.path];
+  if (context.mounted) await report(context, c.sendFiles(deviceId, paths));
+}
+
+/// A device's page: big actions, then everything shared with it, as a
+/// timeline by day.
 class DeviceScreen extends StatelessWidget {
   const DeviceScreen({super.key, required this.deviceId});
 
@@ -22,143 +33,54 @@ class DeviceScreen extends StatelessWidget {
       // Forgotten while open.
       return const Scaffold(body: SizedBox.shrink());
     }
-    final d = view.device;
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final tint = deviceScheme(d.id, theme.brightness);
+    final s = Sig.of(context);
     final days = _byDay(c.activityFor(deviceId));
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: WidgetStateColor.resolveWith(
-          (states) => states.contains(WidgetState.scrolledUnder)
-              ? scheme.surfaceContainer
-              : Colors.transparent,
-        ),
-        actions: [
-          PopupMenuButton<void>(
-            icon: const Icon(Icons.more_vert_rounded),
-            itemBuilder: (_) => [
-              PopupMenuItem(
-                onTap: () => _forget(context),
-                child: const ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Icon(Icons.link_off_rounded),
-                  title: Text('Forget device'),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    tint.primaryContainer.withValues(alpha: 0.75),
-                    scheme.surface,
-                  ],
-                ),
-              ),
-              padding: EdgeInsets.fromLTRB(
-                16,
-                MediaQuery.paddingOf(context).top + kToolbarHeight,
-                16,
-                8,
-              ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlayFor(Brightness.dark),
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              toolbarHeight: 0,
+              collapsedHeight: 0,
+              systemOverlayStyle: overlayFor(Brightness.dark),
+              backgroundColor: s.heroTop,
+            ),
+            // One box, so the actions paint over the hero they overlap.
+            SliverToBoxAdapter(
               child: Column(
                 children: [
-                  DeviceAvatar(device: d, size: 96),
-                  const SizedBox(height: 16),
-                  Text(
-                    d.name,
-                    style: theme.textTheme.headlineMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      PresencePill(
-                        presence: view.presence,
-                        background: scheme.surface.withValues(alpha: 0.7),
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        kindIcon(d.kind),
-                        size: 18,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        d.description,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 28),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _Action(
-                        icon: Icons.upload_file_rounded,
-                        label: 'Send files',
-                        primary: true,
-                        onTap: () => _sendFiles(context),
-                      ),
-                      _Action(
-                        icon: Icons.content_paste_go_rounded,
-                        label: 'Clipboard',
-                        onTap: () => report(context, c.sendClipboard(deviceId)),
-                      ),
-                      _Action(
-                        icon: Icons.notifications_active_rounded,
-                        label: 'Ping',
-                        onTap: () => report(context, c.ping(deviceId)),
-                      ),
-                    ],
+                  _Hero(view: view),
+                  Transform.translate(
+                    offset: const Offset(0, -34),
+                    child: _Actions(view: view),
                   ),
                 ],
               ),
             ),
-          ),
-          const SliverToBoxAdapter(child: SectionHeader('Activity')),
-          if (days.isEmpty)
-            SliverToBoxAdapter(child: _NoActivity(name: d.name))
-          else
-            for (final (day, entries) in days) ...[
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 4, 24, 8),
-                  child: Text(
-                    day,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: scheme.primary,
-                    ),
+            if (days.isEmpty)
+              SliverToBoxAdapter(child: _NoActivity(name: view.device.name))
+            else
+              for (final (day, entries) in days) ...[
+                SliverToBoxAdapter(child: SectionLabel(day)),
+                SliverList.builder(
+                  itemCount: entries.length,
+                  itemBuilder: (context, i) => TimelineEntry(
+                    activity: entries[i],
+                    first: i == 0,
+                    last: i == entries.length - 1,
                   ),
                 ),
+              ],
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 32 + MediaQuery.paddingOf(context).bottom,
               ),
-              SliverToBoxAdapter(
-                child: Grouped(
-                  children: [
-                    for (final a in entries) ActivityTile(activity: a),
-                  ],
-                ),
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: 16)),
-            ],
-          SliverToBoxAdapter(
-            child: SizedBox(height: 24 + MediaQuery.paddingOf(context).bottom),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -172,97 +94,307 @@ class DeviceScreen extends StatelessWidget {
     }
     return days;
   }
+}
 
-  Future<void> _sendFiles(BuildContext context) async {
-    final c = LinksyScope.read(context);
-    final picked = await FilePicker.pickFiles();
-    final paths = [for (final f in picked) ?f.path];
-    if (context.mounted) await report(context, c.sendFiles(deviceId, paths));
-  }
+class _Hero extends StatelessWidget {
+  const _Hero({required this.view});
 
-  Future<void> _forget(BuildContext context) async {
-    final c = LinksyScope.read(context);
-    final name = c.device(deviceId)?.device.name ?? 'this device';
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (dialog) => AlertDialog(
-        icon: const Icon(Icons.link_off_rounded),
-        title: Text('Forget $name?'),
-        content: const Text(
-          'You’ll need to pair again to share with it. Its activity on this '
-          'phone is cleared too.',
+  final DeviceView view;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final d = view.device;
+    final hue = deviceHue(d.id);
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
+        // Starts as the status bar's ink, blooms into the device's hue.
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            s.heroTop,
+            Color.lerp(s.heroBottom, hue, 0.3)!,
+            Color.lerp(s.heroTop, hue, 0.45)!,
+          ],
+          stops: const [0, 0.55, 1],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialog).pop(false),
-            child: const Text('Cancel'),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 64),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              RoundButton(
+                icon: Ph.arrowLeft,
+                tooltip: 'Back',
+                onDark: true,
+                onTap: () => Navigator.of(context).maybePop(),
+              ),
+              const Spacer(),
+              RoundButton(
+                icon: Ph.dotsThree,
+                tooltip: 'More',
+                onDark: true,
+                onTap: () => _more(context, d),
+              ),
+            ],
           ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(dialog).colorScheme.error,
-              foregroundColor: Theme.of(dialog).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(dialog).pop(true),
-            child: const Text('Forget'),
+          const SizedBox(height: 8),
+          Orb(device: d, size: 104, presence: view.presence, glow: true),
+          const SizedBox(height: 18),
+          Text(
+            d.name,
+            textAlign: TextAlign.center,
+            style: sora(30, weight: FontWeight.w700, color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (view.presence == Presence.notNearby)
+                Icon(Ph.wifiSlash, size: 15, color: Colors.white54)
+              else
+                PulseDot(color: presenceColor(s, view.presence), size: 7),
+              const SizedBox(width: 4),
+              Text(
+                presenceLabel(view.presence),
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: view.presence == Presence.notNearby
+                      ? Colors.white54
+                      : presenceColor(s, view.presence),
+                ),
+              ),
+              Text(
+                '   ${d.description}',
+                style: const TextStyle(fontSize: 14, color: Colors.white60),
+              ),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _more(BuildContext context, DeviceInfo d) =>
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (sheet) {
+          final s = Sig.of(sheet);
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    d.name,
+                    textAlign: TextAlign.center,
+                    style: sora(20, color: s.ink),
+                  ),
+                  Text(
+                    'ID ${d.shortId}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: s.muted, fontSize: 13),
+                  ),
+                  const SizedBox(height: 20),
+                  SigButton(
+                    label: 'Forget this device',
+                    icon: Ph.linkBreak,
+                    kind: SigButtonKind.secondary,
+                    expand: true,
+                    onTap: () {
+                      Navigator.of(sheet).pop();
+                      _forget(context, d);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+  Future<void> _forget(BuildContext context, DeviceInfo d) async {
+    final c = LinksyScope.read(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (dialog) {
+        final s = Sig.of(dialog);
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: IconCircle(icon: Ph.linkBreak, color: s.red, size: 56),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Forget ${d.name}?',
+                  textAlign: TextAlign.center,
+                  style: sora(21, color: s.ink),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'You’ll need to pair again to share with it. Its activity on '
+                  'this phone is cleared too.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: s.muted, height: 1.4),
+                ),
+                const SizedBox(height: 24),
+                SigButton(
+                  label: 'Forget',
+                  kind: SigButtonKind.danger,
+                  expand: true,
+                  onTap: () => Navigator.of(dialog).pop(true),
+                ),
+                SigButton(
+                  label: 'Cancel',
+                  kind: SigButtonKind.quiet,
+                  expand: true,
+                  onTap: () => Navigator.of(dialog).pop(false),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
     if (ok != true || !context.mounted) return;
     Navigator.of(context).pop();
-    await c.forget(deviceId);
+    await c.forget(d.id);
   }
 }
 
-/// A rounded button with its label underneath, like the Contacts app.
-class _Action extends StatelessWidget {
-  const _Action({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.primary = false,
-  });
+class _Actions extends StatelessWidget {
+  const _Actions({required this.view});
 
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final bool primary;
+  final DeviceView view;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final (bg, fg) = primary
-        ? (scheme.primary, scheme.onPrimary)
-        : (scheme.surfaceContainerHighest, scheme.onSurface);
-    final shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(Radii.lg),
-    );
-    return SizedBox(
-      width: 96,
+    final c = LinksyScope.read(context);
+    final id = view.device.id;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          Material(
-            color: bg,
-            shape: shape,
-            elevation: primary ? 2 : 0,
-            shadowColor: scheme.primary.withValues(alpha: 0.4),
-            child: InkWell(
-              customBorder: shape,
-              onTap: onTap,
-              child: SizedBox(
-                width: 72,
-                height: 64,
-                child: Icon(icon, color: fg, size: 28),
+          Pressable(
+            onTap: () => pickAndSend(context, id),
+            semanticLabel: 'Send files',
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(20, 18, 18, 18),
+              decoration: BoxDecoration(
+                gradient: Sig.sendGradient,
+                borderRadius: BorderRadius.circular(Radii.lg),
+                boxShadow: [
+                  BoxShadow(
+                    color: Sig.blue.withValues(alpha: 0.35),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Send files',
+                          style: sora(21, color: Colors.white),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Photos, documents, anything',
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            color: Colors.white.withValues(alpha: 0.75),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.16),
+                    ),
+                    child: const Icon(
+                      PhFill.paperPlaneTilt,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: theme.textTheme.labelLarge,
-            textAlign: TextAlign.center,
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: _SmallAction(
+                  icon: Ph.clipboardText,
+                  title: 'Clipboard',
+                  caption: 'Send what you copied',
+                  onTap: () => report(context, c.sendClipboard(id)),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _SmallAction(
+                  icon: Ph.bellRinging,
+                  title: 'Ping',
+                  caption: 'Make it chime',
+                  onTap: () => report(context, c.ping(id)),
+                ),
+              ),
+            ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SmallAction extends StatelessWidget {
+  const _SmallAction({
+    required this.icon,
+    required this.title,
+    required this.caption,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String caption;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    return SigCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IconCircle(icon: icon, color: Sig.blue, size: 40),
+          const SizedBox(height: 14),
+          Text(title, style: sora(16, color: s.ink)),
+          const SizedBox(height: 2),
+          Text(caption, style: TextStyle(fontSize: 12.5, color: s.muted)),
         ],
       ),
     );
@@ -276,35 +408,23 @@ class _NoActivity extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return Grouped(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
-          child: Column(
-            children: [
-              IconBadge(
-                icon: Icons.swap_horiz_rounded,
-                foreground: scheme.primary,
-                background: scheme.primaryContainer,
-                size: 56,
-              ),
-              const SizedBox(height: 16),
-              Text('Nothing shared yet', style: theme.textTheme.titleMedium),
-              const SizedBox(height: 6),
-              Text(
-                'Files, clipboard text and pings you share with $name '
-                'show up here.',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-            ],
+    final s = Sig.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(40, 12, 40, 0),
+      child: Column(
+        children: [
+          Icon(Ph.arrowsLeftRight, size: 34, color: s.faint),
+          const SizedBox(height: 12),
+          Text('Nothing shared yet', style: sora(17, color: s.ink)),
+          const SizedBox(height: 6),
+          Text(
+            'Files, clipboard text and pings between this phone and $name '
+            'line up here.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: s.muted, height: 1.4),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
