@@ -49,3 +49,7 @@ app.*.map.json
 
 # Release builds (tool/release.sh)
 /dist/
+
+# Rust bridge: built by tool/build_rust.sh
+/rust/target/
+/android/app/src/main/jniLibs/

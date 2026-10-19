@@ -231,7 +231,15 @@ class DemoNode implements LinksyNode {
   }) {
     if (_cancelled.remove(transfer)) return;
     final total = files.fold<int>(0, (s, f) => s + f.size);
-    _emit(TransferStarted(transfer));
+    _emit(
+      TransferStarted(
+        transfer,
+        peer: _devices[peer]?.device,
+        incoming: received,
+        files: files,
+        total: total,
+      ),
+    );
     // About three seconds whatever the size, in ten steps.
     var sent = 0;
     _timers[transfer] = Timer.periodic(const Duration(milliseconds: 300), (t) {

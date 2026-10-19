@@ -94,8 +94,34 @@ class LinksyController extends ChangeNotifier {
             total: total,
           ),
         );
-      case TransferStarted(:final transfer):
-        _update(transfer, (a) => a.status = ActivityStatus.active);
+      case TransferStarted(
+        :final transfer,
+        :final peer,
+        :final incoming,
+        :final files,
+        :final total,
+      ):
+        // Outgoing transfers start when offered: they wait for the other side
+        // until bytes flow. Incoming ones start once accepted.
+        if (_activity.any((a) => a.id == transfer)) {
+          if (incoming) {
+            _update(transfer, (a) => a.status = ActivityStatus.active);
+          }
+        } else if (peer != null) {
+          // Not started here (auto-accepted files): file it under the peer.
+          _add(
+            Activity(
+              id: transfer,
+              deviceId: peer.id,
+              kind: ActivityKind.files,
+              incoming: incoming,
+              time: DateTime.now(),
+              status: incoming ? ActivityStatus.active : ActivityStatus.waiting,
+              names: [for (final f in files) f.name],
+              total: total,
+            ),
+          );
+        }
       case TransferProgress(:final transfer, :final bytes, :final total):
         _update(transfer, (a) {
           a

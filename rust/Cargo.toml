@@ -1,0 +1,33 @@
+[package]
+name = "linksy_bridge"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "Thin flutter_rust_bridge wrapper around linksy-core's Node for the Android app."
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+flutter_rust_bridge = "=2.13.0"
+# The protocol lives in linksy-desktop; pin the commit the app was built against.
+linksy-core = { git = "ssh://git@github.com/LinkSy-mg/linksy-desktop.git", rev = "10bb2e0c4c3c3c6fd6294fe76f5cee8b45c58563" }
+serde = "1.0.229"
+serde_json = "1.0.154"
+tokio = { version = "1.53.3", features = ["rt-multi-thread", "macros", "sync", "time", "net"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", default-features = false, features = ["registry", "std"] }
+
+[lints.rust]
+# flutter_rust_bridge's macros check this cfg.
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
+
+[target.'cfg(target_os = "android")'.dependencies]
+# Core logs to logcat (tag "linksy").
+paranoid-android = "0.2.2"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
+opt-level = 3

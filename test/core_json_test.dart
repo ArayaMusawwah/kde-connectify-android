@@ -1,0 +1,91 @@
+import 'dart:convert';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:linksy/core/core_json.dart';
+import 'package:linksy/core/models.dart';
+import 'package:linksy/core/rust_node.dart';
+
+void main() {
+  final id = 'ebb09ce2${'a' * 56}';
+  final device = {
+    'id': id,
+    'name': 'Studio Desktop',
+    'kind': 'desktop',
+    'os': 'linux',
+  };
+  LinksyEvent? parse(Map<String, Object?> j) =>
+      eventFromJson(jsonDecode(jsonEncode(j)) as Json);
+
+  test('reads devices as the core serializes them', () {
+    final v = deviceViewFromJson({
+      'device': device,
+      'trusted': true,
+      'connected': false,
+      'nearby': true,
+    });
+    expect(v.device.id, id);
+    expect(v.device.kind, DeviceKind.desktop);
+    expect(v.presence, Presence.nearby);
+  });
+
+  test('reads pairing and transfer events', () {
+    final pairing = parse({
+      'type': 'pairing_request',
+      'request': '0b3f-uuid',
+      'device': device,
+      'code': '147331',
+      'incoming': true,
+    });
+    expect(pairing, isA<PairingRequest>());
+    expect((pairing! as PairingRequest).code, '147331');
+
+    final started = parse({
+      'type': 'transfer_started',
+      'transfer': 't1',
+      'peer': device,
+      'direction': 'incoming',
+      'files': [
+        {'path': 'Photos/a.jpg', 'size': 123},
+      ],
+      'total': 123,
+    })! as TransferStarted;
+    expect(started.incoming, isTrue);
+    expect(started.peer?.name, 'Studio Desktop');
+    expect(started.files.single.name, 'a.jpg');
+
+    final connected = parse({'type': 'connected', 'device': device});
+    expect((connected! as Connected).id, id);
+  });
+
+  test('settings round-trip in the core\'s field names', () {
+    final s = settingsFromJson({
+      'name': 'Pixel 9',
+      'download_dir': '/sdcard/Received',
+      'stay_connected': false,
+      'auto_accept': true,
+    });
+    expect(s.autoAccept, isTrue);
+    expect(settingsToJson(s)['download_dir'], '/sdcard/Received');
+  });
+
+  test('ignores event types it does not know', () {
+    expect(parse({'type': 'session_ended', 'session': 'x'}), isNull);
+    expect(parse({'type': 'from_the_future'}), isNull);
+  });
+
+  test('core errors read as sentences naming the device', () {
+    expect(
+      describeCoreError('unreachable', 'Studio Desktop'),
+      "Studio Desktop isn't reachable. Check that it's on and on this network.",
+    );
+    expect(describeCoreError('declined', 'ThinkPad'), 'ThinkPad declined.');
+    expect(
+      describeCoreError("invalid:that's this device's own code", 'X'),
+      "that's this device's own code",
+    );
+    expect(
+      describeCoreError('other:connection lost: timed out', 'X'),
+      'Something went wrong: connection lost: timed out',
+    );
+  });
+}

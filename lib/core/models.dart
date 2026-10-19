@@ -186,8 +186,22 @@ class TransferRequest extends LinksyEvent {
 }
 
 class TransferStarted extends LinksyEvent {
-  const TransferStarted(this.transfer);
+  const TransferStarted(
+    this.transfer, {
+    this.peer,
+    this.incoming = false,
+    this.files = const [],
+    this.total = 0,
+  });
+
   final String transfer;
+
+  /// Who it's with, so a transfer the app didn't start (auto-accepted
+  /// incoming files) still lands in that device's timeline.
+  final DeviceInfo? peer;
+  final bool incoming;
+  final List<OfferedFile> files;
+  final int total;
 }
 
 class TransferProgress extends LinksyEvent {

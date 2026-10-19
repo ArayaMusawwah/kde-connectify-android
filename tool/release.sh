@@ -25,6 +25,7 @@ flutter analyze
 flutter test
 
 echo "== $TAG: building"
+tool/build_rust.sh
 OUT=build/app/outputs/flutter-apk
 DIST="dist/$TAG"; rm -rf "$DIST"; mkdir -p "$DIST"
 flutter build apk --release --obfuscate --split-debug-info=build/symbols
