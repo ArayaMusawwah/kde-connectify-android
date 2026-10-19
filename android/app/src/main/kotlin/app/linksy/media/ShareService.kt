@@ -34,8 +34,13 @@ class ShareService : Service() {
     private fun start(intent: Intent, session: String) {
         val kind = intent.getStringExtra(EXTRA_KIND) ?: return
         val peer = intent.getStringExtra(EXTRA_PEER) ?: "Your computer"
-        val screen = kind == "screen"
-        val text = if (screen) "Sharing your screen with $peer" else "$peer is using your camera"
+        // `control` is a screen share whose viewer also sends input.
+        val screen = kind == "screen" || kind == "control"
+        val text = when (kind) {
+            "control" -> "$peer is controlling your screen"
+            "screen" -> "Sharing your screen with $peer"
+            else -> "$peer is using your camera"
+        }
         // Android 14: foreground with the right type before touching the
         // projection or the camera.
         val type = if (screen) ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION else ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA
@@ -48,7 +53,18 @@ class ShareService : Service() {
                 val data = consents.remove(session) ?: error("no screen capture consent")
                 val manager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
                 val projection = manager.getMediaProjection(data.first, data.second) ?: error("screen capture refused")
-                ScreenShare(this, projection, session, onEnded)
+                val share = ScreenShare(this, projection, session, onEnded)
+                if (kind == "control") {
+                    val input = ControlInput(this, session)
+                    object : Share {
+                        override fun stop() {
+                            input.stop()
+                            share.stop()
+                        }
+                    }
+                } else {
+                    share
+                }
             } else {
                 CameraShare(this, session, onEnded)
             }

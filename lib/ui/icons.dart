@@ -47,6 +47,8 @@ abstract final class Ph {
   static const x = IconData(0xe4f6, fontFamily: 'PhosphorRegular');
   static const screencast = IconData(0xe404, fontFamily: 'PhosphorRegular');
   static const videoCamera = IconData(0xe4da, fontFamily: 'PhosphorRegular');
+  static const monitor = IconData(0xe32e, fontFamily: 'PhosphorRegular');
+  static const cursorClick = IconData(0xe7c8, fontFamily: 'PhosphorRegular');
 }
 
 abstract final class PhBold {

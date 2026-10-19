@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/demo_node.dart';
 import '../../core/models.dart';
@@ -92,6 +93,8 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SectionLabel('Remote control'),
+                  const _Group(children: [_RemoteControl()]),
                   if (demo != null) ...[
                     const SectionLabel('Demo'),
                     _Group(
@@ -330,4 +333,53 @@ class _Row extends StatelessWidget {
     );
     return onTap == null ? row : Pressable(onTap: onTap, child: row);
   }
+}
+
+/// Whether a computer may tap and type on this phone while it watches the
+/// screen: Android's Accessibility switch for Linksy, read again on return.
+class _RemoteControl extends StatefulWidget {
+  const _RemoteControl();
+
+  @override
+  State<_RemoteControl> createState() => _RemoteControlState();
+}
+
+class _RemoteControlState extends State<_RemoteControl>
+    with WidgetsBindingObserver {
+  bool? _on;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _read();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _read();
+  }
+
+  Future<void> _read() async {
+    final on = await LinksyPlatform.controlEnabled();
+    if (mounted) setState(() => _on = on);
+  }
+
+  @override
+  Widget build(BuildContext context) => _Row(
+    icon: Ph.cursorClick,
+    title: _on == true ? 'On' : 'Off',
+    caption: _on == true
+        ? 'Computers you allow can tap, swipe and type on this phone while '
+              'they watch its screen.'
+        : 'Let computers you allow tap, swipe and type on this phone. Turn on '
+              '“Linksy remote control” in Accessibility.',
+    onTap: LinksyPlatform.openAccessibilitySettings,
+  );
 }

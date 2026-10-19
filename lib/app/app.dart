@@ -6,6 +6,7 @@ import '../core/invite.dart';
 import '../core/models.dart';
 import '../features/devices/home_screen.dart';
 import '../features/pairing/pairing_flows.dart';
+import '../features/sharing/display_screen.dart';
 import '../features/sharing/sharing.dart';
 import '../features/transfer/incoming_sheet.dart';
 import '../ui/sig.dart';
@@ -92,6 +93,28 @@ class _LinksyAppState extends State<LinksyApp> {
         );
       case Paired(:final device):
         _say('Paired with ${device.name}');
+      case ControlUnavailable(:final from):
+        _messenger.currentState
+          ?..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              duration: const Duration(seconds: 8),
+              // Would stay forever while an accessibility service is on.
+              persist: false,
+              content: Text(
+                '${from.name} asked to control this phone. Turn on Linksy '
+                'remote control in Accessibility first.',
+              ),
+              action: SnackBarAction(
+                label: 'Turn on',
+                onPressed: LinksyPlatform.openAccessibilitySettings,
+              ),
+            ),
+          );
+      case SessionStarted(kind: SessionKind.display):
+        _navigator.currentState?.push(
+          MaterialPageRoute<void>(builder: (_) => DisplayScreen(session: e)),
+        );
       case SessionRequest():
         showDialog<void>(
           context: context,

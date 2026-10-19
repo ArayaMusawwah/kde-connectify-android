@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="control_service_label">Linksy remote control</string>
+    <string name="control_service_description">Lets a computer you paired with Linksy tap, swipe and type on this phone, only while you share your screen with it and allow it. Linksy reads nothing on your screen for itself.</string>
+</resources>

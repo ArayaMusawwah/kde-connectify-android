@@ -16,6 +16,8 @@ IconData activityIcon(Activity a) => switch (a.kind) {
   ActivityKind.ping => Ph.bellRinging,
   ActivityKind.screen => Ph.screencast,
   ActivityKind.camera => Ph.videoCamera,
+  ActivityKind.control => Ph.cursorClick,
+  ActivityKind.display => Ph.monitor,
 };
 
 /// File name, "N items", quoted clipboard text or the ping title.
@@ -27,6 +29,8 @@ String activityTitle(Activity a) => switch (a.kind) {
   ActivityKind.ping => a.text ?? 'Ping',
   ActivityKind.screen => 'Your screen',
   ActivityKind.camera => 'Your camera',
+  ActivityKind.control => 'Your screen',
+  ActivityKind.display => 'Second display',
 };
 
 /// "Received · 2.1 MB", "Declined".
@@ -37,6 +41,12 @@ String activityDetail(Activity a) {
   }
   if (a.kind == ActivityKind.camera) {
     return live ? 'In use as a webcam' : 'Used as a webcam';
+  }
+  if (a.kind == ActivityKind.control) {
+    return live ? 'Being controlled now' : 'Watched and controlled';
+  }
+  if (a.kind == ActivityKind.display) {
+    return live ? 'In use now' : 'This phone was its second display';
   }
   final verb = switch (a.status) {
     ActivityStatus.declined => 'Declined',
@@ -188,10 +198,13 @@ class TimelineEntry extends StatelessWidget {
     );
 
     if (a.isLive && _isSession(a)) {
+      final c = LinksyScope.read(context);
       return button(
         Ph.x,
-        'Stop sharing',
-        () => LinksyScope.read(context).stopSharing(a.id),
+        'Stop',
+        () => a.kind == ActivityKind.display
+            ? c.stopDisplay(a.id)
+            : c.stopSharing(a.id),
       );
     }
     if (a.isLive && (!a.incoming || a.status == ActivityStatus.active)) {
@@ -216,8 +229,12 @@ class TimelineEntry extends StatelessWidget {
     return null;
   }
 
-  static bool _isSession(Activity a) =>
-      a.kind == ActivityKind.screen || a.kind == ActivityKind.camera;
+  static bool _isSession(Activity a) => const [
+    ActivityKind.screen,
+    ActivityKind.camera,
+    ActivityKind.control,
+    ActivityKind.display,
+  ].contains(a.kind);
 
   static Future<void> _open(BuildContext context, Activity a) async {
     if (a.saved.length == 1) return _openFile(context, a.saved.single);

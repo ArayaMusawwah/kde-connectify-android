@@ -86,6 +86,12 @@ enum ActivityKind {
 
   /// A device used this phone's camera as a webcam.
   camera,
+
+  /// A device watched and controlled this phone's screen.
+  control,
+
+  /// This phone was a device's second display.
+  display,
 }
 
 enum ActivityStatus { waiting, active, done, declined, failed }

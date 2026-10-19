@@ -13,8 +13,9 @@ linksy-desktop. Read it before changing anything that talks to other devices.
 The app runs on **linksy-core itself** (Rust, from linksy-desktop) through
 flutter_rust_bridge, so it speaks the desktop's exact protocol. Tested against a node on
 the same network: pairing by invite link and by 6-digit code, files both ways (resume
-and BLAKE3 checks are the core's), clipboard and pings both ways, and screen and camera
-sharing (streams checked for profile, SPS/PPS before keyframes, size and frame rate).
+and BLAKE3 checks are the core's), clipboard and pings both ways, and screen, camera,
+remote control and second-display sessions (streams checked for profile, SPS/PPS before
+keyframes, size, frame rate and rotation; input checked both ways).
 
 | Done | To do |
 |---|---|
@@ -24,8 +25,10 @@ sharing (streams checked for profile, SPS/PPS before keyframes, size and frame r
 | Pairing: in-app QR scanner, `linksy://pair` links from any camera app, by address, 6-digit code | Send from `content://` URIs without copying (needs a core API, docs/protocol.md §7) |
 | Incoming files prompt, live progress / speed / time left, cancel, open received files | Save received files into MediaStore Downloads (now: app folder, `Android/data/app.linksy/files/Received`) |
 | Settings: name, auto-accept, stay connected | NsdManager discovery fallback for phones that filter multicast |
-| History kept on the phone (500 entries, clipboard text never on disk) | Remote control (`control`) and second display (`display`) sessions: declined for now |
-| Sharing this phone's screen ("View Screen" on the desktop) and camera ("Use as Webcam"), in a foreground service with a Stop notification | Watching the desktop's screen on the phone; front/back camera switch |
+| History kept on the phone (500 entries, clipboard text never on disk) | Watching the desktop's screen on the phone; front/back camera switch |
+| Sharing this phone's screen ("View Screen", exact shape, follows rotation) and camera ("Use as Webcam"), in a foreground service with a Stop notification | Second display at the phone's own size (the desktop sends 1920×1080 for now) |
+| Remote control (`control`) through an accessibility service the user turns on once; declined as unsupported until then | |
+| Second display (`display`): the desktop's virtual monitor full screen in landscape, touch as mouse, two-finger scroll | |
 | Signal design, light and dark, edge-to-edge, predictive back, reduced motion respected | |
 
 `flutter run --dart-define=LINKSY_DEMO=true` runs on `DemoNode` (made-up devices) for UI
@@ -72,11 +75,11 @@ Android only for now (application id `app.linksy`). iOS comes later.
 
 Linksy has its own look, "Signal", rather than stock Material:
 
-- **Only the brand's colors.** Blue `#2563FF` is the sender, cyan `#22C3E6` the
-  receiver (from the mark): outgoing things are blue, incoming things cyan. Heroes use
-  the app icon's tile gradient (`#3B78FF` → `#1A45C8`, deep `#1438B8` in dark mode) with
-  the mark in white and light cyan `#9FE6F5`. Devices are blue, deep or cyan. Red only
-  for failed or declined.
+- **Flat, and only the brand's colors.** No gradients, shadows or glows. Blue
+  `#2563FF` is the sender, cyan `#22C3E6` the receiver (from the mark): outgoing things
+  are blue, incoming things cyan. Device headers are solid blue (deep `#1438B8` in dark
+  mode) with the mark in white and light cyan `#9FE6F5`. Devices are flat blue, deep or
+  cyan. Red only for failed or declined.
 - **The real logo.** `assets/brand/` holds the mark and the desktop app icon with inline
   colors (flutter_svg ignores the `<style>` classes in linksy-desktop's SVGs). The
   launcher icon is rendered from the same design by `tool/make_icons.sh`.
@@ -85,7 +88,8 @@ Linksy has its own look, "Signal", rather than stock Material:
 - **Icons.** Phosphor (MIT), vendored as fonts in `assets/fonts/phosphor/` with the
   icons in use declared in `lib/ui/icons.dart` (the `phosphor_flutter` package doesn't
   build on current Flutter).
-- **Shapes.** Solid cards with soft shadows (no borders), pill buttons, pressables that shrink instead of rippling.
+- **Shapes.** Solid cards (no borders, no shadows), pill buttons, pressables that shrink
+  instead of rippling.
 - **Home stays simple.** A plain header (logo, name, settings) and the device list. No
   decorative hero.
 
@@ -107,8 +111,16 @@ self-signed certificates, the TLS exporter behind the pairing code). Instead:
 - Screen and camera sharing (`android/…/media/`): `ShareService` (foreground, types
   `mediaProjection|camera`) feeds MediaProjection or Camera2 into a hardware H.264
   encoder (Constrained Baseline, Annex-B, keyframe every 2 s, SPS/PPS before each,
-  screen ≤ 1920×1080 at ≤ 30 fps, camera 1280×720 at 30 fps). Encoded video goes into
-  the session's QUIC stream through JNI (`rust/src/sessions.rs`), not through Dart.
+  screen at its exact shape within 1920×1080 at ≤ 30 fps, restarted on rotation; camera
+  1280×720 at 30 fps). Video and input cross through JNI (`rust/src/sessions.rs`, one
+  task per session owning its streams), not through Dart.
+- Remote control: `ControlService` (an accessibility service the user enables once)
+  plays `control` input with `ControlInput`: left button + pointer moves = one stroke
+  (tap or drag), wheel = swipe, Escape/right click = Back, Home/Super = Home, text into
+  the focused field. Off: requests are declined with `decline_unsupported`.
+- Second display: `DisplayReceiver` decodes the desktop's stream into a Flutter texture
+  (`TextureRegistry.SurfaceProducer`); `DisplayScreen` sends touches back as framed
+  `pointer`/`button`/`scroll` messages.
 
 Build the native libraries before `flutter run` or a release (release.sh does it):
 

@@ -300,6 +300,14 @@ class SessionStarted extends LinksyEvent {
   final bool sharing;
 }
 
+/// App-side: [from] asked to control this phone, but remote control isn't
+/// switched on (Settings → Accessibility), so the request was declined as
+/// unsupported.
+class ControlUnavailable extends LinksyEvent {
+  const ControlUnavailable(this.from);
+  final DeviceInfo from;
+}
+
 class SessionEnded extends LinksyEvent {
   const SessionEnded(this.session);
   final String session;

@@ -17,7 +17,32 @@ class SessionRequestDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     final name = request.from.name;
-    final screen = request.kind == SessionKind.screen;
+    final (icon, title, detail) = switch (request.kind) {
+      SessionKind.screen => (
+        Ph.screencast,
+        '$name wants to see your screen',
+        'Everything on this phone’s screen shows on $name until you stop. '
+            'Android asks you to confirm next.',
+      ),
+      SessionKind.control => (
+        Ph.cursorClick,
+        '$name wants to control your screen',
+        '$name sees this phone’s screen and can tap, swipe and type on it '
+            'until you stop. Android asks you to confirm next.',
+      ),
+      SessionKind.camera => (
+        Ph.videoCamera,
+        '$name wants to use your camera',
+        '$name gets this phone’s back camera as a webcam until you stop. '
+            'Hold the phone sideways for a wide picture.',
+      ),
+      SessionKind.display => (
+        Ph.monitor,
+        '$name wants to use this screen as a second display',
+        'This phone shows a screen of $name full screen. Touch it to click '
+            'and drag; scroll with two fingers. Go back to stop.',
+      ),
+    };
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 28, 24, 14),
@@ -26,27 +51,17 @@ class SessionRequestDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Center(
-              child: IconCircle(
-                icon: screen ? Ph.screencast : Ph.videoCamera,
-                color: Sig.blue,
-                size: 64,
-              ),
+              child: IconCircle(icon: icon, color: Sig.blue, size: 64),
             ),
             const SizedBox(height: 18),
             Text(
-              screen
-                  ? '$name wants to see your screen'
-                  : '$name wants to use your camera',
+              title,
               textAlign: TextAlign.center,
               style: sora(21, color: s.ink, height: 1.2),
             ),
             const SizedBox(height: 8),
             Text(
-              screen
-                  ? 'Everything on this phone’s screen shows on $name until '
-                        'you stop. Android asks you to confirm next.'
-                  : '$name gets this phone’s back camera as a webcam until you '
-                        'stop. Hold the phone sideways for a wide picture.',
+              detail,
               textAlign: TextAlign.center,
               style: TextStyle(color: s.muted, height: 1.4),
             ),
@@ -112,8 +127,15 @@ class _Banner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screen = share.kind == SessionKind.screen;
     final name = share.peer.name;
+    final (icon, text) = switch (share.kind) {
+      SessionKind.control => (
+        Ph.cursorClick,
+        '$name is controlling your screen',
+      ),
+      SessionKind.camera => (Ph.videoCamera, '$name is using your camera'),
+      _ => (Ph.screencast, 'Sharing your screen with $name'),
+    };
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
       decoration: BoxDecoration(
@@ -124,17 +146,11 @@ class _Banner extends StatelessWidget {
         children: [
           const PulseDot(color: Sig.cyanLight, size: 8),
           const SizedBox(width: 8),
-          Icon(
-            screen ? Ph.screencast : Ph.videoCamera,
-            color: Colors.white,
-            size: 22,
-          ),
+          Icon(icon, color: Colors.white, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              screen
-                  ? 'Sharing your screen with $name'
-                  : '$name is using your camera',
+              text,
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,

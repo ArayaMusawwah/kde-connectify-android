@@ -37,6 +37,10 @@ abstract interface class LinksyNode {
 
   Future<void> forget(String id);
 
+  /// Turns down a session this phone can't do at all, so the other device
+  /// says "can't" instead of "didn't allow it".
+  Future<void> declineUnsupported(String request);
+
   /// Stops sharing into a media session from this side.
   Future<void> endSession(String session);
 

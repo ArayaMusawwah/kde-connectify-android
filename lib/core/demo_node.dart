@@ -308,6 +308,9 @@ class DemoNode implements LinksyNode {
   }
 
   @override
+  Future<void> declineUnsupported(String request) async {}
+
+  @override
   Future<void> endSession(String session) async => _emit(SessionEnded(session));
 
   @override

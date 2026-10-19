@@ -11,7 +11,11 @@ import android.provider.Settings
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import app.linksy.media.ControlService
+import app.linksy.media.DisplayReceiver
+import app.linksy.media.NativeSession
 import app.linksy.media.ShareService
+import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
     private var channel: MethodChannel? = null
@@ -24,8 +28,15 @@ class MainActivity : FlutterActivity() {
     private var pendingCapture: Pair<String, MethodChannel.Result>? = null
     private var pendingCamera: MethodChannel.Result? = null
 
+    private var engine: FlutterEngine? = null
+    /// Second-display sessions on screen, by session.
+    private val displays = mutableMapOf<String, DisplayReceiver>()
+    /// Display input goes out in order, off the UI thread (writes can wait).
+    private val inputWriter = Executors.newSingleThreadExecutor()
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        engine = flutterEngine
         pendingLink = linkFrom(intent)
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "app.linksy/platform").apply {
             setMethodCallHandler { call, result ->
@@ -44,6 +55,22 @@ class MainActivity : FlutterActivity() {
                             call.argument<String>("kind")!!,
                             call.argument<String>("peer") ?: "Your computer",
                         )
+                        result.success(null)
+                    }
+                    "controlEnabled" -> result.success(ControlService.enabled(this@MainActivity))
+                    "openAccessibilitySettings" -> {
+                        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                        result.success(null)
+                    }
+                    "startDisplay" -> result.success(startDisplay(call.argument<String>("session")!!))
+                    "stopDisplay" -> {
+                        displays.remove(call.argument<String>("session")!!)?.stop()
+                        result.success(null)
+                    }
+                    "displayInput" -> {
+                        val session = call.argument<String>("session")!!
+                        val frames = call.argument<ByteArray>("frames")!!
+                        inputWriter.execute { NativeSession.write(session, frames) }
                         result.success(null)
                     }
                     "stopShare" -> {
@@ -77,6 +104,27 @@ class MainActivity : FlutterActivity() {
         multicastLock?.takeIf { it.isHeld }?.release()
         multicastLock = null
         super.onStop()
+    }
+
+    /// Decodes a second-display session into a new Flutter texture; returns
+    /// its id for Dart's `Texture` widget.
+    private fun startDisplay(session: String): Long? {
+        val producer = engine?.renderer?.createSurfaceProducer() ?: return null
+        displays[session] = DisplayReceiver(
+            session, producer,
+            onSize = { w, h ->
+                runOnUiThread { channel?.invokeMethod("displaySize", mapOf("session" to session, "width" to w, "height" to h)) }
+            },
+            onEnded = { runOnUiThread { channel?.invokeMethod("displayEnded", session) } },
+        )
+        return producer.id()
+    }
+
+    override fun onDestroy() {
+        displays.values.forEach { it.stop() }
+        displays.clear()
+        inputWriter.shutdown()
+        super.onDestroy()
     }
 
     /// Android's own "start recording or casting?" prompt. The consent is kept

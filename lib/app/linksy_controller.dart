@@ -29,6 +29,9 @@ class LinksyController extends ChangeNotifier {
   /// What this phone is sharing right now (its screen or camera), by session.
   final Map<String, SessionStarted> sharing = {};
 
+  /// Second-display sessions showing on this phone, by session.
+  final Map<String, SessionStarted> displays = {};
+
   /// Pairing and transfer requests, failures, and things received.
   Stream<LinksyEvent> get prompts => _prompts.stream;
 
@@ -158,46 +161,78 @@ class LinksyController extends ChangeNotifier {
       case NotificationReceived(:final from, :final title):
         _addLocal(from.id, ActivityKind.ping, incoming: true, text: title);
       case SessionStarted(:final session, :final peer, :final kind)
-          when e.sharing &&
-              (kind == SessionKind.screen || kind == SessionKind.camera):
+          when e.sharing && kind != SessionKind.display:
         sharing[session] = e;
         LinksyPlatform.startShare(session, kind.name, peer.name);
-        _add(
-          Activity(
-            id: session,
-            deviceId: peer.id,
-            kind: kind == SessionKind.screen
-                ? ActivityKind.screen
-                : ActivityKind.camera,
-            incoming: false,
-            time: DateTime.now(),
-            status: ActivityStatus.active,
-          ),
-        );
+        _addSession(e);
+      case SessionStarted(:final session, kind: SessionKind.display)
+          when !e.sharing:
+        displays[session] = e;
+        _addSession(e);
       case SessionEnded(:final session):
         if (sharing.remove(session) != null) {
           LinksyPlatform.stopShare(session);
           _update(session, (a) => a.status = ActivityStatus.done);
         }
+        if (displays.remove(session) != null) {
+          _update(session, (a) => a.status = ActivityStatus.done);
+        }
+      case SessionRequest(
+        :final from,
+        :final request,
+        kind: SessionKind.control,
+      ):
+        // Answered here when remote control isn't switched on: the desktop
+        // then says this phone can't be controlled yet.
+        LinksyPlatform.controlEnabled().then((on) {
+          if (on) {
+            _prompts.add(e);
+          } else {
+            node.declineUnsupported(request);
+            _prompts.add(ControlUnavailable(from));
+          }
+        });
+        return;
       case PairingRequest() ||
           PairingFailed() ||
           SessionRequest() ||
-          SessionStarted():
+          SessionStarted() ||
+          ControlUnavailable():
         break;
     }
     switch (e) {
       case PairingRequest() ||
           PairingFailed() ||
           SessionRequest() ||
+          ControlUnavailable() ||
           Paired() ||
           TransferRequest() ||
           NotificationReceived() ||
           ClipboardReceived():
         _prompts.add(e);
+      // The full-screen page for a second display.
+      case SessionStarted(kind: SessionKind.display) when !e.sharing:
+        _prompts.add(e);
       default:
         break;
     }
   }
+
+  void _addSession(SessionStarted e) => _add(
+    Activity(
+      id: e.session,
+      deviceId: e.peer.id,
+      kind: switch (e.kind) {
+        SessionKind.screen => ActivityKind.screen,
+        SessionKind.camera => ActivityKind.camera,
+        SessionKind.control => ActivityKind.control,
+        SessionKind.display => ActivityKind.display,
+      },
+      incoming: e.kind == SessionKind.display,
+      time: DateTime.now(),
+      status: ActivityStatus.active,
+    ),
+  );
 
   double _speed(String transfer, int bytes, double previous) {
     final now = DateTime.now();
@@ -310,8 +345,9 @@ class LinksyController extends ChangeNotifier {
     return error;
   }
 
-  /// Answers "X wants to see your screen / use your camera". Allowing also
-  /// needs Android's own consent: screen capture, or the camera permission.
+  /// Answers "X wants to see your screen / use your camera / …". Allowing
+  /// also needs Android's own consent: screen capture (screen, control) or
+  /// the camera permission. A second display needs nothing more.
   Future<String?> respondSession(
     SessionRequest request, {
     required bool accept,
@@ -319,17 +355,30 @@ class LinksyController extends ChangeNotifier {
     var allowed = accept;
     String? error;
     if (accept) {
-      allowed = request.kind == SessionKind.screen
-          ? await LinksyPlatform.requestScreenCapture(request.request)
-          : await LinksyPlatform.requestCamera();
-      if (!allowed) {
-        error = request.kind == SessionKind.screen
-            ? 'Screen sharing needs Android’s permission to capture the screen.'
-            : 'Linksy needs the camera permission to work as a webcam.';
+      switch (request.kind) {
+        case SessionKind.screen || SessionKind.control:
+          allowed = await LinksyPlatform.requestScreenCapture(request.request);
+          if (!allowed) {
+            error =
+                'Sharing the screen needs Android’s permission to capture it.';
+          }
+        case SessionKind.camera:
+          allowed = await LinksyPlatform.requestCamera();
+          if (!allowed) {
+            error = 'Linksy needs the camera permission to work as a webcam.';
+          }
+        case SessionKind.display:
+          break;
       }
     }
     await node.respond(request.request, accept: allowed);
     return error;
+  }
+
+  /// Leaves a second display (back from its full-screen page).
+  Future<void> stopDisplay(String session) async {
+    await LinksyPlatform.stopDisplay(session);
+    await node.endSession(session);
   }
 
   /// The Stop button: ends sharing into [session].
