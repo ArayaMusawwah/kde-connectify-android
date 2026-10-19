@@ -65,8 +65,8 @@ class _PressableState extends State<Pressable> {
   }
 }
 
-/// A solid surface: white with a soft blue-tinted shadow in light, a step up
-/// from the page in dark. No borders.
+/// A flat surface: white on the grey page in light, a step up from the page
+/// in dark. No borders, no shadows.
 class SigCard extends StatelessWidget {
   const SigCard({
     super.key,
@@ -91,7 +91,6 @@ class SigCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color ?? s.card,
         borderRadius: BorderRadius.circular(radius),
-        boxShadow: color == null ? cardShadow(s) : null,
       ),
       child: child,
     );
@@ -129,15 +128,8 @@ class SigButton extends StatelessWidget {
     };
     final decoration = switch (kind) {
       SigButtonKind.primary => BoxDecoration(
-        gradient: Sig.sendGradient,
+        color: Sig.blue,
         borderRadius: BorderRadius.circular(99),
-        boxShadow: [
-          BoxShadow(
-            color: Sig.blue.withValues(alpha: 0.35),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       SigButtonKind.danger => BoxDecoration(
         color: s.red,
@@ -220,7 +212,6 @@ class RoundButton extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: onDark ? Colors.white.withValues(alpha: 0.16) : s.card,
-            boxShadow: onDark ? null : cardShadow(s),
           ),
           child: Icon(icon, size: 20, color: onDark ? Colors.white : s.ink),
         ),
@@ -261,10 +252,6 @@ class SectionLabel extends StatelessWidget {
   }
 }
 
-List<BoxShadow> cardShadow(Sig s) => [
-  BoxShadow(color: s.shadow, blurRadius: 18, offset: const Offset(0, 6)),
-];
-
 /// Connected is the receiver's cyan, nearby the sender's blue, away grey.
 /// On the blue hero, nearby turns white so it still shows.
 Color presenceColor(Sig s, Presence p, {bool onBlue = false}) => switch (p) {
@@ -288,14 +275,12 @@ class Orb extends StatelessWidget {
     required this.device,
     this.size = 52,
     this.presence,
-    this.glow = false,
     this.onBlue = false,
   });
 
   final DeviceInfo device;
   final double size;
   final Presence? presence;
-  final bool glow;
 
   /// Sits on a blue hero: a white edge keeps it apart from the background.
   final bool onBlue;
@@ -303,7 +288,7 @@ class Orb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
-    final colors = devicePalette(device.id);
+    final (fill, ink) = devicePalette(device.id);
     final away = presence == Presence.notNearby;
     final ring = presence == null || away
         ? null
@@ -316,22 +301,9 @@ class Orb extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: colors,
-        ),
+        color: fill,
         border: onBlue
             ? Border.all(color: Colors.white.withValues(alpha: 0.85), width: 2)
-            : null,
-        boxShadow: glow && !away
-            ? [
-                BoxShadow(
-                  color: colors.first.withValues(alpha: 0.5),
-                  blurRadius: size * 0.5,
-                  spreadRadius: -size * 0.05,
-                ),
-              ]
             : null,
       ),
       child: Text(
@@ -339,7 +311,7 @@ class Orb extends StatelessWidget {
         style: sora(
           size * 0.34,
           weight: FontWeight.w700,
-          color: Colors.white,
+          color: ink,
           spacing: 0.5,
         ),
       ),

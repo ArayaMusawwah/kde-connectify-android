@@ -210,7 +210,7 @@ class _ThisPhone extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          gradient: s.hero,
+          color: s.hero,
           borderRadius: BorderRadius.circular(Radii.xl),
         ),
         child: Row(

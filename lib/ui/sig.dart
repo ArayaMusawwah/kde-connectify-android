@@ -15,7 +15,6 @@ class Sig extends ThemeExtension<Sig> {
     required this.muted,
     required this.faint,
     required this.red,
-    required this.shadow,
     required this.heroTop,
     required this.heroBottom,
   });
@@ -46,9 +45,6 @@ class Sig extends ThemeExtension<Sig> {
   final Color faint;
   final Color red;
 
-  /// Under solid cards; no borders.
-  final Color shadow;
-
   /// The blue panel behind device headers, as on the app icon.
   final Color heroTop;
   final Color heroBottom;
@@ -62,9 +58,8 @@ class Sig extends ThemeExtension<Sig> {
     muted: Color(0xFF5A6378),
     faint: Color(0xFF98A1B3),
     red: Color(0xFFE5384F),
-    shadow: Color(0x141438B8),
-    heroTop: tileTop,
-    heroBottom: tileBottom,
+    heroTop: blue,
+    heroBottom: blue,
   );
 
   static const dark = Sig(
@@ -76,24 +71,14 @@ class Sig extends ThemeExtension<Sig> {
     muted: Color(0xFF94A0C0),
     faint: Color(0xFF56628A),
     red: Color(0xFFFF5C72),
-    shadow: Color(0x00000000),
     heroTop: deep,
-    heroBottom: tileShade,
+    heroBottom: deep,
   );
 
   static Sig of(BuildContext context) => Theme.of(context).extension<Sig>()!;
 
-  LinearGradient get hero => LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [heroTop, heroBottom],
-  );
-
-  static const sendGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [tileTop, tileBottom],
-  );
+  /// The flat blue of device headers: Signal blue, deep in dark mode.
+  Color get hero => heroTop;
 
   @override
   Sig copyWith() => this;
@@ -111,7 +96,6 @@ class Sig extends ThemeExtension<Sig> {
       muted: l(muted, other.muted),
       faint: l(faint, other.faint),
       red: l(red, other.red),
-      shadow: l(shadow, other.shadow),
       heroTop: l(heroTop, other.heroTop),
       heroBottom: l(heroBottom, other.heroBottom),
     );
@@ -209,6 +193,7 @@ ThemeData buildTheme(Brightness brightness) {
       },
     ),
     dialogTheme: DialogThemeData(
+      elevation: 0,
       backgroundColor: s.card,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
@@ -216,6 +201,8 @@ ThemeData buildTheme(Brightness brightness) {
       ),
     ),
     bottomSheetTheme: BottomSheetThemeData(
+      elevation: 0,
+      modalElevation: 0,
       backgroundColor: s.card,
       surfaceTintColor: Colors.transparent,
       modalBarrierColor: Colors.black.withValues(alpha: 0.45),
@@ -226,6 +213,7 @@ ThemeData buildTheme(Brightness brightness) {
       ),
     ),
     snackBarTheme: SnackBarThemeData(
+      elevation: 0,
       behavior: SnackBarBehavior.floating,
       backgroundColor: brightness == Brightness.light ? s.ink : s.raised,
       contentTextStyle: TextStyle(
@@ -238,6 +226,7 @@ ThemeData buildTheme(Brightness brightness) {
       ),
     ),
     popupMenuTheme: PopupMenuThemeData(
+      elevation: 0,
       color: s.card,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
@@ -290,12 +279,13 @@ SystemUiOverlayStyle overlayFor(Brightness brightness) => SystemUiOverlayStyle(
 );
 
 /// Each device's color, from its id so it survives renames, and only ever
-/// one of the brand's: blue, deep or cyan.
-List<Color> devicePalette(String id) {
+/// one of the brand's, flat: (fill, initials) as blue/white, deep/white or
+/// cyan/deep.
+(Color, Color) devicePalette(String id) {
   const palettes = [
-    [Sig.tileTop, Sig.tileBottom],
-    [Color(0xFF2B4FD6), Sig.tileShade],
-    [Color(0xFF3FD0EE), Color(0xFF1494B8)],
+    (Sig.blue, Colors.white),
+    (Sig.deep, Colors.white),
+    (Sig.cyan, Sig.deep),
   ];
   return palettes[(int.tryParse(id.substring(0, 2), radix: 16) ?? 0) % 3];
 }

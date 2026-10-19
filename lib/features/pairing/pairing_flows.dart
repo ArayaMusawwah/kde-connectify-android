@@ -119,7 +119,7 @@ class _Option extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: Sig.sendGradient,
+          color: Sig.blue,
           borderRadius: BorderRadius.circular(Radii.lg),
         ),
         child: content,
@@ -335,7 +335,7 @@ class _Handshake extends StatelessWidget {
           height: 56,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
-            gradient: Sig.sendGradient,
+            color: Sig.blue,
           ),
           child: const Icon(Ph.deviceMobile, color: Colors.white, size: 26),
         ),

@@ -231,10 +231,7 @@ class _QuickSend extends StatelessWidget {
     child: Container(
       width: 44,
       height: 44,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: Sig.sendGradient,
-      ),
+      decoration: const BoxDecoration(shape: BoxShape.circle, color: Sig.blue),
       child: const Icon(PhFill.paperPlaneTilt, color: Colors.white, size: 19),
     ),
   );

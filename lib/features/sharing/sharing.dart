@@ -117,7 +117,7 @@ class _Banner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
       decoration: BoxDecoration(
-        gradient: Sig.sendGradient,
+        color: Sig.blue,
         borderRadius: BorderRadius.circular(Radii.lg),
       ),
       child: Row(

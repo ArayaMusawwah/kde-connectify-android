@@ -108,7 +108,7 @@ class _Hero extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
-        gradient: s.hero,
+        color: s.hero,
       ),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 64),
       child: Column(
@@ -286,13 +286,6 @@ class _Actions extends StatelessWidget {
               decoration: BoxDecoration(
                 color: s.card,
                 borderRadius: BorderRadius.circular(Radii.lg),
-                boxShadow: [
-                  BoxShadow(
-                    color: Sig.deep.withValues(alpha: 0.18),
-                    blurRadius: 24,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
               ),
               child: Row(
                 children: [
@@ -314,14 +307,7 @@ class _Actions extends StatelessWidget {
                     height: 52,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: Sig.sendGradient,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Sig.blue.withValues(alpha: 0.35),
-                          blurRadius: 14,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
+                      color: Sig.blue,
                     ),
                     child: const Icon(
                       PhFill.paperPlaneTilt,
