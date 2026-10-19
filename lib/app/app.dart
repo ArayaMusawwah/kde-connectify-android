@@ -6,6 +6,7 @@ import '../core/invite.dart';
 import '../core/models.dart';
 import '../features/devices/home_screen.dart';
 import '../features/pairing/pairing_flows.dart';
+import '../features/sharing/sharing.dart';
 import '../features/transfer/incoming_sheet.dart';
 import '../ui/sig.dart';
 import 'linksy_controller.dart';
@@ -91,6 +92,12 @@ class _LinksyAppState extends State<LinksyApp> {
         );
       case Paired(:final device):
         _say('Paired with ${device.name}');
+      case SessionRequest():
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => SessionRequestDialog(request: e),
+        );
       case TransferRequest():
         showModalBottomSheet<void>(
           context: context,

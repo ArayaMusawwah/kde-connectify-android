@@ -13,7 +13,8 @@ linksy-desktop. Read it before changing anything that talks to other devices.
 The app runs on **linksy-core itself** (Rust, from linksy-desktop) through
 flutter_rust_bridge, so it speaks the desktop's exact protocol. Tested against a node on
 the same network: pairing by invite link and by 6-digit code, files both ways (resume
-and BLAKE3 checks are the core's), clipboard and pings both ways.
+and BLAKE3 checks are the core's), clipboard and pings both ways, and screen and camera
+sharing (streams checked for profile, SPS/PPS before keyframes, size and frame rate).
 
 | Done | To do |
 |---|---|
@@ -23,7 +24,8 @@ and BLAKE3 checks are the core's), clipboard and pings both ways.
 | Pairing: in-app QR scanner, `linksy://pair` links from any camera app, by address, 6-digit code | Send from `content://` URIs without copying (needs a core API, docs/protocol.md §7) |
 | Incoming files prompt, live progress / speed / time left, cancel, open received files | Save received files into MediaStore Downloads (now: app folder, `Android/data/app.linksy/files/Received`) |
 | Settings: name, auto-accept, stay connected | NsdManager discovery fallback for phones that filter multicast |
-| History kept on the phone (500 entries, clipboard text never on disk) | Screen mirroring, Sidecar, phone as webcam (§4.8); session requests are declined for now |
+| History kept on the phone (500 entries, clipboard text never on disk) | Remote control (`control`) and second display (`display`) sessions: declined for now |
+| Sharing this phone's screen ("View Screen" on the desktop) and camera ("Use as Webcam"), in a foreground service with a Stop notification | Watching the desktop's screen on the phone; front/back camera switch |
 | Signal design, light and dark, edge-to-edge, predictive back, reduced motion respected | |
 
 `flutter run --dart-define=LINKSY_DEMO=true` runs on `DemoNode` (made-up devices) for UI
@@ -100,7 +102,13 @@ self-signed certificates, the TLS exporter behind the pairing code). Instead:
   `flutter_rust_bridge_codegen generate` (committed, so Dart builds without Rust).
 - `lib/core/rust_node.dart` implements the app's `LinksyNode` on the bindings.
 - `MainActivity.kt` holds a `WifiManager.MulticastLock` from `onStart` to `onStop`,
-  gives Dart the phone's name, and forwards `linksy://pair` links.
+  gives Dart the phone's name, forwards `linksy://pair` links, and asks for screen
+  capture and camera consent.
+- Screen and camera sharing (`android/…/media/`): `ShareService` (foreground, types
+  `mediaProjection|camera`) feeds MediaProjection or Camera2 into a hardware H.264
+  encoder (Constrained Baseline, Annex-B, keyframe every 2 s, SPS/PPS before each,
+  screen ≤ 1920×1080 at ≤ 30 fps, camera 1280×720 at 30 fps). Encoded video goes into
+  the session's QUIC stream through JNI (`rust/src/sessions.rs`), not through Dart.
 
 Build the native libraries before `flutter run` or a release (release.sh does it):
 

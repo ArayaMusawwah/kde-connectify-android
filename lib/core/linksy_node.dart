@@ -37,6 +37,9 @@ abstract interface class LinksyNode {
 
   Future<void> forget(String id);
 
+  /// Stops sharing into a media session from this side.
+  Future<void> endSession(String session);
+
   Future<void> shutdown();
 }
 

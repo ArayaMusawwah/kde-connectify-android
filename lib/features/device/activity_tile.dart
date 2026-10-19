@@ -14,6 +14,8 @@ IconData activityIcon(Activity a) => switch (a.kind) {
   ActivityKind.files => Ph.file,
   ActivityKind.clipboard => Ph.clipboardText,
   ActivityKind.ping => Ph.bellRinging,
+  ActivityKind.screen => Ph.screencast,
+  ActivityKind.camera => Ph.videoCamera,
 };
 
 /// File name, "N items", quoted clipboard text or the ping title.
@@ -23,10 +25,19 @@ String activityTitle(Activity a) => switch (a.kind) {
   ActivityKind.clipboard when a.text != null => '“${a.text!.trim()}”',
   ActivityKind.clipboard => 'Clipboard text',
   ActivityKind.ping => a.text ?? 'Ping',
+  ActivityKind.screen => 'Your screen',
+  ActivityKind.camera => 'Your camera',
 };
 
 /// "Received · 2.1 MB", "Declined".
 String activityDetail(Activity a) {
+  final live = a.isLive;
+  if (a.kind == ActivityKind.screen) {
+    return live ? 'Watching now' : 'Watched';
+  }
+  if (a.kind == ActivityKind.camera) {
+    return live ? 'In use as a webcam' : 'Used as a webcam';
+  }
   final verb = switch (a.status) {
     ActivityStatus.declined => 'Declined',
     ActivityStatus.failed => a.reason ?? 'Failed',
@@ -121,7 +132,7 @@ class TimelineEntry extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 2),
-                          if (a.isLive)
+                          if (a.isLive && !_isSession(a))
                             _Live(activity: a, color: color)
                           else
                             Row(
@@ -176,6 +187,13 @@ class TimelineEntry extends StatelessWidget {
       ),
     );
 
+    if (a.isLive && _isSession(a)) {
+      return button(
+        Ph.x,
+        'Stop sharing',
+        () => LinksyScope.read(context).stopSharing(a.id),
+      );
+    }
     if (a.isLive && (!a.incoming || a.status == ActivityStatus.active)) {
       return button(
         Ph.x,
@@ -197,6 +215,9 @@ class TimelineEntry extends StatelessWidget {
     }
     return null;
   }
+
+  static bool _isSession(Activity a) =>
+      a.kind == ActivityKind.screen || a.kind == ActivityKind.camera;
 
   static Future<void> _open(BuildContext context, Activity a) async {
     if (a.saved.length == 1) return _openFile(context, a.saved.single);

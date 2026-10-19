@@ -27,6 +27,43 @@ abstract final class LinksyPlatform {
     }
   }
 
+  /// Android's own screen capture prompt, for [session]. True if allowed.
+  static Future<bool> requestScreenCapture(String session) async =>
+      await _channel.invokeMethod<bool>('requestScreenCapture', {
+        'session': session,
+      }) ??
+      false;
+
+  /// The camera permission. True if granted.
+  static Future<bool> requestCamera() async =>
+      await _channel.invokeMethod<bool>('requestCamera') ?? false;
+
+  /// Starts encoding the screen or camera into [session] (a foreground
+  /// service, so it goes on in other apps).
+  static Future<void> startShare(
+    String session,
+    String kind,
+    String peer,
+  ) async {
+    try {
+      await _channel.invokeMethod('startShare', {
+        'session': session,
+        'kind': kind,
+        'peer': peer,
+      });
+    } on MissingPluginException {
+      // No Android side (tests).
+    }
+  }
+
+  static Future<void> stopShare(String session) async {
+    try {
+      await _channel.invokeMethod('stopShare', {'session': session});
+    } on MissingPluginException {
+      // No Android side (tests).
+    }
+  }
+
   /// Links that arrive while the app is running.
   static Stream<String> get links {
     if (!_listening) {

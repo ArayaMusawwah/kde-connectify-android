@@ -15,10 +15,13 @@ class RustNode implements LinksyNode {
         .events()
         .map((raw) {
           final j = jsonDecode(raw) as Json;
-          // Screen and camera sessions aren't built on the phone yet: say no
-          // straight away instead of leaving the other device waiting.
-          if (j['type'] == 'session_request') {
+          // The phone shares its screen and camera; being controlled or used
+          // as a second display isn't built yet. Say no straight away rather
+          // than leave the other device waiting.
+          if (j['type'] == 'session_request' &&
+              !const ['screen', 'camera'].contains(j['kind'])) {
             _node.respond(request: j['request'] as String, accept: false);
+            return null;
           }
           return eventFromJson(j);
         })
@@ -125,6 +128,10 @@ class RustNode implements LinksyNode {
   @override
   Future<void> forget(String id) =>
       _guard(() async => _node.forget(id: id), name: _nameOf(id));
+
+  @override
+  Future<void> endSession(String session) async =>
+      _node.endSession(session: session);
 
   @override
   Future<void> shutdown() => _node.shutdown();

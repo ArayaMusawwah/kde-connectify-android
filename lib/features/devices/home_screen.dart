@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/activity.dart';
 import '../../app/linksy_controller.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
@@ -8,6 +9,7 @@ import '../../ui/sig.dart';
 import '../device/activity_tile.dart';
 import '../device/device_screen.dart';
 import '../pairing/pairing_flows.dart';
+import '../sharing/sharing.dart';
 import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -45,6 +47,7 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           SliverToBoxAdapter(child: _Visible(controller: c)),
+          SliverToBoxAdapter(child: SharingBanners(controller: c)),
           if (paired.isEmpty)
             const SliverToBoxAdapter(child: _GetStarted())
           else ...[
@@ -142,6 +145,10 @@ class _DeviceRow extends StatelessWidget {
     final s = Sig.of(context);
     final d = view.device;
     final last = controller.lastActivity(d.id);
+    // Only transfers have progress; a live screen or camera share shows as
+    // the banner at the top instead.
+    final transferring =
+        last != null && last.isLive && last.kind == ActivityKind.files;
     final away = view.presence == Presence.notNearby;
 
     return SigCard(
@@ -174,7 +181,7 @@ class _DeviceRow extends StatelessWidget {
                         color: away ? s.faint : presenceColor(s, view.presence),
                       ),
                     ),
-                    if (last != null && !last.isLive) ...[
+                    if (last != null && !transferring) ...[
                       Text('  ·  ', style: TextStyle(color: s.faint)),
                       Expanded(
                         child: Text(
@@ -187,7 +194,7 @@ class _DeviceRow extends StatelessWidget {
                     ],
                   ],
                 ),
-                if (last != null && last.isLive) ...[
+                if (transferring) ...[
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     color: last.incoming ? Sig.incoming : Sig.outgoing,

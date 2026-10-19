@@ -39,16 +39,18 @@ void main() {
     expect(pairing, isA<PairingRequest>());
     expect((pairing! as PairingRequest).code, '147331');
 
-    final started = parse({
-      'type': 'transfer_started',
-      'transfer': 't1',
-      'peer': device,
-      'direction': 'incoming',
-      'files': [
-        {'path': 'Photos/a.jpg', 'size': 123},
-      ],
-      'total': 123,
-    })! as TransferStarted;
+    final started =
+        parse({
+              'type': 'transfer_started',
+              'transfer': 't1',
+              'peer': device,
+              'direction': 'incoming',
+              'files': [
+                {'path': 'Photos/a.jpg', 'size': 123},
+              ],
+              'total': 123,
+            })!
+            as TransferStarted;
     expect(started.incoming, isTrue);
     expect(started.peer?.name, 'Studio Desktop');
     expect(started.files.single.name, 'a.jpg');
@@ -68,9 +70,47 @@ void main() {
     expect(settingsToJson(s)['download_dir'], '/sdcard/Received');
   });
 
-  test('ignores event types it does not know', () {
-    expect(parse({'type': 'session_ended', 'session': 'x'}), isNull);
+  test('reads media session events', () {
+    final request =
+        parse({
+              'type': 'session_request',
+              'request': 's1',
+              'from': device,
+              'kind': 'camera',
+            })!
+            as SessionRequest;
+    expect(request.kind, SessionKind.camera);
+    expect(request.from.name, 'Studio Desktop');
+
+    final started =
+        parse({
+              'type': 'session_started',
+              'session': 's1',
+              'peer': device,
+              'kind': 'screen',
+              'sharing': true,
+            })!
+            as SessionStarted;
+    expect(started.sharing, isTrue);
+    expect(started.kind, SessionKind.screen);
+
+    expect(
+      parse({'type': 'session_ended', 'session': 's1'}),
+      isA<SessionEnded>(),
+    );
+  });
+
+  test('ignores event types and session kinds it does not know', () {
     expect(parse({'type': 'from_the_future'}), isNull);
+    expect(
+      parse({
+        'type': 'session_request',
+        'request': 's2',
+        'from': device,
+        'kind': 'hologram',
+      }),
+      isNull,
+    );
   });
 
   test('core errors read as sentences naming the device', () {

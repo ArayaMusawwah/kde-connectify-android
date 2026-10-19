@@ -76,7 +76,17 @@ class Activity {
   );
 }
 
-enum ActivityKind { files, clipboard, ping }
+enum ActivityKind {
+  files,
+  clipboard,
+  ping,
+
+  /// A device watched this phone's screen.
+  screen,
+
+  /// A device used this phone's camera as a webcam.
+  camera,
+}
 
 enum ActivityStatus { waiting, active, done, declined, failed }
 

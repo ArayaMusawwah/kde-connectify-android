@@ -40,7 +40,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -625238136;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1313833958;
 
 // Section: executor
 
@@ -140,6 +140,55 @@ fn wire__crate__api__node__LinksyNode_devices_json_impl(
                 let api_that_guard = api_that_guard.unwrap();
                 let output_ok =
                     Ok::<_, ()>(crate::api::node::LinksyNode::devices_json(&*api_that_guard))?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__node__LinksyNode_end_session_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "LinksyNode_end_session",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<LinksyNode>,
+            >>::sse_decode(&mut deserializer);
+            let api_session = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_that_guard = api_that_guard.unwrap();
+                let output_ok = Ok::<_, ()>({
+                    crate::api::node::LinksyNode::end_session(&*api_that_guard, api_session);
+                })?;
                 std::result::Result::Ok(output_ok)
             })())
         },
@@ -1122,34 +1171,34 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        3 => wire__crate__api__node__LinksyNode_events_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__node__LinksyNode_notify_impl(port, ptr, rust_vec_len, data_len),
-        7 => {
+        4 => wire__crate__api__node__LinksyNode_events_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__node__LinksyNode_notify_impl(port, ptr, rust_vec_len, data_len),
+        8 => {
             wire__crate__api__node__LinksyNode_pair_address_impl(port, ptr, rust_vec_len, data_len)
         }
-        8 => wire__crate__api__node__LinksyNode_pair_device_impl(port, ptr, rust_vec_len, data_len),
-        9 => wire__crate__api__node__LinksyNode_pair_with_invite_impl(
+        9 => wire__crate__api__node__LinksyNode_pair_device_impl(port, ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__node__LinksyNode_pair_with_invite_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        12 => wire__crate__api__node__LinksyNode_send_clipboard_impl(
+        13 => wire__crate__api__node__LinksyNode_send_clipboard_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        13 => wire__crate__api__node__LinksyNode_send_files_impl(port, ptr, rust_vec_len, data_len),
-        15 => wire__crate__api__node__LinksyNode_shutdown_impl(port, ptr, rust_vec_len, data_len),
-        16 => wire__crate__api__node__LinksyNode_update_settings_impl(
+        14 => wire__crate__api__node__LinksyNode_send_files_impl(port, ptr, rust_vec_len, data_len),
+        16 => wire__crate__api__node__LinksyNode_shutdown_impl(port, ptr, rust_vec_len, data_len),
+        17 => wire__crate__api__node__LinksyNode_update_settings_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        17 => wire__crate__api__node__init_app_impl(port, ptr, rust_vec_len, data_len),
-        18 => wire__crate__api__node__start_node_impl(port, ptr, rust_vec_len, data_len),
+        18 => wire__crate__api__node__init_app_impl(port, ptr, rust_vec_len, data_len),
+        19 => wire__crate__api__node__start_node_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -1164,11 +1213,12 @@ fn pde_ffi_dispatcher_sync_impl(
     match func_id {
         1 => wire__crate__api__node__LinksyNode_cancel_impl(ptr, rust_vec_len, data_len),
         2 => wire__crate__api__node__LinksyNode_devices_json_impl(ptr, rust_vec_len, data_len),
-        4 => wire__crate__api__node__LinksyNode_forget_impl(ptr, rust_vec_len, data_len),
-        5 => wire__crate__api__node__LinksyNode_info_json_impl(ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__node__LinksyNode_port_impl(ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__node__LinksyNode_respond_impl(ptr, rust_vec_len, data_len),
-        14 => wire__crate__api__node__LinksyNode_settings_json_impl(ptr, rust_vec_len, data_len),
+        3 => wire__crate__api__node__LinksyNode_end_session_impl(ptr, rust_vec_len, data_len),
+        5 => wire__crate__api__node__LinksyNode_forget_impl(ptr, rust_vec_len, data_len),
+        6 => wire__crate__api__node__LinksyNode_info_json_impl(ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__node__LinksyNode_port_impl(ptr, rust_vec_len, data_len),
+        12 => wire__crate__api__node__LinksyNode_respond_impl(ptr, rust_vec_len, data_len),
+        15 => wire__crate__api__node__LinksyNode_settings_json_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

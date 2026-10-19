@@ -29,6 +29,9 @@ abstract class LinksyNode implements RustOpaqueInterface {
   /// Every known device, as a JSON list of `DeviceView`.
   String devicesJson();
 
+  /// Stops sharing into a session (the Stop button, or the encoder ended).
+  void endSession({required String session});
+
   /// Every core event as JSON (`{"type": "...", ...}`), until the app stops
   /// listening.
   Stream<String> events();

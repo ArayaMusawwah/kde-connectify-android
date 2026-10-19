@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The "Sender" mark for the status bar (the system tints it). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="100" android:viewportHeight="100">
+    <path android:fillColor="#FFFFFFFF" android:pathData="M13,75a12,12 0 1,0 24,0a12,12 0 1,0 -24,0"/>
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="9.5" android:strokeLineCap="round"
+        android:fillColor="#00000000" android:pathData="M25,47 A28,28 0 0,1 53,75"/>
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="8" android:strokeLineCap="round"
+        android:fillColor="#00000000" android:pathData="M78,42 A20,20 0 0,1 58,22"/>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M70,22a8,8 0 1,0 16,0a8,8 0 1,0 -16,0"/>
+</vector>

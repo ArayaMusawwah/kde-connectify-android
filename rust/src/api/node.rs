@@ -16,7 +16,7 @@ use tokio::sync::broadcast::error::RecvError;
 use crate::frb_generated::StreamSink;
 
 /// The core spawns its tasks on tokio; it gets a runtime of its own.
-fn rt() -> &'static Runtime {
+pub(crate) fn rt() -> &'static Runtime {
     static RT: OnceLock<Runtime> = OnceLock::new();
     RT.get_or_init(|| {
         tokio::runtime::Builder::new_multi_thread()
@@ -54,6 +54,8 @@ fn json<T: serde::Serialize>(v: &T) -> String {
 #[frb(init)]
 pub fn init_app() {
     flutter_rust_bridge::setup_default_user_utils();
+    // That sets up logging at trace level: mDNS alone floods logcat.
+    log::set_max_level(log::LevelFilter::Info);
     #[cfg(target_os = "android")]
     {
         use tracing_subscriber::filter::LevelFilter;
@@ -80,7 +82,10 @@ pub async fn start_node(data_dir: String, download_dir: String, name: String) ->
         config.port = port;
         config.discovery = discovery;
         match run(Node::start(config)).await {
-            Ok(node) => return Ok(LinksyNode { node }),
+            Ok(node) => {
+                crate::sessions::collect(&node);
+                return Ok(LinksyNode { node });
+            }
             Err(e) => {
                 tracing::warn!(port, discovery, error = %e, "node didn't start, trying the next way");
                 last = e;
@@ -196,6 +201,12 @@ impl LinksyNode {
     pub fn forget(&self, id: String) -> Result<(), String> {
         let id = fingerprint(&id)?;
         self.node.forget(&id).map(|_| ()).map_err(kind)
+    }
+
+    /// Stops sharing into a session (the Stop button, or the encoder ended).
+    #[frb(sync)]
+    pub fn end_session(&self, session: String) {
+        crate::sessions::end(&session);
     }
 
     pub async fn shutdown(&self) -> Result<(), String> {

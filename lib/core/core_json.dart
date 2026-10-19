@@ -99,6 +99,24 @@ LinksyEvent? eventFromJson(Json j) {
       from: device('from'),
       text: j['text'] as String? ?? '',
     ),
+    'session_request' => switch (SessionKind.parse(j['kind'] as String)) {
+      final kind? => SessionRequest(
+        request: j['request'] as String,
+        from: device('from'),
+        kind: kind,
+      ),
+      null => null,
+    },
+    'session_started' => switch (SessionKind.parse(j['kind'] as String)) {
+      final kind? => SessionStarted(
+        session: j['session'] as String,
+        peer: device('peer'),
+        kind: kind,
+        sharing: j['sharing'] as bool? ?? false,
+      ),
+      null => null,
+    },
+    'session_ended' => SessionEnded(j['session'] as String),
     _ => null,
   };
 }

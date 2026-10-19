@@ -252,3 +252,55 @@ class ClipboardReceived extends LinksyEvent {
   final DeviceInfo from;
   final String text;
 }
+
+/// What a media session shares (docs/protocol.md §4.8).
+enum SessionKind {
+  /// The receiver shares its screen with the requester.
+  screen,
+
+  /// Like [screen], and the requester also controls it.
+  control,
+
+  /// The requester shares a virtual monitor the receiver shows full screen.
+  display,
+
+  /// The receiver shares its camera, used as a webcam.
+  camera;
+
+  static SessionKind? parse(String value) =>
+      SessionKind.values.where((k) => k.name == value).firstOrNull;
+}
+
+/// Ask the user whether [from] may start a session ([request] is its id).
+class SessionRequest extends LinksyEvent {
+  const SessionRequest({
+    required this.request,
+    required this.from,
+    required this.kind,
+  });
+
+  final String request;
+  final DeviceInfo from;
+  final SessionKind kind;
+}
+
+class SessionStarted extends LinksyEvent {
+  const SessionStarted({
+    required this.session,
+    required this.peer,
+    required this.kind,
+    required this.sharing,
+  });
+
+  final String session;
+  final DeviceInfo peer;
+  final SessionKind kind;
+
+  /// This phone is the one sharing (its screen or camera).
+  final bool sharing;
+}
+
+class SessionEnded extends LinksyEvent {
+  const SessionEnded(this.session);
+  final String session;
+}

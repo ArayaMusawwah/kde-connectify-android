@@ -308,6 +308,9 @@ class DemoNode implements LinksyNode {
   }
 
   @override
+  Future<void> endSession(String session) async => _emit(SessionEnded(session));
+
+  @override
   Future<void> shutdown() async {
     for (final t in _timers.values) {
       t.cancel();

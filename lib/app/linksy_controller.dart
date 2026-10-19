@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../core/linksy_node.dart';
 import '../core/models.dart';
 import 'activity.dart';
+import 'platform.dart';
 
 /// App state on top of a [LinksyNode]: the device list, settings and every
 /// device's activity. Consent prompts and notices go out on [prompts] for the
@@ -24,6 +25,9 @@ class LinksyController extends ChangeNotifier {
   StreamSubscription<LinksyEvent>? _sub;
   final _lastSample = <String, (DateTime, int)>{};
   Timer? _saveTimer;
+
+  /// What this phone is sharing right now (its screen or camera), by session.
+  final Map<String, SessionStarted> sharing = {};
 
   /// Pairing and transfer requests, failures, and things received.
   Stream<LinksyEvent> get prompts => _prompts.stream;
@@ -153,12 +157,38 @@ class LinksyController extends ChangeNotifier {
         _addLocal(from.id, ActivityKind.clipboard, incoming: true, text: text);
       case NotificationReceived(:final from, :final title):
         _addLocal(from.id, ActivityKind.ping, incoming: true, text: title);
-      case PairingRequest() || PairingFailed():
+      case SessionStarted(:final session, :final peer, :final kind)
+          when e.sharing &&
+              (kind == SessionKind.screen || kind == SessionKind.camera):
+        sharing[session] = e;
+        LinksyPlatform.startShare(session, kind.name, peer.name);
+        _add(
+          Activity(
+            id: session,
+            deviceId: peer.id,
+            kind: kind == SessionKind.screen
+                ? ActivityKind.screen
+                : ActivityKind.camera,
+            incoming: false,
+            time: DateTime.now(),
+            status: ActivityStatus.active,
+          ),
+        );
+      case SessionEnded(:final session):
+        if (sharing.remove(session) != null) {
+          LinksyPlatform.stopShare(session);
+          _update(session, (a) => a.status = ActivityStatus.done);
+        }
+      case PairingRequest() ||
+          PairingFailed() ||
+          SessionRequest() ||
+          SessionStarted():
         break;
     }
     switch (e) {
       case PairingRequest() ||
           PairingFailed() ||
+          SessionRequest() ||
           Paired() ||
           TransferRequest() ||
           NotificationReceived() ||
@@ -278,6 +308,34 @@ class LinksyController extends ChangeNotifier {
       });
     }
     return error;
+  }
+
+  /// Answers "X wants to see your screen / use your camera". Allowing also
+  /// needs Android's own consent: screen capture, or the camera permission.
+  Future<String?> respondSession(
+    SessionRequest request, {
+    required bool accept,
+  }) async {
+    var allowed = accept;
+    String? error;
+    if (accept) {
+      allowed = request.kind == SessionKind.screen
+          ? await LinksyPlatform.requestScreenCapture(request.request)
+          : await LinksyPlatform.requestCamera();
+      if (!allowed) {
+        error = request.kind == SessionKind.screen
+            ? 'Screen sharing needs Android’s permission to capture the screen.'
+            : 'Linksy needs the camera permission to work as a webcam.';
+      }
+    }
+    await node.respond(request.request, accept: allowed);
+    return error;
+  }
+
+  /// The Stop button: ends sharing into [session].
+  Future<void> stopSharing(String session) async {
+    await LinksyPlatform.stopShare(session);
+    await node.endSession(session);
   }
 
   Future<String?> pair(String deviceId) =>
