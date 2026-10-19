@@ -3,55 +3,106 @@ package app.linksy.media
 import android.content.Context
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
+import android.media.MediaCodecInfo.VideoCapabilities
 import android.media.projection.MediaProjection
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
+import android.view.Display
 import android.view.WindowManager
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
-/// The phone's screen, mirrored into an encoder. Scaled to fit 1920×1080
-/// (either way round), which every phone encoder handles.
+/// The phone's screen, mirrored into an encoder at its exact shape: the
+/// desktop fits its window to the stream, so the video must not be
+/// letterboxed here (docs/protocol.md §6, §7). Follows rotation by restarting the
+/// encoder at the new shape; the new stream opens with SPS/PPS and a keyframe.
 class ScreenShare(
-    context: Context,
+    private val context: Context,
     private val projection: MediaProjection,
-    session: String,
-    onEnded: () -> Unit,
+    private val session: String,
+    private val onEnded: () -> Unit,
 ) : Share {
-    private val encoder: H264Encoder
+    private val main = Handler(Looper.getMainLooper())
+    private val caps = H264Encoder.capabilities()
+    private val displays = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    private var size: Pair<Int, Int>
+    private var encoder: H264Encoder
     private val display: VirtualDisplay
+    @Volatile private var stopped = false
+
+    private val rotation = object : DisplayManager.DisplayListener {
+        override fun onDisplayChanged(id: Int) {
+            if (id != Display.DEFAULT_DISPLAY || stopped) return
+            val next = fit(screen(), caps)
+            if (next != size) restart(next)
+        }
+
+        override fun onDisplayAdded(id: Int) {}
+        override fun onDisplayRemoved(id: Int) {}
+    }
 
     init {
-        val metrics = DisplayMetrics()
-        @Suppress("DEPRECATION")
-        (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getRealMetrics(metrics)
-        val (w, h) = fit(metrics.widthPixels, metrics.heightPixels)
-        encoder = H264Encoder(w, h, bitrate = 6_000_000, fps = 30, session = session, onEnded = onEnded)
+        size = fit(screen(), caps)
+        encoder = encoder(size)
         // Android 14 wants this before the virtual display exists.
         projection.registerCallback(object : MediaProjection.Callback() {
             override fun onStop() = onEnded()
-        }, Handler(Looper.getMainLooper()))
+        }, main)
         display = projection.createVirtualDisplay(
-            "linksy", w, h, metrics.densityDpi,
+            "linksy", size.first, size.second, density(),
             DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, encoder.inputSurface, null, null,
         ) ?: error("screen capture gave no display")
+        displays.registerDisplayListener(rotation, main)
+    }
+
+    private fun encoder(size: Pair<Int, Int>) =
+        H264Encoder(size.first, size.second, bitrate = 6_000_000, fps = 30, session = session, onEnded = onEnded)
+
+    /// The old encoder stops before the new one starts, so the stream never
+    /// mixes frames from the two.
+    private fun restart(next: Pair<Int, Int>) {
+        display.surface = null
+        encoder.stop()
+        size = next
+        encoder = encoder(next)
+        display.resize(next.first, next.second, density())
+        display.surface = encoder.inputSurface
     }
 
     override fun stop() {
+        stopped = true
+        displays.unregisterDisplayListener(rotation)
         display.release()
         encoder.stop()
         projection.stop()
     }
 
-    private companion object {
-        /// Fits within 1920×1080 keeping the aspect, in multiples of 16.
-        fun fit(width: Int, height: Int): Pair<Int, Int> {
-            val long = max(width, height).toDouble()
-            val short = min(width, height).toDouble()
-            val scale = min(1.0, min(1920 / long, 1080 / short))
-            fun round(v: Double) = max(16, (v * scale).toInt() / 16 * 16)
-            return round(width.toDouble()) to round(height.toDouble())
+    private fun metrics() = DisplayMetrics().also {
+        @Suppress("DEPRECATION")
+        (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getRealMetrics(it)
+    }
+
+    private fun screen() = metrics().let { it.widthPixels to it.heightPixels }
+
+    private fun density() = metrics().densityDpi
+
+    companion object {
+        /// The screen's exact shape within 1920×1080 (either way round): the
+        /// width a multiple of 16, the height from the aspect ratio and even
+        /// (H.264 needs even sizes; encoders pad internally and signal the
+        /// crop), stepping down until the encoder takes it.
+        fun fit(screen: Pair<Int, Int>, caps: VideoCapabilities?): Pair<Int, Int> {
+            val (w, h) = screen
+            val scale = min(1.0, min(1920.0 / max(w, h), 1080.0 / min(w, h)))
+            var width = (w * scale).toInt() / 16 * 16
+            while (width >= 16) {
+                val height = ((width.toDouble() * h / w) / 2).roundToInt() * 2
+                if (caps == null || caps.isSizeSupported(width, height)) return width to height
+                width -= 16
+            }
+            return 16 to 16
         }
     }
 }

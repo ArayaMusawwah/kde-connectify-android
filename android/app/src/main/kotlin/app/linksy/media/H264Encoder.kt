@@ -101,11 +101,21 @@ class H264Encoder(
         inputSurface.release()
     }
 
-    private companion object {
-        const val TAG = "linksy"
+    companion object {
+        private const val TAG = "linksy"
+
+        /// What the phone's default H.264 encoder can do, for picking sizes.
+        fun capabilities(): android.media.MediaCodecInfo.VideoCapabilities? = runCatching {
+            val codec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC)
+            try {
+                codec.codecInfo.getCapabilitiesForType(MediaFormat.MIMETYPE_VIDEO_AVC).videoCapabilities
+            } finally {
+                codec.release()
+            }
+        }.getOrNull()
 
         /// Whether the encoder already put SPS (NAL type 7) in front.
-        fun startsWithSps(b: ByteArray): Boolean {
+        private fun startsWithSps(b: ByteArray): Boolean {
             val start = when {
                 b.size > 4 && b[0].toInt() == 0 && b[1].toInt() == 0 && b[2].toInt() == 0 && b[3].toInt() == 1 -> 4
                 b.size > 3 && b[0].toInt() == 0 && b[1].toInt() == 0 && b[2].toInt() == 1 -> 3

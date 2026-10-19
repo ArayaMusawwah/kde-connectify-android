@@ -20,7 +20,7 @@ class RustNode implements LinksyNode {
           // than leave the other device waiting.
           if (j['type'] == 'session_request' &&
               !const ['screen', 'camera'].contains(j['kind'])) {
-            _node.respond(request: j['request'] as String, accept: false);
+            _node.declineUnsupported(request: j['request'] as String);
             return null;
           }
           return eventFromJson(j);
@@ -164,6 +164,7 @@ String describeCoreError(String error, String name) {
     'declined' => '$name declined.',
     'timeout' => "$name didn't answer in time.",
     'not_paired' => "$name isn't paired anymore. Pair again to share.",
+    'unsupported' => "$name can't do that yet.",
     'invalid' => detail.isEmpty ? 'That didn’t work.' : detail,
     _ =>
       detail.isEmpty

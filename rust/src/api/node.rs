@@ -38,6 +38,7 @@ fn kind(e: Error) -> String {
         Error::Declined => "declined".into(),
         Error::Timeout => "timeout".into(),
         Error::NotPaired => "not_paired".into(),
+        Error::Unsupported => "unsupported".into(),
         Error::Invalid(m) => format!("invalid:{m}"),
         other => format!("other:{other}"),
     }
@@ -170,6 +171,13 @@ impl LinksyNode {
     #[frb(sync)]
     pub fn respond(&self, request: String, accept: bool) -> bool {
         Uuid::parse_str(&request).is_ok_and(|id| self.node.respond(id, accept))
+    }
+
+    /// Turns down a session this phone can't do at all (the desktop then says
+    /// "can't" rather than "didn't allow it"). False if it already expired.
+    #[frb(sync)]
+    pub fn decline_unsupported(&self, request: String) -> bool {
+        Uuid::parse_str(&request).is_ok_and(|id| self.node.decline_unsupported(id))
     }
 
     /// Returns the transfer id.

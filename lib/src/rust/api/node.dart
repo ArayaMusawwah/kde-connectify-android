@@ -26,6 +26,10 @@ Future<LinksyNode> startNode({
 abstract class LinksyNode implements RustOpaqueInterface {
   bool cancel({required String transfer});
 
+  /// Turns down a session this phone can't do at all (the desktop then says
+  /// "can't" rather than "didn't allow it"). False if it already expired.
+  bool declineUnsupported({required String request});
+
   /// Every known device, as a JSON list of `DeviceView`.
   String devicesJson();
 
