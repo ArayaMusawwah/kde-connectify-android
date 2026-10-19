@@ -23,7 +23,7 @@ core is bridged in. Settings → Demo triggers the flows that start on the other
 | Settings: name, auto-accept, stay connected | Save received files into MediaStore Downloads |
 | History kept on the phone (500 entries, clipboard text never on disk) | Screen mirroring, Sidecar, phone as webcam (§4.8) |
 | Open received files from the timeline | |
-| Signal design: orbit home, device timelines, light and dark, edge-to-edge, predictive back, reduced motion respected | |
+| Signal design: simple home, device timelines, light and dark, edge-to-edge, predictive back, reduced motion respected | |
 
 ## Run
 
@@ -42,7 +42,7 @@ Android only for now (application id `app.linksy`). iOS comes later.
 | `lib/core/` | Node interface (`linksy_node.dart`, mirrors `linksy_core::Node`), models and events, invite parsing, `DemoNode` |
 | `lib/app/` | `LinksyController` (devices, settings, activity), history store, app shell that shows prompts |
 | `lib/features/` | Screens: devices, device page, pairing, incoming transfer, settings |
-| `lib/ui/` | The Signal design system: tokens and theme (`sig.dart`), components, the orbit, icons, formatting |
+| `lib/ui/` | The Signal design system: tokens and theme (`sig.dart`), components, icons, formatting |
 | `assets/brand/` | The "Sender" mark and the app icon from linksy-desktop, with inline colors |
 | `tool/make_icons.sh` | Renders the launcher icons (adaptive + themed) from the mark |
 
@@ -64,8 +64,8 @@ Linksy has its own look, "Signal", rather than stock Material:
   icons in use declared in `lib/ui/icons.dart` (the `phosphor_flutter` package doesn't
   build on current Flutter).
 - **Shapes.** Solid cards with soft shadows (no borders), pill buttons, pressables that shrink instead of rippling.
-- **The orbit.** Home shows this phone at the center and each device on an orbit by how
-  close it is: connected (with a live beam), nearby, away. Unpaired devices are dashed.
+- **Home stays simple.** A plain header (logo, name, settings) and the device list. No
+  decorative hero.
 
 ## Next: the Rust bridge
 

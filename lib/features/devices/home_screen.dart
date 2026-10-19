@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../app/linksy_controller.dart';
 import '../../app/scope.dart';
@@ -9,7 +8,7 @@ import '../../ui/sig.dart';
 import '../device/activity_tile.dart';
 import '../device/device_screen.dart';
 import '../pairing/pairing_flows.dart';
-import 'home_hero.dart';
+import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -25,76 +24,103 @@ class HomeScreen extends StatelessWidget {
       MaterialPageRoute(builder: (_) => DeviceScreen(deviceId: v.device.id)),
     );
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      // The hero is ink in both themes.
-      value: overlayFor(Brightness.dark),
-      child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            // Keeps the status bar on ink once the hero scrolls away.
-            SliverAppBar(
-              pinned: true,
-              toolbarHeight: 0,
-              collapsedHeight: 0,
-              systemOverlayStyle: overlayFor(Brightness.dark),
-              backgroundColor: s.heroTop,
-            ),
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            toolbarHeight: 68,
+            titleSpacing: 20,
+            backgroundColor: s.bg,
+            title: const Wordmark(),
+            actions: [
+              RoundButton(
+                icon: Ph.gearSix,
+                tooltip: 'Settings',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                ),
+              ),
+              const SizedBox(width: 16),
+            ],
+          ),
+          SliverToBoxAdapter(child: _Visible(controller: c)),
+          if (paired.isEmpty)
+            const SliverToBoxAdapter(child: _GetStarted())
+          else ...[
             SliverToBoxAdapter(
-              child: HomeHero(
-                controller: c,
-                onDevice: open,
-                onPair: (v) => report(context, c.pair(v.device.id)),
+              child: SectionLabel(
+                'Your devices',
+                trailing: Text(
+                  '${paired.length}',
+                  style: sora(13, color: s.muted),
+                ),
               ),
             ),
-            if (paired.isEmpty)
-              const SliverToBoxAdapter(child: _GetStarted())
-            else ...[
-              SliverToBoxAdapter(
-                child: SectionLabel(
-                  'Your devices',
-                  trailing: Text(
-                    '${paired.length}',
-                    style: sora(13, color: s.muted),
-                  ),
+            SliverList.separated(
+              itemCount: paired.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 10),
+              itemBuilder: (context, i) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _DeviceRow(
+                  view: paired[i],
+                  controller: c,
+                  onTap: () => open(paired[i]),
                 ),
               ),
-              SliverList.separated(
-                itemCount: paired.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 10),
-                itemBuilder: (context, i) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _DeviceRow(
-                    view: paired[i],
-                    controller: c,
-                    onTap: () => open(paired[i]),
-                  ),
-                ),
-              ),
-            ],
-            if (unpaired.isNotEmpty) ...[
-              const SliverToBoxAdapter(
-                child: SectionLabel('Nearby, not paired'),
-              ),
-              SliverList.separated(
-                itemCount: unpaired.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 10),
-                itemBuilder: (context, i) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _NearbyRow(view: unpaired[i]),
-                ),
-              ),
-            ],
-            const SliverToBoxAdapter(child: SizedBox(height: 120)),
+            ),
           ],
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: paired.isEmpty
-            ? null
-            : SigButton(
-                label: 'Add a device',
-                icon: PhBold.qrCode,
-                onTap: () => showAddDevice(context),
+          if (unpaired.isNotEmpty) ...[
+            const SliverToBoxAdapter(child: SectionLabel('Nearby, not paired')),
+            SliverList.separated(
+              itemCount: unpaired.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 10),
+              itemBuilder: (context, i) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _NearbyRow(view: unpaired[i]),
               ),
+            ),
+          ],
+          const SliverToBoxAdapter(child: SizedBox(height: 120)),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: paired.isEmpty
+          ? null
+          : SigButton(
+              label: 'Add a device',
+              icon: PhBold.qrCode,
+              onTap: () => showAddDevice(context),
+            ),
+    );
+  }
+}
+
+/// One quiet line: this phone can be found.
+class _Visible extends StatelessWidget {
+  const _Visible({required this.controller});
+
+  final LinksyController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final name = controller.settings?.name ?? controller.node.info.name;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 20, 0),
+      child: Row(
+        children: [
+          const PulseDot(color: Sig.cyan, size: 7),
+          const SizedBox(width: 2),
+          Expanded(
+            child: Text(
+              '$name is visible on this Wi-Fi',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 14, color: s.muted),
+            ),
+          ),
+        ],
       ),
     );
   }

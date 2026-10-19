@@ -35,17 +35,16 @@ void main() {
   testWidgets('home lists paired and unpaired devices', (tester) async {
     await pumpApp(tester);
     expect(find.text('YOUR DEVICES'), findsOneWidget);
-    // Each device is on the orbit and in the list.
-    expect(find.text('Studio Desktop'), findsNWidgets(2));
-    expect(find.text('ThinkPad'), findsNWidgets(2));
+    expect(find.text('Studio Desktop'), findsOneWidget);
+    expect(find.text('ThinkPad'), findsOneWidget);
     expect(find.text('NEARBY, NOT PAIRED'), findsOneWidget);
-    expect(find.text('Pair Living Room PC'), findsOneWidget);
+    expect(find.text('Living Room PC'), findsOneWidget);
     expect(find.text('Pair'), findsOneWidget);
   });
 
   testWidgets('a device page offers the three actions', (tester) async {
     await pumpApp(tester);
-    await tester.tap(find.text('Studio Desktop').last);
+    await tester.tap(find.text('Studio Desktop'));
     await tester.pumpAndSettle();
     expect(find.text('Send files'), findsOneWidget);
     expect(find.text('Clipboard'), findsOneWidget);
