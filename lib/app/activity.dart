@@ -1,0 +1,112 @@
+import 'dart:convert';
+import 'dart:io';
+
+/// One row in a device's timeline: files, clipboard text or a ping, either
+/// way. The core keeps no history, so the app does (`docs/protocol.md` §6).
+class Activity {
+  Activity({
+    required this.id,
+    required this.deviceId,
+    required this.kind,
+    required this.incoming,
+    required this.time,
+    required this.status,
+    this.names = const [],
+    this.total = 0,
+    this.bytes = 0,
+    this.saved = const [],
+    this.text,
+    this.reason,
+  });
+
+  /// Transfer id for files, otherwise a local id.
+  final String id;
+  final String deviceId;
+  final ActivityKind kind;
+  final bool incoming;
+  final DateTime time;
+  ActivityStatus status;
+
+  /// File names offered or sent.
+  final List<String> names;
+  int total;
+  int bytes;
+  List<String> saved;
+
+  /// Clipboard text or ping title. Clipboard text is never written to disk:
+  /// it may be a password.
+  final String? text;
+  String? reason;
+
+  /// Bytes per second, smoothed. Only meaningful while [status] is active.
+  double speed = 0;
+
+  bool get isLive =>
+      status == ActivityStatus.waiting || status == ActivityStatus.active;
+
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'device': deviceId,
+    'kind': kind.name,
+    'incoming': incoming,
+    'time': time.millisecondsSinceEpoch,
+    // A transfer still going when the app stops did not finish.
+    'status': (isLive ? ActivityStatus.failed : status).name,
+    'names': names,
+    'total': total,
+    'bytes': bytes,
+    'saved': saved,
+    if (kind == ActivityKind.ping) 'text': text,
+    'reason': isLive ? 'Interrupted' : reason,
+  };
+
+  static Activity fromJson(Map<String, Object?> j) => Activity(
+    id: j['id'] as String,
+    deviceId: j['device'] as String,
+    kind: ActivityKind.values.byName(j['kind'] as String),
+    incoming: j['incoming'] as bool,
+    time: DateTime.fromMillisecondsSinceEpoch(j['time'] as int),
+    status: ActivityStatus.values.byName(j['status'] as String),
+    names: (j['names'] as List).cast<String>(),
+    total: j['total'] as int,
+    bytes: j['bytes'] as int,
+    saved: (j['saved'] as List).cast<String>(),
+    text: j['text'] as String?,
+    reason: j['reason'] as String?,
+  );
+}
+
+enum ActivityKind { files, clipboard, ping }
+
+enum ActivityStatus { waiting, active, done, declined, failed }
+
+/// Newest first, capped like the desktop's history.
+class ActivityStore {
+  ActivityStore(this.file);
+
+  final File? file;
+  static const maxEntries = 500;
+
+  Future<List<Activity>> load() async {
+    final f = file;
+    if (f == null || !await f.exists()) return [];
+    try {
+      final list = jsonDecode(await f.readAsString()) as List;
+      return [
+        for (final j in list) Activity.fromJson(j as Map<String, Object?>),
+      ];
+    } on Object {
+      // A history that can't be read is not worth failing the app over.
+      return [];
+    }
+  }
+
+  Future<void> save(List<Activity> entries) async {
+    final f = file;
+    if (f == null) return;
+    final kept = entries.take(maxEntries).map((a) => a.toJson()).toList();
+    final tmp = File('${f.path}.tmp');
+    await tmp.writeAsString(jsonEncode(kept));
+    await tmp.rename(f.path);
+  }
+}
