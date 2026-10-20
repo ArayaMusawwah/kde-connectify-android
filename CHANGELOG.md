@@ -2,7 +2,7 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
-## [Unreleased]
+## [0.1.7] - 2026-10-20
 
 ### Added
 - **Remote**: use the phone as your computer's touchpad and keyboard, or as a presentation remote (big Next/Back buttons, and the volume keys change slides).
