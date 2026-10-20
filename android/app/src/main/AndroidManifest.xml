@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- "Ring my phone" also vibrates. -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:label="Linksy"
@@ -45,6 +47,26 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="linksy" android:host="pair"/>
+            </intent-filter>
+        </activity>
+        <!-- "Share → Linksy" from other apps: links open on a computer, text goes to
+             its clipboard, files are sent. Hands over to MainActivity. -->
+        <activity
+            android:name=".ShareTarget"
+            android:exported="true"
+            android:label="Linksy"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
             </intent-filter>
         </activity>
         <!-- Opens received files in other apps, read-only, without any storage permission. -->

@@ -19,6 +19,15 @@ DeviceView deviceViewFromJson(Json j) => DeviceView(
   trusted: j['trusted'] as bool? ?? false,
   connected: j['connected'] as bool? ?? false,
   nearby: j['nearby'] as bool? ?? false,
+  battery: switch (j['battery']) {
+    final Json b => batteryFromJson(b),
+    _ => null,
+  },
+);
+
+Battery batteryFromJson(Json j) => Battery(
+  level: _int(j['level']).clamp(0, 100),
+  charging: j['charging'] as bool? ?? false,
 );
 
 NodeSettings settingsFromJson(Json j) => NodeSettings(
@@ -117,6 +126,15 @@ LinksyEvent? eventFromJson(Json j) {
       null => null,
     },
     'session_ended' => SessionEnded(j['session'] as String),
+    'open_url' => OpenUrlReceived(
+      from: device('from'),
+      url: j['url'] as String,
+    ),
+    'battery' => BatteryReported(
+      from: device('from'),
+      battery: batteryFromJson(j['battery'] as Json),
+    ),
+    'ring' => RingRequested(from: device('from'), on: j['on'] as bool? ?? true),
     _ => null,
   };
 }

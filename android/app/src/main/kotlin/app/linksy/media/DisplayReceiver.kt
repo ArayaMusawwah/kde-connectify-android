@@ -28,10 +28,11 @@ class DisplayReceiver(
                 runCatching { decoder.setOutputSurface(producer.surface) }
             }
         })
-        decoder.configure(
-            MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, 1920, 1080),
-            producer.surface, null, 0,
-        )
+        val format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, 1920, 1080).apply {
+            // A keyframe of a busy desktop is big; make sure one always fits.
+            setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 2 * 1024 * 1024)
+        }
+        decoder.configure(format, producer.surface, null, 0)
         decoder.start()
         input = Thread(::readLoop, "linksy-display-in").apply { start() }
         output = Thread(::renderLoop, "linksy-display-out").apply { start() }
@@ -39,10 +40,11 @@ class DisplayReceiver(
 
     private fun readLoop() {
         val nals = AnnexB()
+        val units = AccessUnits(::queue)
         try {
             while (running) {
                 val chunk = NativeSession.read(session) ?: break
-                nals.push(chunk) { nal -> queue(nal) }
+                nals.push(chunk, units::push)
             }
         } catch (e: Exception) {
             if (running) Log.w("linksy", "display stream stopped", e)
@@ -50,15 +52,22 @@ class DisplayReceiver(
         if (running) onEnded()
     }
 
-    private fun queue(nal: ByteArray) {
-        if (nal.size < 5) return
-        val type = nal[if (nal[2].toInt() == 1) 3 else 4].toInt() and 0x1f
-        val flags = if (type == 7 || type == 8) MediaCodec.BUFFER_FLAG_CODEC_CONFIG else 0
+    /// One whole picture (or SPS+PPS, as codec config) per input buffer, with
+    /// one timestamp: a decoder fed slice by slice never sees a full frame.
+    private fun queue(unit: ByteArray, config: Boolean) {
+        val flags = if (config) MediaCodec.BUFFER_FLAG_CODEC_CONFIG else 0
         while (running) {
             val index = decoder.dequeueInputBuffer(10_000)
             if (index < 0) continue
-            decoder.getInputBuffer(index)?.apply { clear(); put(nal) }
-            decoder.queueInputBuffer(index, 0, nal.size, System.nanoTime() / 1000, flags)
+            val buffer = decoder.getInputBuffer(index) ?: return
+            if (unit.size > buffer.capacity()) {
+                Log.w("linksy", "display frame of ${unit.size} bytes doesn't fit, skipped")
+                decoder.queueInputBuffer(index, 0, 0, System.nanoTime() / 1000, 0)
+                return
+            }
+            buffer.clear()
+            buffer.put(unit)
+            decoder.queueInputBuffer(index, 0, unit.size, System.nanoTime() / 1000, flags)
             return
         }
     }
@@ -93,6 +102,60 @@ class DisplayReceiver(
         runCatching { decoder.stop() }
         runCatching { decoder.release() }
         producer.release()
+    }
+
+    /// Groups NAL units into access units (docs/protocol.md §7): a new picture starts
+    /// at an access unit delimiter (type 9, which the desktop sends before each
+    /// frame), at SEI/SPS/PPS after a slice, or at a slice whose
+    /// first_mb_in_slice is 0. SPS and PPS go out together as codec config,
+    /// again only when they change.
+    private class AccessUnits(private val emit: (ByteArray, Boolean) -> Unit) {
+        private val unit = java.io.ByteArrayOutputStream()
+        private var hasPicture = false
+        private val config = java.io.ByteArrayOutputStream()
+        private var sentConfig = ByteArray(0)
+
+        fun push(nal: ByteArray) {
+            val header = if (nal.size > 3 && nal[2].toInt() == 1) 3 else 4
+            if (nal.size <= header) return
+            when (val type = nal[header].toInt() and 0x1f) {
+                7, 8 -> {
+                    flush()
+                    if (type == 7) config.reset()
+                    config.write(nal)
+                }
+                1, 5 -> {
+                    val firstSlice = nal.size > header + 1 && (nal[header + 1].toInt() and 0x80) != 0
+                    if (hasPicture && firstSlice) flush()
+                    sendConfig()
+                    unit.write(nal)
+                    hasPicture = true
+                }
+                6, 9, in 14..18 -> {
+                    if (hasPicture) flush()
+                    unit.write(nal)
+                }
+                else -> unit.write(nal)
+            }
+        }
+
+        private fun sendConfig() {
+            if (config.size() == 0) return
+            val bytes = config.toByteArray()
+            config.reset()
+            if (!bytes.contentEquals(sentConfig)) {
+                sentConfig = bytes
+                emit(bytes, true)
+            }
+        }
+
+        private fun flush() {
+            // Before the first slice, keep what leads the picture (AUD, SEI).
+            if (!hasPicture) return
+            emit(unit.toByteArray(), false)
+            unit.reset()
+            hasPicture = false
+        }
     }
 
     /// Splits an Annex-B byte stream into NAL units (each with its start

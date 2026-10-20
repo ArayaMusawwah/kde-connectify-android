@@ -51,6 +51,9 @@ abstract class LinksyNode implements RustOpaqueInterface {
     required String body,
   });
 
+  /// "Open on PC": asks a computer to open an `http(s)` link in its browser.
+  Future<void> openUrl({required String id, required String url});
+
   /// `ip:port` or `[ipv6]:port`.
   Future<void> pairAddress({required String address});
 
@@ -64,6 +67,16 @@ abstract class LinksyNode implements RustOpaqueInterface {
 
   /// Answer a pairing or transfer request. False if it already expired.
   bool respond({required String request, required bool accept});
+
+  /// "Find my computer": makes it ring (`on`), or stops it.
+  Future<void> ring({required String id, required bool on_});
+
+  /// This phone's battery, `level` in percent.
+  Future<void> sendBattery({
+    required String id,
+    required int level,
+    required bool charging,
+  });
 
   Future<void> sendClipboard({required String id, required String text});
 

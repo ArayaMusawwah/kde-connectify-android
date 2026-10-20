@@ -9,7 +9,7 @@ use std::path::PathBuf;
 use std::sync::OnceLock;
 
 use flutter_rust_bridge::frb;
-use linksy_core::{Config, DeviceKind, Error, Fingerprint, Node, Settings, Uuid};
+use linksy_core::{Battery, Config, DeviceKind, Error, Fingerprint, Node, Settings, Uuid};
 use tokio::runtime::Runtime;
 use tokio::sync::broadcast::error::RecvError;
 
@@ -211,6 +211,27 @@ impl LinksyNode {
         let id = fingerprint(&id)?;
         let node = self.node.clone();
         run(async move { node.notify(&id, &title, &body).await }).await
+    }
+
+    /// "Open on PC": asks a computer to open an `http(s)` link in its browser.
+    pub async fn open_url(&self, id: String, url: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.open_url(&id, &url).await }).await
+    }
+
+    /// This phone's battery, `level` in percent.
+    pub async fn send_battery(&self, id: String, level: u8, charging: bool) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.send_battery(&id, Battery { level, charging }).await }).await
+    }
+
+    /// "Find my computer": makes it ring (`on`), or stops it.
+    pub async fn ring(&self, id: String, on: bool) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.ring(&id, on).await }).await
     }
 
     #[frb(sync)]

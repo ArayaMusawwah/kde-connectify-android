@@ -42,13 +42,14 @@ void main() {
     expect(find.text('Pair'), findsOneWidget);
   });
 
-  testWidgets('a device page offers the three actions', (tester) async {
+  testWidgets('a device page offers its actions', (tester) async {
     await pumpApp(tester);
     await tester.tap(find.text('Studio Desktop'));
     await tester.pumpAndSettle();
     expect(find.text('Send files'), findsOneWidget);
     expect(find.text('Clipboard'), findsOneWidget);
     expect(find.text('Ping'), findsOneWidget);
+    expect(find.text('Find Studio Desktop'), findsOneWidget);
     expect(find.text('Nothing shared yet'), findsOneWidget);
   });
 

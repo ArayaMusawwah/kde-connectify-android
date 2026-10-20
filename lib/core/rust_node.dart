@@ -117,6 +117,28 @@ class RustNode implements LinksyNode {
   );
 
   @override
+  Future<void> openUrl(String id, String url) => _guard(
+    () => _node.openUrl(id: id, url: url),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> sendBattery(String id, Battery battery) => _guard(
+    () => _node.sendBattery(
+      id: id,
+      level: battery.level,
+      charging: battery.charging,
+    ),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> ring(String id, {required bool on}) => _guard(
+    () => _node.ring(id: id, on_: on),
+    name: _nameOf(id),
+  );
+
+  @override
   Future<NodeSettings> settings() async =>
       settingsFromJson(jsonDecode(_node.settingsJson()) as Json);
 

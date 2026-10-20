@@ -280,6 +280,21 @@ class DemoNode implements LinksyNode {
   }
 
   @override
+  Future<void> openUrl(String id, String url) async {
+    _reachable(id);
+    _setConnected(id, true);
+  }
+
+  @override
+  Future<void> sendBattery(String id, Battery battery) async {}
+
+  @override
+  Future<void> ring(String id, {required bool on}) async {
+    _reachable(id);
+    _setConnected(id, true);
+  }
+
+  @override
   Future<NodeSettings> settings() async => _settings;
 
   @override

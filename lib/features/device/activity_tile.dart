@@ -18,6 +18,8 @@ IconData activityIcon(Activity a) => switch (a.kind) {
   ActivityKind.camera => Ph.videoCamera,
   ActivityKind.control => Ph.cursorClick,
   ActivityKind.display => Ph.monitor,
+  ActivityKind.link => Ph.link,
+  ActivityKind.ring => Ph.bellSimpleRinging,
 };
 
 /// File name, "N items", quoted clipboard text or the ping title.
@@ -31,7 +33,13 @@ String activityTitle(Activity a) => switch (a.kind) {
   ActivityKind.camera => 'Your camera',
   ActivityKind.control => 'Your screen',
   ActivityKind.display => 'Second display',
+  ActivityKind.link => linkLabel(a.text ?? 'Link'),
+  ActivityKind.ring => a.incoming ? 'Rang this phone' : 'Rang it',
 };
+
+/// A link without its scheme, "example.com/page".
+String linkLabel(String url) =>
+    url.replaceFirst(RegExp(r'^https?://', caseSensitive: false), '');
 
 /// "Received · 2.1 MB", "Declined".
 String activityDetail(Activity a) {
@@ -47,6 +55,12 @@ String activityDetail(Activity a) {
   }
   if (a.kind == ActivityKind.display) {
     return live ? 'In use now' : 'This phone was its second display';
+  }
+  if (a.kind == ActivityKind.link) {
+    return a.incoming ? 'Link received' : 'Opened on the computer';
+  }
+  if (a.kind == ActivityKind.ring) {
+    return a.incoming ? 'Asked to find this phone' : 'To find it';
   }
   final verb = switch (a.status) {
     ActivityStatus.declined => 'Declined',
@@ -87,7 +101,9 @@ class TimelineEntry extends StatelessWidget {
         : a.incoming
         ? Sig.incoming
         : Sig.outgoing;
-    final openable = a.incoming && a.saved.isNotEmpty;
+    final openable =
+        (a.incoming && a.saved.isNotEmpty) ||
+        (a.kind == ActivityKind.link && a.text != null);
 
     return IntrinsicHeight(
       child: Row(
@@ -220,6 +236,12 @@ class TimelineEntry extends StatelessWidget {
         if (context.mounted) showMessage(context, 'Copied');
       });
     }
+    if (a.kind == ActivityKind.link && a.text != null) {
+      return button(Ph.copy, 'Copy link', () async {
+        await Clipboard.setData(ClipboardData(text: a.text!));
+        if (context.mounted) showMessage(context, 'Link copied');
+      });
+    }
     if (a.incoming && a.saved.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.only(right: 10),
@@ -237,6 +259,12 @@ class TimelineEntry extends StatelessWidget {
   ].contains(a.kind);
 
   static Future<void> _open(BuildContext context, Activity a) async {
+    if (a.kind == ActivityKind.link) {
+      if (!await LinksyPlatform.openUrl(a.text!) && context.mounted) {
+        showMessage(context, 'No app here opens that link.');
+      }
+      return;
+    }
     if (a.saved.length == 1) return _openFile(context, a.saved.single);
     await showModalBottomSheet<void>(
       context: context,

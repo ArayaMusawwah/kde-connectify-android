@@ -49,6 +49,23 @@ abstract final class Ph {
   static const videoCamera = IconData(0xe4da, fontFamily: 'PhosphorRegular');
   static const monitor = IconData(0xe32e, fontFamily: 'PhosphorRegular');
   static const cursorClick = IconData(0xe7c8, fontFamily: 'PhosphorRegular');
+  static const link = IconData(0xe2e2, fontFamily: 'PhosphorRegular');
+  static const globe = IconData(0xe288, fontFamily: 'PhosphorRegular');
+  static const textAa = IconData(0xe6ee, fontFamily: 'PhosphorRegular');
+  static const binoculars = IconData(0xea64, fontFamily: 'PhosphorRegular');
+  static const bellSimpleRinging = IconData(
+    0xe5ea,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const batteryCharging = IconData(
+    0xe0ba,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const batteryFull = IconData(0xe0c0, fontFamily: 'PhosphorRegular');
+  static const batteryHigh = IconData(0xe0c2, fontFamily: 'PhosphorRegular');
+  static const batteryMedium = IconData(0xe0c6, fontFamily: 'PhosphorRegular');
+  static const batteryLow = IconData(0xe0c4, fontFamily: 'PhosphorRegular');
+  static const batteryWarning = IconData(0xe0c8, fontFamily: 'PhosphorRegular');
 }
 
 abstract final class PhBold {
@@ -65,4 +82,5 @@ abstract final class PhBold {
 abstract final class PhFill {
   static const flashlight = IconData(0xe246, fontFamily: 'PhosphorFill');
   static const paperPlaneTilt = IconData(0xe398, fontFamily: 'PhosphorFill');
+  static const bellRinging = IconData(0xe5e8, fontFamily: 'PhosphorFill');
 }

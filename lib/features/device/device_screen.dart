@@ -163,6 +163,11 @@ class _Hero extends StatelessWidget {
               ),
             ],
           ),
+          if (view.battery case final battery?
+              when view.presence != Presence.notNearby) ...[
+            const SizedBox(height: 6),
+            _BatteryLine(battery: battery),
+          ],
         ],
       ),
     );
@@ -340,8 +345,107 @@ class _Actions extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 10),
+          _FindAction(view: view),
         ],
       ),
+    );
+  }
+}
+
+/// "Find my computer": rings it until stopped (or 30 s), so it can be found.
+class _FindAction extends StatelessWidget {
+  const _FindAction({required this.view});
+
+  final DeviceView view;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = LinksyScope.of(context);
+    final s = Sig.of(context);
+    final id = view.device.id;
+    final ringing = c.isFinding(id);
+    return SigCard(
+      onTap: () => report(context, ringing ? c.stopFinding(id) : c.find(id)),
+      color: ringing ? Sig.blue : null,
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      child: Row(
+        children: [
+          ringing
+              ? Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Sig.deep,
+                  ),
+                  child: const Icon(
+                    PhFill.bellRinging,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                )
+              : IconCircle(icon: Ph.binoculars, color: Sig.blue, size: 40),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  ringing ? 'Ringing…' : 'Find ${view.device.name}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: sora(16, color: ringing ? Colors.white : s.ink),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  ringing
+                      ? 'Tap to stop'
+                      : 'Make it ring loudly so you can find it',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    color: ringing ? Colors.white70 : s.muted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// "82% · Charging" under the device's name.
+class _BatteryLine extends StatelessWidget {
+  const _BatteryLine({required this.battery});
+
+  final Battery battery;
+
+  @override
+  Widget build(BuildContext context) {
+    final b = battery;
+    final icon = b.charging
+        ? Ph.batteryCharging
+        : b.level >= 90
+        ? Ph.batteryFull
+        : b.level >= 60
+        ? Ph.batteryHigh
+        : b.level >= 30
+        ? Ph.batteryMedium
+        : b.level > 15
+        ? Ph.batteryLow
+        : Ph.batteryWarning;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 17, color: Colors.white70),
+        const SizedBox(width: 5),
+        Text(
+          '${b.level}%${b.charging ? ' · Charging' : ''}',
+          style: const TextStyle(fontSize: 14, color: Colors.white70),
+        ),
+      ],
     );
   }
 }

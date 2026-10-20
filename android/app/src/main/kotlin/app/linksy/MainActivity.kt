@@ -1,10 +1,13 @@
 package app.linksy
 
 import android.Manifest
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
+import android.os.BatteryManager
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.provider.Settings
@@ -23,6 +26,12 @@ class MainActivity : FlutterActivity() {
 
     /// A `linksy://pair?…` link that opened the app, until Dart asks for it.
     private var pendingLink: String? = null
+    /// Something shared to Linksy from another app (text or file copies),
+    /// until Dart asks for it.
+    private var pendingShare: Map<String, Any>? = null
+
+    private val ring by lazy { RingPlayer(applicationContext) }
+    private var batteryReceiver: BroadcastReceiver? = null
 
     /// Waiting on the system's screen capture prompt: the session and Dart's reply.
     private var pendingCapture: Pair<String, MethodChannel.Result>? = null
@@ -39,6 +48,8 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         engine = flutterEngine
         pendingLink = linkFrom(intent)
+        takeShared(intent)
+        watchBattery()
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "app.linksy/platform").apply {
             setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -46,6 +57,20 @@ class MainActivity : FlutterActivity() {
                     "takeLink" -> {
                         result.success(pendingLink)
                         pendingLink = null
+                    }
+                    "takeShare" -> {
+                        result.success(pendingShare)
+                        pendingShare = null
+                    }
+                    "battery" -> result.success(battery(null))
+                    "openUrl" -> result.success(openUrl(call.argument<String>("url")!!))
+                    "startRing" -> {
+                        ring.start()
+                        result.success(null)
+                    }
+                    "stopRing" -> {
+                        ring.stop()
+                        result.success(null)
                     }
                     "requestScreenCapture" -> requestScreenCapture(call.argument<String>("session")!!, result)
                     "requestCamera" -> requestPermission(Manifest.permission.CAMERA, REQUEST_CAMERA, result)
@@ -119,8 +144,53 @@ class MainActivity : FlutterActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        takeShared(intent)
         val link = linkFrom(intent) ?: return
         channel?.invokeMethod("link", link) ?: run { pendingLink = link }
+    }
+
+    /// "Share → Linksy", handed over by [ShareTarget] (files already copied).
+    private fun takeShared(intent: Intent?) {
+        if (intent?.action != ShareTarget.ACTION_SHARED) return
+        // Handled once, even if the activity is recreated with this intent.
+        setIntent(Intent(Intent.ACTION_MAIN))
+        val files = intent.getStringArrayExtra(ShareTarget.EXTRA_FILES)?.toList().orEmpty()
+        val text = intent.getStringExtra(ShareTarget.EXTRA_TEXT)
+        when {
+            files.isNotEmpty() -> deliverShare(mapOf("files" to files))
+            !text.isNullOrBlank() -> deliverShare(mapOf("text" to text))
+        }
+    }
+
+    private fun deliverShare(share: Map<String, Any>) {
+        val c = channel
+        if (c == null) pendingShare = share else c.invokeMethod("share", share)
+    }
+
+    /// Battery changes go to Dart, which tells paired computers (docs/protocol.md
+    /// §4.5: on connecting, every 5 points, plugging in or out).
+    private fun watchBattery() {
+        if (batteryReceiver != null) return
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                battery(intent)?.let { channel?.invokeMethod("batteryChanged", it) }
+            }
+        }
+        batteryReceiver = receiver
+        // A system broadcast: no export flag needed, and no permission.
+        registerReceiver(receiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+    }
+
+    /// Level in percent and whether it's charging; the sticky broadcast when
+    /// [intent] is null.
+    private fun battery(intent: Intent?): Map<String, Any>? {
+        val i = intent ?: registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED)) ?: return null
+        val level = i.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+        val scale = i.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+        if (level < 0 || scale <= 0) return null
+        val status = i.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
+        val charging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
+        return mapOf("level" to (level * 100 / scale).coerceIn(0, 100), "charging" to charging)
     }
 
     // mDNS presence needs multicast, which Android filters out unless an app
@@ -155,6 +225,9 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
+        batteryReceiver?.let { runCatching { unregisterReceiver(it) } }
+        batteryReceiver = null
+        ring.stop()
         scanner?.stop()
         displays.values.forEach { it.stop() }
         displays.clear()
@@ -239,18 +312,15 @@ class MainActivity : FlutterActivity() {
         startActivityForResult(intent, REQUEST_PICK)
     }
 
-    private fun copyPicks(uris: List<android.net.Uri>): List<String> {
-        val dir = java.io.File(cacheDir, "picked").apply { deleteRecursively(); mkdirs() }
-        return uris.mapIndexedNotNull { i, uri ->
-            runCatching {
-                val name = contentResolver.query(uri, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME), null, null, null)
-                    ?.use { c -> if (c.moveToFirst()) c.getString(0) else null }
-                    ?.replace('/', '_') ?: "file-$i"
-                // Each in its own folder, so two picks with one name both keep it.
-                val file = java.io.File(java.io.File(dir, "$i").apply { mkdirs() }, name)
-                contentResolver.openInputStream(uri)!!.use { input -> file.outputStream().use { input.copyTo(it) } }
-                file.path
-            }.getOrNull()
+    /// A link a computer sent, in the browser. Web links only.
+    private fun openUrl(url: String): Boolean {
+        val uri = android.net.Uri.parse(url.trim())
+        if (uri.scheme?.lowercase() !in setOf("http", "https")) return false
+        return try {
+            startActivity(Intent(Intent.ACTION_VIEW, uri).addCategory(Intent.CATEGORY_BROWSABLE))
+            true
+        } catch (e: android.content.ActivityNotFoundException) {
+            false
         }
     }
 
@@ -284,7 +354,7 @@ class MainActivity : FlutterActivity() {
                 if (isEmpty()) data?.data?.let(::add)
             }
             if (resultCode != RESULT_OK || uris.isEmpty()) return result.success(emptyList<String>())
-            Thread { val paths = copyPicks(uris); runOnUiThread { result.success(paths) } }.start()
+            Thread { val paths = ShareTarget.copyUris(this, uris, "picked"); runOnUiThread { result.success(paths) } }.start()
             return
         }
         if (requestCode != REQUEST_CAPTURE) return

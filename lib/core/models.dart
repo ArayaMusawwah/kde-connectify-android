@@ -64,6 +64,7 @@ class DeviceView {
     required this.trusted,
     required this.connected,
     required this.nearby,
+    this.battery,
   });
 
   final DeviceInfo device;
@@ -71,11 +72,30 @@ class DeviceView {
   final bool connected;
   final bool nearby;
 
+  /// What the device last said about its battery, if it has one.
+  final Battery? battery;
+
   Presence get presence => connected
       ? Presence.connected
       : nearby
       ? Presence.nearby
       : Presence.notNearby;
+}
+
+/// A device's battery (docs/protocol.md §4.5, `battery`).
+class Battery {
+  const Battery({required this.level, required this.charging});
+
+  /// Percent, 0–100.
+  final int level;
+  final bool charging;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Battery && other.level == level && other.charging == charging;
+
+  @override
+  int get hashCode => Object.hash(level, charging);
 }
 
 class NodeSettings {
@@ -303,4 +323,26 @@ class SessionStarted extends LinksyEvent {
 class SessionEnded extends LinksyEvent {
   const SessionEnded(this.session);
   final String session;
+}
+
+/// A paired device asks this phone to open a web link (`http`/`https`).
+class OpenUrlReceived extends LinksyEvent {
+  const OpenUrlReceived({required this.from, required this.url});
+  final DeviceInfo from;
+  final String url;
+}
+
+/// A paired device reported its battery.
+class BatteryReported extends LinksyEvent {
+  const BatteryReported({required this.from, required this.battery});
+  final DeviceInfo from;
+  final Battery battery;
+}
+
+/// A paired device wants this phone to ring so it can be found ([on]), or
+/// to stop.
+class RingRequested extends LinksyEvent {
+  const RingRequested({required this.from, required this.on});
+  final DeviceInfo from;
+  final bool on;
 }

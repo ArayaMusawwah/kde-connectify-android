@@ -32,6 +32,28 @@ class LinksyController extends ChangeNotifier {
   /// Second-display sessions showing on this phone, by session.
   final Map<String, SessionStarted> displays = {};
 
+  /// Who is making this phone ring right now ("Find my phone").
+  DeviceInfo? ringingFrom;
+  Timer? _ringTimer;
+
+  /// When each device last sent `ring_stop` with nothing ringing: a `ring`
+  /// right behind it arrived out of order and is already over (§4.5).
+  final _strayRingStops = <String, DateTime>{};
+
+  /// Devices this phone is making ring ("Find my computer"), each until
+  /// stopped or for [ringFor].
+  final Map<String, Timer> _finding = {};
+
+  bool isFinding(String deviceId) => _finding.containsKey(deviceId);
+
+  /// This phone's battery, and what each computer was last told.
+  Battery? _battery;
+  final _toldBattery = <String, Battery>{};
+  StreamSubscription<Battery>? _batterySub;
+
+  /// How long a ring lasts at most (§4.5).
+  static const ringFor = Duration(seconds: 30);
+
   /// Pairing and transfer requests, failures, and things received.
   Stream<LinksyEvent> get prompts => _prompts.stream;
 
@@ -64,6 +86,49 @@ class LinksyController extends ChangeNotifier {
     devices = await node.devices();
     settings = await node.settings();
     notifyListeners();
+    _batterySub = LinksyPlatform.batteryChanges.listen(_onBattery);
+    unawaited(
+      LinksyPlatform.battery().then((b) {
+        _battery ??= b;
+        for (final v in devices) {
+          if (v.connected || v.nearby) _tellBattery(v.device.id, always: true);
+        }
+      }),
+    );
+  }
+
+  // Battery (docs/protocol.md §4.5): sent to paired computers on connecting, then
+  // when it moves by 5 points or charging starts or stops. Each send may open
+  // a connection, so no more often than that.
+
+  bool _isComputer(DeviceInfo d) =>
+      d.kind == DeviceKind.desktop || d.kind == DeviceKind.laptop;
+
+  void _onBattery(Battery b) {
+    _battery = b;
+    for (final v in devices) {
+      if (v.trusted && (v.connected || v.nearby)) _tellBattery(v.device.id);
+    }
+  }
+
+  Future<void> _tellBattery(String id, {bool always = false}) async {
+    final b = _battery;
+    final v = device(id);
+    if (b == null || v == null || !v.trusted || !_isComputer(v.device)) return;
+    final told = _toldBattery[id];
+    if (!always &&
+        told != null &&
+        told.charging == b.charging &&
+        (told.level - b.level).abs() < 5) {
+      return;
+    }
+    _toldBattery[id] = b;
+    try {
+      await node.sendBattery(id, b);
+    } on LinksyException {
+      // Not around after all: say it again next time it connects.
+      _toldBattery.remove(id);
+    }
   }
 
   Future<void> refresh() async {
@@ -73,13 +138,33 @@ class LinksyController extends ChangeNotifier {
 
   void _onEvent(LinksyEvent e) {
     switch (e) {
-      case DeviceFound() ||
-          DeviceLost() ||
-          DeviceUpdated() ||
-          Connected() ||
-          Disconnected() ||
-          Paired():
+      case Connected(:final id):
+        refresh().then((_) => _tellBattery(id, always: true));
+      case Paired(:final device):
+        refresh().then((_) => _tellBattery(device.id, always: true));
+      case DeviceFound(:final device):
+        // A paired computer came around: tell it the battery.
+        refresh().then((_) => _tellBattery(device.id, always: true));
+      case DeviceLost() || DeviceUpdated() || Disconnected():
         refresh();
+      case BatteryReported():
+        // Also in the device list; read it again to show it.
+        refresh();
+      case OpenUrlReceived(:final from, :final url):
+        _addLocal(from.id, ActivityKind.link, incoming: true, text: url);
+      case RingRequested(:final from, on: true):
+        final stray = _strayRingStops.remove(from.id);
+        if (stray != null &&
+            DateTime.now().difference(stray) < const Duration(seconds: 1)) {
+          return;
+        }
+        _startRinging(from);
+      case RingRequested(:final from, on: false):
+        if (ringingFrom?.id == from.id) {
+          stopRinging();
+        } else {
+          _strayRingStops[from.id] = DateTime.now();
+        }
       case SettingsChanged(:final settings):
         this.settings = settings;
         notifyListeners();
@@ -190,7 +275,8 @@ class LinksyController extends ChangeNotifier {
           Paired() ||
           TransferRequest() ||
           NotificationReceived() ||
-          ClipboardReceived():
+          ClipboardReceived() ||
+          OpenUrlReceived():
         _prompts.add(e);
       // The full-screen page for a second display.
       case SessionStarted(kind: SessionKind.display) when !e.sharing:
@@ -198,6 +284,30 @@ class LinksyController extends ChangeNotifier {
       default:
         break;
     }
+  }
+
+  void _startRinging(DeviceInfo from) {
+    final already = ringingFrom != null;
+    ringingFrom = from;
+    _ringTimer?.cancel();
+    _ringTimer = Timer(ringFor, stopRinging);
+    if (!already) {
+      LinksyPlatform.startRing();
+      _addLocal(from.id, ActivityKind.ring, incoming: true);
+      // The full-screen "Found it".
+      _prompts.add(RingRequested(from: from, on: true));
+    }
+    notifyListeners();
+  }
+
+  /// "Found it", `ring_stop`, or 30 seconds.
+  void stopRinging() {
+    _ringTimer?.cancel();
+    _ringTimer = null;
+    if (ringingFrom == null) return;
+    ringingFrom = null;
+    LinksyPlatform.stopRing();
+    notifyListeners();
   }
 
   void _addSession(SessionStarted e) => _add(
@@ -313,6 +423,40 @@ class LinksyController extends ChangeNotifier {
     _addLocal(deviceId, ActivityKind.ping, incoming: false, text: 'Ping');
   });
 
+  /// "Find my computer": makes it ring until [stopFinding].
+  Future<String?> find(String deviceId) => _run(() async {
+    await node.ring(deviceId, on: true);
+    _finding.remove(deviceId)?.cancel();
+    _finding[deviceId] = Timer(ringFor, () {
+      _finding.remove(deviceId);
+      notifyListeners();
+    });
+    _addLocal(deviceId, ActivityKind.ring, incoming: false);
+  });
+
+  Future<String?> stopFinding(String deviceId) => _run(() async {
+    _finding.remove(deviceId)?.cancel();
+    notifyListeners();
+    await node.ring(deviceId, on: false);
+  });
+
+  /// "Open on PC": the computer opens [url] in its browser.
+  Future<String?> openUrl(String deviceId, String url) => _run(() async {
+    await node.openUrl(deviceId, url);
+    _addLocal(deviceId, ActivityKind.link, incoming: false, text: url);
+  });
+
+  /// Text shared from another app, to [deviceId]'s clipboard.
+  Future<String?> sendText(String deviceId, String text) async {
+    if (utf8.encode(text).length > maxClipboardBytes) {
+      return 'That’s too much text to send.';
+    }
+    return _run(() async {
+      await node.sendClipboard(deviceId, text);
+      _addLocal(deviceId, ActivityKind.clipboard, incoming: false, text: text);
+    });
+  }
+
   Future<String?> cancel(String transfer) => _run(() => node.cancel(transfer));
 
   Future<String?> respond(String request, {required bool accept}) async {
@@ -406,6 +550,11 @@ class LinksyController extends ChangeNotifier {
   @override
   void dispose() {
     _sub?.cancel();
+    _batterySub?.cancel();
+    _ringTimer?.cancel();
+    for (final t in _finding.values) {
+      t.cancel();
+    }
     _saveTimer?.cancel();
     _store.save(_activity);
     _prompts.close();

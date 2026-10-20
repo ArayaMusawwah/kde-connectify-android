@@ -2,6 +2,25 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+import '../core/models.dart';
+
+/// Something another app shared to Linksy: text (maybe a link) or files.
+sealed class SharedIn {
+  const SharedIn();
+}
+
+class SharedText extends SharedIn {
+  const SharedText(this.text);
+  final String text;
+}
+
+class SharedFiles extends SharedIn {
+  const SharedFiles(this.paths);
+
+  /// Copies in the app's cache.
+  final List<String> paths;
+}
+
 /// The few things only Android knows (android/…/MainActivity.kt).
 abstract final class LinksyPlatform {
   static const _channel = MethodChannel('app.linksy/platform');
@@ -11,6 +30,8 @@ abstract final class LinksyPlatform {
   static final _displaysEnded = StreamController<String>.broadcast();
   static final _qrCodes = StreamController<String>.broadcast();
   static final _scannerErrors = StreamController<String>.broadcast();
+  static final _shares = StreamController<SharedIn>.broadcast();
+  static final _batteries = StreamController<Battery>.broadcast();
   static var _listening = false;
 
   /// Calls from Android: pairing links, second-display size and end, and
@@ -35,9 +56,30 @@ abstract final class LinksyPlatform {
           _qrCodes.add(call.arguments as String);
         case 'scannerError' when call.arguments is String:
           _scannerErrors.add(call.arguments as String);
+        case 'share':
+          final share = _shared(call.arguments);
+          if (share != null) _shares.add(share);
+        case 'batteryChanged':
+          final b = _battery(call.arguments);
+          if (b != null) _batteries.add(b);
       }
     });
   }
+
+  static SharedIn? _shared(Object? args) {
+    if (args is! Map) return null;
+    final files = (args['files'] as List?)?.cast<String>();
+    if (files != null && files.isNotEmpty) return SharedFiles(files);
+    final text = args['text'];
+    return text is String && text.trim().isNotEmpty ? SharedText(text) : null;
+  }
+
+  static Battery? _battery(Object? args) => args is Map
+      ? Battery(
+          level: (args['level'] as num).toInt(),
+          charging: args['charging'] == true,
+        )
+      : null;
 
   static Future<T?> _call<T>(String method, [Object? args]) async {
     try {
@@ -66,6 +108,31 @@ abstract final class LinksyPlatform {
       return null;
     }
   }
+
+  /// What was shared to Linksy before the app was ready, once.
+  static Future<SharedIn?> takeShare() async =>
+      _shared(await _call<Object?>('takeShare'));
+
+  /// Shares that arrive while the app is running.
+  static Stream<SharedIn> get shares {
+    _listen();
+    return _shares.stream;
+  }
+
+  /// This phone's battery now (null without one, or in tests).
+  static Future<Battery?> battery() async =>
+      _battery(await _call<Object?>('battery'));
+
+  /// Every battery change Android reports (often the same level again).
+  static Stream<Battery> get batteryChanges {
+    _listen();
+    return _batteries.stream;
+  }
+
+  /// "Ring my phone": the alarm sound at full volume until [stopRing].
+  static Future<void> startRing() => _call<void>('startRing');
+
+  static Future<void> stopRing() => _call<void>('stopRing');
 
   /// Android's own screen capture prompt, for [session]. True if allowed.
   static Future<bool> requestScreenCapture(String session) async =>
@@ -126,6 +193,10 @@ abstract final class LinksyPlatform {
   /// Opens a received file in another app: `done`, `missing` or `noApp`.
   static Future<String> openFile(String path) async =>
       await _call<String>('openFile', {'path': path}) ?? 'noApp';
+
+  /// Opens an `http(s)` link in the phone's browser. False if nothing can.
+  static Future<bool> openUrl(String url) async =>
+      await _call<bool>('openUrl', {'url': url}) ?? false;
 
   /// Starts the pairing QR scanner: its preview texture, the camera's frame
   /// size and how far the camera is turned from upright.

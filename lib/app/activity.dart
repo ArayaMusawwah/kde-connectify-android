@@ -33,7 +33,7 @@ class Activity {
   int bytes;
   List<String> saved;
 
-  /// Clipboard text or ping title. Clipboard text is never written to disk:
+  /// Clipboard text, ping title or link. Clipboard text is never written to disk:
   /// it may be a password.
   final String? text;
   String? reason;
@@ -56,7 +56,8 @@ class Activity {
     'total': total,
     'bytes': bytes,
     'saved': saved,
-    if (kind == ActivityKind.ping) 'text': text,
+    // Links are kept; clipboard text never is (it may be a password).
+    if (kind == ActivityKind.ping || kind == ActivityKind.link) 'text': text,
     'reason': isLive ? 'Interrupted' : reason,
   };
 
@@ -92,6 +93,12 @@ enum ActivityKind {
 
   /// This phone was a device's second display.
   display,
+
+  /// A web link: opened on the computer ("Open on PC"), or sent to this phone.
+  link,
+
+  /// "Find my phone" / "Find my computer".
+  ring,
 }
 
 enum ActivityStatus { waiting, active, done, declined, failed }

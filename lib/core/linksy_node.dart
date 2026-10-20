@@ -31,6 +31,15 @@ abstract interface class LinksyNode {
 
   Future<void> notify(String id, String title, String body);
 
+  /// "Open on PC": asks [id] to open an `http(s)` [url] in its browser.
+  Future<void> openUrl(String id, String url);
+
+  /// Tells [id] this phone's battery.
+  Future<void> sendBattery(String id, Battery battery);
+
+  /// "Find my computer": makes [id] ring, or stops it.
+  Future<void> ring(String id, {required bool on});
+
   Future<NodeSettings> settings();
 
   Future<void> updateSettings(NodeSettings settings);

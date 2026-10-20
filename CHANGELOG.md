@@ -2,6 +2,18 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- **Open on PC**: share a link from any app to Linksy and it opens in your computer's browser. Shared text goes to its clipboard, and shared files are sent.
+- Links your computer sends open on the phone with a tap.
+- **Find my phone**: your computer can make the phone ring loudly, even on silent, until you tap "Found it" (or for 30 seconds).
+- **Find my computer**: a button on each computer's page makes it ring.
+- Your computer shows the phone's battery level and warns you when it runs low.
+
+### Fixed
+- **Second display stays black** on some phones (realme and others): the phone now decodes whole frames, whatever way the computer slices them.
+
 ## [0.1.5] - 2026-10-19
 
 ### Fixed

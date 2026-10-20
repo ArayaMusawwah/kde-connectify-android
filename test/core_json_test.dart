@@ -100,6 +100,38 @@ void main() {
     );
   });
 
+  test('reads links, batteries and rings', () {
+    final link = parse({
+      'type': 'open_url',
+      'from': device,
+      'url': 'https://linksy.diary.mg/',
+    });
+    expect(link, isA<OpenUrlReceived>());
+    expect((link as OpenUrlReceived).url, 'https://linksy.diary.mg/');
+
+    final battery = parse({
+      'type': 'battery',
+      'from': device,
+      'battery': {'level': 82, 'charging': true},
+    });
+    expect(
+      (battery as BatteryReported).battery,
+      const Battery(level: 82, charging: true),
+    );
+
+    final ring = parse({'type': 'ring', 'from': device, 'on': false});
+    expect((ring as RingRequested).on, isFalse);
+
+    final v = deviceViewFromJson({
+      'device': device,
+      'trusted': true,
+      'connected': true,
+      'nearby': true,
+      'battery': {'level': 40, 'charging': false},
+    });
+    expect(v.battery?.level, 40);
+  });
+
   test('ignores event types and session kinds it does not know', () {
     expect(parse({'type': 'from_the_future'}), isNull);
     expect(

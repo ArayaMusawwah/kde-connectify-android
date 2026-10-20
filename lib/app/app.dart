@@ -7,6 +7,8 @@ import '../core/models.dart';
 import '../features/devices/home_screen.dart';
 import '../features/pairing/pairing_flows.dart';
 import '../features/permissions/permissions_sheet.dart';
+import '../features/ring/ring_screen.dart';
+import '../features/share/share_sheet.dart';
 import '../features/sharing/display_screen.dart';
 import '../features/sharing/sharing.dart';
 import '../features/transfer/incoming_sheet.dart';
@@ -29,6 +31,7 @@ class _LinksyAppState extends State<LinksyApp> {
   final _messenger = GlobalKey<ScaffoldMessengerState>();
   StreamSubscription<LinksyEvent>? _prompts;
   StreamSubscription<String>? _links;
+  StreamSubscription<SharedIn>? _shares;
 
   /// The pairing dialog on screen, so a decline from the other side closes it.
   String? _openPairing;
@@ -43,6 +46,11 @@ class _LinksyAppState extends State<LinksyApp> {
     LinksyPlatform.takeLink().then((link) {
       if (link != null) _pairWith(link);
     });
+    // "Share → Linksy" from another app, before or while the app runs.
+    _shares = LinksyPlatform.shares.listen(_shareOut);
+    LinksyPlatform.takeShare().then((shared) {
+      if (shared != null) _shareOut(shared);
+    });
     // What Linksy needs from Android, explained once on a first launch.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final context = _navigator.currentContext;
@@ -54,6 +62,7 @@ class _LinksyAppState extends State<LinksyApp> {
   void dispose() {
     _prompts?.cancel();
     _links?.cancel();
+    _shares?.cancel();
     super.dispose();
   }
 
@@ -68,6 +77,17 @@ class _LinksyAppState extends State<LinksyApp> {
     );
     final error = await widget.controller.pairWithInvite(link);
     if (error != null) _say(error);
+  }
+
+  void _shareOut(SharedIn shared) {
+    final context = _navigator.currentContext;
+    if (context == null) return;
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => ShareSheet(shared: shared),
+    );
   }
 
   void _say(String text) => _messenger.currentState
@@ -122,6 +142,18 @@ class _LinksyAppState extends State<LinksyApp> {
         _say(body.isEmpty ? '${from.name}: $title' : '${from.name}: $body');
       case ClipboardReceived(:final from):
         _say('Copied text from ${from.name}');
+      case OpenUrlReceived():
+        showDialog<void>(
+          context: context,
+          builder: (_) => LinkReceivedDialog(event: e),
+        );
+      case RingRequested(:final from, on: true):
+        _navigator.currentState?.push(
+          MaterialPageRoute<void>(
+            fullscreenDialog: true,
+            builder: (_) => RingScreen(from: from),
+          ),
+        );
       default:
         break;
     }
