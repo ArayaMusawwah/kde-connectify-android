@@ -13,6 +13,9 @@ All notable changes to Linksy for Android. Format: [Keep a Changelog](https://ke
 - **Browse the phone from your computer**: share one folder you choose; it shows up in the computer's Files app.
 - Keep Linksy running in the background (optional), so files, backups and calls keep working with the app closed.
 
+### Fixed
+- **Screen sharing shows the whole screen again**, status bar, notifications and quick settings included. Android 14 and later offered to share "a single app" first, which left everything else black.
+
 ### Not included
 - Texting from the computer and showing the phone's notifications or music there: Android blocks apps installed from outside the Play Store from asking for those permissions.
 

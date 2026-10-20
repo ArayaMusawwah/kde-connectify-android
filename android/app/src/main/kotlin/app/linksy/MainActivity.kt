@@ -347,8 +347,16 @@ class MainActivity : FlutterActivity() {
         pendingCapture?.second?.success(false)
         pendingCapture = session to result
         val manager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        // The whole screen only: Android 14+ otherwise preselects "A single
+        // app", which leaves the status bar, notifications and quick settings
+        // black on the computer.
+        val intent = if (Build.VERSION.SDK_INT >= 34) {
+            manager.createScreenCaptureIntent(android.media.projection.MediaProjectionConfig.createConfigForDefaultDisplay())
+        } else {
+            manager.createScreenCaptureIntent()
+        }
         @Suppress("DEPRECATION")
-        startActivityForResult(manager.createScreenCaptureIntent(), REQUEST_CAPTURE)
+        startActivityForResult(intent, REQUEST_CAPTURE)
     }
 
     private fun granted(permission: String) =
