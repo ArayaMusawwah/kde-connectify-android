@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../app/activity.dart';
+import '../../app/linksy_controller.dart';
 import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../../ui/format.dart';
 import '../../ui/sig.dart';
+import '../remote/remote_screen.dart';
 import 'activity_tile.dart';
 
 /// Picks files and sends them to a device, reporting any error.
@@ -19,10 +23,33 @@ Future<void> pickAndSend(BuildContext context, String deviceId) async {
 
 /// A device's page: big actions, then everything shared with it, as a
 /// timeline by day.
-class DeviceScreen extends StatelessWidget {
+class DeviceScreen extends StatefulWidget {
   const DeviceScreen({super.key, required this.deviceId});
 
   final String deviceId;
+
+  @override
+  State<DeviceScreen> createState() => _DeviceScreenState();
+}
+
+class _DeviceScreenState extends State<DeviceScreen> {
+  late final LinksyController _c;
+
+  String get deviceId => widget.deviceId;
+
+  // A computer's players show here while the page is open.
+  @override
+  void initState() {
+    super.initState();
+    _c = LinksyScope.read(context);
+    _c.watchMedia(deviceId);
+  }
+
+  @override
+  void dispose() {
+    _c.unwatchMedia(deviceId);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +83,18 @@ class DeviceScreen extends StatelessWidget {
                     offset: const Offset(0, -34),
                     child: _Actions(view: view),
                   ),
+                  if (c.media[deviceId]?.players case final players?
+                      when players.isNotEmpty)
+                    for (final p in players)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                        child: _NowPlaying(deviceId: deviceId, player: p),
+                      ),
+                  if (_isComputer(view.device))
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                      child: _PhotoBackup(view: view),
+                    ),
                 ],
               ),
             ),
@@ -83,6 +122,9 @@ class DeviceScreen extends StatelessWidget {
       ),
     );
   }
+
+  static bool _isComputer(DeviceInfo d) =>
+      d.kind == DeviceKind.desktop || d.kind == DeviceKind.laptop;
 
   static List<(String, List<Activity>)> _byDay(List<Activity> entries) {
     final days = <(String, List<Activity>)>[];
@@ -167,6 +209,20 @@ class _Hero extends StatelessWidget {
               when view.presence != Presence.notNearby) ...[
             const SizedBox(height: 6),
             _BatteryLine(battery: battery),
+          ],
+          if (LinksyScope.of(context).lockWatchers.containsKey(d.id)) ...[
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Ph.lockSimple, size: 16, color: Colors.white70),
+                const SizedBox(width: 5),
+                Text(
+                  'Locks when you leave with this phone',
+                  style: const TextStyle(fontSize: 14, color: Colors.white70),
+                ),
+              ],
+            ),
           ],
         ],
       ),
@@ -346,7 +402,25 @@ class _Actions extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          _FindAction(view: view),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _SmallAction(
+                  icon: Ph.mouseSimple,
+                  title: 'Remote',
+                  caption: 'Touchpad and slides',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => RemoteScreen(device: view.device),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(child: _FindAction(view: view)),
+            ],
+          ),
         ],
       ),
     );
@@ -362,54 +436,169 @@ class _FindAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = LinksyScope.of(context);
-    final s = Sig.of(context);
     final id = view.device.id;
     final ringing = c.isFinding(id);
-    return SigCard(
+    return _SmallAction(
+      icon: ringing ? PhFill.bellRinging : Ph.binoculars,
+      title: ringing ? 'Ringing…' : 'Find it',
+      caption: ringing ? 'Tap to stop' : 'Make it ring loudly',
+      active: ringing,
       onTap: () => report(context, ringing ? c.stopFinding(id) : c.find(id)),
-      color: ringing ? Sig.blue : null,
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+    );
+  }
+}
+
+/// What a computer plays (its MPRIS players), with play/pause and skip.
+class _NowPlaying extends StatelessWidget {
+  const _NowPlaying({required this.deviceId, required this.player});
+
+  final String deviceId;
+  final MediaPlayer player;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final c = LinksyScope.read(context);
+    final p = player;
+    final art = p.art;
+    Uint8List? cover;
+    if (art != null) {
+      try {
+        cover = base64Decode(art);
+      } on FormatException {
+        cover = null;
+      }
+    }
+    Widget control(
+      IconData icon,
+      String tip,
+      String action, {
+      bool big = false,
+    }) => Tooltip(
+      message: tip,
+      child: Pressable(
+        onTap: () => report(context, c.mediaCommand(deviceId, p.id, action)),
+        semanticLabel: tip,
+        child: Container(
+          width: big ? 48 : 40,
+          height: big ? 48 : 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: big ? Sig.blue : Colors.transparent,
+          ),
+          child: Icon(
+            icon,
+            size: big ? 22 : 20,
+            color: big ? Colors.white : s.ink,
+          ),
+        ),
+      ),
+    );
+    return SigCard(
+      padding: const EdgeInsets.fromLTRB(12, 12, 10, 12),
       child: Row(
         children: [
-          ringing
-              ? Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Sig.deep,
-                  ),
-                  child: const Icon(
-                    PhFill.bellRinging,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                )
-              : IconCircle(icon: Ph.binoculars, color: Sig.blue, size: 40),
-          const SizedBox(width: 14),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(Radii.sm),
+            child: SizedBox(
+              width: 52,
+              height: 52,
+              child: cover != null
+                  ? Image.memory(
+                      cover,
+                      fit: BoxFit.cover,
+                      gaplessPlayback: true,
+                    )
+                  : ColoredBox(
+                      color: s.raised,
+                      child: Icon(Ph.musicNotes, color: s.muted),
+                    ),
+            ),
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  ringing ? 'Ringing…' : 'Find ${view.device.name}',
+                  p.title.isEmpty ? p.app : p.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: sora(16, color: ringing ? Colors.white : s.ink),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: s.ink,
+                  ),
                 ),
+                Text(
+                  [if (p.artist.isNotEmpty) p.artist, p.app].join(' · '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 13, color: s.muted),
+                ),
+              ],
+            ),
+          ),
+          if (p.canPrevious) control(PhFill.skipBack, 'Previous', 'previous'),
+          control(
+            p.playing ? PhFill.pause : PhFill.play,
+            p.playing ? 'Pause' : 'Play',
+            'play_pause',
+            big: true,
+          ),
+          if (p.canNext) control(PhFill.skipForward, 'Next', 'next'),
+        ],
+      ),
+    );
+  }
+}
+
+/// "Back up new photos to fedora": photo auto-import from the folder picked
+/// in Android's picker, while the computer is around.
+class _PhotoBackup extends StatelessWidget {
+  const _PhotoBackup({required this.view});
+
+  final DeviceView view;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final c = LinksyScope.of(context);
+    final id = view.device.id;
+    final on = c.backsUpPhotos(id);
+    final name = view.device.name;
+    final at = c.photosBackedUp(id);
+    final detail = !on
+        ? 'New photos go to $name’s Pictures folder'
+        : c.photosDeclined(id)
+        ? '$name doesn’t take photos. Turn on “Import Photos From Phones” there.'
+        : [
+            'From ${c.photosFolder ?? 'your camera folder'}',
+            if (at != null) 'last ${formatClock(at)}',
+          ].join(' · ');
+    return SigCard(
+      padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+      child: Row(
+        children: [
+          IconCircle(icon: Ph.images, color: Sig.blue, size: 40),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Back up photos', style: sora(16, color: s.ink)),
                 const SizedBox(height: 2),
                 Text(
-                  ringing
-                      ? 'Tap to stop'
-                      : 'Make it ring loudly so you can find it',
+                  detail,
                   style: TextStyle(
                     fontSize: 12.5,
-                    color: ringing ? Colors.white70 : s.muted,
+                    color: on && c.photosDeclined(id) ? s.red : s.muted,
                   ),
                 ),
               ],
             ),
           ),
+          Switch(value: on, onChanged: (v) => c.setPhotoBackup(id, v)),
         ],
       ),
     );
@@ -456,6 +645,7 @@ class _SmallAction extends StatelessWidget {
     required this.title,
     required this.caption,
     required this.onTap,
+    this.active = false,
   });
 
   final IconData icon;
@@ -463,20 +653,40 @@ class _SmallAction extends StatelessWidget {
   final String caption;
   final VoidCallback onTap;
 
+  /// Blue while it's going on (ringing).
+  final bool active;
+
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     return SigCard(
       onTap: onTap,
+      color: active ? Sig.blue : null,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconCircle(icon: icon, color: Sig.blue, size: 40),
+          active
+              ? Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Sig.deep,
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 20),
+                )
+              : IconCircle(icon: icon, color: Sig.blue, size: 40),
           const SizedBox(height: 14),
-          Text(title, style: sora(16, color: s.ink)),
+          Text(title, style: sora(16, color: active ? Colors.white : s.ink)),
           const SizedBox(height: 2),
-          Text(caption, style: TextStyle(fontSize: 12.5, color: s.muted)),
+          Text(
+            caption,
+            style: TextStyle(
+              fontSize: 12.5,
+              color: active ? Colors.white70 : s.muted,
+            ),
+          ),
         ],
       ),
     );

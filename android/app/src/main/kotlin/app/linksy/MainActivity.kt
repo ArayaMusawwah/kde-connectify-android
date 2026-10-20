@@ -14,6 +14,8 @@ import android.provider.Settings
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import app.linksy.files.FileServer
+import app.linksy.files.NativeFiles
 import app.linksy.media.DisplayReceiver
 import app.linksy.media.NativeSession
 import app.linksy.media.QrScanner
@@ -31,6 +33,9 @@ class MainActivity : FlutterActivity() {
     private var pendingShare: Map<String, Any>? = null
 
     private val ring by lazy { RingPlayer(applicationContext) }
+    private var calls: CallWatcher? = null
+    /// Waiting on Android's folder picker: which folder, and Dart's reply.
+    private var pendingFolder: Pair<String, MethodChannel.Result>? = null
     private var batteryReceiver: BroadcastReceiver? = null
 
     /// Waiting on the system's screen capture prompt: the session and Dart's reply.
@@ -58,6 +63,53 @@ class MainActivity : FlutterActivity() {
                         result.success(pendingLink)
                         pendingLink = null
                     }
+                    "pickFolder" -> pickFolder(call.argument<String>("kind")!!, result)
+                    "folder" -> result.success(folderName(call.argument<String>("kind")!!))
+                    "shareFiles" -> {
+                        val on = call.argument<Boolean>("on") == true
+                        fileServer(this@MainActivity).root = folder("files")
+                        NativeFiles.sharing(on && folder("files") != null)
+                        result.success(null)
+                    }
+                    "keepAlive" -> {
+                        if (call.argument<Boolean>("on") == true) {
+                            KeepAlive.start(this@MainActivity, call.argument<String>("text") ?: "Linksy is connected", call.argument<Boolean>("awake") == true)
+                        } else {
+                            KeepAlive.stop(this@MainActivity)
+                        }
+                        result.success(null)
+                    }
+                    "watchCalls" -> {
+                        calls?.stop()
+                        calls = null
+                        if (call.argument<Boolean>("on") == true) {
+                            calls = CallWatcher(applicationContext) { state -> channel?.invokeMethod("callState", state) }.apply { start() }
+                        }
+                        result.success(null)
+                    }
+                    "photoBatch" -> {
+                        val tree = folder("photos") ?: return@setMethodCallHandler result.success(null)
+                        val since = (call.argument<Number>("since") ?: 0).toLong()
+                        Thread {
+                            val batch = runCatching { PhotoScanner.batch(applicationContext, tree, since) }.getOrNull()
+                            runOnUiThread { result.success(batch) }
+                        }.start()
+                    }
+                    "presentation" -> {
+                        presenting = call.argument<Boolean>("on") == true
+                        if (presenting) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                        else window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                        result.success(null)
+                    }
+                    "prefs" -> result.success(
+                        prefs().all.filterKeys { it.startsWith("app.") }.mapKeys { it.key.removePrefix("app.") },
+                    )
+                    "setPref" -> {
+                        val key = "app." + call.argument<String>("key")!!
+                        val value = call.argument<String>("value")
+                        prefs().edit().apply { if (value == null) remove(key) else putString(key, value) }.apply()
+                        result.success(null)
+                    }
                     "takeShare" -> {
                         result.success(pendingShare)
                         pendingShare = null
@@ -70,6 +122,7 @@ class MainActivity : FlutterActivity() {
                     }
                     "stopRing" -> {
                         ring.stop()
+        calls?.stop()
                         result.success(null)
                     }
                     "requestScreenCapture" -> requestScreenCapture(call.argument<String>("session")!!, result)
@@ -142,11 +195,63 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    /// Presentation remote: the volume keys change slides instead of volume.
+    private var presenting = false
+
+    override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
+        val code = event.keyCode
+        if (presenting && (code == android.view.KeyEvent.KEYCODE_VOLUME_UP || code == android.view.KeyEvent.KEYCODE_VOLUME_DOWN)) {
+            if (event.action == android.view.KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+                channel?.invokeMethod("volumeKey", if (code == android.view.KeyEvent.KEYCODE_VOLUME_UP) "up" else "down")
+            }
+            return true
+        }
+        return super.dispatchKeyEvent(event)
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         takeShared(intent)
         val link = linkFrom(intent) ?: return
         channel?.invokeMethod("link", link) ?: run { pendingLink = link }
+    }
+
+    private fun prefs() = getSharedPreferences("linksy", MODE_PRIVATE)
+
+    /// A folder the user picked for Linksy (`files` to share, `photos` to back
+    /// up), if Android still grants it.
+    private fun folder(kind: String): android.net.Uri? {
+        val uri = prefs().getString("folder.$kind", null)?.let(android.net.Uri::parse) ?: return null
+        return uri.takeIf { u -> contentResolver.persistedUriPermissions.any { it.uri == u && it.isReadPermission } }
+    }
+
+    private fun folderName(kind: String): String? {
+        val tree = folder(kind) ?: return null
+        val doc = android.provider.DocumentsContract.buildDocumentUriUsingTree(
+            tree, android.provider.DocumentsContract.getTreeDocumentId(tree),
+        )
+        return runCatching {
+            contentResolver.query(doc, arrayOf(android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME), null, null, null)
+                ?.use { c -> if (c.moveToFirst()) c.getString(0) else null }
+        }.getOrNull() ?: tree.lastPathSegment?.substringAfterLast(':')
+    }
+
+    /// Android's folder picker; the grant is kept across restarts.
+    private fun pickFolder(kind: String, result: MethodChannel.Result) {
+        pendingFolder?.second?.success(null)
+        pendingFolder = kind to result
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
+                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION,
+        )
+        if (kind == "photos" && Build.VERSION.SDK_INT >= 26) {
+            intent.putExtra(
+                android.provider.DocumentsContract.EXTRA_INITIAL_URI,
+                android.provider.DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", "primary:DCIM"),
+            )
+        }
+        @Suppress("DEPRECATION")
+        startActivityForResult(intent, REQUEST_FOLDER)
     }
 
     /// "Share → Linksy", handed over by [ShareTarget] (files already copied).
@@ -346,6 +451,28 @@ class MainActivity : FlutterActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         @Suppress("DEPRECATION")
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_FOLDER) {
+            val (kind, result) = pendingFolder ?: return
+            pendingFolder = null
+            val uri = data?.data
+            if (resultCode != RESULT_OK || uri == null) return result.success(null)
+            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                (if (kind == "files") Intent.FLAG_GRANT_WRITE_URI_PERMISSION else 0)
+            runCatching { contentResolver.takePersistableUriPermission(uri, flags) }
+            // Let go of the folder this replaces.
+            prefs().getString("folder.$kind", null)?.takeIf { it != uri.toString() }?.let { old ->
+                val stillUsed = listOf("files", "photos").any { it != kind && prefs().getString("folder.$it", null) == old }
+                if (!stillUsed) runCatching {
+                    contentResolver.releasePersistableUriPermission(
+                        android.net.Uri.parse(old),
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+                    )
+                }
+            }
+            prefs().edit().putString("folder.$kind", uri.toString()).apply()
+            if (kind == "files") fileServer(this).root = uri
+            return result.success(folderName(kind))
+        }
         if (requestCode == REQUEST_PICK) {
             val result = pendingPick ?: return
             pendingPick = null
@@ -388,5 +515,12 @@ class MainActivity : FlutterActivity() {
         const val REQUEST_CAMERA = 42
         const val REQUEST_NOTIFICATIONS = 43
         const val REQUEST_PICK = 44
+        const val REQUEST_FOLDER = 45
+
+        private var files: FileServer? = null
+
+        /// One file server per process, whatever happens to the activity.
+        fun fileServer(context: Context): FileServer =
+            files ?: FileServer(context.applicationContext).also { files = it; it.start() }
     }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import '../src/rust/api/node.dart' as rust;
 import '../src/rust/frb_generated.dart';
@@ -20,8 +21,11 @@ class RustNode implements LinksyNode {
           // gets sideloaded apps blocked at install; this phone doesn't offer
           // it. That, or a kind this app doesn't know: say "can't" straight
           // away rather than leave the other device waiting.
+          // `input` goes the other way (this phone drives a computer).
           if (j['type'] == 'session_request' &&
-              (event == null || j['kind'] == 'control')) {
+              (event == null ||
+                  j['kind'] == 'control' ||
+                  j['kind'] == 'input')) {
             _node.declineUnsupported(request: j['request'] as String);
             return null;
           }
@@ -135,6 +139,46 @@ class RustNode implements LinksyNode {
   @override
   Future<void> ring(String id, {required bool on}) => _guard(
     () => _node.ring(id: id, on_: on),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<String> startInput(String id) =>
+      _guard(() => _node.startInput(id: id), name: _nameOf(id));
+
+  @override
+  Future<bool> sessionWrite(String session, Uint8List bytes) =>
+      _node.sessionWrite(session: session, bytes: bytes);
+
+  @override
+  Future<void> watchMedia(String id, {required bool on}) => _guard(
+    () => _node.watchMedia(id: id, on_: on),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> mediaCommand(
+    String id,
+    String player,
+    Map<String, Object> command,
+  ) => _guard(
+    () => _node.mediaCommand(
+      id: id,
+      player: player,
+      commandJson: jsonEncode(command),
+    ),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> sendCallState(String id, String state) => _guard(
+    () => _node.sendCallState(id: id, state: state),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<String> importFiles(String id, List<String> paths) => _guard(
+    () => _node.importFiles(id: id, paths: paths),
     name: _nameOf(id),
   );
 

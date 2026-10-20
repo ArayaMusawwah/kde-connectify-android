@@ -25,6 +25,27 @@ DeviceView deviceViewFromJson(Json j) => DeviceView(
   },
 );
 
+MediaState mediaStateFromJson(Json j) => MediaState(
+  seq: _int(j['seq']),
+  players: [
+    for (final p in (j['players'] as List? ?? const []).cast<Json>())
+      MediaPlayer(
+        id: p['id'] as String,
+        app: p['app'] as String? ?? '',
+        title: p['title'] as String? ?? '',
+        artist: p['artist'] as String? ?? '',
+        album: p['album'] as String? ?? '',
+        playing: p['playing'] as bool? ?? false,
+        positionMs: (p['position_ms'] as num?)?.toInt(),
+        lengthMs: (p['length_ms'] as num?)?.toInt(),
+        canNext: p['can_next'] as bool? ?? false,
+        canPrevious: p['can_previous'] as bool? ?? false,
+        canSeek: p['can_seek'] as bool? ?? false,
+        art: p['art'] as String?,
+      ),
+  ],
+);
+
 Battery batteryFromJson(Json j) => Battery(
   level: _int(j['level']).clamp(0, 100),
   charging: j['charging'] as bool? ?? false,
@@ -135,6 +156,15 @@ LinksyEvent? eventFromJson(Json j) {
       battery: batteryFromJson(j['battery'] as Json),
     ),
     'ring' => RingRequested(from: device('from'), on: j['on'] as bool? ?? true),
+    'media_state' => MediaStateReceived(
+      from: device('from'),
+      state: mediaStateFromJson(j['state'] as Json),
+    ),
+    'heartbeat_watch' => HeartbeatWatchChanged(
+      from: device('from'),
+      on: j['on'] as bool? ?? false,
+      everyS: _int(j['every_s']),
+    ),
     _ => null,
   };
 }

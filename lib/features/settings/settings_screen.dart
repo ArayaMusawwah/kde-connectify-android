@@ -92,6 +92,61 @@ class SettingsScreen extends StatelessWidget {
                               update(st.copyWith(stayConnected: v)),
                         ),
                       ),
+                      _Row(
+                        icon: Ph.deviceMobile,
+                        title: 'Keep running in the background',
+                        caption:
+                            'Files, photo backup and calls keep working '
+                            'when Linksy is closed. Shows a quiet '
+                            'notification.',
+                        trailing: Switch(
+                          value: c.stayRunning,
+                          onChanged: c.setStayRunning,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SectionLabel('With your computers'),
+                  _Group(
+                    children: [
+                      _Row(
+                        icon: Ph.phoneCall,
+                        title: 'Pause music during calls',
+                        caption:
+                            'Your computers pause what plays while a call '
+                            'rings or goes on, and resume after.',
+                        trailing: Switch(
+                          value: c.pauseOnCalls,
+                          onChanged: c.setPauseOnCalls,
+                        ),
+                      ),
+                      _Row(
+                        icon: Ph.folderOpen,
+                        title: 'Let computers browse files',
+                        caption: c.filesFolder == null
+                            ? 'Choose a folder your computers can open in '
+                                  'their Files app, like Documents (Android '
+                                  'doesn’t allow Download).'
+                            : 'Shares “${c.filesFolder}”. Tap to choose '
+                                  'another folder.',
+                        onTap: c.pickFilesFolder,
+                        trailing: Switch(
+                          value: c.sharingFiles && c.filesFolder != null,
+                          onChanged: (v) => v && c.filesFolder == null
+                              ? c.pickFilesFolder()
+                              : c.setSharingFiles(v),
+                        ),
+                      ),
+                      _Row(
+                        icon: Ph.images,
+                        title: 'Photo folder',
+                        caption: c.photosFolder == null
+                            ? 'Choose your camera folder (DCIM › Camera) '
+                                  'to back up photos to a computer.'
+                            : 'Backs up “${c.photosFolder}”. Turn it on '
+                                  'per computer, on its page.',
+                        onTap: c.pickPhotosFolder,
+                      ),
                     ],
                   ),
                   const SectionLabel('Permissions'),

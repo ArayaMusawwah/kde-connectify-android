@@ -2,6 +2,20 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- **Remote**: use the phone as your computer's touchpad and keyboard, or as a presentation remote (big Next/Back buttons, and the volume keys change slides).
+- **Media controls**: what plays on your computer shows on its page, with play/pause and skip.
+- **Lock when you walk away**: when your computer asks for it, the phone keeps telling it you're near, even with the screen off, so it locks when you leave.
+- **Pause music during calls**: your computers pause while a call rings or goes on, and resume after. No phone permission needed.
+- **Back up photos**: new photos from the folder you choose go to a computer's Pictures folder, per computer.
+- **Browse the phone from your computer**: share one folder you choose; it shows up in the computer's Files app.
+- Keep Linksy running in the background (optional), so files, backups and calls keep working with the app closed.
+
+### Not included
+- Texting from the computer and showing the phone's notifications or music there: Android blocks apps installed from outside the Play Store from asking for those permissions.
+
 ## [0.1.6] - 2026-10-20
 
 ### Added

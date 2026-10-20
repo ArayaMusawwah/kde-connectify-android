@@ -4,6 +4,7 @@
 //! - `screen`, `camera`: the phone writes H.264; nothing comes back.
 //! - `control`: the phone writes H.264 and reads framed input messages.
 //! - `display`: the phone reads H.264 and writes framed input messages.
+//! - `input`: the phone (touchpad, keyboard) writes framed input messages.
 //!
 //! Each session gets a task that owns its streams: it writes what the app
 //! queues and hands what arrives to the app, until either side ends.
@@ -41,7 +42,7 @@ pub(crate) fn collect(node: &Node) {
     });
 }
 
-fn run(mut session: Session) {
+pub(crate) fn run(mut session: Session) {
     let id = session.id.to_string();
     let reads = matches!(session.kind, SessionKind::Control | SessionKind::Display);
     // Video in for a display ends the session when the sharer stops.
@@ -110,6 +111,12 @@ fn handle(id: &str) -> Option<Arc<Handle>> {
 pub(crate) fn write(id: &str, bytes: Vec<u8>) -> bool {
     let Some(out) = handle(id).and_then(|h| h.out.lock().unwrap().clone()) else { return false };
     out.blocking_send(bytes).is_ok()
+}
+
+/// [`write`] for async callers (Dart): waits for room instead of blocking.
+pub(crate) async fn write_async(id: &str, bytes: Vec<u8>) -> bool {
+    let Some(out) = handle(id).and_then(|h| h.out.lock().unwrap().clone()) else { return false };
+    out.send(bytes).await.is_ok()
 }
 
 /// The next bytes from the other side, blocking; None once it's over.

@@ -11,6 +11,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA"/>
+    <!-- Staying connected with the screen off while a computer locks itself when the
+         phone leaves (heartbeats) or browses its files. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <!-- "Ring my phone" also vibrates. -->
     <uses-permission android:name="android.permission.VIBRATE"/>
@@ -79,6 +83,10 @@
             android:name=".media.ShareService"
             android:exported="false"
             android:foregroundServiceType="mediaProjection|camera"/>
+        <service
+            android:name=".KeepAlive"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice"/>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

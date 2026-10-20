@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'models.dart';
 
 /// What the app needs from a Linksy node. The real implementation wraps
@@ -39,6 +41,28 @@ abstract interface class LinksyNode {
 
   /// "Find my computer": makes [id] ring, or stops it.
   Future<void> ring(String id, {required bool on});
+
+  /// Touchpad and keyboard: asks [id] for an `input` session; returns its id.
+  Future<String> startInput(String id);
+
+  /// Framed input messages into a session. False once it has ended.
+  Future<bool> sessionWrite(String session, Uint8List bytes);
+
+  /// Ask [id] for its players while [on] (`MediaStateReceived` events).
+  Future<void> watchMedia(String id, {required bool on});
+
+  /// `{"action": "play_pause"}` and so on, for [player] on [id].
+  Future<void> mediaCommand(
+    String id,
+    String player,
+    Map<String, Object> command,
+  );
+
+  /// `ringing`, `active` or `idle`.
+  Future<void> sendCallState(String id, String state);
+
+  /// Photo auto-import into [id]'s picture library; returns the transfer id.
+  Future<String> importFiles(String id, List<String> paths);
 
   Future<NodeSettings> settings();
 

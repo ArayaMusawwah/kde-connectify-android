@@ -32,6 +32,8 @@ abstract final class LinksyPlatform {
   static final _scannerErrors = StreamController<String>.broadcast();
   static final _shares = StreamController<SharedIn>.broadcast();
   static final _batteries = StreamController<Battery>.broadcast();
+  static final _callStates = StreamController<String>.broadcast();
+  static final _volumeKeys = StreamController<bool>.broadcast();
   static var _listening = false;
 
   /// Calls from Android: pairing links, second-display size and end, and
@@ -59,6 +61,10 @@ abstract final class LinksyPlatform {
         case 'share':
           final share = _shared(call.arguments);
           if (share != null) _shares.add(share);
+        case 'callState' when call.arguments is String:
+          _callStates.add(call.arguments as String);
+        case 'volumeKey' when call.arguments is String:
+          _volumeKeys.add(call.arguments == 'up');
         case 'batteryChanged':
           final b = _battery(call.arguments);
           if (b != null) _batteries.add(b);
@@ -127,6 +133,73 @@ abstract final class LinksyPlatform {
   static Stream<Battery> get batteryChanges {
     _listen();
     return _batteries.stream;
+  }
+
+  /// Android's folder picker, for `files` (shared with computers) or
+  /// `photos` (backed up). Returns the folder's name, or null if cancelled.
+  static Future<String?> pickFolder(String kind) =>
+      _call<String>('pickFolder', {'kind': kind});
+
+  /// The name of the folder picked for [kind], if still allowed.
+  static Future<String?> folder(String kind) =>
+      _call<String>('folder', {'kind': kind});
+
+  /// Lets paired computers browse the `files` folder (or not).
+  static Future<void> shareFiles(bool on) =>
+      _call<void>('shareFiles', {'on': on});
+
+  /// Keeps Linksy running with the screen off, with a quiet notification
+  /// saying [text]; [awake] keeps the CPU on too (heartbeats).
+  static Future<void> keepAlive({
+    required bool on,
+    String text = '',
+    bool awake = false,
+  }) => _call<void>('keepAlive', {'on': on, 'text': text, 'awake': awake});
+
+  /// Reports calls (`ringing`, `active`, `idle`) on [callStates] while on.
+  static Future<void> watchCalls(bool on) =>
+      _call<void>('watchCalls', {'on': on});
+
+  static Stream<String> get callStates {
+    _listen();
+    return _callStates.stream;
+  }
+
+  /// New photos in the `photos` folder after [sinceMs], copied into month
+  /// folders: (folders to send, newest time, count, more to come). Null
+  /// without a folder.
+  static Future<({List<String> folders, int newest, int count, bool more})?>
+  photoBatch(int sinceMs) async {
+    final m = await _call<Map<Object?, Object?>>('photoBatch', {
+      'since': sinceMs,
+    });
+    if (m == null) return null;
+    return (
+      folders: (m['folders'] as List).cast<String>(),
+      newest: (m['newest'] as num).toInt(),
+      count: (m['count'] as num).toInt(),
+      more: m['more'] == true,
+    );
+  }
+
+  /// Small settings kept by Android (no plugin), as strings.
+  static Future<Map<String, String>> prefs() async =>
+      (await _call<Map<Object?, Object?>>('prefs'))
+          ?.map((k, v) => MapEntry(k as String, v as String)) ??
+      {};
+
+  /// Null removes it.
+  static Future<void> setPref(String key, String? value) =>
+      _call<void>('setPref', {'key': key, 'value': value});
+
+  /// Presentation remote: keeps the screen on and turns the volume keys into
+  /// [volumeKeys] (true = up) while on.
+  static Future<void> presentation(bool on) =>
+      _call<void>('presentation', {'on': on});
+
+  static Stream<bool> get volumeKeys {
+    _listen();
+    return _volumeKeys.stream;
   }
 
   /// "Ring my phone": the alarm sound at full volume until [stopRing].

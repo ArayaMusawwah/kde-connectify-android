@@ -20,6 +20,7 @@ IconData activityIcon(Activity a) => switch (a.kind) {
   ActivityKind.display => Ph.monitor,
   ActivityKind.link => Ph.link,
   ActivityKind.ring => Ph.bellSimpleRinging,
+  ActivityKind.remote => Ph.mouseSimple,
 };
 
 /// File name, "N items", quoted clipboard text or the ping title.
@@ -35,6 +36,7 @@ String activityTitle(Activity a) => switch (a.kind) {
   ActivityKind.display => 'Second display',
   ActivityKind.link => linkLabel(a.text ?? 'Link'),
   ActivityKind.ring => a.incoming ? 'Rang this phone' : 'Rang it',
+  ActivityKind.remote => 'Touchpad and keyboard',
 };
 
 /// A link without its scheme, "example.com/page".
@@ -52,6 +54,9 @@ String activityDetail(Activity a) {
   }
   if (a.kind == ActivityKind.control) {
     return live ? 'Being controlled now' : 'Watched and controlled';
+  }
+  if (a.kind == ActivityKind.remote) {
+    return a.isLive ? 'In use now' : 'This phone was its touchpad';
   }
   if (a.kind == ActivityKind.display) {
     return live ? 'In use now' : 'This phone was its second display';
@@ -218,9 +223,11 @@ class TimelineEntry extends StatelessWidget {
       return button(
         Ph.x,
         'Stop',
-        () => a.kind == ActivityKind.display
-            ? c.stopDisplay(a.id)
-            : c.stopSharing(a.id),
+        () => switch (a.kind) {
+          ActivityKind.display => c.stopDisplay(a.id),
+          ActivityKind.remote => c.stopRemote(a.deviceId),
+          _ => c.stopSharing(a.id),
+        },
       );
     }
     if (a.isLive && (!a.incoming || a.status == ActivityStatus.active)) {
@@ -256,6 +263,7 @@ class TimelineEntry extends StatelessWidget {
     ActivityKind.camera,
     ActivityKind.control,
     ActivityKind.display,
+    ActivityKind.remote,
   ].contains(a.kind);
 
   static Future<void> _open(BuildContext context, Activity a) async {

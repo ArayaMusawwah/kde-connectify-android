@@ -36,6 +36,11 @@ class SessionRequestDialog extends StatelessWidget {
         '$name gets this phone’s back camera as a webcam until you stop. '
             'Hold the phone sideways for a wide picture.',
       ),
+      SessionKind.input => (
+        Ph.mouseSimple,
+        '$name wants to use this phone as a touchpad',
+        'Unexpected: computers don’t ask this. Don’t allow it.',
+      ),
       SessionKind.display => (
         Ph.monitor,
         '$name wants to use this screen as a second display',

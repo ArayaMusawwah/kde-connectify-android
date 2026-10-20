@@ -99,6 +99,9 @@ enum ActivityKind {
 
   /// "Find my phone" / "Find my computer".
   ring,
+
+  /// This phone was a computer's touchpad and keyboard.
+  remote,
 }
 
 enum ActivityStatus { waiting, active, done, declined, failed }

@@ -285,7 +285,11 @@ enum SessionKind {
   display,
 
   /// The receiver shares its camera, used as a webcam.
-  camera;
+  camera,
+
+  /// This phone drives the computer's pointer and keyboard (touchpad,
+  /// keyboard, presentation remote); no video.
+  input;
 
   static SessionKind? parse(String value) =>
       SessionKind.values.where((k) => k.name == value).firstOrNull;
@@ -345,4 +349,64 @@ class RingRequested extends LinksyEvent {
   const RingRequested({required this.from, required this.on});
   final DeviceInfo from;
   final bool on;
+}
+
+/// One of a device's media players (docs/protocol.md §4.5, `media_state`).
+class MediaPlayer {
+  const MediaPlayer({
+    required this.id,
+    required this.app,
+    this.title = '',
+    this.artist = '',
+    this.album = '',
+    required this.playing,
+    this.positionMs,
+    this.lengthMs,
+    this.canNext = false,
+    this.canPrevious = false,
+    this.canSeek = false,
+    this.art,
+  });
+
+  final String id;
+  final String app;
+  final String title;
+  final String artist;
+  final String album;
+  final bool playing;
+  final int? positionMs;
+  final int? lengthMs;
+  final bool canNext;
+  final bool canPrevious;
+  final bool canSeek;
+
+  /// Cover art, base64 JPEG or PNG.
+  final String? art;
+}
+
+/// Everything a device plays; a later [seq] replaces an earlier one.
+class MediaState {
+  const MediaState({required this.seq, required this.players});
+  final int seq;
+  final List<MediaPlayer> players;
+}
+
+/// A computer's players changed (while this phone watches them).
+class MediaStateReceived extends LinksyEvent {
+  const MediaStateReceived({required this.from, required this.state});
+  final DeviceInfo from;
+  final MediaState state;
+}
+
+/// A computer wants (or no longer wants) a heartbeat every [everyS] seconds,
+/// to lock itself when this phone leaves.
+class HeartbeatWatchChanged extends LinksyEvent {
+  const HeartbeatWatchChanged({
+    required this.from,
+    required this.on,
+    required this.everyS,
+  });
+  final DeviceInfo from;
+  final bool on;
+  final int everyS;
 }

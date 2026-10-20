@@ -27,6 +27,8 @@ void main() {
       ..devicePixelRatio = 2.625;
     addTearDown(tester.view.reset);
     await c.start();
+    // Cancels its timers (photo backup checks) before the test ends.
+    addTearDown(c.dispose);
     await tester.pumpWidget(LinksyApp(controller: c));
     await tester.pumpAndSettle();
     return (c, node);
@@ -49,8 +51,9 @@ void main() {
     expect(find.text('Send files'), findsOneWidget);
     expect(find.text('Clipboard'), findsOneWidget);
     expect(find.text('Ping'), findsOneWidget);
-    expect(find.text('Find Studio Desktop'), findsOneWidget);
-    expect(find.text('Nothing shared yet'), findsOneWidget);
+    expect(find.text('Remote'), findsOneWidget);
+    expect(find.text('Find it'), findsOneWidget);
+    expect(find.text('Back up photos'), findsOneWidget);
   });
 
   testWidgets('incoming files ask first', (tester) async {

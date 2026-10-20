@@ -42,8 +42,18 @@ abstract class LinksyNode implements RustOpaqueInterface {
 
   void forget({required String id});
 
+  /// Photo auto-import: offers files into the computer's picture library.
+  Future<String> importFiles({required String id, required List<String> paths});
+
   /// This device, as `DeviceInfo` JSON.
   String infoJson();
+
+  /// `command_json` in the core's shape: `{"action":"play_pause"}`.
+  Future<void> mediaCommand({
+    required String id,
+    required String player,
+    required String commandJson,
+  });
 
   Future<void> notify({
     required String id,
@@ -78,14 +88,34 @@ abstract class LinksyNode implements RustOpaqueInterface {
     required bool charging,
   });
 
+  /// `ringing`, `active` or `idle`.
+  Future<void> sendCallState({required String id, required String state});
+
   Future<void> sendClipboard({required String id, required String text});
 
   /// Returns the transfer id.
   Future<String> sendFiles({required String id, required List<String> paths});
 
+  /// Writes to a session (framed input messages). False once it has ended.
+  Future<bool> sessionWrite({
+    required String session,
+    required List<int> bytes,
+  });
+
   String settingsJson();
+
+  /// Lets paired computers browse the folder Android shares (or not).
+  void shareFiles({required bool on_});
 
   Future<void> shutdown();
 
+  /// Touchpad, keyboard and presentation remote: asks the computer for an
+  /// `input` session (its user allows it there). Returns the session id to
+  /// write framed input messages to.
+  Future<String> startInput({required String id});
+
   Future<void> updateSettings({required String settingsJson});
+
+  /// Ask the computer for its players (`media_state` events) while `on`.
+  Future<void> watchMedia({required String id, required bool on_});
 }

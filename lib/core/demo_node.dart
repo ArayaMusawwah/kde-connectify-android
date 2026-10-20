@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
@@ -293,6 +294,42 @@ class DemoNode implements LinksyNode {
     _reachable(id);
     _setConnected(id, true);
   }
+
+  @override
+  Future<String> startInput(String id) async {
+    _reachable(id);
+    _setConnected(id, true);
+    final session = _uuid();
+    _emit(
+      SessionStarted(
+        session: session,
+        peer: _devices[id]!.device,
+        kind: SessionKind.input,
+        sharing: true,
+      ),
+    );
+    return session;
+  }
+
+  @override
+  Future<bool> sessionWrite(String session, Uint8List bytes) async => true;
+
+  @override
+  Future<void> watchMedia(String id, {required bool on}) async {}
+
+  @override
+  Future<void> mediaCommand(
+    String id,
+    String player,
+    Map<String, Object> command,
+  ) async {}
+
+  @override
+  Future<void> sendCallState(String id, String state) async {}
+
+  @override
+  Future<String> importFiles(String id, List<String> paths) =>
+      sendFiles(id, paths);
 
   @override
   Future<NodeSettings> settings() async => _settings;

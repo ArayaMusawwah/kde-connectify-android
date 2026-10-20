@@ -9,7 +9,7 @@ use std::path::PathBuf;
 use std::sync::OnceLock;
 
 use flutter_rust_bridge::frb;
-use linksy_core::{Battery, Config, DeviceKind, Error, Fingerprint, Node, Settings, Uuid};
+use linksy_core::{Battery, CallState, Config, DeviceKind, Error, Fingerprint, MediaCommand, Node, SessionKind, Settings, Uuid};
 use tokio::runtime::Runtime;
 use tokio::sync::broadcast::error::RecvError;
 
@@ -40,6 +40,7 @@ fn kind(e: Error) -> String {
         Error::NotPaired => "not_paired".into(),
         Error::Unsupported => "unsupported".into(),
         Error::Invalid(m) => format!("invalid:{m}"),
+        Error::NotFound(m) => format!("invalid:{m}"),
         other => format!("other:{other}"),
     }
 }
@@ -92,6 +93,8 @@ pub async fn start_node(data_dir: String, download_dir: String, name: String) ->
         match run(Node::start(config)).await {
             Ok(node) => {
                 crate::sessions::collect(&node);
+                crate::files::collect(&node);
+                crate::heartbeats::run(&node);
                 *RUNNING.lock().unwrap() = Some(node.clone());
                 return Ok(LinksyNode { node });
             }
@@ -232,6 +235,60 @@ impl LinksyNode {
         let id = fingerprint(&id)?;
         let node = self.node.clone();
         run(async move { node.ring(&id, on).await }).await
+    }
+
+    /// Touchpad, keyboard and presentation remote: asks the computer for an
+    /// `input` session (its user allows it there). Returns the session id to
+    /// write framed input messages to.
+    pub async fn start_input(&self, id: String) -> Result<String, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        let session = run(async move { node.request_session(&id, SessionKind::Input).await }).await?;
+        let session_id = session.id.to_string();
+        crate::sessions::run(session);
+        Ok(session_id)
+    }
+
+    /// Writes to a session (framed input messages). False once it has ended.
+    pub async fn session_write(&self, session: String, bytes: Vec<u8>) -> bool {
+        crate::sessions::write_async(&session, bytes).await
+    }
+
+    /// Ask the computer for its players (`media_state` events) while `on`.
+    pub async fn watch_media(&self, id: String, on: bool) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.watch_media(&id, on).await }).await
+    }
+
+    /// `command_json` in the core's shape: `{"action":"play_pause"}`.
+    pub async fn media_command(&self, id: String, player: String, command_json: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let command: MediaCommand = serde_json::from_str(&command_json).map_err(|e| format!("other:{e}"))?;
+        let node = self.node.clone();
+        run(async move { node.media_command(&id, &player, command).await }).await
+    }
+
+    /// `ringing`, `active` or `idle`.
+    pub async fn send_call_state(&self, id: String, state: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let state: CallState = serde_json::from_value(state.into()).map_err(|e| format!("other:{e}"))?;
+        let node = self.node.clone();
+        run(async move { node.send_call_state(&id, state, None).await }).await
+    }
+
+    /// Photo auto-import: offers files into the computer's picture library.
+    pub async fn import_files(&self, id: String, paths: Vec<String>) -> Result<String, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        let paths = paths.into_iter().map(PathBuf::from).collect();
+        run(async move { node.import_files(&id, paths).await.map(|t| t.to_string()) }).await
+    }
+
+    /// Lets paired computers browse the folder Android shares (or not).
+    #[frb(sync)]
+    pub fn share_files(&self, on: bool) {
+        crate::files::set_sharing(on);
     }
 
     #[frb(sync)]

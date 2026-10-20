@@ -132,6 +132,41 @@ void main() {
     expect(v.battery?.level, 40);
   });
 
+  test('reads media and lock-when-away events', () {
+    final media = parse({
+      'type': 'media_state',
+      'from': device,
+      'state': {
+        'seq': 1760945000123,
+        'players': [
+          {
+            'id': 'spotify',
+            'app': 'Spotify',
+            'title': 'Song',
+            'playing': true,
+            'length_ms': 215000,
+            'can_next': true,
+          },
+        ],
+      },
+    });
+    final p = (media as MediaStateReceived).state.players.single;
+    expect(p.app, 'Spotify');
+    expect(p.playing, isTrue);
+    expect(p.canNext, isTrue);
+    expect(p.canPrevious, isFalse);
+    expect(p.lengthMs, 215000);
+
+    final watch = parse({
+      'type': 'heartbeat_watch',
+      'from': device,
+      'on': true,
+      'every_s': 20,
+    });
+    expect((watch as HeartbeatWatchChanged).everyS, 20);
+    expect(SessionKind.parse('input'), SessionKind.input);
+  });
+
   test('ignores event types and session kinds it does not know', () {
     expect(parse({'type': 'from_the_future'}), isNull);
     expect(

@@ -3,4 +3,6 @@
 
 pub mod api;
 mod frb_generated;
+mod files;
+mod heartbeats;
 mod sessions;

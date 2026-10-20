@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 
 import '../core/linksy_node.dart';
@@ -12,7 +13,7 @@ import 'platform.dart';
 /// App state on top of a [LinksyNode]: the device list, settings and every
 /// device's activity. Consent prompts and notices go out on [prompts] for the
 /// UI to show.
-class LinksyController extends ChangeNotifier {
+class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   LinksyController(this.node, this._store);
 
   final LinksyNode node;
@@ -51,6 +52,40 @@ class LinksyController extends ChangeNotifier {
   final _toldBattery = <String, Battery>{};
   StreamSubscription<Battery>? _batterySub;
 
+  /// Small settings kept by Android: `pause_calls`, `stay_running`,
+  /// `share_files`, `photos.<device>`, `photos_since.<device>`…
+  Map<String, String> prefs = {};
+
+  /// Each computer's players, the newest state it sent while watched.
+  final Map<String, MediaState> media = {};
+  final Map<String, int> _mediaWatchers = {};
+
+  /// Computers that lock themselves when this phone leaves.
+  final Map<String, int> lockWatchers = {};
+
+  /// Remote (touchpad and keyboard) sessions, by device.
+  final Map<String, String> remotes = {};
+
+  /// Folders picked in Android's picker: shared with computers, backed up.
+  String? filesFolder;
+  String? photosFolder;
+
+  /// Photo imports going out: transfer → (device, newest photo time, more).
+  final Map<String, (String, int, bool)> _imports = {};
+  bool _importing = false;
+  Timer? _importTimer;
+  StreamSubscription<String>? _callSub;
+
+  bool get pauseOnCalls => prefs['pause_calls'] != 'off';
+  bool get stayRunning => prefs['stay_running'] == 'on';
+  bool get sharingFiles => prefs['share_files'] == 'on';
+  bool backsUpPhotos(String id) => prefs['photos.$id'] == 'on';
+  bool photosDeclined(String id) => prefs['photos_declined.$id'] == '1';
+  DateTime? photosBackedUp(String id) => switch (prefs['photos_at.$id']) {
+    final ms? => DateTime.fromMillisecondsSinceEpoch(int.parse(ms)),
+    null => null,
+  };
+
   /// How long a ring lasts at most (§4.5).
   static const ringFor = Duration(seconds: 30);
 
@@ -87,6 +122,9 @@ class LinksyController extends ChangeNotifier {
     settings = await node.settings();
     notifyListeners();
     _batterySub = LinksyPlatform.batteryChanges.listen(_onBattery);
+    _callSub = LinksyPlatform.callStates.listen(_onCall);
+    unawaited(_loadPlatform());
+    WidgetsBinding.instance.addObserver(this);
     unawaited(
       LinksyPlatform.battery().then((b) {
         _battery ??= b;
@@ -95,6 +133,234 @@ class LinksyController extends ChangeNotifier {
         }
       }),
     );
+  }
+
+  /// Back in the app: new photos may be waiting.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _importAll();
+  }
+
+  /// Android-side settings and folders; not awaited by [start] (tests have
+  /// no Android side).
+  Future<void> _loadPlatform() async {
+    prefs = await LinksyPlatform.prefs();
+    filesFolder = await LinksyPlatform.folder('files');
+    photosFolder = await LinksyPlatform.folder('photos');
+    await LinksyPlatform.shareFiles(sharingFiles && filesFolder != null);
+    await LinksyPlatform.watchCalls(pauseOnCalls);
+    _updateKeepAlive();
+    notifyListeners();
+    _importAll();
+    _importTimer = Timer.periodic(
+      const Duration(minutes: 15),
+      (_) => _importAll(),
+    );
+  }
+
+  Future<void> _setPref(String key, String? value) async {
+    if (value == null) {
+      prefs.remove(key);
+    } else {
+      prefs[key] = value;
+    }
+    notifyListeners();
+    await LinksyPlatform.setPref(key, value);
+  }
+
+  String _name(String id) => device(id)?.device.name ?? 'your computer';
+
+  /// The quiet "stay connected" notification: while a computer locks when
+  /// this phone leaves (CPU kept awake for heartbeats), or when the user
+  /// wants Linksy to keep running in the background.
+  void _updateKeepAlive() {
+    final lockers = [for (final id in lockWatchers.keys) _name(id)];
+    if (lockers.isNotEmpty) {
+      LinksyPlatform.keepAlive(
+        on: true,
+        awake: true,
+        text: 'Keeping ${lockers.join(' and ')} locked when you leave',
+      );
+    } else if (stayRunning) {
+      LinksyPlatform.keepAlive(
+        on: true,
+        text: 'Staying connected to your computers',
+      );
+    } else {
+      LinksyPlatform.keepAlive(on: false);
+    }
+  }
+
+  Future<void> setStayRunning(bool on) async {
+    await _setPref('stay_running', on ? 'on' : null);
+    _updateKeepAlive();
+  }
+
+  // Calls (§4.5): paired computers that are around hear when a call rings,
+  // goes on and ends, and pause what plays meanwhile.
+
+  Future<void> setPauseOnCalls(bool on) async {
+    await _setPref('pause_calls', on ? null : 'off');
+    await LinksyPlatform.watchCalls(on);
+  }
+
+  void _onCall(String state) {
+    if (!pauseOnCalls) return;
+    for (final v in devices) {
+      if (v.trusted && _isComputer(v.device) && (v.connected || v.nearby)) {
+        node.sendCallState(v.device.id, state).catchError((Object _) {});
+      }
+    }
+  }
+
+  // Files (§4.9): computers browse the one folder the user picked.
+
+  Future<String?> pickFilesFolder() async {
+    final name = await LinksyPlatform.pickFolder('files');
+    if (name == null) return null;
+    filesFolder = name;
+    await setSharingFiles(true);
+    return name;
+  }
+
+  Future<void> setSharingFiles(bool on) async {
+    await _setPref('share_files', on ? 'on' : null);
+    await LinksyPlatform.shareFiles(on && filesFolder != null);
+  }
+
+  // Media (§4.5): a computer's players, while a page shows them.
+
+  void watchMedia(String id) {
+    final n = (_mediaWatchers[id] ?? 0) + 1;
+    _mediaWatchers[id] = n;
+    if (n == 1) node.watchMedia(id, on: true).catchError((Object _) {});
+  }
+
+  void unwatchMedia(String id) {
+    final n = (_mediaWatchers[id] ?? 1) - 1;
+    if (n > 0) {
+      _mediaWatchers[id] = n;
+      return;
+    }
+    _mediaWatchers.remove(id);
+    node.watchMedia(id, on: false).catchError((Object _) {});
+  }
+
+  /// `play_pause`, `next`, `previous`…
+  Future<String?> mediaCommand(String id, String player, String action) =>
+      _run(() => node.mediaCommand(id, player, {'action': action}));
+
+  // Remote (§4.8, `input`): this phone as the computer's touchpad and
+  // keyboard.
+
+  /// Asks the computer (its user allows it there); null when it's on.
+  Future<String?> startRemote(String id) => _run(() async {
+    final session = await node.startInput(id);
+    remotes[id] = session;
+    notifyListeners();
+  });
+
+  /// Input messages (`pointer_by`, `button`, `scroll`, `key`, `text`), each
+  /// framed as u32 big-endian length + JSON. False once the computer ended it.
+  Future<bool> remoteSend(String id, List<Map<String, Object>> messages) async {
+    final session = remotes[id];
+    if (session == null) return false;
+    final out = BytesBuilder(copy: false);
+    for (final m in messages) {
+      final body = utf8.encode(jsonEncode(m));
+      out
+        ..add((ByteData(4)..setUint32(0, body.length)).buffer.asUint8List())
+        ..add(body);
+    }
+    return node.sessionWrite(session, out.takeBytes());
+  }
+
+  Future<void> stopRemote(String id) async {
+    final session = remotes.remove(id);
+    notifyListeners();
+    if (session != null) await node.endSession(session);
+  }
+
+  // Photo backup (§4.5, `import`): new photos from the picked folder go to
+  // each computer that has it on, a batch at a time, while it's around.
+
+  Future<bool> setPhotoBackup(String id, bool on) async {
+    if (on && photosFolder == null) {
+      photosFolder = await LinksyPlatform.pickFolder('photos');
+      if (photosFolder == null) return false;
+    }
+    await _setPref('photos.$id', on ? 'on' : null);
+    await _setPref('photos_declined.$id', null);
+    // Only what's taken from now on; earlier photos aren't sent.
+    if (on && prefs['photos_since.$id'] == null) {
+      await _setPref(
+        'photos_since.$id',
+        '${DateTime.now().millisecondsSinceEpoch}',
+      );
+    }
+    if (on) _importTo(id);
+    return true;
+  }
+
+  Future<String?> pickPhotosFolder() async {
+    final name = await LinksyPlatform.pickFolder('photos');
+    if (name != null) {
+      photosFolder = name;
+      notifyListeners();
+      _importAll();
+    }
+    return name;
+  }
+
+  void _importAll() {
+    for (final v in devices) {
+      _importTo(v.device.id);
+    }
+  }
+
+  Future<void> _importTo(String id) async {
+    final v = device(id);
+    if (_importing ||
+        photosFolder == null ||
+        v == null ||
+        !v.trusted ||
+        !(v.connected || v.nearby) ||
+        !backsUpPhotos(id) ||
+        photosDeclined(id)) {
+      return;
+    }
+    _importing = true;
+    try {
+      final since = int.tryParse(prefs['photos_since.$id'] ?? '') ?? 0;
+      final batch = await LinksyPlatform.photoBatch(since);
+      if (batch == null || batch.count == 0) {
+        _importing = false;
+        return;
+      }
+      final transfer = await node.importFiles(id, batch.folders);
+      _imports[transfer] = (id, batch.newest, batch.more);
+    } on Object {
+      _importing = false;
+    }
+  }
+
+  void _importEnded(String transfer, {required bool ok, String reason = ''}) {
+    final entry = _imports.remove(transfer);
+    if (entry == null) return;
+    final (id, newest, more) = entry;
+    _importing = false;
+    if (ok) {
+      _setPref('photos_since.$id', '$newest');
+      _setPref('photos_at.$id', '${DateTime.now().millisecondsSinceEpoch}');
+      if (more) {
+        _importTo(id);
+        return;
+      }
+    } else if (reason.toLowerCase().contains('declin')) {
+      // That computer doesn't take imports (turned off there).
+      _setPref('photos_declined.$id', '1');
+    }
+    _importAll();
   }
 
   // Battery (docs/protocol.md §4.5): sent to paired computers on connecting, then
@@ -139,14 +405,40 @@ class LinksyController extends ChangeNotifier {
   void _onEvent(LinksyEvent e) {
     switch (e) {
       case Connected(:final id):
-        refresh().then((_) => _tellBattery(id, always: true));
+        refresh().then((_) {
+          _tellBattery(id, always: true);
+          _importTo(id);
+        });
       case Paired(:final device):
         refresh().then((_) => _tellBattery(device.id, always: true));
       case DeviceFound(:final device):
         // A paired computer came around: tell it the battery.
-        refresh().then((_) => _tellBattery(device.id, always: true));
-      case DeviceLost() || DeviceUpdated() || Disconnected():
+        refresh().then((_) {
+          _tellBattery(device.id, always: true);
+          _importTo(device.id);
+        });
+      case Disconnected(:final id):
+        media.remove(id);
         refresh();
+      case DeviceLost() || DeviceUpdated():
+        refresh();
+      case MediaStateReceived(:final from, :final state):
+        final known = media[from.id];
+        if (known == null || state.seq >= known.seq) {
+          media[from.id] = state;
+          notifyListeners();
+        }
+      case HeartbeatWatchChanged(:final from, :final on):
+        if (on) {
+          lockWatchers[from.id] = e.everyS;
+        } else {
+          lockWatchers.remove(from.id);
+        }
+        _updateKeepAlive();
+        notifyListeners();
+      case SessionStarted(:final session, :final peer, kind: SessionKind.input):
+        remotes[peer.id] = session;
+        _addSession(e);
       case BatteryReported():
         // Also in the device list; read it again to show it.
         refresh();
@@ -222,6 +514,22 @@ class LinksyController extends ChangeNotifier {
             ..total = total
             ..speed = _speed(transfer, bytes, a.speed);
         }, save: false);
+      case TransferComplete(:final transfer)
+          when _imports.containsKey(transfer):
+        _update(transfer, (a) {
+          a
+            ..status = ActivityStatus.done
+            ..bytes = a.total;
+        });
+        _importEnded(transfer, ok: true);
+      case TransferFailed(:final transfer, :final reason)
+          when _imports.containsKey(transfer):
+        _update(transfer, (a) {
+          a
+            ..status = ActivityStatus.failed
+            ..reason = reason;
+        });
+        _importEnded(transfer, ok: false, reason: reason);
       case TransferComplete(:final transfer, :final saved):
         _update(transfer, (a) {
           a
@@ -255,6 +563,14 @@ class LinksyController extends ChangeNotifier {
         displays[session] = e;
         _addSession(e);
       case SessionEnded(:final session):
+        if (remotes.containsValue(session)) {
+          remotes.removeWhere((_, s) => s == session);
+          notifyListeners();
+        }
+        // Whichever side ended it, the timeline says it's over.
+        _update(session, (a) {
+          if (a.isLive) a.status = ActivityStatus.done;
+        });
         if (sharing.remove(session) != null) {
           LinksyPlatform.stopShare(session);
           _update(session, (a) => a.status = ActivityStatus.done);
@@ -319,6 +635,7 @@ class LinksyController extends ChangeNotifier {
         SessionKind.camera => ActivityKind.camera,
         SessionKind.control => ActivityKind.control,
         SessionKind.display => ActivityKind.display,
+        SessionKind.input => ActivityKind.remote,
       },
       incoming: e.kind == SessionKind.display,
       time: DateTime.now(),
@@ -493,7 +810,7 @@ class LinksyController extends ChangeNotifier {
           if (!allowed) {
             error = 'Linksy needs the camera permission to work as a webcam.';
           }
-        case SessionKind.display:
+        case SessionKind.display || SessionKind.input:
           break;
       }
     }
@@ -551,6 +868,9 @@ class LinksyController extends ChangeNotifier {
   void dispose() {
     _sub?.cancel();
     _batterySub?.cancel();
+    _callSub?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    _importTimer?.cancel();
     _ringTimer?.cancel();
     for (final t in _finding.values) {
       t.cancel();
