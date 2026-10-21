@@ -17,6 +17,8 @@ void main() {
   Future<(LinksyController, DemoNode)> pumpApp(WidgetTester tester) async {
     final node = DemoNode(name: 'Test Phone', downloadDir: '/downloads');
     final c = LinksyController(node, ActivityStore(null));
+    // Set up already (language, permissions): straight to home.
+    c.prefs = {'onboarded': '1'};
     // Looping animations stop when motion is reduced, so the tree settles.
     tester.platformDispatcher.accessibilityFeaturesTestValue =
         const FakeAccessibilityFeatures(disableAnimations: true);

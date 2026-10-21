@@ -14,14 +14,6 @@ Future<void> showPermissions(BuildContext context) =>
       builder: (_) => const _PermissionsSheet(),
     );
 
-/// Once, on a first launch on a real phone.
-Future<void> showPermissionsOnce(BuildContext context) async {
-  // Kept on the Android side: the shared_preferences plugin's Android code
-  // is reached through JNI and R8 strips it from release builds.
-  if (!await LinksyPlatform.firstPermissionsVisit()) return;
-  if (context.mounted) await showPermissions(context);
-}
-
 class _PermissionsSheet extends StatefulWidget {
   const _PermissionsSheet();
 

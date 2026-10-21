@@ -792,8 +792,10 @@ class _CodeSheetState extends State<_CodeSheet> {
           _busy = false;
           _error = e.message;
         });
-        // Straight back to typing it again.
-        _field.requestFocus();
+        // Straight back to typing it again, once the field is enabled.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _field.requestFocus();
+        });
       }
     }
   }

@@ -1,0 +1,75 @@
+{
+  "@@locale": "en",
+  "appTitle": "Linksy",
+  "@appTitle": {
+    "description": "The app's name; not translated."
+  },
+  "onboardingWelcome": "Welcome to Linksy",
+  "@onboardingWelcome": {
+    "description": "First screen title."
+  },
+  "onboardingChooseLanguage": "Choose your language",
+  "@onboardingChooseLanguage": {},
+  "onboardingLanguageHint": "You can change it later in Settings.",
+  "@onboardingLanguageHint": {},
+  "onboardingContinue": "Continue",
+  "@onboardingContinue": {},
+  "onboardingSetUpTitle": "Set up Linksy",
+  "@onboardingSetUpTitle": {},
+  "onboardingSetUpSubtitle": "Choose what Linksy may do. Nothing leaves this phone until you say so.",
+  "@onboardingSetUpSubtitle": {},
+  "onboardingNotifications": "Notifications",
+  "@onboardingNotifications": {},
+  "onboardingNotificationsDetail": "Files arriving, and when a computer uses your screen, camera or microphone, with a button to stop.",
+  "@onboardingNotificationsDetail": {},
+  "onboardingCamera": "Camera",
+  "@onboardingCamera": {},
+  "onboardingCameraDetail": "Scans pairing QR codes, and lets a computer use it as a webcam when you allow it.",
+  "@onboardingCameraDetail": {},
+  "onboardingAway": "Away from home",
+  "@onboardingAway": {},
+  "onboardingAwayDetail": "Reach your computers over the internet when you're not on the same Wi-Fi. Encrypted end to end.",
+  "@onboardingAwayDetail": {},
+  "onboardingBackground": "Keep running in the background",
+  "@onboardingBackground": {},
+  "onboardingBackgroundDetail": "Files and calls keep working when Linksy is closed. Shows a quiet notification.",
+  "@onboardingBackgroundDetail": {},
+  "onboardingFolder": "Share a folder with computers",
+  "@onboardingFolder": {},
+  "onboardingFolderDetail": "Your computers can open one folder you choose in their Files app.",
+  "@onboardingFolderDetail": {},
+  "onboardingPhotos": "Photo backup folder",
+  "@onboardingPhotos": {},
+  "onboardingPhotosDetail": "Choose your camera folder to back up new photos to a computer. Turned on per computer.",
+  "@onboardingPhotosDetail": {},
+  "onboardingLocate": "Let computers locate this phone",
+  "@onboardingLocate": {},
+  "onboardingLocateDetail": "A computer can ask where this phone is, once. Nothing is kept.",
+  "@onboardingLocateDetail": {},
+  "onboardingAllow": "Allow",
+  "@onboardingAllow": {},
+  "onboardingAllowed": "Allowed",
+  "@onboardingAllowed": {},
+  "onboardingChooseFolder": "Choose",
+  "@onboardingChooseFolder": {
+    "description": "Button to pick a folder."
+  },
+  "onboardingFolderChosen": "“{folder}”",
+  "@onboardingFolderChosen": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingAnytime": "You can turn any of these on or off anytime in Settings.",
+  "@onboardingAnytime": {},
+  "onboardingStart": "Start using Linksy",
+  "@onboardingStart": {},
+  "onboardingBack": "Back",
+  "@onboardingBack": {},
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {},
+  "languageDone": "Done",
+  "@languageDone": {}
+}

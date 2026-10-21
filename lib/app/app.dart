@@ -6,13 +6,14 @@ import '../core/invite.dart';
 import '../core/models.dart';
 import '../features/devices/home_screen.dart';
 import '../features/pairing/pairing_flows.dart';
-import '../features/permissions/permissions_sheet.dart';
+import '../features/onboarding/onboarding_screen.dart';
 import '../features/ring/ring_screen.dart';
 import '../features/share/share_sheet.dart';
 import '../features/sharing/display_screen.dart';
 import '../features/sharing/sharing.dart';
 import '../features/sharing/webcam_screen.dart';
 import '../features/transfer/incoming_sheet.dart';
+import '../ui/l10n.dart';
 import '../ui/sig.dart';
 import 'linksy_controller.dart';
 import 'platform.dart';
@@ -58,11 +59,17 @@ class _LinksyAppState extends State<LinksyApp> {
     LinksyPlatform.takeShare().then((shared) {
       if (shared != null) _shareOut(shared);
     });
-    // What Linksy needs from Android, explained once on a first launch.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final context = _navigator.currentContext;
-      if (context != null) showPermissionsOnce(context);
-    });
+    // First run: the language, then what Linksy may do.
+    if (!widget.controller.onboarded) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _navigator.currentState?.push(
+          MaterialPageRoute<void>(
+            fullscreenDialog: true,
+            builder: (_) => const OnboardingScreen(),
+          ),
+        );
+      });
+    }
   }
 
   @override
@@ -178,14 +185,20 @@ class _LinksyAppState extends State<LinksyApp> {
   @override
   Widget build(BuildContext context) => LinksyScope(
     controller: widget.controller,
-    child: MaterialApp(
-      title: 'Linksy',
-      debugShowCheckedModeBanner: false,
-      navigatorKey: _navigator,
-      scaffoldMessengerKey: _messenger,
-      theme: buildTheme(Brightness.light),
-      darkTheme: buildTheme(Brightness.dark),
-      home: const HomeScreen(),
+    child: ValueListenableBuilder(
+      valueListenable: widget.controller.locale,
+      builder: (context, locale, _) => MaterialApp(
+        title: 'Linksy',
+        debugShowCheckedModeBanner: false,
+        navigatorKey: _navigator,
+        scaffoldMessengerKey: _messenger,
+        theme: buildTheme(Brightness.light),
+        darkTheme: buildTheme(Brightness.dark),
+        locale: locale,
+        supportedLocales: [for (final l in languages) Locale(l.code)],
+        localizationsDelegates: localizationsDelegates,
+        home: const HomeScreen(),
+      ),
     ),
   );
 }

@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+import '../onboarding/language_wheel.dart';
+import '../../ui/l10n.dart';
+
 
 import '../../app/platform.dart';
 import '../../app/scope.dart';
@@ -203,31 +206,19 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SectionLabel('Notifications'),
+                  const SectionLabel('This app'),
                   _Group(
                     children: [
                       _Row(
-                        icon: Ph.bellRinging,
-                        title: 'News from Linksy',
-                        caption:
-                            'Updates and announcements arrive as '
-                            'notifications. Tap to copy this phone’s push '
-                            'token (for a test message).',
-                        onTap: () async {
-                          final token = await LinksyPlatform.pushToken();
-                          if (!context.mounted) return;
-                          if (token == null) {
-                            showMessage(
-                              context,
-                              'Push needs Google Play services on this phone.',
-                            );
-                            return;
-                          }
-                          await Clipboard.setData(ClipboardData(text: token));
-                          if (context.mounted) {
-                            showMessage(context, 'Push token copied');
-                          }
-                        },
+                        icon: Ph.globe,
+                        title: context.l10n.settingsLanguage,
+                        caption: languages
+                            .firstWhere(
+                              (l) => l.code == c.locale.value.languageCode,
+                              orElse: () => languages.first,
+                            )
+                            .name,
+                        onTap: () => showLanguagePicker(context),
                       ),
                     ],
                   ),

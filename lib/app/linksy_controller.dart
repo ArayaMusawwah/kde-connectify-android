@@ -10,6 +10,7 @@ import '../core/linksy_node.dart';
 import '../core/models.dart';
 import '../core/service_info.dart';
 import '../ui/format.dart';
+import '../ui/l10n.dart';
 import 'activity.dart';
 import 'platform.dart';
 import 'terminals.dart';
@@ -111,6 +112,23 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   bool get pauseOnCalls => prefs['pause_calls'] != 'off';
   bool get locatable => prefs['locate'] == 'on';
+
+  /// The app's language (a code from `languages`), or null for the phone's.
+  String? get languageCode => prefs['language'];
+
+  /// The language the app shows; the app rebuilds when it changes.
+  final locale = ValueNotifier<Locale>(resolveLocale(null));
+
+  Future<void> setLanguage(String code) async {
+    locale.value = resolveLocale(code);
+    useLocale(locale.value);
+    await _setPref('language', code);
+  }
+
+  /// The first-run setup (language, then what Linksy may do) is done.
+  bool get onboarded => prefs['onboarded'] == '1';
+
+  Future<void> finishOnboarding() => _setPref('onboarded', '1');
 
   /// This phone's screen in landscape, for "Second display".
   (int, int)? screenSize;
@@ -231,6 +249,8 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   /// no Android side).
   Future<void> _loadPlatform() async {
     prefs = await LinksyPlatform.prefs();
+    locale.value = resolveLocale(languageCode);
+    useLocale(locale.value);
     // Shares that went on while the app's screen was recreated.
     for (final (session, kind, peerId) in await LinksyPlatform.activeShares()) {
       final peer = device(peerId)?.device;

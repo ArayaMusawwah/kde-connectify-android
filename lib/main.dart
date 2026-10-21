@@ -11,6 +11,7 @@ import 'core/demo_node.dart';
 import 'core/linksy_node.dart';
 import 'core/rust_node.dart';
 import 'core/service_info.dart';
+import 'ui/l10n.dart';
 
 /// `--dart-define=LINKSY_DEMO=true` runs on made-up devices, for UI work.
 const _demo = bool.fromEnvironment('LINKSY_DEMO');
@@ -79,6 +80,10 @@ Future<void> main() async {
     service: service,
     dir: support,
   );
+  // The language and whether setup was done, before the first frame.
+  controller.prefs = await LinksyPlatform.prefs();
+  controller.locale.value = resolveLocale(controller.languageCode);
+  useLocale(controller.locale.value);
   await controller.start();
   runApp(LinksyApp(controller: controller));
 }

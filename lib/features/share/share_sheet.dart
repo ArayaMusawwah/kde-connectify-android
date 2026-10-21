@@ -159,7 +159,7 @@ class _ShareSheetState extends State<ShareSheet> {
                                       ),
                                     ),
                                     Text(
-                                      presenceText(v),
+                                      linkWords(v),
                                       style: TextStyle(
                                         fontSize: 12.5,
                                         color: s.muted,
