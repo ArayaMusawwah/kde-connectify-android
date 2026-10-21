@@ -217,38 +217,6 @@ class _Hero extends StatelessWidget {
     final details = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // How it's reached, above the name.
-        Container(
-          height: 30,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: chipColor.withValues(alpha: notNearby ? 0.12 : 0.18),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (notNearby)
-                const Icon(Ph.wifiSlash, size: 15, color: Colors.white54)
-              else if (view.connected && view.usb)
-                Icon(Ph.usb, size: 15, color: chipColor)
-              else if (view.connected && view.away)
-                Icon(Ph.globeHemisphereWest, size: 15, color: chipColor)
-              else
-                PulseDot(color: chipColor, size: 7),
-              const SizedBox(width: 6),
-              Text(
-                linkWords(view),
-                style: TextStyle(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w600,
-                  color: chipColor,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
         Text(
           d.name,
           textAlign: TextAlign.center,
@@ -267,6 +235,30 @@ class _Hero extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 14, color: Colors.white70),
+        ),
+        const SizedBox(height: 4),
+        // How it's reached, small, under its kind.
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (notNearby)
+              const Icon(Ph.wifiSlash, size: 13, color: Colors.white54)
+            else if (view.connected && view.usb)
+              Icon(Ph.usb, size: 13, color: chipColor)
+            else if (view.connected && view.away)
+              Icon(Ph.globeHemisphereWest, size: 13, color: chipColor)
+            else
+              PulseDot(color: chipColor, size: 6),
+            const SizedBox(width: 5),
+            Text(
+              linkWords(view),
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w600,
+                color: chipColor,
+              ),
+            ),
+          ],
         ),
         if (view.presence == Presence.notNearby &&
             (c.settings?.away ?? false) &&

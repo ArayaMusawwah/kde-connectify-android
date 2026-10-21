@@ -75,6 +75,18 @@ abstract class LinksyNode implements RustOpaqueInterface {
     required String body,
   });
 
+  /// Opens a terminal on a computer with the code its user set there, or
+  /// reattaches to `resume` (docs/protocol.md §4.15). JSON `{"session","terminal"}`:
+  /// the session carries the output ([`terminal_output`]) and takes framed
+  /// `term_*` messages ([`session_write`]).
+  Future<String> openTerminal({
+    required String id,
+    required String code,
+    required int cols,
+    required int rows,
+    String? resume,
+  });
+
   /// "Open on PC": asks a computer to open an `http(s)` link in its browser.
   Future<void> openUrl({required String id, required String url});
 
@@ -162,6 +174,14 @@ abstract class LinksyNode implements RustOpaqueInterface {
   /// Its user picks the screen there. Returns the session id; the video
   /// arrives on it like a second display's.
   Future<String> startView({required String id, required bool control});
+
+  /// A terminal's output, chunk by chunk, until its stream ends (the shell
+  /// exited, it was closed or ended on the computer, or the link dropped).
+  Stream<Uint8List> terminalOutput({required String session});
+
+  /// The terminals running on a computer for this phone, as JSON
+  /// `[{"id","title","started_ms"}]`: asks, then waits for its answer.
+  Future<String> terminals({required String id});
 
   Future<void> updateSettings({required String settingsJson});
 

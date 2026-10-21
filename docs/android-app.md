@@ -6,7 +6,7 @@ offer those features to Android phones.
 
 - App: `app.linksy.mg` (since 0.1.8; 0.1.x up to 0.1.7 was `app.linksy`), Flutter + the
   real `linksy-core` through flutter_rust_bridge. Repo: LinkSy-mg/linksy-mobile.
-- Core pinned at `61b08e0` (desktop 0.6.4), as of phone 0.1.19. Builds for arm64-v8a, armeabi-v7a, x86_64.
+- Core pinned at `e6957b4` (desktop 0.7.0), as of phone 0.2.0. Builds for arm64-v8a, armeabi-v7a, x86_64.
 - Releases: LinkSy-mg/linksy-releases (`/releases/latest/download/linksy.apk`).
 - Distributed as a sideloaded APK, not through the Play Store. That shapes everything in
   §3: Android's fraud protection blocks installing sideloaded apps that declare certain
@@ -60,24 +60,17 @@ desktop side with a real phone:
 
 1. **USB cable**: the phone's bridge follows §4.11 but couldn't be tried without a
    computer to switch it into accessory mode; please test with a real phone.
-2. **Terminal (§4.15): the phone side is built, waiting for the core.** Phone 0.1.19
-   has the whole UI to the contract: the Terminal card (only for computers announcing
-   `terminal`), the code prompt before every open (never stored, digits or a
-   passphrase), each decline reason in words (`code` with `tries_left`, `locked`,
-   `off`, `away`, `unsupported`, plain no), xterm with true colour and the window title
-   (OSC 0/2) as the tab name, a key bar (Esc, Ctrl, Alt, Tab, arrows, `| ~ / -`),
-   `term_input` / `term_resize` / `term_close`, tabs, detach and reattach with
-   `resume`, and the "still running" list from `terminal_list`. What the bridge needs
-   from `linksy-core`, as a suggestion (any shape works as long as these are there):
-   - `node.request_terminal(id, code, cols, rows, resume: Option<String>)` →
-     `Ok((Session, terminal_id))` or an error carrying the decline `reason` and
-     `tries_left`, e.g. `Error::TerminalDeclined { reason, tries_left }`.
-   - `node.terminal_list(id)` → `Vec<TerminalInfo { id, title, started_ms }>`.
-   - `SessionKind::Terminal`, with the session's `recv` giving the raw output and
-     `send` taking the framed JSON (as `control`).
-   The phone's side of it is one small interface (`openTerminal` / `terminals` in
-   `lib/core/linksy_node.dart`); wiring it to those calls is a short job once they
-   exist. Until then the phone answers nothing about terminals and shows no entry.
+2. **Terminal (§4.15): done on the phone in 0.2.0**, on core `e6957b4` (desktop 0.7.0):
+   `request_terminal`, the session's output to the terminal view, `term_input` /
+   `term_resize` / `term_close` frames, `list_terminals` + `Event::Terminals` (5 s
+   wait), every decline reason including `limit`. Closing follows your rules: Close
+   (button or the tab's ×, confirmed) sends `term_close` then finishes our side; `exit`
+   or End on the computer finishes the stream and the phone, finding it gone from
+   `terminal_list`, drops the tab ("… ended on <computer>"); leaving or a dropped link
+   only detaches (if the list can't be fetched, the tab stays detached). Tested
+   end to end against a stand-in computer on the 0.7 core hosting a real login shell
+   (code, wrong code with tries, detach/reattach, exit, close). Not yet tried against
+   linksyd itself: please run a real phone against it.
 3. **Black status bar / notification shade when watching an Android phone.** Android
    15's screen share protections, which some phones (realme, seen on a realme 15 Pro)
    extend to the whole status bar and notification shade, so those come out black in
@@ -117,6 +110,9 @@ default SMS app.
   works on the networks tested; pairing by QR or address covers the rest).
 
 ## Changelog
+
+- **2026-10-22** — Phone 0.2.0 on core `e6957b4` (desktop 0.7.0): the terminal works
+  end to end (§2.2), with the closing rules of docs/protocol.md §4.15.
 
 - **2026-10-22** — Phone 0.1.19 on core `61b08e0` (desktop 0.6.4): the Terminal's phone
   side (§2.2), with what the core needs for it. Phone 0.1.17 redesigned home and the

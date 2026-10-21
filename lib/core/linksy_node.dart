@@ -154,6 +154,29 @@ class LinksyException implements Exception {
 
 /// A computer turned a terminal down, saying why.
 class TerminalRefused extends LinksyException {
+  /// From the core's error: `refused:code:3`, `refused:locked:`, `declined`,
+  /// `unsupported`, `not_from_away`. Null for any other error.
+  static TerminalRefused? parse(String error, String name) {
+    final parts = error.split(':');
+    final reason = switch (parts.first) {
+      'refused' when parts.length > 1 => switch (parts[1]) {
+        'code' => TerminalRefusal.code,
+        'locked' => TerminalRefusal.locked,
+        'off' => TerminalRefusal.off,
+        'limit' => TerminalRefusal.limit,
+        'away' => TerminalRefusal.away,
+        _ => TerminalRefusal.unsupported,
+      },
+      'declined' => TerminalRefusal.declined,
+      'unsupported' => TerminalRefusal.unsupported,
+      'not_from_away' => TerminalRefusal.away,
+      _ => null,
+    };
+    if (reason == null) return null;
+    final tries = parts.length > 2 ? int.tryParse(parts[2]) : null;
+    return TerminalRefused(reason, triesLeft: tries, name: name);
+  }
+
   TerminalRefused(this.reason, {this.triesLeft, String name = 'The computer'})
     : super(_say(reason, triesLeft, name));
 
@@ -176,6 +199,8 @@ class TerminalRefused extends LinksyException {
           '$name allows a terminal only on the same network, unless '
               '“Allow Everything From Away” is on there.',
         TerminalRefusal.unsupported => "$name can't open a terminal.",
+        TerminalRefusal.limit =>
+          '8 terminals already run on $name for this phone. Close one first.',
         TerminalRefusal.declined => '$name didn’t allow it.',
       };
 }

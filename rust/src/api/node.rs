@@ -10,7 +10,7 @@ use std::sync::OnceLock;
 
 use flutter_rust_bridge::frb;
 use linksy_core::{Battery, CallState, Config, DeviceKind, Error, Fingerprint, MediaCommand, Node, SessionKind, Settings, Uuid};
-use linksy_core::Link;
+use linksy_core::{Event, Link, TerminalOpen};
 use tokio::runtime::Runtime;
 use tokio::sync::broadcast::error::RecvError;
 
@@ -41,6 +41,10 @@ fn kind(e: Error) -> String {
         Error::NotPaired => "not_paired".into(),
         Error::Unsupported => "unsupported".into(),
         Error::NotFromAway => "not_from_away".into(),
+        // A terminal turned down (§4.15): `refused:code:3`, `refused:locked:`.
+        Error::Refused { reason, tries_left } => {
+            format!("refused:{reason}:{}", tries_left.map(|t| t.to_string()).unwrap_or_default())
+        }
         Error::Invalid(m) => format!("invalid:{m}"),
         Error::NotFound(m) => format!("invalid:{m}"),
         other => format!("other:{other}"),
@@ -405,6 +409,56 @@ impl LinksyNode {
     pub fn forget(&self, id: String) -> Result<(), String> {
         let id = fingerprint(&id)?;
         self.node.forget(&id).map(|_| ()).map_err(kind)
+    }
+
+    /// Opens a terminal on a computer with the code its user set there, or
+    /// reattaches to `resume` (docs/protocol.md §4.15). JSON `{"session","terminal"}`:
+    /// the session carries the output ([`terminal_output`]) and takes framed
+    /// `term_*` messages ([`session_write`]).
+    pub async fn open_terminal(&self, id: String, code: String, cols: u16, rows: u16, resume: Option<String>) -> Result<String, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        let (session, terminal) =
+            run(async move { node.request_terminal(&id, TerminalOpen { code, cols, rows, resume }).await }).await?;
+        let session_id = session.id.to_string();
+        crate::sessions::run(session);
+        Ok(serde_json::json!({ "session": session_id, "terminal": terminal }).to_string())
+    }
+
+    /// A terminal's output, chunk by chunk, until its stream ends (the shell
+    /// exited, it was closed or ended on the computer, or the link dropped).
+    pub fn terminal_output(&self, session: String, sink: StreamSink<Vec<u8>>) {
+        let Some(mut incoming) = crate::sessions::take_incoming(&session) else { return };
+        rt().spawn(async move {
+            while let Some(bytes) = incoming.recv().await {
+                if sink.add(bytes).is_err() {
+                    break;
+                }
+            }
+        });
+    }
+
+    /// The terminals running on a computer for this phone, as JSON
+    /// `[{"id","title","started_ms"}]`: asks, then waits for its answer.
+    pub async fn terminals(&self, id: String) -> Result<String, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        let list = run(async move {
+            let mut events = node.subscribe();
+            node.list_terminals(&id).await?;
+            let answer = async {
+                loop {
+                    match events.recv().await {
+                        Ok(Event::Terminals { from, list }) if from.id == id => return Ok(list),
+                        Ok(_) | Err(RecvError::Lagged(_)) => continue,
+                        Err(RecvError::Closed) => return Err(Error::Unreachable),
+                    }
+                }
+            };
+            tokio::time::timeout(std::time::Duration::from_secs(5), answer).await.map_err(|_| Error::Timeout)?
+        })
+        .await?;
+        Ok(json(&list))
     }
 
     /// Stops sharing into a session (the Stop button, or the encoder ended).

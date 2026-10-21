@@ -148,6 +148,10 @@ class TerminalTab extends ChangeNotifier {
   /// Called once this tab's shell is gone (closed here, or exited there).
   void Function(TerminalTab)? onGone;
 
+  /// Closed from this phone (else it ended on the computer: `exit`, End
+  /// there, or the phone no longer allowed).
+  bool closedHere = false;
+
   /// Leaves the shell running on the computer.
   Future<void> detach() async {
     _leaving = true;
@@ -158,15 +162,18 @@ class TerminalTab extends ChangeNotifier {
   /// stream), so nothing stays open on either side. A detached tab has to be
   /// reattached first (the screen asks for the code), or its shell runs on.
   Future<void> close() async {
+    closedHere = true;
     final channel = _channel;
     _channel = null;
     state = TabState.ended;
     notifyListeners();
-    await _sub?.cancel();
-    _sub = null;
+    // `term_close` first: the computer ends the shell and finishes the
+    // stream. The output listener is dropped without waiting on it.
     if (channel != null) {
       await channel.close().catchError((Object _) {});
     }
+    unawaited(_sub?.cancel());
+    _sub = null;
     onGone?.call(this);
   }
 

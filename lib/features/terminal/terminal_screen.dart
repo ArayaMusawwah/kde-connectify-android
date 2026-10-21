@@ -70,7 +70,10 @@ class _TerminalScreenState extends State<TerminalScreen> {
       if (LinksyScope.read(context).terminals.of(widget.deviceId).isEmpty) {
         _focus.unfocus();
       }
-      showMessage(context, '“${t.title}” closed');
+      showMessage(
+        context,
+        t.closedHere ? '“${t.title}” closed' : '“${t.title}” ended on $_name',
+      );
     });
   }
 
@@ -758,6 +761,7 @@ class _CodeSheet extends StatefulWidget {
 
 class _CodeSheetState extends State<_CodeSheet> {
   final _code = TextEditingController();
+  final _field = FocusNode();
   bool _letters = false;
   bool _busy = false;
   String? _error;
@@ -767,6 +771,7 @@ class _CodeSheetState extends State<_CodeSheet> {
     _code
       ..clear()
       ..dispose();
+    _field.dispose();
     super.dispose();
   }
 
@@ -787,6 +792,8 @@ class _CodeSheetState extends State<_CodeSheet> {
           _busy = false;
           _error = e.message;
         });
+        // Straight back to typing it again.
+        _field.requestFocus();
       }
     }
   }
@@ -824,6 +831,7 @@ class _CodeSheetState extends State<_CodeSheet> {
           const SizedBox(height: 18),
           TextField(
             controller: _code,
+            focusNode: _field,
             autofocus: true,
             obscureText: true,
             enableSuggestions: false,

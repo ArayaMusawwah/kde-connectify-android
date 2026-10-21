@@ -267,8 +267,8 @@ class RustNode implements LinksyNode {
     name: _nameOf(id),
   );
 
-  // Terminal (§4.15) needs a core with the `terminal` session (desktop
-  // 0.7); computers don't announce it before, so the app doesn't offer it.
+  // Terminal (§4.15): a session whose output comes to Dart and which takes
+  // framed `term_*` messages.
 
   @override
   Future<TerminalChannel> openTerminal(
@@ -277,11 +277,44 @@ class RustNode implements LinksyNode {
     required int cols,
     required int rows,
     String? resume,
-  }) async =>
-      throw TerminalRefused(TerminalRefusal.unsupported, name: _nameOf(id));
+  }) async {
+    final name = _nameOf(id);
+    try {
+      final j = jsonDecode(
+        await _node.openTerminal(
+          id: id,
+          code: code,
+          cols: cols.clamp(1, 1000),
+          rows: rows.clamp(1, 1000),
+          resume: resume,
+        ),
+      ) as Json;
+      return _RustTerminal(
+        _node,
+        j['session'] as String,
+        j['terminal'] as String? ?? '',
+      );
+    } on Object catch (e) {
+      final error = e is String ? e : '$e';
+      throw TerminalRefused.parse(error, name) ??
+          LinksyException(describeCoreError(error, name));
+    }
+  }
 
   @override
-  Future<List<RemoteTerminal>> terminals(String id) async => const [];
+  Future<List<RemoteTerminal>> terminals(String id) async {
+    final raw = await _guard(() => _node.terminals(id: id), name: _nameOf(id));
+    return [
+      for (final t in (jsonDecode(raw) as List).cast<Json>())
+        RemoteTerminal(
+          id: t['id'] as String,
+          title: t['title'] as String? ?? 'Terminal',
+          started: DateTime.fromMillisecondsSinceEpoch(
+            (t['started_ms'] as num? ?? 0).toInt(),
+          ),
+        ),
+    ];
+  }
 
   @override
   Future<NodeSettings> settings() async =>
@@ -323,6 +356,50 @@ class RustNode implements LinksyNode {
       throw LinksyException(describeCoreError(e is String ? e : '$e', name));
     }
   }
+}
+
+/// A terminal over a session: output from the core, input framed as u32
+/// big-endian length + JSON (`term_input`, `term_resize`, `term_close`).
+class _RustTerminal implements TerminalChannel {
+  _RustTerminal(this._node, this._session, this.terminalId)
+    : output = _node.terminalOutput(session: _session);
+
+  final rust.LinksyNode _node;
+  final String _session;
+
+  @override
+  final String terminalId;
+
+  @override
+  final Stream<Uint8List> output;
+
+  Future<bool> _send(Map<String, Object> message) {
+    final body = utf8.encode(jsonEncode(message));
+    final frame = BytesBuilder(copy: false)
+      ..add((ByteData(4)..setUint32(0, body.length)).buffer.asUint8List())
+      ..add(body);
+    return _node.sessionWrite(session: _session, bytes: frame.takeBytes());
+  }
+
+  @override
+  Future<bool> input(String data) =>
+      _send({'type': 'term_input', 'data': data});
+
+  @override
+  Future<bool> resize(int cols, int rows) =>
+      _send({'type': 'term_resize', 'cols': cols, 'rows': rows});
+
+  /// `term_close`, then this side of the stream: queued in order, so the
+  /// computer gets the close before the end.
+  @override
+  Future<void> close() async {
+    await _send({'type': 'term_close'});
+    _node.endSession(session: _session);
+  }
+
+  /// Just this side of the stream: the shell stays, detached.
+  @override
+  Future<void> detach() async => _node.endSession(session: _session);
 }
 
 /// `unreachable`, `declined`, `invalid:…` and so on, as the user should read

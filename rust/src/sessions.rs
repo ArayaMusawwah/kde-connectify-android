@@ -150,6 +150,12 @@ pub(crate) fn read(id: &str) -> Option<Vec<u8>> {
     slot.as_mut()?.blocking_recv()
 }
 
+/// What arrives on a session, for a reader in Dart (a terminal's output):
+/// the receiver itself, taken once.
+pub(crate) fn take_incoming(id: &str) -> Option<mpsc::Receiver<Vec<u8>>> {
+    handle(id)?.incoming.lock().unwrap().take()
+}
+
 /// Ends this side; the core then reports `SessionEnded`. Closing the queue
 /// ends the session's task, which also wakes a reader waiting in `read`.
 pub(crate) fn end(id: &str) {

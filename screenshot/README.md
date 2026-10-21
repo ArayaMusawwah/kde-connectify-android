@@ -22,5 +22,9 @@ bar. Version 0.1.9+ (device pictures).
 | `terminal-detached.png` | Detached: still running on the computer, Reattach |
 | `terminal-close.png` | The Close button in the header and the × on each tab |
 | `terminal-close-confirm.png` | "Close this terminal?" with Keep running / Close |
+| `terminal-real-shell.png` | A real login shell (zsh on a Mac test computer) through the 0.7 core |
+| `terminal-still-running.png` | Start screen listing a terminal still running on the computer, Reattach |
+| `terminal-exit.png` | After typing `exit`: the tab closed, "“Terminal” ended on …" |
+| `device-status.png` | A computer's page: name, its kind, and a small "Same Wi-Fi" under it |
 
 The device picture is a flat illustration in the brand colors, made for these shots.

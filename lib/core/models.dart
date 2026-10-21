@@ -511,6 +511,9 @@ enum TerminalRefusal {
   /// The computer can't do terminals.
   unsupported,
 
+  /// 8 terminals already run there for this phone.
+  limit,
+
   /// Its user said no.
   declined,
 }
