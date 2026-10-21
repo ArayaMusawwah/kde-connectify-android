@@ -14,6 +14,7 @@ import '../../ui/format.dart';
 import '../../ui/sig.dart';
 import '../remote/remote_screen.dart';
 import '../sharing/sharing.dart';
+import '../sharing/webcam_screen.dart';
 import 'activity_tile.dart';
 
 /// Picks files and sends them to a device, reporting any error.
@@ -36,6 +37,9 @@ class DeviceScreen extends StatefulWidget {
 
 class _DeviceScreenState extends State<DeviceScreen> {
   late final LinksyController _c;
+
+  /// The timeline's filter: null for everything.
+  ActivityKind? _filter;
 
   String get deviceId => widget.deviceId;
 
@@ -61,7 +65,11 @@ class _DeviceScreenState extends State<DeviceScreen> {
       // Forgotten while open.
       return const Scaffold(body: SizedBox.shrink());
     }
-    final days = _byDay(c.activityFor(deviceId));
+    final all = c.activityFor(deviceId);
+    final days = _byDay([
+      for (final a in all)
+        if (_filter == null || a.kind == _filter) a,
+    ]);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayFor(Brightness.dark),
@@ -89,19 +97,15 @@ class _DeviceScreenState extends State<DeviceScreen> {
                     offset: const Offset(0, -34),
                     child: _Actions(view: view),
                   ),
-                  // What this phone shares with it right now (camera, screen),
-                  // with the way back to the webcam's controls.
+                  // Its screen being shared from here, with Stop.
                   Transform.translate(
                     offset: const Offset(0, -34),
-                    child: SharingBanners(controller: c, deviceId: deviceId),
+                    child: SharingBanners(
+                      controller: c,
+                      deviceId: deviceId,
+                      kinds: const {SessionKind.screen, SessionKind.control},
+                    ),
                   ),
-                  if (c.media[deviceId]?.players case final players?
-                      when players.isNotEmpty)
-                    for (final p in players)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                        child: _NowPlaying(deviceId: deviceId, player: p),
-                      ),
                   if (_isComputer(view.device)) ...[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
@@ -109,43 +113,44 @@ class _DeviceScreenState extends State<DeviceScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                      child: _PhotoBackup(view: view),
+                      child: _PhoneAs(view: view),
                     ),
-                    if (view.device.features.contains('clipboard_watch'))
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                        child: _SwitchCard(
-                          icon: Ph.clipboard,
-                          title: 'Get its clipboard',
-                          detail:
-                              'Text copied on ${view.device.name} lands on '
-                              'this phone’s clipboard while connected',
-                          value: c.watchesClipboard(deviceId),
-                          onChanged: (v) => c.setClipboardWatch(deviceId, v),
-                        ),
-                      ),
-                    if (view.trusted)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                        child: _SwitchCard(
-                          icon: Ph.globeHemisphereWest,
-                          title: 'Allow everything from away',
-                          detail: view.awayAll
-                              ? 'From away too, ${view.device.name} can use '
-                                    'this screen, camera, microphone and files'
-                              : 'From away, ${view.device.name} gets '
-                                    'clipboard, links, files and ring only',
-                          value: view.awayAll,
-                          onChanged: (v) =>
-                              report(context, c.setAwayAll(deviceId, v)),
-                        ),
-                      ),
                   ],
+                  if (c.media[deviceId]?.players case final players?
+                      when players.isNotEmpty)
+                    for (final p in players)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                        child: _NowPlaying(deviceId: deviceId, player: p),
+                      ),
+                  if (_isComputer(view.device))
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                      child: _Switches(view: view),
+                    ),
                 ],
               ),
             ),
-            if (days.isEmpty)
+            if (all.isNotEmpty)
+              SliverToBoxAdapter(
+                child: _Filters(
+                  selected: _filter,
+                  onSelected: (k) => setState(() => _filter = k),
+                ),
+              ),
+            if (all.isEmpty)
               SliverToBoxAdapter(child: _NoActivity(name: view.device.name))
+            else if (days.isEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                  child: Text(
+                    'Nothing of that kind yet.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Sig.of(context).muted),
+                  ),
+                ),
+              )
             else
               for (final (day, entries) in days) ...[
                 SliverToBoxAdapter(child: SectionLabel(day)),
@@ -199,9 +204,43 @@ class _Hero extends StatelessWidget {
     final d = view.device;
     final picture = c.pictureOf(d.id);
 
+    final notNearby = view.presence == Presence.notNearby;
+    final chipColor = presenceColor(s, view.presence, onBlue: true);
     final details = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // How it's reached, above the name.
+        Container(
+          height: 30,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: chipColor.withValues(alpha: notNearby ? 0.12 : 0.18),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (notNearby)
+                const Icon(Ph.wifiSlash, size: 15, color: Colors.white54)
+              else if (view.connected && view.usb)
+                Icon(Ph.usb, size: 15, color: chipColor)
+              else if (view.connected && view.away)
+                Icon(Ph.globeHemisphereWest, size: 15, color: chipColor)
+              else
+                PulseDot(color: chipColor, size: 7),
+              const SizedBox(width: 6),
+              Text(
+                linkWords(view),
+                style: TextStyle(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                  color: chipColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
         Text(
           d.name,
           textAlign: TextAlign.center,
@@ -209,35 +248,17 @@ class _Hero extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: sora(30, weight: FontWeight.w700, color: Colors.white),
         ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (view.presence == Presence.notNearby)
-              Icon(Ph.wifiSlash, size: 15, color: Colors.white54)
-            else
-              PulseDot(
-                color: presenceColor(s, view.presence, onBlue: true),
-                size: 7,
-              ),
-            const SizedBox(width: 4),
-            Text(
-              presenceText(view),
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: presenceColor(s, view.presence, onBlue: true),
-              ),
-            ),
-            Flexible(
-              child: Text(
-                '   ${d.description}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 14, color: Colors.white70),
-              ),
-            ),
-          ],
+        const SizedBox(height: 6),
+        Text(
+          [
+            if (view.battery case final b? when !notNearby)
+              '${b.level}%${b.charging ? ', charging' : ''}',
+            d.description,
+          ].join(' · '),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 14, color: Colors.white70),
         ),
         if (view.presence == Presence.notNearby &&
             (c.settings?.away ?? false) &&
@@ -266,11 +287,6 @@ class _Hero extends StatelessWidget {
               ],
             ),
           ],
-        if (view.battery case final battery?
-            when view.presence != Presence.notNearby) ...[
-          const SizedBox(height: 6),
-          _BatteryLine(battery: battery),
-        ],
         if (c.lockWatchers.containsKey(d.id)) ...[
           const SizedBox(height: 6),
           const Row(
@@ -799,10 +815,262 @@ class _WatchScreen extends StatelessWidget {
   }
 }
 
-/// "Back up new photos to fedora": photo auto-import from the folder picked
-/// in Android's picker, while the computer is around.
-class _PhotoBackup extends StatelessWidget {
-  const _PhotoBackup({required this.view});
+/// "Activity" and its filters: All, Files, Clipboard, Links.
+class _Filters extends StatelessWidget {
+  const _Filters({required this.selected, required this.onSelected});
+
+  final ActivityKind? selected;
+  final ValueChanged<ActivityKind?> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    const options = [
+      ('All', null),
+      ('Files', ActivityKind.files),
+      ('Clipboard', ActivityKind.clipboard),
+      ('Links', ActivityKind.link),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionLabel('Activity'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final (label, kind) in options)
+                Pressable(
+                  onTap: () => onSelected(kind),
+                  semanticLabel: 'Show $label',
+                  child: Container(
+                    height: 38,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: selected == kind ? Sig.blue : s.card,
+                      borderRadius: BorderRadius.circular(19),
+                    ),
+                    child: Center(
+                      widthFactor: 1,
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: selected == kind ? Colors.white : s.ink,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// What this phone is for the computer right now, or could be: its webcam,
+/// microphone and second display. The computer starts them.
+class _PhoneAs extends StatelessWidget {
+  const _PhoneAs({required this.view});
+
+  final DeviceView view;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final c = LinksyScope.of(context);
+    final d = view.device;
+    SessionStarted? live(SessionKind kind) => c.sharing.values
+        .where((e) => e.peer.id == d.id && e.kind == kind)
+        .firstOrNull;
+    final camera = live(SessionKind.camera);
+    final mic = live(SessionKind.microphone);
+    final display = c.displays.values
+        .where((e) => e.peer.id == d.id && e.kind == SessionKind.display)
+        .firstOrNull;
+    final ready = 'Ready when ${d.name} asks';
+    final size = c.screenSize;
+
+    Widget action(String label, VoidCallback onTap, {bool primary = false}) =>
+        SizedBox(
+          height: 40,
+          child: TextButton(
+            onPressed: onTap,
+            style: TextButton.styleFrom(
+              backgroundColor: primary ? Sig.blue : s.raised,
+              foregroundColor: primary ? Colors.white : Sig.blue,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              shape: const StadiumBorder(),
+              textStyle: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            child: Text(label),
+          ),
+        );
+
+    final rows = [
+      if (d.can('camera'))
+        _PhoneAsRow(
+          icon: Ph.videoCamera,
+          title: 'Webcam',
+          live: camera != null,
+          detail: camera != null ? 'In use now' : ready,
+          action: camera == null
+              ? null
+              : action(
+                  'Controls',
+                  () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => WebcamScreen(share: camera),
+                    ),
+                  ),
+                ),
+        ),
+      if (d.can('microphone'))
+        _PhoneAsRow(
+          icon: Ph.microphone,
+          title: 'Microphone',
+          live: mic != null,
+          detail: mic != null ? 'In use now' : ready,
+          action: mic == null
+              ? null
+              : action('Stop', () => c.stopSharing(mic.session)),
+        ),
+      if (d.can('display'))
+        _PhoneAsRow(
+          icon: Ph.monitor,
+          title: 'Second display',
+          live: display != null,
+          detail: display != null
+              ? 'Showing now'
+              : size == null
+              ? ready
+              : 'Ready · ${size.$1} × ${size.$2}',
+        ),
+    ];
+    if (rows.isEmpty) return const SizedBox.shrink();
+    return SigCard(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Expanded(
+                child: Text('This phone as', style: sora(16, color: s.ink)),
+              ),
+              Text(
+                'Started on ${d.name}',
+                style: TextStyle(fontSize: 12.5, color: s.muted),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0) Divider(height: 1, thickness: 1, color: s.line),
+            rows[i],
+          ],
+          if (!view.usb) ...[
+            const SizedBox(height: 4),
+            Text(
+              'Faster and steadier over a USB cable.',
+              style: TextStyle(fontSize: 12.5, color: s.muted),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PhoneAsRow extends StatelessWidget {
+  const _PhoneAsRow({
+    required this.icon,
+    required this.title,
+    required this.detail,
+    required this.live,
+    this.action,
+  });
+
+  final IconData icon;
+  final String title;
+  final String detail;
+  final bool live;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final cyanText = s.bg.computeLuminance() > 0.5
+        ? const Color(0xFF0E8FAE)
+        : Sig.cyanLight;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: live ? Sig.blue : s.raised,
+            ),
+            child: Icon(icon, size: 18, color: live ? Colors.white : Sig.blue),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: s.ink,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    if (live) ...[
+                      const PulseDot(color: Sig.cyan, size: 6),
+                      const SizedBox(width: 4),
+                    ],
+                    Flexible(
+                      child: Text(
+                        detail,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: live ? FontWeight.w600 : null,
+                          color: live ? cyanText : s.muted,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          ?action,
+        ],
+      ),
+    );
+  }
+}
+
+/// This computer's switches in one card: photo backup, its clipboard, what
+/// it may do from away.
+class _Switches extends StatelessWidget {
+  const _Switches({required this.view});
 
   final DeviceView view;
 
@@ -811,54 +1079,67 @@ class _PhotoBackup extends StatelessWidget {
     final s = Sig.of(context);
     final c = LinksyScope.of(context);
     final id = view.device.id;
-    final on = c.backsUpPhotos(id);
     final name = view.device.name;
+    final photos = c.backsUpPhotos(id);
     final at = c.photosBackedUp(id);
-    final detail = !on
-        ? 'New photos go to $name’s Pictures folder'
-        : c.photosDeclined(id)
-        ? '$name doesn’t take photos. Turn on “Import Photos From Phones” there.'
-        : [
-            'From ${c.photosFolder ?? 'your camera folder'}',
-            if (at != null) 'last ${formatClock(at)}',
-          ].join(' · ');
+    final declined = photos && c.photosDeclined(id);
+    final rows = [
+      _SwitchRow(
+        icon: Ph.images,
+        title: 'Back up photos',
+        detail: !photos
+            ? 'New photos go to $name’s Pictures folder'
+            : declined
+            ? '$name doesn’t take photos. Turn on “Import Photos From '
+                  'Phones” there.'
+            : [
+                'From ${c.photosFolder ?? 'your camera folder'}',
+                if (at != null) 'last ${formatClock(at)}',
+              ].join(' · '),
+        warn: declined,
+        value: photos,
+        onChanged: (v) => c.setPhotoBackup(id, v),
+      ),
+      if (view.device.features.contains('clipboard_watch'))
+        _SwitchRow(
+          icon: Ph.clipboard,
+          title: 'Get its clipboard',
+          detail: 'Text copied on $name lands here while connected',
+          value: c.watchesClipboard(id),
+          onChanged: (v) => c.setClipboardWatch(id, v),
+        ),
+      _SwitchRow(
+        icon: Ph.globeHemisphereWest,
+        title: 'Allow everything from away',
+        detail: view.awayAll
+            ? 'From away too: this screen, webcam, microphone and files'
+            : 'From away: clipboard, links, files and ring only',
+        value: view.awayAll,
+        onChanged: (v) => report(context, c.setAwayAll(id, v)),
+      ),
+    ];
     return SigCard(
-      padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
-      child: Row(
+      padding: EdgeInsets.zero,
+      child: Column(
         children: [
-          IconCircle(icon: Ph.images, color: Sig.blue, size: 40),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Back up photos', style: sora(16, color: s.ink)),
-                const SizedBox(height: 2),
-                Text(
-                  detail,
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    color: on && c.photosDeclined(id) ? s.red : s.muted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Switch(value: on, onChanged: (v) => c.setPhotoBackup(id, v)),
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0) Divider(height: 1, thickness: 1, color: s.line),
+            rows[i],
+          ],
         ],
       ),
     );
   }
 }
 
-/// A card with one switch, like [_PhotoBackup].
-class _SwitchCard extends StatelessWidget {
-  const _SwitchCard({
+class _SwitchRow extends StatelessWidget {
+  const _SwitchRow({
     required this.icon,
     required this.title,
     required this.detail,
     required this.value,
     required this.onChanged,
+    this.warn = false,
   });
 
   final IconData icon;
@@ -866,63 +1147,45 @@ class _SwitchCard extends StatelessWidget {
   final String detail;
   final bool value;
   final ValueChanged<bool> onChanged;
+  final bool warn;
 
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
-    return SigCard(
-      padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
       child: Row(
         children: [
-          IconCircle(icon: icon, color: Sig.blue, size: 40),
+          Icon(icon, color: Sig.blue, size: 22),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: sora(16, color: s.ink)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w600,
+                    color: s.ink,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(detail, style: TextStyle(fontSize: 12.5, color: s.muted)),
+                Text(
+                  detail,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: warn ? s.red : s.muted,
+                    height: 1.35,
+                  ),
+                ),
               ],
             ),
           ),
+          const SizedBox(width: 10),
           Switch(value: value, onChanged: onChanged),
         ],
       ),
-    );
-  }
-}
-
-/// "82% · Charging" under the device's name.
-class _BatteryLine extends StatelessWidget {
-  const _BatteryLine({required this.battery});
-
-  final Battery battery;
-
-  @override
-  Widget build(BuildContext context) {
-    final b = battery;
-    final icon = b.charging
-        ? Ph.batteryCharging
-        : b.level >= 90
-        ? Ph.batteryFull
-        : b.level >= 60
-        ? Ph.batteryHigh
-        : b.level >= 30
-        ? Ph.batteryMedium
-        : b.level > 15
-        ? Ph.batteryLow
-        : Ph.batteryWarning;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, size: 17, color: Colors.white70),
-        const SizedBox(width: 5),
-        Text(
-          '${b.level}%${b.charging ? ' · Charging' : ''}',
-          style: const TextStyle(fontSize: 14, color: Colors.white70),
-        ),
-      ],
     );
   }
 }

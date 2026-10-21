@@ -164,7 +164,13 @@ class TimelineEntry extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(4, 5, 16, 5),
-              child: SigCard(
+              child: _Box(
+                // Files and what's running get a card; the small things
+                // (a ping, a link, copied text) a plain line.
+                card:
+                    a.kind == ActivityKind.files ||
+                    a.isLive ||
+                    a.names.isNotEmpty,
                 onTap: !openable
                     ? null
                     : webcam != null
@@ -175,8 +181,6 @@ class TimelineEntry extends StatelessWidget {
                         ),
                       )
                     : () => _open(context, a),
-                padding: const EdgeInsets.fromLTRB(14, 12, 6, 12),
-                radius: Radii.md + 2,
                 child: Row(
                   children: [
                     Icon(activityIcon(a), color: color, size: 22),
@@ -292,6 +296,7 @@ class TimelineEntry extends StatelessWidget {
   }
 
   static bool _isSession(Activity a) => const [
+    ActivityKind.microphone,
     ActivityKind.screen,
     ActivityKind.camera,
     ActivityKind.control,
@@ -462,5 +467,29 @@ class _Live extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+/// A timeline entry's box: a card, or the same padding with no card.
+class _Box extends StatelessWidget {
+  const _Box({required this.card, required this.child, this.onTap});
+
+  final bool card;
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    const padding = EdgeInsets.fromLTRB(14, 12, 6, 12);
+    if (card) {
+      return SigCard(
+        onTap: onTap,
+        padding: padding,
+        radius: Radii.md + 2,
+        child: child,
+      );
+    }
+    final plain = Padding(padding: padding, child: child);
+    return onTap == null ? plain : Pressable(onTap: onTap, child: plain);
   }
 }

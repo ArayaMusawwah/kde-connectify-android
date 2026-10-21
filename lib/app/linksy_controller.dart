@@ -108,6 +108,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   bool get pauseOnCalls => prefs['pause_calls'] != 'off';
   bool get locatable => prefs['locate'] == 'on';
 
+  /// This phone's screen in landscape, for "Second display".
+  (int, int)? screenSize;
+
   /// Android 15's screen share protections (see [LinksyPlatform]); on some
   /// phones they black out the status bar and the notification shade.
   String? shareProtections;
@@ -237,6 +240,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       );
     }
     await _readShareProtections();
+    screenSize = await LinksyPlatform.screenSize();
     pictures = await LinksyPlatform.pictures()
       ..remove(_self);
     filesFolder = await LinksyPlatform.folder('files');

@@ -111,17 +111,27 @@ class SessionRequestDialog extends StatelessWidget {
 
 /// Live shares at the top of home, each with Stop.
 class SharingBanners extends StatelessWidget {
-  const SharingBanners({super.key, required this.controller, this.deviceId});
+  const SharingBanners({
+    super.key,
+    required this.controller,
+    this.deviceId,
+    this.kinds,
+  });
 
   final LinksyController controller;
 
   /// Only the shares with this device (its page), else all (home).
   final String? deviceId;
 
+  /// Only these kinds (a computer's page shows its webcam and microphone in
+  /// its own card).
+  final Set<SessionKind>? kinds;
+
   @override
   Widget build(BuildContext context) {
     final shares = controller.sharing.values
         .where((s) => deviceId == null || s.peer.id == deviceId)
+        .where((s) => kinds == null || kinds!.contains(s.kind))
         .toList();
     if (shares.isEmpty) return const SizedBox.shrink();
     return Padding(

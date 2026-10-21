@@ -268,6 +268,15 @@ String presenceLabel(Presence p) => switch (p) {
 
 /// [presenceLabel], saying how a connection goes: the USB cable, or the
 /// internet (away from home).
+/// How a device is reached, for lists: the cable, the internet, or the same
+/// network.
+String linkWords(DeviceView v) => switch (v) {
+  DeviceView(connected: true, usb: true) => 'USB cable',
+  DeviceView(connected: true, away: true) => 'Away from home',
+  DeviceView(presence: Presence.notNearby) => 'Not nearby',
+  _ => 'Same Wi-Fi',
+};
+
 String presenceText(DeviceView v) => switch (v) {
   DeviceView(connected: true, usb: true) => 'Connected by USB',
   DeviceView(connected: true, away: true) => 'Connected away from home',
@@ -285,11 +294,15 @@ class Orb extends StatelessWidget {
     this.presence,
     this.onBlue = false,
     this.picture,
+    this.battery,
   });
 
   final DeviceInfo device;
   final double size;
   final Presence? presence;
+
+  /// Its battery, drawn as the presence ring filled to the level.
+  final Battery? battery;
 
   /// The device's picture (a file), shown instead of its initials.
   final String? picture;
@@ -340,6 +353,20 @@ class Orb extends StatelessWidget {
     );
     if (away) orb = Opacity(opacity: 0.45, child: orb);
     if (ring == null) return orb;
+    if (battery case final b?) {
+      return Semantics(
+        label: 'Battery ${b.level} percent${b.charging ? ', charging' : ''}',
+        child: CustomPaint(
+          painter: _BatteryRing(
+            level: b.level / 100,
+            color: ring,
+            track: onBlue ? Colors.white.withValues(alpha: 0.2) : s.raised,
+            width: ringWidth,
+          ),
+          child: Padding(padding: EdgeInsets.all(ringWidth + 1.5), child: orb),
+        ),
+      );
+    }
     return Container(
       padding: EdgeInsets.all(ringWidth + 1.5),
       decoration: BoxDecoration(
@@ -349,6 +376,48 @@ class Orb extends StatelessWidget {
       child: orb,
     );
   }
+}
+
+/// The ring round a device's disc, filled clockwise from the top to its
+/// battery level.
+class _BatteryRing extends CustomPainter {
+  const _BatteryRing({
+    required this.level,
+    required this.color,
+    required this.track,
+    required this.width,
+  });
+
+  final double level;
+  final Color color;
+  final Color track;
+  final double width;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = (Offset.zero & size).deflate(width / 2);
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = width
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(rect, 0, 2 * pi, false, paint..color = track);
+    if (level > 0) {
+      canvas.drawArc(
+        rect,
+        -pi / 2,
+        2 * pi * level.clamp(0.0, 1.0),
+        false,
+        paint..color = color,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_BatteryRing old) =>
+      old.level != level ||
+      old.color != color ||
+      old.track != track ||
+      old.width != width;
 }
 
 /// Icon in a soft circle of its color.

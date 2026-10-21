@@ -275,6 +275,7 @@ class _DeviceRow extends StatelessWidget {
             size: 46,
             presence: view.presence,
             picture: LinksyScope.of(context).pictureOf(d.id),
+            battery: view.battery,
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -290,27 +291,27 @@ class _DeviceRow extends StatelessWidget {
                 const SizedBox(height: 3),
                 Row(
                   children: [
-                    Icon(kindIcon(d.kind), size: 14, color: s.muted),
-                    const SizedBox(width: 5),
                     Text(
-                      presenceText(view),
+                      linkWords(view),
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: away ? s.faint : presenceColor(s, view.presence),
+                        color: away ? s.faint : _linkColor(s),
                       ),
                     ),
-                    if (last != null && !transferring) ...[
-                      Text('  ·  ', style: TextStyle(color: s.faint)),
-                      Expanded(
-                        child: Text(
-                          activityTitle(last),
-                          style: TextStyle(fontSize: 13, color: s.muted),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                    Expanded(
+                      child: Text(
+                        [
+                          if (view.battery case final b? when !away)
+                            '${b.level}%',
+                          if (last != null && !transferring)
+                            activityTitle(last),
+                        ].map((p) => '  ·  $p').join(),
+                        style: TextStyle(fontSize: 13, color: s.muted),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
+                    ),
                   ],
                 ),
                 if (transferring) ...[
@@ -335,6 +336,10 @@ class _DeviceRow extends StatelessWidget {
     );
   }
 }
+
+/// Cyan text that still reads on white (the brand cyan is too light).
+Color _linkColor(Sig s) =>
+    s.bg.computeLuminance() > 0.5 ? const Color(0xFF0E8FAE) : Sig.cyanLight;
 
 /// Send files without opening the device first.
 class _QuickSend extends StatelessWidget {
