@@ -87,6 +87,10 @@
             android:name=".KeepAlive"
             android:exported="false"
             android:foregroundServiceType="connectedDevice"/>
+        <!-- Accept / Decline on the incoming-files notification. -->
+        <receiver
+            android:name=".TransferNotice$Answer"
+            android:exported="false"/>
         <!-- Push notifications (Firebase Cloud Messaging). No analytics. -->
         <service
             android:name=".Push"

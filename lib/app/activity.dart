@@ -102,6 +102,9 @@ enum ActivityKind {
 
   /// This phone was a computer's touchpad and keyboard.
   remote,
+
+  /// This phone watched (or drove) a computer's screen.
+  watch,
 }
 
 enum ActivityStatus { waiting, active, done, declined, failed }

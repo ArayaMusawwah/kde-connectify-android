@@ -33,8 +33,9 @@ class SessionRequestDialog extends StatelessWidget {
       SessionKind.camera => (
         Ph.videoCamera,
         '$name wants to use your camera',
-        '$name gets this phone’s back camera as a webcam until you stop. '
-            'Hold the phone sideways for a wide picture.',
+        '$name gets this phone’s camera as a webcam until you stop. '
+            'Hold the phone sideways for a wide picture; switch to the front '
+            'camera from the notification.',
       ),
       SessionKind.input => (
         Ph.mouseSimple,
@@ -164,6 +165,29 @@ class _Banner extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
+          if (share.kind == SessionKind.camera) ...[
+            Tooltip(
+              message: 'Switch camera',
+              child: Pressable(
+                onTap: () => controller.switchCamera(share.session),
+                semanticLabel: 'Switch camera',
+                child: Container(
+                  width: 38,
+                  height: 38,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Sig.deep,
+                  ),
+                  child: const Icon(
+                    Ph.cameraRotate,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
           Pressable(
             onTap: () => controller.stopSharing(share.session),
             semanticLabel: 'Stop sharing',

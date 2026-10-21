@@ -27,6 +27,7 @@ class ShareService : Service() {
         when (intent.action) {
             ACTION_START -> start(intent, session)
             ACTION_STOP -> stop(session)
+            ACTION_SWITCH -> (shares[session] as? CameraShare)?.switch()
         }
         return START_NOT_STICKY
     }
@@ -39,8 +40,8 @@ class ShareService : Service() {
         // Android 14: foreground with the right type before touching the
         // projection or the camera.
         val type = if (screen) ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION else ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA
-        if (Build.VERSION.SDK_INT >= 29) startForeground(NOTIFICATION, notification(text, session), type)
-        else startForeground(NOTIFICATION, notification(text, session))
+        if (Build.VERSION.SDK_INT >= 29) startForeground(NOTIFICATION, notification(text, session, !screen), type)
+        else startForeground(NOTIFICATION, notification(text, session, !screen))
 
         val onEnded = { stopFromAnyThread(session) }
         try {
@@ -76,7 +77,7 @@ class ShareService : Service() {
         super.onDestroy()
     }
 
-    private fun notification(text: String, session: String): Notification {
+    private fun notification(text: String, session: String, camera: Boolean = false): Notification {
         val manager = getSystemService(NotificationManager::class.java)
         if (Build.VERSION.SDK_INT >= 26) {
             manager.createNotificationChannel(
@@ -100,6 +101,16 @@ class ShareService : Service() {
             .setOngoing(true)
             .setContentIntent(open)
             .addAction(Notification.Action.Builder(null, "Stop sharing", stop).build())
+            .apply {
+                if (camera) {
+                    val switch = PendingIntent.getService(
+                        this@ShareService, session.hashCode() + 1,
+                        Intent(this@ShareService, ShareService::class.java).setAction(ACTION_SWITCH).putExtra(EXTRA_SESSION, session),
+                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                    )
+                    addAction(Notification.Action.Builder(null, "Switch camera", switch).build())
+                }
+            }
             .build()
     }
 
@@ -108,6 +119,7 @@ class ShareService : Service() {
         private const val NOTIFICATION = 7
         private const val ACTION_START = "app.linksy.START_SHARE"
         private const val ACTION_STOP = "app.linksy.STOP_SHARE"
+        private const val ACTION_SWITCH = "app.linksy.SWITCH_CAMERA"
         private const val EXTRA_SESSION = "session"
         private const val EXTRA_KIND = "kind"
         private const val EXTRA_PEER = "peer"
@@ -120,6 +132,11 @@ class ShareService : Service() {
             val intent = Intent(context, ShareService::class.java).setAction(ACTION_START)
                 .putExtra(EXTRA_SESSION, session).putExtra(EXTRA_KIND, kind).putExtra(EXTRA_PEER, peer)
             if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(intent) else context.startService(intent)
+        }
+
+        /// Front ↔ back camera for a webcam session.
+        fun switchCamera(context: Context, session: String) {
+            context.startService(Intent(context, ShareService::class.java).setAction(ACTION_SWITCH).putExtra(EXTRA_SESSION, session))
         }
 
         fun stop(context: Context, session: String) {

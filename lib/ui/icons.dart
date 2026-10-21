@@ -66,6 +66,7 @@ abstract final class Ph {
   static const batteryMedium = IconData(0xe0c6, fontFamily: 'PhosphorRegular');
   static const batteryLow = IconData(0xe0c4, fontFamily: 'PhosphorRegular');
   static const batteryWarning = IconData(0xe0c8, fontFamily: 'PhosphorRegular');
+  static const cameraRotate = IconData(0xe7a4, fontFamily: 'PhosphorRegular');
   static const handPointing = IconData(0xe29a, fontFamily: 'PhosphorRegular');
   static const mouseSimple = IconData(0xe644, fontFamily: 'PhosphorRegular');
   static const keyboard = IconData(0xe2d8, fontFamily: 'PhosphorRegular');

@@ -34,6 +34,7 @@ abstract final class LinksyPlatform {
   static final _batteries = StreamController<Battery>.broadcast();
   static final _callStates = StreamController<String>.broadcast();
   static final _volumeKeys = StreamController<bool>.broadcast();
+  static final _transferAnswers = StreamController<(String, bool)>.broadcast();
   static var _listening = false;
 
   /// Calls from Android: pairing links, second-display size and end, and
@@ -63,6 +64,9 @@ abstract final class LinksyPlatform {
           if (share != null) _shares.add(share);
         case 'callState' when call.arguments is String:
           _callStates.add(call.arguments as String);
+        case 'transferAnswer':
+          final a = call.arguments as Map;
+          _transferAnswers.add((a['transfer'] as String, a['accept'] == true));
         case 'volumeKey' when call.arguments is String:
           _volumeKeys.add(call.arguments == 'up');
         case 'batteryChanged':
@@ -201,6 +205,38 @@ abstract final class LinksyPlatform {
     _listen();
     return _volumeKeys.stream;
   }
+
+  /// Incoming files as a notification with Accept and Decline (when Linksy
+  /// isn't on screen); the answer comes back on [transferAnswers].
+  static Future<void> noticeTransfer(
+    String transfer,
+    String title,
+    String body,
+  ) => _call<void>('noticeTransfer', {
+    'transfer': transfer,
+    'title': title,
+    'body': body,
+  });
+
+  static Future<void> cancelNotice(String transfer) =>
+      _call<void>('cancelNotice', {'transfer': transfer});
+
+  static Stream<(String, bool)> get transferAnswers {
+    _listen();
+    return _transferAnswers.stream;
+  }
+
+  /// Moves received files into Downloads/Linksy (Android 10+); returns where
+  /// each one is now (a `content://` URI, or the same path if it stayed).
+  static Future<List<String>> publishDownloads(List<String> paths) async =>
+      (await _call<List<Object?>>('publishDownloads', {
+        'paths': paths,
+      }))?.cast<String>() ??
+      paths;
+
+  /// Front ↔ back camera while the phone is a webcam.
+  static Future<void> switchCamera(String session) =>
+      _call<void>('switchCamera', {'session': session});
 
   /// This install's Firebase push token (null without Google Play services).
   static Future<String?> pushToken() => _call<String>('pushToken');

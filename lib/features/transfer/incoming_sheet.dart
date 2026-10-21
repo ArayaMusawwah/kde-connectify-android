@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/activity.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
@@ -17,6 +18,20 @@ class IncomingFilesSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
+    // Answered from the notification: nothing left to ask here.
+    final c = LinksyScope.of(context);
+    final entry = c
+        .activityFor(request.from.id)
+        .where((a) => a.id == request.transfer)
+        .firstOrNull;
+    if (entry != null && entry.status != ActivityStatus.waiting) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final route = ModalRoute.of(context);
+        if (context.mounted && route != null && route.isActive) {
+          Navigator.of(context).removeRoute(route);
+        }
+      });
+    }
     final files = request.files;
     final what = files.length == 1 ? 'a file' : '${files.length} files';
     return SafeArea(

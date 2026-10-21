@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import '../core/linksy_node.dart';
 import '../core/models.dart';
+import '../ui/format.dart';
 import 'activity.dart';
 import 'platform.dart';
 
@@ -75,6 +76,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   bool _importing = false;
   Timer? _importTimer;
   StreamSubscription<String>? _callSub;
+  StreamSubscription<(String, bool)>? _answerSub;
 
   bool get pauseOnCalls => prefs['pause_calls'] != 'off';
   bool get stayRunning => prefs['stay_running'] == 'on';
@@ -123,6 +125,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
     _batterySub = LinksyPlatform.batteryChanges.listen(_onBattery);
     _callSub = LinksyPlatform.callStates.listen(_onCall);
+    _answerSub = LinksyPlatform.transferAnswers.listen(
+      (a) => respond(a.$1, accept: a.$2),
+    );
     unawaited(_loadPlatform());
     WidgetsBinding.instance.addObserver(this);
     unawaited(
@@ -436,6 +441,13 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         }
         _updateKeepAlive();
         notifyListeners();
+      // A computer's screen this phone asked to see: shown like a second
+      // display.
+      case SessionStarted(:final session)
+          when !e.sharing &&
+              (e.kind == SessionKind.screen || e.kind == SessionKind.control):
+        displays[session] = e;
+        _addSession(e);
       case SessionStarted(:final session, :final peer, kind: SessionKind.input):
         remotes[peer.id] = session;
         _addSession(e);
@@ -466,6 +478,20 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         :final files,
         :final total,
       ):
+        // Not on screen: Accept / Decline right in the notification.
+        if (WidgetsBinding.instance.lifecycleState !=
+            AppLifecycleState.resumed) {
+          LinksyPlatform.noticeTransfer(
+            transfer,
+            files.length == 1
+                ? '${from.name} wants to send you a file'
+                : '${from.name} wants to send you ${files.length} files',
+            [
+              if (files.length == 1) files.single.name,
+              formatBytes(total),
+            ].join(' · '),
+          );
+        }
         _add(
           Activity(
             id: transfer,
@@ -531,14 +557,22 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         });
         _importEnded(transfer, ok: false, reason: reason);
       case TransferComplete(:final transfer, :final saved):
+        LinksyPlatform.cancelNotice(transfer);
         _update(transfer, (a) {
           a
             ..status = ActivityStatus.done
             ..bytes = a.total
             ..saved = saved;
         });
+        // Into Downloads/Linksy, where other apps find them.
+        if (saved.isNotEmpty) {
+          LinksyPlatform.publishDownloads(saved).then((moved) {
+            _update(transfer, (a) => a.saved = moved);
+          });
+        }
         _lastSample.remove(transfer);
       case TransferFailed(:final transfer, :final reason):
+        LinksyPlatform.cancelNotice(transfer);
         _update(transfer, (a) {
           final declined = reason.toLowerCase().contains('declin');
           a
@@ -594,8 +628,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           ClipboardReceived() ||
           OpenUrlReceived():
         _prompts.add(e);
-      // The full-screen page for a second display.
-      case SessionStarted(kind: SessionKind.display) when !e.sharing:
+      // The full-screen page for a second display or a computer's screen.
+      case SessionStarted(:final kind)
+          when !e.sharing && kind != SessionKind.input:
         _prompts.add(e);
       default:
         break;
@@ -631,13 +666,16 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       id: e.session,
       deviceId: e.peer.id,
       kind: switch (e.kind) {
+        _ when !e.sharing && e.kind != SessionKind.display =>
+          ActivityKind.watch,
         SessionKind.screen => ActivityKind.screen,
         SessionKind.camera => ActivityKind.camera,
         SessionKind.control => ActivityKind.control,
         SessionKind.display => ActivityKind.display,
         SessionKind.input => ActivityKind.remote,
       },
-      incoming: e.kind == SessionKind.display,
+      // Video coming in: a second display, or a computer's screen watched.
+      incoming: !e.sharing && e.kind != SessionKind.input,
       time: DateTime.now(),
       status: ActivityStatus.active,
     ),
@@ -777,6 +815,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   Future<String?> cancel(String transfer) => _run(() => node.cancel(transfer));
 
   Future<String?> respond(String request, {required bool accept}) async {
+    LinksyPlatform.cancelNotice(request);
     final error = await _run(() => node.respond(request, accept: accept));
     if (!accept) {
       _update(request, (a) {
@@ -817,6 +856,15 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     await node.respond(request.request, accept: allowed);
     return error;
   }
+
+  /// Watch [id]'s screen ([control]: and use its mouse and keyboard). The
+  /// screen opens full screen once its user picks what to share there.
+  Future<String?> watchScreen(String id, {required bool control}) =>
+      _run(() => node.startView(id, control: control));
+
+  /// Front ↔ back camera while this phone is a webcam.
+  Future<void> switchCamera(String session) =>
+      LinksyPlatform.switchCamera(session);
 
   /// Leaves a second display (back from its full-screen page).
   Future<void> stopDisplay(String session) async {
@@ -869,6 +917,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _sub?.cancel();
     _batterySub?.cancel();
     _callSub?.cancel();
+    _answerSub?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _importTimer?.cancel();
     _ringTimer?.cancel();

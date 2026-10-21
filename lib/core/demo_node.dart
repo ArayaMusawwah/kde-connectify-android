@@ -312,6 +312,22 @@ class DemoNode implements LinksyNode {
   }
 
   @override
+  Future<String> startView(String id, {required bool control}) async {
+    _reachable(id);
+    _setConnected(id, true);
+    final session = _uuid();
+    _emit(
+      SessionStarted(
+        session: session,
+        peer: _devices[id]!.device,
+        kind: control ? SessionKind.control : SessionKind.screen,
+        sharing: false,
+      ),
+    );
+    return session;
+  }
+
+  @override
   Future<bool> sessionWrite(String session, Uint8List bytes) async => true;
 
   @override

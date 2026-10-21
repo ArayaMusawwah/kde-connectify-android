@@ -55,6 +55,9 @@ class MainActivity : FlutterActivity() {
         pendingLink = linkFrom(intent)
         takeShared(intent)
         watchBattery()
+        TransferNotice.answer = { transfer, accept ->
+            runOnUiThread { channel?.invokeMethod("transferAnswer", mapOf("transfer" to transfer, "accept" to accept)) }
+        }
         Push.subscribe()
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "app.linksy/platform").apply {
             setMethodCallHandler { call, result ->
@@ -116,6 +119,25 @@ class MainActivity : FlutterActivity() {
                         pendingShare = null
                     }
                     "battery" -> result.success(battery(null))
+                    "noticeTransfer" -> {
+                        TransferNotice.post(
+                            this@MainActivity, call.argument<String>("transfer")!!,
+                            call.argument<String>("title")!!, call.argument<String>("body") ?: "",
+                        )
+                        result.success(null)
+                    }
+                    "cancelNotice" -> {
+                        TransferNotice.cancel(this@MainActivity, call.argument<String>("transfer")!!)
+                        result.success(null)
+                    }
+                    "publishDownloads" -> {
+                        val paths = call.argument<List<String>>("paths").orEmpty()
+                        val root = java.io.File(getExternalFilesDir(null), "Received")
+                        Thread {
+                            val moved = Downloads.publish(applicationContext, root, paths)
+                            runOnUiThread { result.success(moved) }
+                        }.start()
+                    }
                     "pushToken" -> Push.token { token -> runOnUiThread { result.success(token) } }
                     "openUrl" -> result.success(openUrl(call.argument<String>("url")!!))
                     "startRing" -> {
@@ -185,6 +207,10 @@ class MainActivity : FlutterActivity() {
                         val session = call.argument<String>("session")!!
                         val frames = call.argument<ByteArray>("frames")!!
                         inputWriter.execute { NativeSession.write(session, frames) }
+                        result.success(null)
+                    }
+                    "switchCamera" -> {
+                        ShareService.switchCamera(this@MainActivity, call.argument<String>("session")!!)
                         result.success(null)
                     }
                     "stopShare" -> {
@@ -332,6 +358,7 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
+        TransferNotice.answer = null
         batteryReceiver?.let { runCatching { unregisterReceiver(it) } }
         batteryReceiver = null
         ring.stop()
@@ -441,6 +468,17 @@ class MainActivity : FlutterActivity() {
 
     /// Opens a received file in another app: "done", "missing" or "noApp".
     private fun openFile(path: String): String {
+        if (path.startsWith("content://")) {
+            val uri = android.net.Uri.parse(path)
+            val type = contentResolver.getType(uri) ?: return "missing"
+            val view = Intent(Intent.ACTION_VIEW).setDataAndType(uri, type).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            return try {
+                startActivity(Intent.createChooser(view, null).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION))
+                "done"
+            } catch (e: android.content.ActivityNotFoundException) {
+                "noApp"
+            }
+        }
         val file = java.io.File(path)
         if (!file.isFile) return "missing"
         val root = java.io.File(getExternalFilesDir(null), "Received").canonicalPath

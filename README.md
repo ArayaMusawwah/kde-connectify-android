@@ -23,7 +23,7 @@ keyframes, size, frame rate and rotation; input checked both ways).
 | Device list with presence, nearby unpaired devices | Share sheet entry point ("Share → Linksy") |
 | Device page: Send files, Clipboard, Ping, activity as a timeline | Notifications with Accept / Decline actions |
 | Pairing: in-app QR scanner, `linksy://pair` links from any camera app, by address, 6-digit code | Send from `content://` URIs without copying (needs a core API, docs/protocol.md §7) |
-| Incoming files prompt, live progress / speed / time left, cancel, open received files | Save received files into MediaStore Downloads (now: app folder, `Android/data/app.linksy.mg/files/Received`) |
+| Incoming files prompt (also as a notification with Accept/Decline), live progress / speed / time left, cancel; received files moved to Downloads/Linksy and opened from the timeline | |
 | Settings: name, auto-accept, stay connected | NsdManager discovery fallback for phones that filter multicast |
 | History kept on the phone (500 entries, clipboard text never on disk) | Watching the desktop's screen on the phone; front/back camera switch |
 | Sharing this phone's screen ("View Screen", exact shape, follows rotation) and camera ("Use as Webcam"), in a foreground service with a Stop notification | Second display at the phone's own size (the desktop sends 1920×1080 for now) |
@@ -92,6 +92,11 @@ Linksy has its own look, "Signal", rather than stock Material:
   instead of rippling.
 - **Home stays simple.** A plain header (logo, name, settings) and the device list. No
   decorative hero.
+
+## For the desktop side
+
+[`docs/android-app.md`](docs/android-app.md) tells linksy-desktop what the phone does, what it needs from the
+desktop, and which features Android won't allow in a sideloaded app.
 
 ## Lean on purpose
 

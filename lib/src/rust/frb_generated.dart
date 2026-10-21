@@ -69,7 +69,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => -876779379;
+  int get rustContentHash => 991565398;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -205,6 +205,12 @@ abstract class RustLibApi extends BaseApi {
   Future<String> crateApiNodeLinksyNodeStartInput({
     required LinksyNode that,
     required String id,
+  });
+
+  Future<String> crateApiNodeLinksyNodeStartView({
+    required LinksyNode that,
+    required String id,
+    required bool control,
   });
 
   Future<void> crateApiNodeLinksyNodeUpdateSettings({
@@ -1184,6 +1190,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<String> crateApiNodeLinksyNodeStartView({
+    required LinksyNode that,
+    required String id,
+    required bool control,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_bool(control, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 27,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeStartViewConstMeta,
+        argValues: [that, id, control],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeStartViewConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_start_view",
+        argNames: ["that", "id", "control"],
+      );
+
+  @override
   Future<void> crateApiNodeLinksyNodeUpdateSettings({
     required LinksyNode that,
     required String settingsJson,
@@ -1200,7 +1246,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 27,
+            funcId: 28,
             port: port_,
           );
         },
@@ -1240,7 +1286,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 28,
+            funcId: 29,
             port: port_,
           );
         },
@@ -1270,7 +1316,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 29,
+            funcId: 30,
             port: port_,
           );
         },
@@ -1304,7 +1350,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 30,
+            funcId: 31,
             port: port_,
           );
         },
@@ -1857,6 +1903,16 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
   /// write framed input messages to.
   Future<String> startInput({required String id}) =>
       RustLib.instance.api.crateApiNodeLinksyNodeStartInput(that: this, id: id);
+
+  /// Watch a computer's screen (`control`: and use its mouse and keyboard).
+  /// Its user picks the screen there. Returns the session id; the video
+  /// arrives on it like a second display's.
+  Future<String> startView({required String id, required bool control}) =>
+      RustLib.instance.api.crateApiNodeLinksyNodeStartView(
+        that: this,
+        id: id,
+        control: control,
+      );
 
   Future<void> updateSettings({required String settingsJson}) =>
       RustLib.instance.api.crateApiNodeLinksyNodeUpdateSettings(

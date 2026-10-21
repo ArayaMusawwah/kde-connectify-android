@@ -21,6 +21,7 @@ IconData activityIcon(Activity a) => switch (a.kind) {
   ActivityKind.link => Ph.link,
   ActivityKind.ring => Ph.bellSimpleRinging,
   ActivityKind.remote => Ph.mouseSimple,
+  ActivityKind.watch => Ph.monitor,
 };
 
 /// File name, "N items", quoted clipboard text or the ping title.
@@ -37,6 +38,7 @@ String activityTitle(Activity a) => switch (a.kind) {
   ActivityKind.link => linkLabel(a.text ?? 'Link'),
   ActivityKind.ring => a.incoming ? 'Rang this phone' : 'Rang it',
   ActivityKind.remote => 'Touchpad and keyboard',
+  ActivityKind.watch => 'Its screen',
 };
 
 /// A link without its scheme, "example.com/page".
@@ -54,6 +56,9 @@ String activityDetail(Activity a) {
   }
   if (a.kind == ActivityKind.control) {
     return live ? 'Being controlled now' : 'Watched and controlled';
+  }
+  if (a.kind == ActivityKind.watch) {
+    return a.isLive ? 'Watching now' : 'Watched from this phone';
   }
   if (a.kind == ActivityKind.remote) {
     return a.isLive ? 'In use now' : 'This phone was its touchpad';
@@ -224,7 +229,7 @@ class TimelineEntry extends StatelessWidget {
         Ph.x,
         'Stop',
         () => switch (a.kind) {
-          ActivityKind.display => c.stopDisplay(a.id),
+          ActivityKind.display || ActivityKind.watch => c.stopDisplay(a.id),
           ActivityKind.remote => c.stopRemote(a.deviceId),
           _ => c.stopSharing(a.id),
         },
@@ -264,6 +269,7 @@ class TimelineEntry extends StatelessWidget {
     ActivityKind.control,
     ActivityKind.display,
     ActivityKind.remote,
+    ActivityKind.watch,
   ].contains(a.kind);
 
   static Future<void> _open(BuildContext context, Activity a) async {

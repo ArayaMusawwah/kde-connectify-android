@@ -93,6 +93,13 @@ class H264Encoder(
         }
     }
 
+    /// A keyframe now (the picture changed completely: another camera).
+    fun keyframe() {
+        runCatching {
+            codec.setParameters(android.os.Bundle().apply { putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0) })
+        }
+    }
+
     fun stop() {
         running = false
         drain.join(500)

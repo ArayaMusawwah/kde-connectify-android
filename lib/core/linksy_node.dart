@@ -45,6 +45,10 @@ abstract interface class LinksyNode {
   /// Touchpad and keyboard: asks [id] for an `input` session; returns its id.
   Future<String> startInput(String id);
 
+  /// Watch [id]'s screen ([control]: and drive it). Its user picks the
+  /// screen there. Returns the session id.
+  Future<String> startView(String id, {required bool control});
+
   /// Framed input messages into a session. False once it has ended.
   Future<bool> sessionWrite(String session, Uint8List bytes);
 

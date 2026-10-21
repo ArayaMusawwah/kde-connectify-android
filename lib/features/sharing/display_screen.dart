@@ -10,9 +10,11 @@ import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/sig.dart';
 
-/// This phone as a computer's second display (docs/protocol.md §4.8, `display`):
-/// its screen full screen in landscape, touches sent back as pointer input.
-/// One finger is the mouse with its left button held; two fingers scroll.
+/// A computer's screen full screen in landscape: this phone as its second
+/// display (`display`), or its screen watched from here (`screen`, `control`
+/// asked by the phone). With `display` and `control`, touches go back as
+/// pointer input: one finger is the mouse with its left button held; two
+/// fingers scroll.
 class DisplayScreen extends StatefulWidget {
   const DisplayScreen({super.key, required this.session});
 
@@ -33,6 +35,9 @@ class _DisplayScreenState extends State<DisplayScreen> {
   bool _hint = true;
 
   String get _id => widget.session.session;
+
+  /// Touches drive the computer (not when only watching).
+  bool get _input => widget.session.kind != SessionKind.screen;
 
   @override
   void initState() {
@@ -181,6 +186,7 @@ class _DisplayScreenState extends State<DisplayScreen> {
                     : LayoutBuilder(
                         builder: (context, box) {
                           final size = box.biggest;
+                          if (!_input) return Texture(textureId: texture);
                           return Listener(
                             behavior: HitTestBehavior.opaque,
                             onPointerDown: (e) => _down(e, size),
@@ -210,7 +216,14 @@ class _DisplayScreenState extends State<DisplayScreen> {
                       borderRadius: BorderRadius.circular(99),
                     ),
                     child: Text(
-                      '${widget.session.peer.name}’s second display · go back to stop',
+                      switch (widget.session.kind) {
+                        SessionKind.display =>
+                          '${widget.session.peer.name}’s second display · go back to stop',
+                        SessionKind.control =>
+                          '${widget.session.peer.name}’s screen · touch to click · go back to stop',
+                        _ =>
+                          '${widget.session.peer.name}’s screen · go back to stop',
+                      },
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,

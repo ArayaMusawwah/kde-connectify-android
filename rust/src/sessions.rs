@@ -5,6 +5,8 @@
 //! - `control`: the phone writes H.264 and reads framed input messages.
 //! - `display`: the phone reads H.264 and writes framed input messages.
 //! - `input`: the phone (touchpad, keyboard) writes framed input messages.
+//! - `screen` / `control` the phone asked for: it reads the computer's H.264
+//!   and, for `control`, writes framed input messages.
 //!
 //! Each session gets a task that owns its streams: it writes what the app
 //! queues and hands what arrives to the app, until either side ends.
@@ -44,9 +46,13 @@ pub(crate) fn collect(node: &Node) {
 
 pub(crate) fn run(mut session: Session) {
     let id = session.id.to_string();
-    let reads = matches!(session.kind, SessionKind::Control | SessionKind::Display);
-    // Video in for a display ends the session when the sharer stops.
-    let ends_with_input = session.kind == SessionKind::Display;
+    // The phone reads video when it watches (a second display, or a computer's
+    // screen it asked for), and input when it's controlled. An `input`
+    // session only writes.
+    let watching = !session.sharing && session.kind != SessionKind::Input;
+    let reads = watching || (session.sharing && session.kind == SessionKind::Control);
+    // Video in ends the session when the sharer stops.
+    let ends_with_input = watching;
     let (out, mut queued) = mpsc::channel::<Vec<u8>>(32);
     let (arrived, incoming) = mpsc::channel::<Vec<u8>>(256);
     let closed = Arc::new(Notify::new());

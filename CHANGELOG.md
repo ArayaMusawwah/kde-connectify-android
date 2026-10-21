@@ -2,6 +2,16 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- **See your computer's screen** on the phone, from its page: just watch, or control it with touch (tap to click, drag, two fingers to scroll).
+- **Switch between the front and back camera** while the phone is a webcam, from the banner or the notification.
+- **Accept or decline incoming files from the notification** when Linksy isn't on screen.
+
+### Changed
+- Received files go to **Downloads › Linksy**, where every app finds them (Android 10 and later).
+
 ## [0.1.8] - 2026-10-21
 
 ### Added

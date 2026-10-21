@@ -119,7 +119,7 @@ class _LinksyAppState extends State<LinksyApp> {
         );
       case Paired(:final device):
         _say('Paired with ${device.name}');
-      case SessionStarted(kind: SessionKind.display):
+      case SessionStarted() when !e.sharing && e.kind != SessionKind.input:
         _navigator.currentState?.push(
           MaterialPageRoute<void>(builder: (_) => DisplayScreen(session: e)),
         );

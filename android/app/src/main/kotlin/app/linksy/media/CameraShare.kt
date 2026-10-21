@@ -14,28 +14,52 @@ import android.util.Log
 import android.util.Size
 
 /// The phone as a webcam: the back camera at 1280×720, 30 fps, into an
-/// encoder (docs/protocol.md §4.8, kind `camera`).
+/// encoder (docs/protocol.md §4.8, kind `camera`). [switch] turns to the other
+/// camera (front/back) without ending the session.
 @SuppressLint("MissingPermission") // Dart asks for the camera before a session starts.
 class CameraShare(context: Context, session: String, private val onEnded: () -> Unit) : Share {
     private val thread = HandlerThread("linksy-camera").apply { start() }
     private val handler = Handler(thread.looper)
+    private val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val encoder: H264Encoder
     private var device: CameraDevice? = null
     private var capture: CameraCaptureSession? = null
+    private var facing = CameraCharacteristics.LENS_FACING_BACK
+    @Volatile private var stopped = false
 
     init {
-        val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-        val id = manager.cameraIdList.firstOrNull {
-            manager.getCameraCharacteristics(it).get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK
-        } ?: manager.cameraIdList.first()
-        val chars = manager.getCameraCharacteristics(id)
-        val size = pickSize(chars)
+        val id = cameraFacing(facing) ?: manager.cameraIdList.first()
+        val size = pickSize(manager.getCameraCharacteristics(id))
         encoder = H264Encoder(size.width, size.height, bitrate = 4_000_000, fps = 30, session = session, onEnded = onEnded)
-        val fps = chars.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES)
-            ?.filter { it.upper == 30 }?.maxByOrNull { it.lower }
+        open(id)
+    }
 
+    private fun cameraFacing(facing: Int) = manager.cameraIdList.firstOrNull {
+        manager.getCameraCharacteristics(it).get(CameraCharacteristics.LENS_FACING) == facing
+    }
+
+    /// Front ↔ back, same stream. False when there's no other camera.
+    fun switch(): Boolean {
+        val other = if (facing == CameraCharacteristics.LENS_FACING_BACK) CameraCharacteristics.LENS_FACING_FRONT
+        else CameraCharacteristics.LENS_FACING_BACK
+        val id = cameraFacing(other) ?: return false
+        facing = other
+        handler.post {
+            runCatching { capture?.close() }
+            runCatching { device?.close() }
+            capture = null
+            device = null
+            open(id)
+        }
+        return true
+    }
+
+    private fun open(id: String) {
+        val fps = manager.getCameraCharacteristics(id).get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES)
+            ?.filter { it.upper == 30 }?.maxByOrNull { it.lower }
         manager.openCamera(id, object : CameraDevice.StateCallback() {
             override fun onOpened(camera: CameraDevice) {
+                if (stopped) return camera.close()
                 device = camera
                 @Suppress("DEPRECATION")
                 camera.createCaptureSession(listOf(encoder.inputSurface), object : CameraCaptureSession.StateCallback() {
@@ -47,18 +71,26 @@ class CameraShare(context: Context, session: String, private val onEnded: () -> 
                         }
                         runCatching { s.setRepeatingRequest(request.build(), null, handler) }
                             .onFailure { Log.w("linksy", "camera didn't start", it); onEnded() }
+                        encoder.keyframe()
                     }
 
                     override fun onConfigureFailed(s: CameraCaptureSession) = onEnded()
                 }, handler)
             }
 
-            override fun onDisconnected(camera: CameraDevice) = onEnded()
-            override fun onError(camera: CameraDevice, error: Int) = onEnded()
+            // Closing it to switch reports a disconnect too: only the camera in use counts.
+            override fun onDisconnected(camera: CameraDevice) {
+                if (device == camera) onEnded()
+            }
+
+            override fun onError(camera: CameraDevice, error: Int) {
+                if (device == camera || device == null) onEnded()
+            }
         }, handler)
     }
 
     override fun stop() {
+        stopped = true
         runCatching { capture?.close() }
         runCatching { device?.close() }
         encoder.stop()

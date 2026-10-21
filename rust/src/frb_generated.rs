@@ -40,7 +40,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -876779379;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 991565398;
 
 // Section: executor
 
@@ -1505,6 +1505,68 @@ fn wire__crate__api__node__LinksyNode_start_input_impl(
         },
     )
 }
+fn wire__crate__api__node__LinksyNode_start_view_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "LinksyNode_start_view",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<LinksyNode>,
+            >>::sse_decode(&mut deserializer);
+            let api_id = <String>::sse_decode(&mut deserializer);
+            let api_control = <bool>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::node::LinksyNode::start_view(
+                            &*api_that_guard,
+                            api_id,
+                            api_control,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
 fn wire__crate__api__node__LinksyNode_update_settings_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -1872,17 +1934,18 @@ fn pde_ffi_dispatcher_primary_impl(
         26 => {
             wire__crate__api__node__LinksyNode_start_input_impl(port, ptr, rust_vec_len, data_len)
         }
-        27 => wire__crate__api__node__LinksyNode_update_settings_impl(
+        27 => wire__crate__api__node__LinksyNode_start_view_impl(port, ptr, rust_vec_len, data_len),
+        28 => wire__crate__api__node__LinksyNode_update_settings_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        28 => {
+        29 => {
             wire__crate__api__node__LinksyNode_watch_media_impl(port, ptr, rust_vec_len, data_len)
         }
-        29 => wire__crate__api__node__init_app_impl(port, ptr, rust_vec_len, data_len),
-        30 => wire__crate__api__node__start_node_impl(port, ptr, rust_vec_len, data_len),
+        30 => wire__crate__api__node__init_app_impl(port, ptr, rust_vec_len, data_len),
+        31 => wire__crate__api__node__start_node_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

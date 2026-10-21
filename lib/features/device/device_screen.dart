@@ -90,11 +90,16 @@ class _DeviceScreenState extends State<DeviceScreen> {
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                         child: _NowPlaying(deviceId: deviceId, player: p),
                       ),
-                  if (_isComputer(view.device))
+                  if (_isComputer(view.device)) ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                      child: _WatchScreen(view: view),
+                    ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       child: _PhotoBackup(view: view),
                     ),
+                  ],
                 ],
               ),
             ),
@@ -547,6 +552,67 @@ class _NowPlaying extends StatelessWidget {
             big: true,
           ),
           if (p.canNext) control(PhFill.skipForward, 'Next', 'next'),
+        ],
+      ),
+    );
+  }
+}
+
+/// A computer's screen on this phone: just watch it, or drive it with touch.
+/// Its user allows it and picks the screen there.
+class _WatchScreen extends StatelessWidget {
+  const _WatchScreen({required this.view});
+
+  final DeviceView view;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final c = LinksyScope.read(context);
+    final id = view.device.id;
+    Widget button(String label, bool control) => Expanded(
+      child: SigButton(
+        label: label,
+        kind: control ? SigButtonKind.primary : SigButtonKind.secondary,
+        height: 44,
+        onTap: () {
+          showMessage(context, 'Allow it on ${view.device.name}…');
+          report(context, c.watchScreen(id, control: control));
+        },
+      ),
+    );
+    return SigCard(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              IconCircle(icon: Ph.monitor, color: Sig.blue, size: 40),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('See its screen', style: sora(16, color: s.ink)),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Watch it here, or control it with touch',
+                      style: TextStyle(fontSize: 12.5, color: s.muted),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              button('Watch', false),
+              const SizedBox(width: 10),
+              button('Control', true),
+            ],
+          ),
         ],
       ),
     );
