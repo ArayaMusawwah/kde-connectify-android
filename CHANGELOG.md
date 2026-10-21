@@ -2,6 +2,19 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.2.0] - 2026-10-22
+
+### Added
+- **Terminal works**: with Linksy 0.7 on your computer (not its Flatpak), open a shell on it from the phone. Turn on Allow Terminal for this phone and set a terminal code on the computer, then tap Terminal on its page here. Wrong codes say how many tries are left; up to 8 terminals at once; leave and come back to reattach.
+
+### Changed
+- On a computer's page, how it's connected is a small line under its kind, without the pill.
+- After a wrong terminal code, the field is ready to type again straight away.
+- Up to date with Linksy 0.7.0 on the computer.
+
+### Fixed
+- Closing a terminal could stop at "Ended" without ending the shell on the computer.
+
 ## [0.1.20] - 2026-10-22
 
 ### Changed
