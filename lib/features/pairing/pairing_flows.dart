@@ -8,6 +8,7 @@ import '../../core/invite.dart';
 import '../../core/linksy_node.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 import 'scan_screen.dart';
 
@@ -16,6 +17,7 @@ Future<void> showAddDevice(BuildContext context) => showModalBottomSheet<void>(
   context: context,
   builder: (sheet) {
     final s = Sig.of(sheet);
+    final l10n = sheet.l10n;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
@@ -23,18 +25,17 @@ Future<void> showAddDevice(BuildContext context) => showModalBottomSheet<void>(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Add a device', style: sora(24, color: s.ink)),
+            Text(l10n.pairingAddDevice, style: sora(24, color: s.ink)),
             const SizedBox(height: 6),
             Text(
-              'On the other device, open Linksy and choose “Pair with QR '
-              'Code”.',
+              l10n.pairingAddDeviceHint,
               style: TextStyle(color: s.muted, fontSize: 14.5, height: 1.4),
             ),
             const SizedBox(height: 22),
             _Option(
               icon: PhBold.scan,
-              title: 'Scan QR code',
-              caption: 'Fastest. Nothing to type.',
+              title: l10n.pairingScanQr,
+              caption: l10n.pairingScanQrCaption,
               primary: true,
               onTap: () {
                 Navigator.of(sheet).pop();
@@ -44,8 +45,8 @@ Future<void> showAddDevice(BuildContext context) => showModalBottomSheet<void>(
             const SizedBox(height: 10),
             _Option(
               icon: Ph.network,
-              title: 'Pair by address',
-              caption: 'When the other device can’t be found.',
+              title: l10n.pairingByAddress,
+              caption: l10n.pairingByAddressCaption,
               onTap: () {
                 Navigator.of(sheet).pop();
                 pairByAddress(context);
@@ -142,7 +143,7 @@ Future<void> scanAndPair(BuildContext context) async {
   final invite = uri == null ? null : Invite.tryParse(uri);
   if (invite == null || !context.mounted) return;
   final name = invite.name.isEmpty ? shortDeviceId(invite.id) : invite.name;
-  showMessage(context, 'Pairing with $name…');
+  showMessage(context, context.l10n.pairingWith(name));
   await report(context, c.pairWithInvite(uri!));
 }
 
@@ -189,13 +190,13 @@ class _AddressDialogState extends State<_AddressDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Pair by address',
+              context.l10n.pairingByAddress,
               textAlign: TextAlign.center,
               style: sora(21, color: s.ink),
             ),
             const SizedBox(height: 6),
             Text(
-              'It’s in Linksy’s Preferences on the other device.',
+              context.l10n.pairingAddressHint,
               textAlign: TextAlign.center,
               style: TextStyle(color: s.muted),
             ),
@@ -216,13 +217,17 @@ class _AddressDialogState extends State<_AddressDialog> {
             Padding(
               padding: const EdgeInsets.fromLTRB(4, 8, 4, 20),
               child: Text(
-                'Port $defaultPort unless you add another.',
+                context.l10n.pairingPortHint('$defaultPort'),
                 style: TextStyle(fontSize: 12.5, color: s.faint),
               ),
             ),
-            SigButton(label: 'Pair', expand: true, onTap: _submit),
             SigButton(
-              label: 'Cancel',
+              label: context.l10n.pairingPair,
+              expand: true,
+              onTap: _submit,
+            ),
+            SigButton(
+              label: context.l10n.commonCancel,
               kind: SigButtonKind.quiet,
               expand: true,
               onTap: () => Navigator.of(context).pop(),
@@ -256,19 +261,21 @@ class PairingDialog extends StatelessWidget {
             _Handshake(me: me, other: request.device),
             const SizedBox(height: 20),
             Text(
-              request.incoming ? '$name wants to pair' : 'Pair with $name',
+              request.incoming
+                  ? context.l10n.pairingWantsToPair(name)
+                  : context.l10n.pairingPairWith(name),
               textAlign: TextAlign.center,
               style: sora(21, color: s.ink),
             ),
             const SizedBox(height: 6),
             Text(
-              'Both screens should show this code.',
+              context.l10n.pairingCodeHint,
               textAlign: TextAlign.center,
               style: TextStyle(color: s.muted),
             ),
             const SizedBox(height: 22),
             Semantics(
-              label: 'Code ${formatPairingCode(digits)}',
+              label: context.l10n.pairingCodeLabel(formatPairingCode(digits)),
               excludeSemantics: true,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -293,13 +300,13 @@ class PairingDialog extends StatelessWidget {
             ),
             const SizedBox(height: 26),
             SigButton(
-              label: 'Codes match',
+              label: context.l10n.pairingCodesMatch,
               icon: PhBold.check,
               expand: true,
               onTap: () => _answer(context, true),
             ),
             SigButton(
-              label: 'Decline',
+              label: context.l10n.commonDecline,
               kind: SigButtonKind.quiet,
               expand: true,
               onTap: () => _answer(context, false),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import '../src/rust/api/node.dart' as rust;
+import '../ui/l10n.dart';
 import '../src/rust/frb_generated.dart';
 import 'core_json.dart';
 import 'linksy_node.dart';
@@ -82,7 +83,7 @@ class RustNode implements LinksyNode {
 
   String _nameOf(String id) =>
       _devices().where((v) => v.device.id == id).firstOrNull?.device.name ??
-      'That device';
+      tr.errorThatDevice;
 
   @override
   Future<void> pairDevice(String id) =>
@@ -91,12 +92,12 @@ class RustNode implements LinksyNode {
   @override
   Future<void> pairAddress(String address) => _guard(
     () => _node.pairAddress(address: address),
-    name: 'The device at $address',
+    name: tr.errorDeviceAt(address),
   );
 
   @override
   Future<void> pairWithInvite(String uri) =>
-      _guard(() => _node.pairWithInvite(uri: uri), name: 'That device');
+      _guard(() => _node.pairWithInvite(uri: uri), name: tr.errorThatDevice);
 
   @override
   Future<void> respond(String requestId, {required bool accept}) async {
@@ -173,7 +174,7 @@ class RustNode implements LinksyNode {
   @override
   Future<void> connectAddress(String address) => _guard(
     () => _node.connectAddress(address: address),
-    name: 'The computer on the cable',
+    name: tr.errorComputerOnCable,
   );
 
   @override
@@ -308,7 +309,7 @@ class RustNode implements LinksyNode {
       for (final t in (jsonDecode(raw) as List).cast<Json>())
         RemoteTerminal(
           id: t['id'] as String,
-          title: t['title'] as String? ?? 'Terminal',
+          title: t['title'] as String? ?? tr.ctlTerminalTitle,
           started: DateTime.fromMillisecondsSinceEpoch(
             (t['started_ms'] as num? ?? 0).toInt(),
           ),
@@ -346,14 +347,16 @@ class RustNode implements LinksyNode {
   /// name the device.
   static Future<T> _guard<T>(
     FutureOr<T> Function() call, {
-    String name = 'The other device',
+    String? name,
   }) async {
     try {
       return await call();
     } on LinksyException {
       rethrow;
     } on Object catch (e) {
-      throw LinksyException(describeCoreError(e is String ? e : '$e', name));
+      throw LinksyException(
+        describeCoreError(e is String ? e : '$e', name ?? tr.errorOtherDevice),
+      );
     }
   }
 }
@@ -409,19 +412,16 @@ String describeCoreError(String error, String name) {
   final kind = colon < 0 ? error : error.substring(0, colon);
   final detail = colon < 0 ? '' : error.substring(colon + 1).trim();
   return switch (kind) {
-    'unreachable' =>
-      "$name isn't reachable. Check that it's on and on this network.",
-    'declined' => '$name declined.',
-    'timeout' => "$name didn't answer in time.",
-    'not_paired' => "$name isn't paired anymore. Pair again to share.",
-    'unsupported' => "$name can't do that yet.",
-    'not_from_away' =>
-      '$name allows that only on the same network. Its owner can allow '
-          'everything from away for this phone.',
-    'invalid' => detail.isEmpty ? 'That didn’t work.' : detail,
+    'unreachable' => tr.errorUnreachable(name),
+    'declined' => tr.errorDeclined(name),
+    'timeout' => tr.errorTimeout(name),
+    'not_paired' => tr.errorNotPaired(name),
+    'unsupported' => tr.errorUnsupported(name),
+    'not_from_away' => tr.errorNotFromAway(name),
+    'invalid' => detail.isEmpty ? tr.errorInvalid : detail,
     _ =>
       detail.isEmpty
-          ? 'Something went wrong.'
-          : 'Something went wrong: $detail',
+          ? tr.errorSomethingWrong
+          : tr.errorSomethingWrongDetail(detail),
   };
 }

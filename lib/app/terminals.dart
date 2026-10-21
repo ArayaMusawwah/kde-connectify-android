@@ -6,6 +6,7 @@ import 'package:xterm/xterm.dart';
 
 import '../core/linksy_node.dart';
 import '../core/models.dart';
+import '../ui/l10n.dart';
 
 /// Where a terminal tab stands.
 enum TabState {
@@ -46,7 +47,7 @@ class TerminalTab extends ChangeNotifier {
 
   /// The computer's id for it, for `resume`.
   String? terminalId;
-  String title = 'Terminal';
+  String title = tr.ctlTerminalTitle;
   TabState state = TabState.locked;
 
   /// Ctrl or Alt pressed on the key bar: applies to the next key.

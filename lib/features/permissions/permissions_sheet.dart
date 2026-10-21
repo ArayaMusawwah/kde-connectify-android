@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/platform.dart';
 import '../../ui/components.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 
 /// What Linksy asks Android for, why, and a button that brings up Android's
@@ -64,38 +65,33 @@ class _PermissionsSheetState extends State<_PermissionsSheet>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Permissions', style: sora(24, color: s.ink)),
+            Text(context.l10n.permissionsTitle, style: sora(24, color: s.ink)),
             const SizedBox(height: 6),
             Text(
-              'Linksy asks only for what it needs, and you can change any of '
-              'these later in Settings.',
+              context.l10n.permissionsIntro,
               style: TextStyle(color: s.muted, height: 1.4),
             ),
             const SizedBox(height: 20),
             _Permission(
               icon: Ph.bellRinging,
-              title: 'Notifications',
-              why:
-                  'Shows when a computer sees your screen or uses your camera, '
-                  'with a button to stop it.',
+              title: context.l10n.permissionsNotifications,
+              why: context.l10n.permissionsNotificationsWhy,
               allowed: state?.notifications,
-              action: 'Allow',
+              action: context.l10n.permissionsAllow,
               onTap: () => _request('notifications'),
             ),
             const SizedBox(height: 10),
             _Permission(
               icon: Ph.videoCamera,
-              title: 'Camera',
-              why:
-                  'Scans the pairing QR code, and lets a computer use this '
-                  'phone as a webcam when you allow it.',
+              title: context.l10n.permissionsCamera,
+              why: context.l10n.permissionsCameraWhy,
               allowed: state?.camera,
-              action: 'Allow',
+              action: context.l10n.permissionsAllow,
               onTap: () => _request('camera'),
             ),
             const SizedBox(height: 20),
             SigButton(
-              label: 'Done',
+              label: context.l10n.permissionsDone,
               kind: SigButtonKind.secondary,
               expand: true,
               onTap: () => Navigator.of(context).pop(),
@@ -151,7 +147,7 @@ class _Permission extends StatelessWidget {
                       const Icon(PhBold.check, size: 16, color: Sig.blue),
                       const SizedBox(width: 6),
                       Text(
-                        'Allowed',
+                        context.l10n.permissionsAllowed,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: s.ink,

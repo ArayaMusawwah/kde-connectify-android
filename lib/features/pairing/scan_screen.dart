@@ -6,6 +6,7 @@ import '../../app/platform.dart';
 
 import '../../core/invite.dart';
 import '../../ui/components.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 
 /// Full-screen camera that pops with the first valid Linksy invite link.
@@ -42,11 +43,7 @@ class _ScanScreenState extends State<ScanScreen> {
   Future<void> _start() async {
     if (!await LinksyPlatform.requestPermission('camera')) {
       if (mounted) {
-        setState(
-          () => _problem =
-              'Linksy needs the camera to scan the pairing code. Allow it, '
-              'or pair by address.',
-        );
+        setState(() => _problem = context.l10n.scanNeedsCamera);
       }
       return;
     }
@@ -57,7 +54,7 @@ class _ScanScreenState extends State<ScanScreen> {
     }
     setState(() {
       _camera = camera;
-      _problem = camera == null ? 'The camera isn’t available.' : null;
+      _problem = camera == null ? context.l10n.scanCameraUnavailable : null;
     });
   }
 
@@ -127,7 +124,7 @@ class _ScanScreenState extends State<ScanScreen> {
           child: Center(
             child: RoundButton(
               icon: Ph.x,
-              tooltip: 'Close',
+              tooltip: context.l10n.commonClose,
               onDark: true,
               onTap: () => Navigator.of(context).pop(),
             ),
@@ -136,7 +133,7 @@ class _ScanScreenState extends State<ScanScreen> {
         actions: [
           RoundButton(
             icon: _torch ? PhFill.flashlight : Ph.flashlight,
-            tooltip: 'Flashlight',
+            tooltip: context.l10n.scanFlashlight,
             onDark: true,
             onTap: () {
               setState(() => _torch = !_torch);
@@ -154,7 +151,7 @@ class _ScanScreenState extends State<ScanScreen> {
           Align(
             alignment: const Alignment(0, -0.62),
             child: Text(
-              'Scan the code',
+              context.l10n.scanTitle,
               style: sora(26, weight: FontWeight.w700, color: Colors.white),
             ),
           ),
@@ -188,10 +185,8 @@ class _ScanScreenState extends State<ScanScreen> {
                       Expanded(
                         child: Text(
                           _wrongCode
-                              ? 'That’s not a Linksy code. On your computer, '
-                                    'open Linksy → Pair with QR Code.'
-                              : 'On your computer, open Linksy and choose '
-                                    '“Pair with QR Code”.',
+                              ? context.l10n.scanWrongCode
+                              : context.l10n.scanHint,
                           style: const TextStyle(
                             fontSize: 14,
                             height: 1.35,

@@ -1,8 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:linksy/core/models.dart';
 import 'package:linksy/ui/format.dart';
 
 void main() {
+  // Dates come from intl in the app's language; tests load its data.
+  setUpAll(initializeDateFormatting);
+
   test('bytes in decimal units', () {
     expect(formatBytes(512), '512 bytes');
     expect(formatBytes(2100000), '2.1 MB');

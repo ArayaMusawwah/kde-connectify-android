@@ -10,6 +10,7 @@ import '../../core/linksy_node.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../../ui/format.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 
 /// Signal's navy, with the brand's blue and cyan in the palette.
@@ -60,6 +61,48 @@ class _TerminalScreenState extends State<TerminalScreen> {
   final _focus = FocusNode();
   StreamSubscription<TerminalTab>? _gone;
 
+  /// The terminal's text size, pinched; kept for next time.
+  late double _fontSize =
+      double.tryParse(LinksyScope.read(context).prefs['term_font'] ?? '') ??
+      11.5;
+  static const _minFont = 6.0;
+  static const _maxFont = 24.0;
+  final _pointers = <int, Offset>{};
+  double? _pinchStart;
+  double _fontAtStart = 11.5;
+
+  double get _spread {
+    final p = _pointers.values.toList();
+    return (p[0] - p[1]).distance;
+  }
+
+  void _pointerDown(PointerDownEvent e) {
+    _pointers[e.pointer] = e.position;
+    if (_pointers.length == 2) {
+      _pinchStart = _spread;
+      _fontAtStart = _fontSize;
+    }
+  }
+
+  void _pointerMove(PointerMoveEvent e) {
+    if (!_pointers.containsKey(e.pointer)) return;
+    _pointers[e.pointer] = e.position;
+    final start = _pinchStart;
+    if (_pointers.length != 2 || start == null || start < 1) return;
+    final size = (_fontAtStart * _spread / start).clamp(_minFont, _maxFont);
+    // Whole half-points: fewer relayouts (and resizes sent) while pinching.
+    final rounded = (size * 2).roundToDouble() / 2;
+    if (rounded != _fontSize) setState(() => _fontSize = rounded);
+  }
+
+  void _pointerUp(PointerEvent e) {
+    _pointers.remove(e.pointer);
+    if (_pointers.length < 2 && _pinchStart != null) {
+      _pinchStart = null;
+      LinksyScope.read(context).setPref('term_font', '$_fontSize');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -72,7 +115,9 @@ class _TerminalScreenState extends State<TerminalScreen> {
       }
       showMessage(
         context,
-        t.closedHere ? '“${t.title}” closed' : '“${t.title}” ended on $_name',
+        t.closedHere
+            ? context.l10n.terminalTabClosed(t.title)
+            : context.l10n.terminalTabEnded(t.title, _name),
       );
     });
   }
@@ -90,20 +135,17 @@ class _TerminalScreenState extends State<TerminalScreen> {
     final choice = await showDialog<String>(
       context: context,
       builder: (dialog) => AlertDialog(
-        title: const Text('Close this terminal?'),
-        content: Text(
-          'The shell ends on $_name, with anything still running in it. '
-          'To come back to it later, keep it running instead.',
-        ),
+        title: Text(context.l10n.terminalCloseTitle),
+        content: Text(context.l10n.terminalCloseDetail(_name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialog).pop('keep'),
-            child: const Text('Keep running'),
+            child: Text(context.l10n.terminalKeepRunning),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialog).pop('close'),
             style: TextButton.styleFrom(foregroundColor: Sig.of(context).red),
-            child: const Text('Close'),
+            child: Text(context.l10n.terminalClose),
           ),
         ],
       ),
@@ -127,7 +169,7 @@ class _TerminalScreenState extends State<TerminalScreen> {
 
   String get _name =>
       LinksyScope.read(context).device(widget.deviceId)?.device.name ??
-      'the computer';
+      context.l10n.terminalTheComputer;
 
   Future<void> _newTab({RemoteTerminal? resume}) async {
     final terminals = LinksyScope.read(context).terminals;
@@ -203,16 +245,36 @@ class _TerminalScreenState extends State<TerminalScreen> {
                                     4,
                                     0,
                                   ),
-                                  child: TerminalView(
-                                    tab.term,
-                                    key: ObjectKey(tab),
-                                    theme: _theme,
-                                    focusNode: _focus,
-                                    autofocus: tab.state == TabState.live,
-                                    readOnly: tab.state != TabState.live,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    textStyle: const TerminalStyle(
-                                      fontSize: 13,
+                                  // Two fingers: pinch the text smaller
+                                  // for more columns (wide output like
+                                  // fastfetch), or bigger to read.
+                                  child: Listener(
+                                    onPointerDown: _pointerDown,
+                                    onPointerMove: _pointerMove,
+                                    onPointerUp: _pointerUp,
+                                    onPointerCancel: _pointerUp,
+                                    child: TerminalView(
+                                      tab.term,
+                                      key: ObjectKey(tab),
+                                      theme: _theme,
+                                      focusNode: _focus,
+                                      autofocus: tab.state == TabState.live,
+                                      readOnly: tab.state != TabState.live,
+                                      keyboardType:
+                                          TextInputType.visiblePassword,
+                                      // Nerd Font symbols for prompts
+                                      // (starship, powerline) and logos.
+                                      textStyle: TerminalStyle(
+                                        fontSize: _fontSize,
+                                        fontFamily: 'JetBrainsMono',
+                                        fontFamilyFallback: const [
+                                          'NerdSymbols',
+                                          'monospace',
+                                          'Noto Sans Mono',
+                                          'Noto Sans Symbols',
+                                          'Noto Color Emoji',
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -220,11 +282,11 @@ class _TerminalScreenState extends State<TerminalScreen> {
                               if (tab.state == TabState.detached)
                                 _StateCard(
                                   icon: Ph.terminalWindow,
-                                  title: 'Detached',
-                                  detail:
-                                      'Still running on $_name. Reattach to '
-                                      'see it again; the code is asked again.',
-                                  action: 'Reattach',
+                                  title: context.l10n.terminalDetached,
+                                  detail: context.l10n.terminalDetachedDetail(
+                                    _name,
+                                  ),
+                                  action: context.l10n.terminalReattach,
                                   onAction: () => _reattach(tab!),
                                 ),
                               if (tab.state == TabState.ended)
@@ -265,13 +327,14 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final state = switch (tab?.state) {
-      TabState.live => 'Terminal on $name',
-      TabState.detached => 'Detached · still running on $name',
-      TabState.opening => 'Opening on $name…',
-      TabState.locked => 'Waiting for the code',
-      TabState.ended => 'Ended',
-      null => 'Terminal on $name',
+      TabState.live => l.terminalOn(name),
+      TabState.detached => l.terminalDetachedOn(name),
+      TabState.opening => l.terminalOpeningOn(name),
+      TabState.locked => l.terminalWaitingForCode,
+      TabState.ended => l.terminalEnded,
+      null => l.terminalOn(name),
     };
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 8, 8, 4),
@@ -279,7 +342,7 @@ class _Header extends StatelessWidget {
         children: [
           RoundButton(
             icon: Ph.arrowLeft,
-            tooltip: 'Back',
+            tooltip: l.terminalBack,
             onDark: true,
             onTap: () => Navigator.of(context).maybePop(),
           ),
@@ -289,7 +352,7 @@ class _Header extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  tab?.title ?? 'Terminal',
+                  tab?.title ?? l.terminalTitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: sora(17, color: Colors.white),
@@ -316,17 +379,17 @@ class _Header extends StatelessWidget {
           ),
           if (tab != null && onDetach != null)
             PopupMenuButton<String>(
-              tooltip: 'Terminal menu',
+              tooltip: l.terminalMenu,
               icon: const Icon(Ph.dotsThree, color: Colors.white),
               color: _panel,
               onSelected: (v) =>
                   v == 'detach' ? onDetach?.call() : onClose?.call(),
-              itemBuilder: (_) => const [
+              itemBuilder: (_) => [
                 PopupMenuItem(
                   value: 'detach',
                   child: Text(
-                    'Leave it running (detach)',
-                    style: TextStyle(color: Colors.white),
+                    l.terminalDetachMenu,
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ],
@@ -339,7 +402,7 @@ class _Header extends StatelessWidget {
                 child: TextButton.icon(
                   onPressed: onClose,
                   icon: const Icon(Ph.x, size: 16),
-                  label: const Text('Close'),
+                  label: Text(l.terminalClose),
                   style: TextButton.styleFrom(
                     foregroundColor: const Color(0xFFFF8A9A),
                     backgroundColor: const Color(0x26FF5C72),
@@ -424,7 +487,7 @@ class _Tabs extends StatelessWidget {
                       Pressable(
                         onTap: () => onClose(t),
                         scale: 0.85,
-                        semanticLabel: 'Close ${t.title}',
+                        semanticLabel: context.l10n.terminalCloseTab(t.title),
                         child: const SizedBox(
                           width: 36,
                           height: 36,
@@ -438,7 +501,7 @@ class _Tabs extends StatelessWidget {
             ),
           Pressable(
             onTap: onAdd,
-            semanticLabel: 'New terminal',
+            semanticLabel: context.l10n.terminalNew,
             child: Container(
               width: 36,
               decoration: BoxDecoration(
@@ -480,26 +543,26 @@ class _StartState extends State<_Start> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
       children: [
         const Icon(Ph.terminalWindow, color: Sig.cyan, size: 44),
         const SizedBox(height: 14),
         Text(
-          'A shell on ${widget.name}',
+          l.terminalShellOn(widget.name),
           textAlign: TextAlign.center,
           style: sora(22, color: Colors.white),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'Runs as you on the computer, in your home folder. Each time it '
-          'opens, it asks for the terminal code set there.',
+        Text(
+          l.terminalShellDetail,
           textAlign: TextAlign.center,
-          style: TextStyle(color: _muted, height: 1.4),
+          style: const TextStyle(color: _muted, height: 1.4),
         ),
         const SizedBox(height: 22),
         SigButton(
-          label: 'New terminal',
+          label: l.terminalNew,
           icon: PhBold.plus,
           expand: true,
           onTap: widget.onNew,
@@ -512,11 +575,11 @@ class _StartState extends State<_Start> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(6, 26, 6, 10),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(6, 26, 6, 10),
                   child: Text(
-                    'STILL RUNNING',
-                    style: TextStyle(
+                    l.terminalStillRunning,
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.4,
@@ -529,7 +592,7 @@ class _StartState extends State<_Start> {
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Pressable(
                       onTap: () => widget.onResume(r),
-                      semanticLabel: 'Reattach ${r.title}',
+                      semanticLabel: l.terminalReattachTab(r.title),
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
                         decoration: BoxDecoration(
@@ -560,7 +623,7 @@ class _StartState extends State<_Start> {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Started ${formatClock(r.started)}',
+                                    l.terminalStarted(formatClock(r.started)),
                                     style: const TextStyle(
                                       color: _muted,
                                       fontSize: 13,
@@ -569,9 +632,9 @@ class _StartState extends State<_Start> {
                                 ],
                               ),
                             ),
-                            const Text(
-                              'Reattach',
-                              style: TextStyle(
+                            Text(
+                              l.terminalReattach,
+                              style: const TextStyle(
                                 color: Sig.cyanLight,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -669,6 +732,7 @@ class _KeyBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     Widget key(
       String label,
       VoidCallback onTap, {
@@ -719,10 +783,14 @@ class _KeyBar extends StatelessWidget {
             key('Ctrl', tab.toggleCtrl, on: tab.ctrl),
             key('Alt', tab.toggleAlt, on: tab.alt),
             key('Tab', () => tab.key('\t')),
-            key('Left', () => tab.key('\x1b[D'), icon: Ph.arrowLeft),
-            key('Up', () => tab.key('\x1b[A'), icon: Ph.arrowUp),
-            key('Down', () => tab.key('\x1b[B'), icon: Ph.arrowDown),
-            key('Right', () => tab.key('\x1b[C'), icon: PhBold.arrowRight),
+            key(l.terminalKeyLeft, () => tab.key('\x1b[D'), icon: Ph.arrowLeft),
+            key(l.terminalKeyUp, () => tab.key('\x1b[A'), icon: Ph.arrowUp),
+            key(l.terminalKeyDown, () => tab.key('\x1b[B'), icon: Ph.arrowDown),
+            key(
+              l.terminalKeyRight,
+              () => tab.key('\x1b[C'),
+              icon: PhBold.arrowRight,
+            ),
             key('|', () => tab.key('|')),
             key('~', () => tab.key('~')),
             key('/', () => tab.key('/')),
@@ -803,6 +871,7 @@ class _CodeSheetState extends State<_CodeSheet> {
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
+    final l = context.l10n;
     return Padding(
       padding: EdgeInsets.fromLTRB(
         24,
@@ -819,14 +888,13 @@ class _CodeSheetState extends State<_CodeSheet> {
           ),
           const SizedBox(height: 14),
           Text(
-            'Terminal code',
+            l.terminalCodeTitle,
             textAlign: TextAlign.center,
             style: sora(21, color: s.ink),
           ),
           const SizedBox(height: 6),
           Text(
-            'The code set on ${widget.name} in Preferences › Terminal. '
-            'Linksy never keeps it.',
+            l.terminalCodeDetail(widget.name),
             textAlign: TextAlign.center,
             style: TextStyle(color: s.muted, height: 1.4),
           ),
@@ -846,7 +914,9 @@ class _CodeSheetState extends State<_CodeSheet> {
             style: sora(22, color: s.ink, spacing: 4),
             onSubmitted: (_) => _open(),
             decoration: InputDecoration(
-              hintText: _letters ? 'Passphrase' : '6 or more digits',
+              hintText: _letters
+                  ? l.terminalCodePassphrase
+                  : l.terminalCodeDigitsHint,
               hintStyle: TextStyle(
                 fontSize: 16,
                 letterSpacing: 0,
@@ -861,12 +931,14 @@ class _CodeSheetState extends State<_CodeSheet> {
               onPressed: _busy
                   ? null
                   : () => setState(() => _letters = !_letters),
-              child: Text(_letters ? 'Use digits' : 'Use letters'),
+              child: Text(
+                _letters ? l.terminalCodeUseDigits : l.terminalCodeUseLetters,
+              ),
             ),
           ),
           const SizedBox(height: 6),
           SigButton(
-            label: _busy ? 'Opening…' : 'Open terminal',
+            label: _busy ? l.terminalOpening : l.terminalOpen,
             icon: Ph.terminalWindow,
             expand: true,
             onTap: _busy ? null : _open,

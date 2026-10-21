@@ -23,7 +23,7 @@ object TransferNotice {
         val manager = context.getSystemService(NotificationManager::class.java)
         if (Build.VERSION.SDK_INT >= 26) {
             manager.createNotificationChannel(
-                NotificationChannel(CHANNEL, "Incoming files", NotificationManager.IMPORTANCE_HIGH),
+                NotificationChannel(CHANNEL, Lang.str(context, R.string.channel_incoming_files), NotificationManager.IMPORTANCE_HIGH),
             )
         }
         fun button(accept: Boolean) = PendingIntent.getBroadcast(
@@ -43,8 +43,8 @@ object TransferNotice {
             .setContentIntent(open)
             .setAutoCancel(true)
             .setTimeoutAfter(120_000) // the request expires then anyway
-            .addAction(Notification.Action.Builder(null, "Accept", button(true)).build())
-            .addAction(Notification.Action.Builder(null, "Decline", button(false)).build())
+            .addAction(Notification.Action.Builder(null, Lang.str(context, R.string.accept), button(true)).build())
+            .addAction(Notification.Action.Builder(null, Lang.str(context, R.string.decline), button(false)).build())
             .build()
         runCatching { manager.notify(transfer.hashCode(), note) }
     }

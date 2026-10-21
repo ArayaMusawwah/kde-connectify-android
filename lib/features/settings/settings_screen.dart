@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../onboarding/language_wheel.dart';
 import '../../ui/l10n.dart';
 
-
 import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/demo_node.dart';
@@ -39,7 +38,7 @@ class SettingsScreen extends StatelessWidget {
                     children: [
                       RoundButton(
                         icon: Ph.arrowLeft,
-                        tooltip: 'Back',
+                        tooltip: context.l10n.settingsBack,
                         onTap: () => Navigator.of(context).maybePop(),
                       ),
                     ],
@@ -47,7 +46,7 @@ class SettingsScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8, 20, 8, 20),
                     child: Text(
-                      'Settings',
+                      context.l10n.settingsTitle,
                       style: sora(34, weight: FontWeight.w700, color: s.ink),
                     ),
                   ),
@@ -63,22 +62,21 @@ class SettingsScreen extends StatelessWidget {
                       }
                     },
                   ),
-                  const SectionLabel('Receiving'),
+                  SectionLabel(context.l10n.settingsReceiving),
                   _Group(
                     children: [
                       _Row(
                         icon: Ph.folderSimple,
-                        title: 'Save location',
+                        title: context.l10n.settingsSaveLocation,
                         // Files land in the app's folder, then move to
                         // Downloads (Android 10+).
-                        caption: 'Downloads › Linksy',
+                        caption: context.l10n.settingsSaveLocationPath,
                       ),
                       _Row(
                         icon: Ph.shieldCheck,
-                        title: 'Accept from my devices',
+                        title: context.l10n.settingsAcceptFromMyDevices,
                         caption:
-                            'Files from paired devices arrive without '
-                            'asking.',
+                            context.l10n.settingsAcceptFromMyDevicesCaption,
                         trailing: Switch(
                           value: st.autoAccept,
                           onChanged: (v) => update(st.copyWith(autoAccept: v)),
@@ -86,15 +84,13 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SectionLabel('Connection'),
+                  SectionLabel(context.l10n.settingsConnection),
                   _Group(
                     children: [
                       _Row(
                         icon: Ph.lightning,
-                        title: 'Stay connected',
-                        caption:
-                            'Faster sharing with nearby devices. Uses '
-                            'more battery.',
+                        title: context.l10n.settingsStayConnected,
+                        caption: context.l10n.settingsStayConnectedCaption,
                         trailing: Switch(
                           value: st.stayConnected,
                           onChanged: (v) =>
@@ -103,11 +99,8 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       _Row(
                         icon: Ph.deviceMobile,
-                        title: 'Keep running in the background',
-                        caption:
-                            'Files, photo backup and calls keep working '
-                            'when Linksy is closed. Shows a quiet '
-                            'notification.',
+                        title: context.l10n.settingsKeepRunning,
+                        caption: context.l10n.settingsKeepRunningCaption,
                         trailing: Switch(
                           value: c.stayRunning,
                           onChanged: c.setStayRunning,
@@ -115,11 +108,8 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       _Row(
                         icon: Ph.globeHemisphereWest,
-                        title: 'Away from home',
-                        caption:
-                            'Reach your computers over the internet when '
-                            'you’re not on the same network, for a week '
-                            'after you last were. Encrypted end to end.',
+                        title: context.l10n.settingsAwayFromHome,
+                        caption: context.l10n.settingsAwayFromHomeCaption,
                         trailing: Switch(
                           value: st.away,
                           onChanged: (v) => update(st.copyWith(away: v)),
@@ -127,15 +117,13 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SectionLabel('With your computers'),
+                  SectionLabel(context.l10n.settingsWithYourComputers),
                   _Group(
                     children: [
                       _Row(
                         icon: Ph.phoneCall,
-                        title: 'Pause music during calls',
-                        caption:
-                            'Your computers pause what plays while a call '
-                            'rings or goes on, and resume after.',
+                        title: context.l10n.settingsPauseMusic,
+                        caption: context.l10n.settingsPauseMusicCaption,
                         trailing: Switch(
                           value: c.pauseOnCalls,
                           onChanged: c.setPauseOnCalls,
@@ -143,13 +131,10 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       _Row(
                         icon: Ph.folderOpen,
-                        title: 'Let computers browse files',
+                        title: context.l10n.settingsBrowseFiles,
                         caption: c.filesFolder == null
-                            ? 'Choose a folder your computers can open in '
-                                  'their Files app, like Documents (Android '
-                                  'doesn’t allow Download).'
-                            : 'Shares “${c.filesFolder}”. Tap to choose '
-                                  'another folder.',
+                            ? context.l10n.settingsBrowseFilesChoose
+                            : context.l10n.settingsSharesFolder(c.filesFolder!),
                         onTap: c.pickFilesFolder,
                         trailing: Switch(
                           value: c.sharingFiles && c.filesFolder != null,
@@ -160,27 +145,22 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       _Row(
                         icon: Ph.userCircle,
-                        title: 'Picture of this phone',
+                        title: context.l10n.settingsPicture,
                         caption: c.ownPicture == null
-                            ? 'Your computers show it for this phone. Tap '
-                                  'to choose one.'
-                            : 'Your computers show it for this phone. Tap '
-                                  'to change it.',
+                            ? context.l10n.settingsPictureChoose
+                            : context.l10n.settingsPictureChange,
                         onTap: c.pickOwnPicture,
                         trailing: c.ownPicture == null
                             ? null
                             : TextButton(
                                 onPressed: c.removeOwnPicture,
-                                child: const Text('Remove'),
+                                child: Text(context.l10n.settingsPictureRemove),
                               ),
                       ),
                       _Row(
                         icon: Ph.mapPin,
-                        title: 'Let computers locate this phone',
-                        caption:
-                            'A computer can ask where this phone is, once, '
-                            'to find it. Nothing is kept or tracked. Works '
-                            'while Linksy is open.',
+                        title: context.l10n.settingsLocate,
+                        caption: context.l10n.settingsLocateCaption,
                         trailing: Switch(
                           value: c.locatable,
                           onChanged: (v) async {
@@ -188,7 +168,7 @@ class SettingsScreen extends StatelessWidget {
                             if (!ok && context.mounted) {
                               showMessage(
                                 context,
-                                'Linksy needs the location permission for this.',
+                                context.l10n.settingsLocatePermission,
                               );
                             }
                           },
@@ -196,17 +176,17 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       _Row(
                         icon: Ph.images,
-                        title: 'Photo folder',
+                        title: context.l10n.settingsPhotoFolder,
                         caption: c.photosFolder == null
-                            ? 'Choose your camera folder (DCIM › Camera) '
-                                  'to back up photos to a computer.'
-                            : 'Backs up “${c.photosFolder}”. Turn it on '
-                                  'per computer, on its page.',
+                            ? context.l10n.settingsPhotoFolderChoose
+                            : context.l10n.settingsPhotoFolderBacksUp(
+                                c.photosFolder!,
+                              ),
                         onTap: c.pickPhotosFolder,
                       ),
                     ],
                   ),
-                  const SectionLabel('This app'),
+                  SectionLabel(context.l10n.settingsThisApp),
                   _Group(
                     children: [
                       _Row(
@@ -222,34 +202,32 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SectionLabel('Permissions'),
+                  SectionLabel(context.l10n.settingsPermissions),
                   const _Group(children: [_Permissions()]),
                   if (demo != null) ...[
-                    const SectionLabel('Demo'),
+                    SectionLabel(context.l10n.settingsDemo),
                     _Group(
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(16),
                           child: Text(
-                            'Simulated devices until the Linksy core is '
-                            'connected. These start what another device '
-                            'would.',
+                            context.l10n.settingsDemoCaption,
                             style: TextStyle(color: s.muted, height: 1.4),
                           ),
                         ),
                         _Row(
                           icon: Ph.downloadSimple,
-                          title: 'Receive files',
+                          title: context.l10n.settingsDemoReceiveFiles,
                           onTap: demo.simulateIncomingFiles,
                         ),
                         _Row(
                           icon: Ph.handshake,
-                          title: 'Receive a pairing request',
+                          title: context.l10n.settingsDemoReceivePairing,
                           onTap: demo.simulateIncomingPairing,
                         ),
                         _Row(
                           icon: Ph.clipboardText,
-                          title: 'Receive clipboard text',
+                          title: context.l10n.settingsDemoReceiveClipboard,
                           onTap: demo.simulateClipboard,
                         ),
                       ],
@@ -259,7 +237,7 @@ class SettingsScreen extends StatelessWidget {
                   const Center(child: AppIcon(size: 52)),
                   const SizedBox(height: 10),
                   Text(
-                    'Your devices, connected.\nNo account, no cloud.',
+                    context.l10n.settingsTagline,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: s.faint, fontSize: 13, height: 1.5),
                   ),
@@ -293,13 +271,13 @@ class SettingsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Name this phone',
+                  dialog.l10n.settingsNameTitle,
                   textAlign: TextAlign.center,
                   style: sora(21, color: s.ink),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Your other devices see this name.',
+                  dialog.l10n.settingsNameCaption,
                   textAlign: TextAlign.center,
                   style: TextStyle(color: s.muted),
                 ),
@@ -313,12 +291,12 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 SigButton(
-                  label: 'Save',
+                  label: dialog.l10n.settingsSave,
                   expand: true,
                   onTap: () => Navigator.of(dialog).pop(text.text.trim()),
                 ),
                 SigButton(
-                  label: 'Cancel',
+                  label: dialog.l10n.settingsCancel,
                   kind: SigButtonKind.quiet,
                   expand: true,
                   onTap: () => Navigator.of(dialog).pop(),
@@ -354,7 +332,7 @@ class _ThisPhone extends StatelessWidget {
     final s = Sig.of(context);
     return Pressable(
       onTap: onRename,
-      semanticLabel: 'Rename $name',
+      semanticLabel: context.l10n.settingsRename(name),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -387,7 +365,7 @@ class _ThisPhone extends StatelessWidget {
                   Text(name, style: sora(21, color: Colors.white)),
                   const SizedBox(height: 2),
                   Text(
-                    'This phone · $shortId',
+                    context.l10n.settingsThisPhone(shortId),
                     style: sora(
                       12.5,
                       weight: FontWeight.w500,
@@ -529,12 +507,12 @@ class _PermissionsState extends State<_Permissions>
   @override
   Widget build(BuildContext context) => _Row(
     icon: Ph.shieldCheck,
-    title: 'Notifications and camera',
+    title: context.l10n.settingsPermissionsRow,
     caption: _allowed == null
-        ? 'What Linksy asks Android for, and why.'
+        ? context.l10n.settingsPermissionsWhat
         : _allowed == 2
-        ? 'Both allowed.'
-        : '$_allowed of 2 allowed. Tap to allow the rest.',
+        ? context.l10n.settingsPermissionsBoth
+        : context.l10n.settingsPermissionsSome(_allowed!),
     onTap: () async {
       await showPermissions(context);
       await _read();

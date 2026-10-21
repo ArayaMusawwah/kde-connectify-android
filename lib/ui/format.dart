@@ -1,6 +1,10 @@
+import 'package:intl/intl.dart';
+
+import 'l10n.dart';
+
 /// Decimal units, like the desktop: "2.1 MB".
 String formatBytes(int bytes) {
-  if (bytes < 1000) return '$bytes bytes';
+  if (bytes < 1000) return tr.formatBytesSmall(bytes);
   const units = ['kB', 'MB', 'GB', 'TB'];
   var value = bytes / 1000;
   var unit = 0;
@@ -19,58 +23,54 @@ String formatSpeed(double bytesPerSecond) =>
 String formatTimeLeft(int remaining, double bytesPerSecond) {
   if (bytesPerSecond <= 0) return '';
   final s = (remaining / bytesPerSecond).ceil();
-  if (s < 60) return s == 1 ? '1 second left' : '$s seconds left';
+  if (s < 60) return tr.formatSecondsLeft(s);
   final m = (s / 60).round();
-  if (m < 60) return m == 1 ? '1 minute left' : '$m minutes left';
+  if (m < 60) return tr.formatMinutesLeft(m);
   final h = (m / 60).round();
-  return h == 1 ? 'about 1 hour left' : 'about $h hours left';
+  return tr.formatHoursLeft(h);
 }
 
 String formatClock(DateTime t) =>
     '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
-const _weekdays = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-];
-const _months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-
 /// "Today", "Yesterday", "Monday 12 October", with the year when it isn't
-/// this year.
+/// this year, in the app's language.
 String formatDay(DateTime t, {DateTime? now}) {
   final today = _date(now ?? DateTime.now());
   final day = _date(t);
   final diff = today.difference(day).inDays;
-  if (diff == 0) return 'Today';
-  if (diff == 1) return 'Yesterday';
+  if (diff == 0) return tr.formatToday;
+  if (diff == 1) return tr.formatYesterday;
+  final locale = _dateLocale();
   return day.year == today.year
-      ? '${_weekdays[day.weekday - 1]} ${day.day} ${_months[day.month - 1]}'
-      : '${day.day} ${_months[day.month - 1]} ${day.year}';
+      ? DateFormat.MMMMEEEEd(locale).format(day)
+      : DateFormat.yMMMMd(locale).format(day);
+}
+
+/// The app's language for dates: British English for English (day before
+/// month, as the app writes it), French where intl has no data (Malagasy),
+/// else intl's built-in English (all intl has before Flutter's localizations
+/// load its date data, as in unit tests).
+String _dateLocale() {
+  final l = tr.localeName;
+  for (final candidate in [l == 'en' ? 'en_GB' : l, 'fr']) {
+    try {
+      if (DateFormat.localeExists(candidate)) return candidate;
+    } on Exception {
+      break;
+    }
+  }
+  return 'en_US';
 }
 
 DateTime _date(DateTime t) => DateTime(t.year, t.month, t.day);
 
 /// "/storage/emulated/0/Download/Linksy" → "Phone › Download › Linksy".
 String friendlyPath(String path) {
-  const roots = {'/storage/emulated/0': 'Phone', '/sdcard': 'Phone'};
+  final roots = {
+    '/storage/emulated/0': tr.formatPhone,
+    '/sdcard': tr.formatPhone,
+  };
   for (final MapEntry(:key, :value) in roots.entries) {
     if (path == key || path.startsWith('$key/')) {
       final rest = path

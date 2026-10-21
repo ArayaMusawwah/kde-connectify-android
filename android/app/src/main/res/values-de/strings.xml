@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android's own text (notifications); the app's is in lib/l10n. -->
+<resources>
+    <string name="channel_incoming_files">Eingehende Dateien</string>
+    <string name="accept">Annehmen</string>
+    <string name="decline">Ablehnen</string>
+    <string name="keep_alive_default">Linksy ist verbunden</string>
+    <string name="your_computer">Dein Computer</string>
+    <string name="locate_not_allowed">Linksy darf den Standort dieses Telefons nicht verwenden</string>
+    <string name="locate_off">Die Standortermittlung ist auf diesem Telefon aus</string>
+    <string name="locate_timeout">Dieses Telefon hat seinen Standort nicht rechtzeitig gefunden</string>
+    <string name="locate_open_app">Öffne Linksy auf dem Telefon, um seinen Standort zu teilen</string>
+    <string name="channel_news">Neuigkeiten von Linksy</string>
+    <string name="channel_staying">Verbindung bleibt bestehen</string>
+    <string name="camera_didnt_start">Die Kamera ist nicht gestartet.</string>
+    <string name="camera_unavailable">Die Kamera ist nicht verfügbar.</string>
+    <string name="sharing_screen">Dein Bildschirm wird mit %1$s geteilt</string>
+    <string name="using_microphone">%1$s verwendet dein Mikrofon</string>
+    <string name="using_camera">%1$s verwendet deine Kamera</string>
+    <string name="channel_sharing">Bildschirm- und Kamerafreigabe</string>
+    <string name="stop_sharing">Teilen beenden</string>
+    <string name="switch_camera">Kamera wechseln</string>
+</resources>

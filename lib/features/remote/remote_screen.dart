@@ -8,6 +8,7 @@ import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 
 /// X11 keysyms the computer understands (docs/protocol.md §4.8).
@@ -113,7 +114,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
                   children: [
                     RoundButton(
                       icon: Ph.arrowLeft,
-                      tooltip: 'Back',
+                      tooltip: context.l10n.remoteBack,
                       onTap: () => Navigator.of(context).maybePop(),
                     ),
                     const SizedBox(width: 12),
@@ -121,7 +122,10 @@ class _RemoteScreenState extends State<RemoteScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Remote', style: sora(20, color: s.ink)),
+                          Text(
+                            context.l10n.remoteTitle,
+                            style: sora(20, color: s.ink),
+                          ),
                           Text(
                             name,
                             style: TextStyle(color: s.muted, fontSize: 13),
@@ -179,13 +183,10 @@ class _Waiting extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     final (title, detail) = asking
-        ? (
-            'Allow it on $name',
-            'Linksy on $name asks whether this phone may move its pointer and type.',
-          )
+        ? (context.l10n.remoteAllowOn(name), context.l10n.remoteAsks(name))
         : error != null
-        ? ('That didn’t work', error!)
-        : ('The remote stopped', '$name ended it.');
+        ? (context.l10n.remoteFailed, error!)
+        : (context.l10n.remoteStopped, context.l10n.remoteEndedBy(name));
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -204,7 +205,7 @@ class _Waiting extends StatelessWidget {
         ),
         if (!asking) ...[
           const SizedBox(height: 22),
-          SigButton(label: 'Try again', onTap: onRetry),
+          SigButton(label: context.l10n.remoteTryAgain, onTap: onRetry),
         ],
       ],
     );
@@ -259,8 +260,8 @@ class _ModeSwitch extends StatelessWidget {
       ),
       child: Row(
         children: [
-          tab(_Mode.touchpad, Ph.mouseSimple, 'Touchpad'),
-          tab(_Mode.slides, Ph.presentation, 'Slides'),
+          tab(_Mode.touchpad, Ph.mouseSimple, context.l10n.remoteTouchpad),
+          tab(_Mode.slides, Ph.presentation, context.l10n.remoteSlides),
         ],
       ),
     );
@@ -408,8 +409,7 @@ class _TouchpadState extends State<_Touchpad> {
                   Icon(Ph.handPointing, size: 34, color: s.faint),
                   const SizedBox(height: 10),
                   Text(
-                    'Move with one finger, tap to click\n'
-                    'Two fingers scroll, two-finger tap right-clicks',
+                    context.l10n.remoteTouchpadHint,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: s.faint, height: 1.5),
                   ),
@@ -423,14 +423,14 @@ class _TouchpadState extends State<_Touchpad> {
           children: [
             Expanded(
               child: _PadButton(
-                label: 'Left click',
+                label: context.l10n.remoteLeftClick,
                 onTap: () => _click('left'),
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _PadButton(
-                label: 'Right click',
+                label: context.l10n.remoteRightClick,
                 onTap: () => _click('right'),
               ),
             ),
@@ -458,7 +458,7 @@ class _TouchpadState extends State<_Touchpad> {
           ),
         ),
         SigButton(
-          label: 'Keyboard',
+          label: context.l10n.remoteKeyboard,
           icon: Ph.keyboard,
           kind: SigButtonKind.secondary,
           expand: true,
@@ -524,7 +524,7 @@ class _Slides extends StatelessWidget {
               HapticFeedback.lightImpact();
               onKey(Keysym.right);
             },
-            semanticLabel: 'Next slide',
+            semanticLabel: context.l10n.remoteNextSlide,
             child: Container(
               decoration: BoxDecoration(
                 color: Sig.blue,
@@ -535,7 +535,7 @@ class _Slides extends StatelessWidget {
                 children: [
                   const Icon(Ph.caretRight, color: Colors.white, size: 56),
                   Text(
-                    'Next',
+                    context.l10n.remoteNext,
                     style: sora(
                       26,
                       weight: FontWeight.w700,
@@ -555,7 +555,7 @@ class _Slides extends StatelessWidget {
               HapticFeedback.lightImpact();
               onKey(Keysym.left);
             },
-            semanticLabel: 'Previous slide',
+            semanticLabel: context.l10n.remotePreviousSlide,
             child: Container(
               decoration: BoxDecoration(
                 color: s.card,
@@ -565,7 +565,10 @@ class _Slides extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Ph.caretLeft, color: s.ink, size: 44),
-                  Text('Back', style: sora(20, color: s.ink)),
+                  Text(
+                    context.l10n.remoteSlideBack,
+                    style: sora(20, color: s.ink),
+                  ),
                 ],
               ),
             ),
@@ -576,14 +579,14 @@ class _Slides extends StatelessWidget {
           children: [
             Expanded(
               child: _PadButton(
-                label: 'Start (F5)',
+                label: context.l10n.remoteStartShow,
                 onTap: () => onKey(Keysym.f5),
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _PadButton(
-                label: 'End (Esc)',
+                label: context.l10n.remoteEndShow,
                 onTap: () => onKey(Keysym.escape),
               ),
             ),
@@ -591,7 +594,7 @@ class _Slides extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          'Volume down: next · Volume up: back. The screen stays on.',
+          context.l10n.remoteVolumeHint,
           textAlign: TextAlign.center,
           style: TextStyle(color: s.muted, fontSize: 13),
         ),

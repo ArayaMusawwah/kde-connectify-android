@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 
 /// "Find my phone": full screen while it rings, one big "Found it". Closes by
@@ -66,13 +67,13 @@ class _RingScreenState extends State<RingScreen> {
                 ),
                 const SizedBox(height: 32),
                 Text(
-                  'Here I am!',
+                  context.l10n.ringTitle,
                   textAlign: TextAlign.center,
                   style: sora(34, weight: FontWeight.w700, color: Colors.white),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  '${widget.from.name} is looking for this phone.',
+                  context.l10n.ringLookingFor(widget.from.name),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white70,
@@ -83,7 +84,7 @@ class _RingScreenState extends State<RingScreen> {
                 const Spacer(),
                 Pressable(
                   onTap: _found,
-                  semanticLabel: 'Found it',
+                  semanticLabel: context.l10n.ringFoundIt,
                   child: Container(
                     height: 64,
                     alignment: Alignment.center,
@@ -92,7 +93,7 @@ class _RingScreenState extends State<RingScreen> {
                       borderRadius: BorderRadius.circular(99),
                     ),
                     child: Text(
-                      'Found it',
+                      context.l10n.ringFoundIt,
                       style: sora(19, weight: FontWeight.w700, color: Sig.deep),
                     ),
                   ),

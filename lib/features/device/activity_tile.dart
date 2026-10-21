@@ -6,6 +6,7 @@ import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../ui/components.dart';
 import '../../ui/format.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 import '../sharing/webcam_screen.dart';
 
@@ -30,21 +31,24 @@ IconData activityIcon(Activity a) => switch (a.kind) {
 /// File name, "N items", quoted clipboard text or the ping title.
 String activityTitle(Activity a) => switch (a.kind) {
   ActivityKind.files when a.names.length == 1 => a.names.first,
-  ActivityKind.files => '${a.names.length} items',
+  ActivityKind.files => tr.activityItems(a.names.length),
   ActivityKind.clipboard when a.names.isNotEmpty => a.names.first,
-  ActivityKind.clipboard when a.text != null => '“${a.text!.trim()}”',
-  ActivityKind.clipboard => 'Clipboard text',
-  ActivityKind.ping => a.text ?? 'Ping',
-  ActivityKind.screen => 'Your screen',
-  ActivityKind.camera => 'Your camera',
-  ActivityKind.control => 'Your screen',
-  ActivityKind.display => 'Second display',
-  ActivityKind.link => linkLabel(a.text ?? 'Link'),
-  ActivityKind.ring => a.incoming ? 'Rang this phone' : 'Rang it',
-  ActivityKind.remote => 'Touchpad and keyboard',
-  ActivityKind.watch => 'Its screen',
-  ActivityKind.microphone => 'Your microphone',
-  ActivityKind.locate => 'Where this phone is',
+  ActivityKind.clipboard when a.text != null => tr.activityQuoted(
+    a.text!.trim(),
+  ),
+  ActivityKind.clipboard => tr.activityClipboardText,
+  ActivityKind.ping => a.text ?? tr.activityPing,
+  ActivityKind.screen => tr.activityYourScreen,
+  ActivityKind.camera => tr.activityYourCamera,
+  ActivityKind.control => tr.activityYourScreen,
+  ActivityKind.display => tr.activitySecondDisplay,
+  ActivityKind.link => linkLabel(a.text ?? tr.activityLink),
+  ActivityKind.ring =>
+    a.incoming ? tr.activityRangThisPhone : tr.activityRangIt,
+  ActivityKind.remote => tr.activityTouchpadKeyboard,
+  ActivityKind.watch => tr.activityItsScreen,
+  ActivityKind.microphone => tr.activityYourMicrophone,
+  ActivityKind.locate => tr.activityWhereThisPhone,
 };
 
 /// A link without its scheme, "example.com/page".
@@ -55,43 +59,44 @@ String linkLabel(String url) =>
 String activityDetail(Activity a) {
   final live = a.isLive;
   if (a.kind == ActivityKind.screen) {
-    return live ? 'Watching now' : 'Watched';
+    return live ? tr.activityWatchingNow : tr.activityWatched;
   }
   if (a.kind == ActivityKind.camera) {
-    return live ? 'In use as a webcam' : 'Used as a webcam';
+    return live ? tr.activityInUseWebcam : tr.activityUsedWebcam;
   }
   if (a.kind == ActivityKind.control) {
-    return live ? 'Being controlled now' : 'Watched and controlled';
+    return live ? tr.activityBeingControlled : tr.activityWatchedControlled;
   }
   if (a.kind == ActivityKind.watch) {
-    return a.isLive ? 'Watching now' : 'Watched from this phone';
+    return a.isLive ? tr.activityWatchingNow : tr.activityWatchedFromPhone;
   }
   if (a.kind == ActivityKind.remote) {
-    return a.isLive ? 'In use now' : 'This phone was its touchpad';
+    return a.isLive ? tr.activityInUseNow : tr.activityWasTouchpad;
   }
   if (a.kind == ActivityKind.display) {
-    return live ? 'In use now' : 'This phone was its second display';
+    return live ? tr.activityInUseNow : tr.activityWasSecondDisplay;
   }
   if (a.kind == ActivityKind.link) {
-    return a.incoming ? 'Link received' : 'Opened on the computer';
+    return a.incoming ? tr.activityLinkReceived : tr.activityOpenedOnComputer;
   }
   if (a.kind == ActivityKind.microphone) {
-    return live ? 'In use as a microphone' : 'Used as a microphone';
+    return live ? tr.activityInUseMicrophone : tr.activityUsedMicrophone;
   }
   if (a.kind == ActivityKind.locate) {
     return a.status == ActivityStatus.declined
-        ? (a.text ?? 'Not told')
-        : 'Told it where this phone is';
+        ? (a.text ?? tr.activityNotTold)
+        : tr.activityToldWhere;
   }
   if (a.kind == ActivityKind.ring) {
-    return a.incoming ? 'Asked to find this phone' : 'To find it';
+    return a.incoming ? tr.activityAskedToFind : tr.activityToFindIt;
   }
   final verb = switch (a.status) {
-    ActivityStatus.declined => 'Declined',
-    ActivityStatus.failed => a.reason ?? 'Failed',
-    ActivityStatus.waiting || ActivityStatus.active => 'In progress',
-    _ when a.kind == ActivityKind.clipboard && a.incoming => 'Copied here',
-    _ => a.incoming ? 'Received' : 'Sent',
+    ActivityStatus.declined => tr.activityDeclined,
+    ActivityStatus.failed => a.reason ?? tr.activityFailed,
+    ActivityStatus.waiting || ActivityStatus.active => tr.activityInProgress,
+    _ when a.kind == ActivityKind.clipboard && a.incoming =>
+      tr.activityCopiedHere,
+    _ => a.incoming ? tr.activityReceived : tr.activitySent,
   };
   return [
     verb,
@@ -262,7 +267,7 @@ class TimelineEntry extends StatelessWidget {
       final c = LinksyScope.read(context);
       return button(
         Ph.x,
-        'Stop',
+        context.l10n.activityStop,
         () => switch (a.kind) {
           ActivityKind.display || ActivityKind.watch => c.stopDisplay(a.id),
           ActivityKind.remote => c.stopRemote(a.deviceId),
@@ -273,20 +278,22 @@ class TimelineEntry extends StatelessWidget {
     if (a.isLive && (!a.incoming || a.status == ActivityStatus.active)) {
       return button(
         Ph.x,
-        'Cancel',
+        context.l10n.activityCancel,
         () => report(context, LinksyScope.read(context).cancel(a.id)),
       );
     }
     if (a.kind == ActivityKind.clipboard && a.text != null) {
-      return button(Ph.copy, 'Copy again', () async {
+      return button(Ph.copy, context.l10n.activityCopyAgain, () async {
         await Clipboard.setData(ClipboardData(text: a.text!));
-        if (context.mounted) showMessage(context, 'Copied');
+        if (context.mounted) showMessage(context, context.l10n.activityCopied);
       });
     }
     if (a.kind == ActivityKind.link && a.text != null) {
-      return button(Ph.copy, 'Copy link', () async {
+      return button(Ph.copy, context.l10n.activityCopyLink, () async {
         await Clipboard.setData(ClipboardData(text: a.text!));
-        if (context.mounted) showMessage(context, 'Link copied');
+        if (context.mounted) {
+          showMessage(context, context.l10n.activityLinkCopied);
+        }
       });
     }
     if (a.incoming && a.saved.isNotEmpty) {
@@ -311,7 +318,7 @@ class TimelineEntry extends StatelessWidget {
   static Future<void> _open(BuildContext context, Activity a) async {
     if (a.kind == ActivityKind.link) {
       if (!await LinksyPlatform.openUrl(a.text!) && context.mounted) {
-        showMessage(context, 'No app here opens that link.');
+        showMessage(context, context.l10n.activityNoAppForLink);
       }
       return;
     }
@@ -326,7 +333,7 @@ class TimelineEntry extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             children: [
               Text(
-                '${a.saved.length} files',
+                sheet.l10n.activityFiles(a.saved.length),
                 textAlign: TextAlign.center,
                 style: sora(20, color: s.ink),
               ),
@@ -364,6 +371,7 @@ class TimelineEntry extends StatelessWidget {
 
   static Future<void> _openFile(BuildContext context, String path) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     final name = path.split('/').last;
     final result = await LinksyPlatform.openFile(path);
     if (result == 'done') return;
@@ -371,8 +379,8 @@ class TimelineEntry extends StatelessWidget {
       SnackBar(
         content: Text(
           result == 'missing'
-              ? '$name isn’t there anymore.'
-              : 'No app on this phone opens $name.',
+              ? l10n.activityFileMissing(name)
+              : l10n.activityNoAppForFile(name),
         ),
       ),
     );
@@ -443,12 +451,17 @@ class _Live extends StatelessWidget {
     if (a.status == ActivityStatus.waiting) {
       final name = LinksyScope.of(context).device(a.deviceId)?.device.name;
       text = a.incoming
-          ? 'Waiting for you to accept…'
-          : 'Waiting for ${name ?? 'the device'} to accept…';
+          ? context.l10n.activityWaitingForYou
+          : name == null
+          ? context.l10n.activityWaitingForDevice
+          : context.l10n.activityWaitingFor(name);
       value = null;
     } else {
       text = [
-        '${formatBytes(a.bytes)} of ${formatBytes(a.total)}',
+        context.l10n.activityProgress(
+          formatBytes(a.bytes),
+          formatBytes(a.total),
+        ),
         if (a.speed > 0) formatSpeed(a.speed),
         if (a.speed > 0) formatTimeLeft(a.total - a.bytes, a.speed),
       ].join(' · ');

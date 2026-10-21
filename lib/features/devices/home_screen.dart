@@ -6,6 +6,7 @@ import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 import '../device/activity_tile.dart';
 import '../device/device_screen.dart';
@@ -39,7 +40,7 @@ class HomeScreen extends StatelessWidget {
             actions: [
               RoundButton(
                 icon: Ph.gearSix,
-                tooltip: 'Settings',
+                tooltip: context.l10n.homeSettings,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SettingsScreen()),
                 ),
@@ -55,7 +56,7 @@ class HomeScreen extends StatelessWidget {
           else ...[
             SliverToBoxAdapter(
               child: SectionLabel(
-                'Your devices',
+                context.l10n.homeYourDevices,
                 trailing: Text(
                   '${paired.length}',
                   style: sora(13, color: s.muted),
@@ -76,7 +77,9 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
           if (unpaired.isNotEmpty) ...[
-            const SliverToBoxAdapter(child: SectionLabel('Nearby, not paired')),
+            SliverToBoxAdapter(
+              child: SectionLabel(context.l10n.homeNearbyNotPaired),
+            ),
             SliverList.separated(
               itemCount: unpaired.length,
               separatorBuilder: (_, _) => const SizedBox(height: 10),
@@ -93,7 +96,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: paired.isEmpty
           ? null
           : SigButton(
-              label: 'Add a device',
+              label: context.l10n.homeAddDevice,
               icon: PhBold.qrCode,
               onTap: () => showAddDevice(context),
             ),
@@ -119,7 +122,7 @@ class _Visible extends StatelessWidget {
           const SizedBox(width: 2),
           Expanded(
             child: Text(
-              '$name is visible on this Wi-Fi',
+              context.l10n.homeVisible(name),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: 14, color: s.muted),
@@ -147,9 +150,9 @@ class _Notices extends StatelessWidget {
         _Notice(
           icon: Ph.warningCircle,
           warning: true,
-          title: 'Update Linksy to keep connecting',
-          body: 'Your computers now speak a newer Linksy than this app.',
-          action: download == null ? null : 'Get the update',
+          title: context.l10n.homeUpdateTitle,
+          body: context.l10n.homeUpdateBody,
+          action: download == null ? null : context.l10n.homeGetUpdate,
           onAction: download == null
               ? null
               : () => LinksyPlatform.openUrl(download),
@@ -233,7 +236,7 @@ class _Notice extends StatelessWidget {
           ),
           if (onDismiss != null)
             IconButton(
-              tooltip: 'Dismiss',
+              tooltip: context.l10n.commonDismiss,
               onPressed: onDismiss,
               icon: Icon(Ph.x, size: 18, color: s.faint),
             ),
@@ -351,7 +354,7 @@ class _QuickSend extends StatelessWidget {
   Widget build(BuildContext context) => Pressable(
     onTap: () => pickAndSend(context, deviceId),
     scale: 0.88,
-    semanticLabel: 'Send files',
+    semanticLabel: context.l10n.homeSendFiles,
     child: Container(
       width: 44,
       height: 44,
@@ -389,7 +392,7 @@ class _NearbyRow extends StatelessWidget {
             ),
           ),
           SigButton(
-            label: 'Pair',
+            label: context.l10n.homePair,
             height: 40,
             kind: SigButtonKind.secondary,
             onTap: () => report(context, LinksyScope.read(context).pair(d.id)),
@@ -407,10 +410,11 @@ class _GetStarted extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
-    const steps = [
-      ('Open Linksy on your computer', Ph.desktop),
-      ('Choose “Pair with QR Code”', Ph.qrCode),
-      ('Scan it with this phone', Ph.scan),
+    final l10n = context.l10n;
+    final steps = [
+      (l10n.homeStepOpen, Ph.desktop),
+      (l10n.homeStepChoose, Ph.qrCode),
+      (l10n.homeStepScan, Ph.scan),
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
@@ -420,7 +424,7 @@ class _GetStarted extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              'Connect your\nfirst device',
+              l10n.homeConnectTitle,
               style: sora(
                 30,
                 weight: FontWeight.w700,
@@ -433,7 +437,7 @@ class _GetStarted extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              'Straight over your Wi-Fi. No account, no cloud.',
+              l10n.homeConnectSubtitle,
               style: TextStyle(fontSize: 15, color: s.muted),
             ),
           ),
@@ -484,7 +488,7 @@ class _GetStarted extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           SigButton(
-            label: 'Scan QR code',
+            label: l10n.homeScanQr,
             icon: PhBold.scan,
             expand: true,
             height: 58,
@@ -492,7 +496,7 @@ class _GetStarted extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           SigButton(
-            label: 'Pair by address instead',
+            label: l10n.homePairByAddress,
             kind: SigButtonKind.quiet,
             expand: true,
             onTap: () => pairByAddress(context),

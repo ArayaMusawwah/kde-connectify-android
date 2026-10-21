@@ -31,12 +31,12 @@ object Locator {
         if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
             context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
         ) {
-            return refuse("Linksy isn't allowed to use this phone's location").let {}
+            return refuse(Lang.str(context, R.string.locate_not_allowed)).let {}
         }
         val manager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val on = if (Build.VERSION.SDK_INT >= 28) manager.isLocationEnabled else
             manager.isProviderEnabled(LocationManager.GPS_PROVIDER) || manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-        if (!on) return refuse("Location is off on this phone").let {}
+        if (!on) return refuse(Lang.str(context, R.string.locate_off)).let {}
 
         val providers = buildList {
             if (Build.VERSION.SDK_INT >= 31 && manager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) add(LocationManager.FUSED_PROVIDER)
@@ -51,27 +51,27 @@ object Locator {
             null
         }
         if (recent != null) return answer(of(recent)).let {}
-        val provider = providers.firstOrNull() ?: return refuse("Location is off on this phone").let {}
+        val provider = providers.firstOrNull() ?: return refuse(Lang.str(context, R.string.locate_off)).let {}
 
         val cancel = CancellationSignal()
         main.postDelayed({
             cancel.cancel()
-            refuse("This phone couldn't find where it is in time")
+            refuse(Lang.str(context, R.string.locate_timeout))
         }, TIMEOUT_MS)
         try {
             if (Build.VERSION.SDK_INT >= 30) {
                 manager.getCurrentLocation(provider, cancel, context.mainExecutor) { location ->
                     if (location != null) answer(of(location))
-                    else refuse("Open Linksy on the phone to share where it is")
+                    else refuse(Lang.str(context, R.string.locate_open_app))
                 }
             } else {
                 @Suppress("DEPRECATION")
                 manager.requestSingleUpdate(provider, { location -> answer(of(location)) }, Looper.getMainLooper())
             }
         } catch (_: SecurityException) {
-            refuse("Linksy isn't allowed to use this phone's location")
+            refuse(Lang.str(context, R.string.locate_not_allowed))
         } catch (_: IllegalArgumentException) {
-            refuse("Location is off on this phone")
+            refuse(Lang.str(context, R.string.locate_off))
         }
     }
 

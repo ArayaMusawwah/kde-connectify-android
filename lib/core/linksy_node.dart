@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import '../ui/l10n.dart';
 import 'models.dart';
 
 /// What the app needs from a Linksy node. The real implementation wraps
@@ -177,8 +178,8 @@ class TerminalRefused extends LinksyException {
     return TerminalRefused(reason, triesLeft: tries, name: name);
   }
 
-  TerminalRefused(this.reason, {this.triesLeft, String name = 'The computer'})
-    : super(_say(reason, triesLeft, name));
+  TerminalRefused(this.reason, {this.triesLeft, String? name})
+    : super(_say(reason, triesLeft, name ?? tr.terminalRefusedComputer));
 
   final TerminalRefusal reason;
   final int? triesLeft;
@@ -187,20 +188,13 @@ class TerminalRefused extends LinksyException {
       switch (reason) {
         TerminalRefusal.code =>
           tries == null
-              ? 'Wrong code.'
-              : tries == 1
-              ? 'Wrong code, 1 try left.'
-              : 'Wrong code, $tries tries left.',
-        TerminalRefusal.locked =>
-          'Too many wrong codes. Unlock the terminal on $name.',
-        TerminalRefusal.off =>
-          'Turn on Allow Terminal for this phone on $name.',
-        TerminalRefusal.away =>
-          '$name allows a terminal only on the same network, unless '
-              '“Allow Everything From Away” is on there.',
-        TerminalRefusal.unsupported => "$name can't open a terminal.",
-        TerminalRefusal.limit =>
-          '8 terminals already run on $name for this phone. Close one first.',
-        TerminalRefusal.declined => '$name didn’t allow it.',
+              ? tr.terminalRefusedCode
+              : tr.terminalRefusedCodeTries(tries),
+        TerminalRefusal.locked => tr.terminalRefusedLocked(name),
+        TerminalRefusal.off => tr.terminalRefusedOff(name),
+        TerminalRefusal.away => tr.terminalRefusedAway(name),
+        TerminalRefusal.unsupported => tr.terminalRefusedUnsupported(name),
+        TerminalRefusal.limit => tr.terminalRefusedLimit(name),
+        TerminalRefusal.declined => tr.terminalRefusedDeclined(name),
       };
 }

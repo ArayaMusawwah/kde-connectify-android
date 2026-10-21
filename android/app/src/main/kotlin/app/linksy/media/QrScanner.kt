@@ -18,6 +18,8 @@ import com.google.zxing.DecodeHintType
 import com.google.zxing.NotFoundException
 import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.common.HybridBinarizer
+import app.linksy.Lang
+import app.linksy.R
 import com.google.zxing.qrcode.QRCodeReader
 import io.flutter.view.TextureRegistry
 
@@ -25,7 +27,7 @@ import io.flutter.view.TextureRegistry
 /// frames decoded on the phone with ZXing. Offline, no Google services.
 @SuppressLint("MissingPermission") // Dart asks for the camera first.
 class QrScanner(
-    context: Context,
+    private val context: Context,
     private val producer: TextureRegistry.SurfaceProducer,
     private val onCode: (String) -> Unit,
     private val onError: (String) -> Unit,
@@ -68,7 +70,7 @@ class QrScanner(
                             repeat()
                         }
 
-                        override fun onConfigureFailed(s: CameraCaptureSession) = onError("The camera didn't start.")
+                        override fun onConfigureFailed(s: CameraCaptureSession) = onError(Lang.str(context, R.string.camera_didnt_start))
                     },
                     handler,
                 )
@@ -77,7 +79,7 @@ class QrScanner(
             override fun onDisconnected(camera: CameraDevice) = camera.close()
             override fun onError(camera: CameraDevice, error: Int) {
                 camera.close()
-                onError("The camera isn't available.")
+                onError(Lang.str(context, R.string.camera_unavailable))
             }
         }, handler)
     }

@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import app.linksy.MainActivity
+import app.linksy.Lang
 import app.linksy.R
 
 /// Keeps a screen or camera share going while the user is in other apps,
@@ -34,14 +35,14 @@ class ShareService : Service() {
 
     private fun start(intent: Intent, session: String) {
         val kind = intent.getStringExtra(EXTRA_KIND) ?: return
-        val peer = intent.getStringExtra(EXTRA_PEER) ?: "Your computer"
+        val peer = intent.getStringExtra(EXTRA_PEER) ?: Lang.str(this, R.string.your_computer)
         active[session] = mapOf("session" to session, "kind" to kind, "peer" to (intent.getStringExtra(EXTRA_PEER_ID) ?: ""))
         val screen = kind == "screen" || kind == "control"
         val mic = kind == "microphone"
         val text = when {
-            screen -> "Sharing your screen with $peer"
-            mic -> "$peer is using your microphone"
-            else -> "$peer is using your camera"
+            screen -> Lang.str(this, R.string.sharing_screen, peer)
+            mic -> Lang.str(this, R.string.using_microphone, peer)
+            else -> Lang.str(this, R.string.using_camera, peer)
         }
         kinds[session] = kind
         // Android 14: foreground with the right type before touching the
@@ -115,7 +116,7 @@ class ShareService : Service() {
         val manager = getSystemService(NotificationManager::class.java)
         if (Build.VERSION.SDK_INT >= 26) {
             manager.createNotificationChannel(
-                NotificationChannel(CHANNEL, "Screen and camera sharing", NotificationManager.IMPORTANCE_LOW),
+                NotificationChannel(CHANNEL, Lang.str(this, R.string.channel_sharing), NotificationManager.IMPORTANCE_LOW),
             )
         }
         // A webcam's notification opens its controls.
@@ -138,7 +139,7 @@ class ShareService : Service() {
             .setContentText(text)
             .setOngoing(true)
             .setContentIntent(open)
-            .addAction(Notification.Action.Builder(null, "Stop sharing", stop).build())
+            .addAction(Notification.Action.Builder(null, Lang.str(this@ShareService, R.string.stop_sharing), stop).build())
             .apply {
                 if (camera) {
                     val switch = PendingIntent.getService(
@@ -146,7 +147,7 @@ class ShareService : Service() {
                         Intent(this@ShareService, ShareService::class.java).setAction(ACTION_SWITCH).putExtra(EXTRA_SESSION, session),
                         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
                     )
-                    addAction(Notification.Action.Builder(null, "Switch camera", switch).build())
+                    addAction(Notification.Action.Builder(null, Lang.str(this@ShareService, R.string.switch_camera), switch).build())
                 }
             }
             .build()

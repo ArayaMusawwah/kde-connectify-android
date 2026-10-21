@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android's own text (notifications); the app's is in lib/l10n. -->
+<resources>
+    <string name="channel_incoming_files">Входящие файлы</string>
+    <string name="accept">Принять</string>
+    <string name="decline">Отклонить</string>
+    <string name="keep_alive_default">Linksy подключён</string>
+    <string name="your_computer">Ваш компьютер</string>
+    <string name="locate_not_allowed">Linksy не может использовать местоположение этого телефона</string>
+    <string name="locate_off">Геолокация на этом телефоне выключена</string>
+    <string name="locate_timeout">Телефон не успел определить своё местоположение</string>
+    <string name="locate_open_app">Откройте Linksy на телефоне, чтобы поделиться его местоположением</string>
+    <string name="channel_news">Новости Linksy</string>
+    <string name="channel_staying">Соединение активно</string>
+    <string name="camera_didnt_start">Камера не запустилась.</string>
+    <string name="camera_unavailable">Камера недоступна.</string>
+    <string name="sharing_screen">Трансляция экрана для %1$s</string>
+    <string name="using_microphone">%1$s использует ваш микрофон</string>
+    <string name="using_camera">%1$s использует вашу камеру</string>
+    <string name="channel_sharing">Трансляция экрана и камеры</string>
+    <string name="stop_sharing">Остановить</string>
+    <string name="switch_camera">Сменить камеру</string>
+</resources>

@@ -9,6 +9,7 @@ import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 
 /// The phone as a webcam, laid out like a camera app: the picture the
@@ -181,7 +182,7 @@ class _WebcamScreenState extends State<WebcamScreen> {
     children: [
       RoundButton(
         icon: Ph.arrowLeft,
-        tooltip: 'Back',
+        tooltip: context.l10n.webcamBack,
         onTap: () => Navigator.of(context).maybePop(),
       ),
       const SizedBox(width: 12),
@@ -189,9 +190,9 @@ class _WebcamScreenState extends State<WebcamScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Webcam', style: sora(20, color: s.ink)),
+            Text(context.l10n.webcamTitle, style: sora(20, color: s.ink)),
             Text(
-              'Live on ${widget.share.peer.name}',
+              context.l10n.webcamLiveOn(widget.share.peer.name),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: s.muted, fontSize: 13),
@@ -205,7 +206,7 @@ class _WebcamScreenState extends State<WebcamScreen> {
           c.stopSharing(_id);
           Navigator.of(context).maybePop();
         },
-        semanticLabel: 'Stop the webcam',
+        semanticLabel: context.l10n.webcamStopSemantic,
         child: Container(
           height: 40,
           padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -214,9 +215,12 @@ class _WebcamScreenState extends State<WebcamScreen> {
             color: s.red,
             borderRadius: BorderRadius.circular(99),
           ),
-          child: const Text(
-            'Stop',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          child: Text(
+            context.l10n.webcamStop,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ),
@@ -281,11 +285,13 @@ class _WebcamScreenState extends State<WebcamScreen> {
                     child: Wrap(
                       spacing: 6,
                       children: [
-                        const _Badge(label: 'LIVE', live: true),
-                        if (_locked) const _Badge(label: 'AE/AF LOCK'),
+                        _Badge(label: context.l10n.webcamBadgeLive, live: true),
+                        if (_locked)
+                          _Badge(label: context.l10n.webcamBadgeLock),
                         if (_get('focus', 'auto') == 'manual')
-                          const _Badge(label: 'MF'),
-                        if (_get('torch', false)) const _Badge(label: 'TORCH'),
+                          _Badge(label: context.l10n.webcamBadgeManualFocus),
+                        if (_get('torch', false))
+                          _Badge(label: context.l10n.webcamBadgeTorch),
                       ],
                     ),
                   ),
@@ -363,6 +369,7 @@ class _WebcamScreenState extends State<WebcamScreen> {
   // The four main actions.
 
   Widget _actions() {
+    final l = context.l10n;
     final canFlip =
         _lenses.any((l) => l['facing'] == 'front') &&
         _lenses.any((l) => l['facing'] == 'back');
@@ -371,7 +378,7 @@ class _WebcamScreenState extends State<WebcamScreen> {
         Expanded(
           child: _Action(
             icon: Ph.cameraRotate,
-            label: _front ? 'Front' : 'Back',
+            label: _front ? l.webcamFacingFront : l.webcamFacingBack,
             enabled: canFlip,
             onTap: () => _set({'facing': _front ? 'back' : 'front'}),
           ),
@@ -379,7 +386,7 @@ class _WebcamScreenState extends State<WebcamScreen> {
         Expanded(
           child: _Action(
             icon: Ph.flashlight,
-            label: 'Torch',
+            label: l.webcamTorch,
             on: _get('torch', false),
             enabled: _get('has_torch', false),
             onTap: () => _set({'torch': !_get('torch', false)}),
@@ -388,7 +395,7 @@ class _WebcamScreenState extends State<WebcamScreen> {
         Expanded(
           child: _Action(
             icon: _portrait ? Ph.deviceMobile : Ph.monitor,
-            label: _portrait ? 'Portrait' : 'Landscape',
+            label: _portrait ? l.webcamPortrait : l.webcamLandscape,
             onTap: () =>
                 _set({'orientation': _portrait ? 'landscape' : 'portrait'}),
           ),
@@ -396,7 +403,7 @@ class _WebcamScreenState extends State<WebcamScreen> {
         Expanded(
           child: _Action(
             icon: Ph.lockSimple,
-            label: _locked ? 'Locked' : 'Lock',
+            label: _locked ? l.webcamLocked : l.webcamLock,
             on: _locked,
             onTap: () => _set({
               'exposure_lock': !_locked,
@@ -445,10 +452,10 @@ class _WebcamScreenState extends State<WebcamScreen> {
       ),
       child: Row(
         children: [
-          tab(_Tab.light, 'Light'),
-          tab(_Tab.focus, 'Focus'),
-          tab(_Tab.color, 'Color'),
-          tab(_Tab.stream, 'Stream'),
+          tab(_Tab.light, context.l10n.webcamTabLight),
+          tab(_Tab.focus, context.l10n.webcamTabFocus),
+          tab(_Tab.color, context.l10n.webcamTabColor),
+          tab(_Tab.stream, context.l10n.webcamTabStream),
         ],
       ),
     );
@@ -477,6 +484,7 @@ class _WebcamScreenState extends State<WebcamScreen> {
   }
 
   List<Widget> _light() {
+    final l = context.l10n;
     final min = _get('exposure_min', 0);
     final max = _get('exposure_max', 0);
     final step = _get('exposure_step', 0.0);
@@ -485,9 +493,10 @@ class _WebcamScreenState extends State<WebcamScreen> {
     return [
       if (max > min)
         _Setting(
-          title: 'Brightness',
-          value:
-              '${value >= 0 ? '+' : '−'}${value.abs().toStringAsFixed(1)} EV',
+          title: l.webcamBrightness,
+          value: l.webcamExposureValue(
+            '${value >= 0 ? '+' : '−'}${value.abs().toStringAsFixed(1)}',
+          ),
           onReset: ev == 0 ? null : () => _set({'exposure': 0}),
           below: Slider(
             value: ev.toDouble().clamp(min.toDouble(), max.toDouble()),
@@ -498,15 +507,10 @@ class _WebcamScreenState extends State<WebcamScreen> {
           ),
         )
       else
-        const _Setting(
-          title: 'Brightness',
-          detail: 'This camera sets exposure by itself.',
-        ),
+        _Setting(title: l.webcamBrightness, detail: l.webcamExposureAuto),
       _Setting(
-        title: 'Lock exposure',
-        detail:
-            'Keeps the brightness as it is now. Hold the picture to lock on '
-            'a spot.',
+        title: l.webcamLockExposure,
+        detail: l.webcamLockExposureDetail,
         trailing: Switch(
           value: _locked,
           onChanged: (v) => _set({'exposure_lock': v}),
@@ -516,26 +520,25 @@ class _WebcamScreenState extends State<WebcamScreen> {
   }
 
   List<Widget> _focus(Sig s) {
+    final l = context.l10n;
     final modes = _list<String>('focus_modes');
     final focus = _get('focus', 'auto');
     if (modes.length <= 1) {
-      return const [
-        _Setting(title: 'Focus', detail: 'This camera has fixed focus.'),
-      ];
+      return [_Setting(title: l.webcamFocus, detail: l.webcamFocusFixed)];
     }
     return [
       _Setting(
-        title: 'Focus',
+        title: l.webcamFocus,
         detail: switch (focus) {
-          'point' => 'Held where you tapped. Double-tap the picture for auto.',
-          'manual' => 'Set by hand below.',
-          _ => 'Follows the picture. Tap it to focus on a spot.',
+          'point' => l.webcamFocusSpotDetail,
+          'manual' => l.webcamFocusManualDetail,
+          _ => l.webcamFocusAutoDetail,
         },
         below: _Segmented(
           options: [
-            ('auto', 'Auto'),
-            if (modes.contains('point')) ('point', 'Spot'),
-            if (modes.contains('manual')) ('manual', 'Manual'),
+            ('auto', l.webcamFocusAuto),
+            if (modes.contains('point')) ('point', l.webcamFocusSpot),
+            if (modes.contains('manual')) ('manual', l.webcamFocusManual),
           ],
           selected: focus,
           onChanged: (m) => m == 'auto'
@@ -549,17 +552,23 @@ class _WebcamScreenState extends State<WebcamScreen> {
       ),
       if (focus == 'manual')
         _Setting(
-          title: 'Distance',
+          title: l.webcamDistance,
           below: Row(
             children: [
-              Text('Far', style: TextStyle(color: s.muted, fontSize: 12.5)),
+              Text(
+                l.webcamFar,
+                style: TextStyle(color: s.muted, fontSize: 12.5),
+              ),
               Expanded(
                 child: Slider(
                   value: _get('focus_distance', 0.0).clamp(0.0, 1.0),
                   onChanged: (v) => _set({'focus_distance': v}),
                 ),
               ),
-              Text('Near', style: TextStyle(color: s.muted, fontSize: 12.5)),
+              Text(
+                l.webcamNear,
+                style: TextStyle(color: s.muted, fontSize: 12.5),
+              ),
             ],
           ),
         ),
@@ -567,19 +576,20 @@ class _WebcamScreenState extends State<WebcamScreen> {
   }
 
   List<Widget> _color() {
-    const names = {
-      'auto': 'Auto',
-      'daylight': 'Daylight',
-      'cloudy': 'Cloudy',
-      'shade': 'Shade',
-      'incandescent': 'Warm light',
-      'fluorescent': 'Office light',
+    final l = context.l10n;
+    final names = {
+      'auto': l.webcamWbAuto,
+      'daylight': l.webcamWbDaylight,
+      'cloudy': l.webcamWbCloudy,
+      'shade': l.webcamWbShade,
+      'incandescent': l.webcamWbIncandescent,
+      'fluorescent': l.webcamWbFluorescent,
     };
     final modes = _list<String>('white_balances');
     final wb = _get('white_balance', 'auto');
     return [
       _Setting(
-        title: 'White balance',
+        title: l.webcamWhiteBalance,
         below: Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -594,8 +604,8 @@ class _WebcamScreenState extends State<WebcamScreen> {
         ),
       ),
       _Setting(
-        title: 'Lock colors',
-        detail: 'Stops the colors shifting as the light changes.',
+        title: l.webcamLockColors,
+        detail: l.webcamLockColorsDetail,
         trailing: Switch(
           value: _get('white_balance_lock', false),
           onChanged: (v) => _set({'white_balance_lock': v}),
@@ -618,42 +628,46 @@ class _WebcamScreenState extends State<WebcamScreen> {
           .any((o) => o is List && o.isNotEmpty && (o.first as num) >= 1920);
 
   List<Widget> _stream() {
+    final l = context.l10n;
     final w = _get('width', 1280);
     final h = _get('height', 720);
     return [
       _Setting(
-        title: 'Orientation',
+        title: l.webcamOrientation,
         detail: _portrait
-            ? 'Hold the phone upright; bars at the sides.'
-            : 'Hold the phone sideways; it fills the frame.',
+            ? l.webcamOrientationPortraitDetail
+            : l.webcamOrientationLandscapeDetail,
         below: _Segmented(
-          options: const [('landscape', 'Landscape'), ('portrait', 'Portrait')],
+          options: [
+            ('landscape', l.webcamLandscape),
+            ('portrait', l.webcamPortrait),
+          ],
           selected: _portrait ? 'portrait' : 'landscape',
           onChanged: (o) => _set({'orientation': o}),
         ),
       ),
       _Setting(
-        title: 'Frame rate',
+        title: l.webcamFrameRate,
         detail: _list<num>('fps_options').contains(60)
             ? (_get('fps', 30) >= 60
-                  ? 'Smoother motion; uses more data and battery.'
-                  : 'Steady for video calls.')
-            : 'This camera does up to 30 fps.',
+                  ? l.webcamFps60Detail
+                  : l.webcamFps30Detail)
+            : l.webcamFpsOnly30,
         below: _list<num>('fps_options').contains(60)
             ? _Segmented(
-                options: const [('30', '30 fps'), ('60', '60 fps')],
+                options: [('30', l.webcamFps('30')), ('60', l.webcamFps('60'))],
                 selected: '${_get('fps', 30)}',
                 onChanged: (f) => _set({'fps': int.parse(f)}),
               )
             : null,
       ),
       _Setting(
-        title: 'Resolution',
+        title: l.webcamResolution,
         detail: _can1080
             ? (w >= 1920
-                  ? 'Full HD, for a big screen; more data.'
-                  : 'HD, right for video calls.')
-            : 'This camera streams 720p.',
+                  ? l.webcamResolution1080Detail
+                  : l.webcamResolution720Detail)
+            : l.webcamResolutionOnly720,
         below: _can1080
             ? _Segmented(
                 options: const [('720', '720p'), ('1080', '1080p')],
@@ -665,17 +679,17 @@ class _WebcamScreenState extends State<WebcamScreen> {
             : null,
       ),
       _Setting(
-        title: 'Quality',
+        title: l.webcamQuality,
         detail: switch (_get('quality', 'standard')) {
-          'saver' => '${_mbps(2)} Mbps, for a busy Wi-Fi.',
-          'high' => '${_mbps(8)} Mbps, the most detail.',
-          _ => '${_mbps(4)} Mbps, sharp for video calls.',
+          'saver' => l.webcamQualitySaverDetail(_mbps(2)),
+          'high' => l.webcamQualityHighDetail(_mbps(8)),
+          _ => l.webcamQualityStandardDetail(_mbps(4)),
         },
         below: _Segmented(
-          options: const [
-            ('saver', 'Saver'),
-            ('standard', 'Standard'),
-            ('high', 'High'),
+          options: [
+            ('saver', l.webcamQualitySaver),
+            ('standard', l.webcamQualityStandard),
+            ('high', l.webcamQualityHigh),
           ],
           selected: _get('quality', 'standard'),
           onChanged: (q) => _set({'quality': q}),
@@ -683,8 +697,8 @@ class _WebcamScreenState extends State<WebcamScreen> {
       ),
       if (_get('has_stabilization', false))
         _Setting(
-          title: 'Stabilization',
-          detail: 'Smooths out hand shake.',
+          title: l.webcamStabilization,
+          detail: l.webcamStabilizationDetail,
           trailing: Switch(
             value: _get('stabilization', false),
             onChanged: (v) => _set({'stabilization': v}),
@@ -692,16 +706,16 @@ class _WebcamScreenState extends State<WebcamScreen> {
         ),
       if (_front)
         _Setting(
-          title: 'Mirror the preview',
-          detail: 'On this phone only; the computer gets it unmirrored.',
+          title: l.webcamMirror,
+          detail: l.webcamMirrorDetail,
           trailing: Switch(
             value: _mirror,
             onChanged: (v) => setState(() => _mirror = v),
           ),
         ),
       _Setting(
-        title: 'Format',
-        value: '$w×$h · ${_get('fps', 30)} fps · H.264',
+        title: l.webcamFormat,
+        value: l.webcamFormatValue('$w', '$h', '${_get('fps', 30)}'),
       ),
     ];
   }
@@ -783,12 +797,15 @@ class _Setting extends StatelessWidget {
               if (onReset != null)
                 Pressable(
                   onTap: onReset,
-                  semanticLabel: 'Reset $title',
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  semanticLabel: context.l10n.webcamResetSetting(title),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     child: Text(
-                      'Reset',
-                      style: TextStyle(
+                      context.l10n.webcamReset,
+                      style: const TextStyle(
                         color: Sig.cyan,
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
@@ -919,7 +936,7 @@ class _ZoomChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Pressable(
     onTap: onTap,
-    semanticLabel: 'Zoom $label',
+    semanticLabel: context.l10n.webcamZoomTo(label),
     child: Container(
       width: selected ? 44 : 36,
       height: selected ? 44 : 36,

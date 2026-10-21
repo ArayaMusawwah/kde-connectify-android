@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android's own text (notifications); the app's is in lib/l10n. -->
+<resources>
+    <string name="channel_incoming_files">收到的文件</string>
+    <string name="accept">接受</string>
+    <string name="decline">拒绝</string>
+    <string name="keep_alive_default">Linksy 已连接</string>
+    <string name="your_computer">你的电脑</string>
+    <string name="locate_not_allowed">Linksy 无权使用这部手机的位置信息</string>
+    <string name="locate_off">这部手机的位置信息已关闭</string>
+    <string name="locate_timeout">这部手机未能及时找到自己的位置</string>
+    <string name="locate_open_app">在手机上打开 Linksy 才能共享它的位置</string>
+    <string name="channel_news">Linksy 动态</string>
+    <string name="channel_staying">保持连接</string>
+    <string name="camera_didnt_start">相机未能启动。</string>
+    <string name="camera_unavailable">相机不可用。</string>
+    <string name="sharing_screen">正在与 %1$s 共享屏幕</string>
+    <string name="using_microphone">%1$s 正在使用你的麦克风</string>
+    <string name="using_camera">%1$s 正在使用你的相机</string>
+    <string name="channel_sharing">屏幕与相机共享</string>
+    <string name="stop_sharing">停止共享</string>
+    <string name="switch_camera">切换相机</string>
+</resources>

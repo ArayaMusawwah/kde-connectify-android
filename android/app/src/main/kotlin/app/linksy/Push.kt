@@ -55,7 +55,7 @@ class Push : FirebaseMessagingService() {
             val manager = context.getSystemService(NotificationManager::class.java)
             if (Build.VERSION.SDK_INT >= 26) {
                 manager.createNotificationChannel(
-                    NotificationChannel(CHANNEL, "News from Linksy", NotificationManager.IMPORTANCE_DEFAULT),
+                    NotificationChannel(CHANNEL, Lang.str(context, R.string.channel_news), NotificationManager.IMPORTANCE_DEFAULT),
                 )
             }
             val open = url?.takeIf { it.startsWith("https://") || it.startsWith("http://") }

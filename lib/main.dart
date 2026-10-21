@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'app/activity.dart';
 import 'app/app.dart';
@@ -44,6 +45,8 @@ const _features = [
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Day and month names in every language the app speaks.
+  await initializeDateFormatting();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   final paths = (await LinksyPlatform.paths())!;
@@ -69,6 +72,8 @@ Future<void> main() async {
         relay: service.cached()?.relay ?? defaultRelay,
       );
     } on Object catch (e) {
+      // Before the controller knows the chosen language: the phone's own.
+      useLocale(resolveLocale(null));
       runApp(StartupFailedApp(message: '$e'));
       return;
     }

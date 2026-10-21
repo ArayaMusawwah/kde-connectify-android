@@ -5,6 +5,7 @@ import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../../ui/format.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 
 /// "Studio Desktop is sending you 3 files": names, sizes, Accept / Decline.
@@ -33,7 +34,12 @@ class IncomingFilesSheet extends StatelessWidget {
       });
     }
     final files = request.files;
-    final what = files.length == 1 ? 'a file' : '${files.length} files';
+    final l10n = context.l10n;
+    // The sender's name in ink, the rest of the sentence muted.
+    final name = request.from.name;
+    final sentence = l10n.incomingSendingYou(name, files.length);
+    final at = name.isEmpty ? -1 : sentence.indexOf(name);
+    final muted = TextStyle(color: s.muted);
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
@@ -69,19 +75,26 @@ class IncomingFilesSheet extends StatelessWidget {
             const SizedBox(height: 18),
             Text.rich(
               TextSpan(
-                children: [
-                  TextSpan(text: request.from.name),
-                  TextSpan(
-                    text: ' is sending you $what',
-                    style: TextStyle(color: s.muted),
-                  ),
-                ],
+                children: at < 0
+                    ? [TextSpan(text: sentence, style: muted)]
+                    : [
+                        if (at > 0)
+                          TextSpan(
+                            text: sentence.substring(0, at),
+                            style: muted,
+                          ),
+                        TextSpan(text: name),
+                        TextSpan(
+                          text: sentence.substring(at + name.length),
+                          style: muted,
+                        ),
+                      ],
               ),
               style: sora(23, color: s.ink, height: 1.2),
             ),
             const SizedBox(height: 6),
             Text(
-              '${formatBytes(request.total)} in total',
+              l10n.incomingTotal(formatBytes(request.total)),
               style: TextStyle(fontSize: 14, color: s.muted),
             ),
             const SizedBox(height: 18),
@@ -126,7 +139,7 @@ class IncomingFilesSheet extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 4, bottom: 8),
                 child: Text(
-                  '+ ${files.length - _shown} more',
+                  l10n.incomingMore(files.length - _shown),
                   style: TextStyle(color: s.muted),
                 ),
               ),
@@ -135,7 +148,7 @@ class IncomingFilesSheet extends StatelessWidget {
               children: [
                 Expanded(
                   child: SigButton(
-                    label: 'Decline',
+                    label: l10n.commonDecline,
                     kind: SigButtonKind.secondary,
                     expand: true,
                     height: 56,
@@ -145,7 +158,7 @@ class IncomingFilesSheet extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: SigButton(
-                    label: 'Accept',
+                    label: l10n.incomingAccept,
                     icon: PhBold.downloadSimple,
                     expand: true,
                     height: 56,

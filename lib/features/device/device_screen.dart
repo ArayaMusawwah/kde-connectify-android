@@ -11,6 +11,7 @@ import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../../ui/format.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 import '../remote/remote_screen.dart';
 import '../sharing/sharing.dart';
@@ -153,7 +154,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                   child: Text(
-                    'Nothing of that kind yet.',
+                    context.l10n.deviceNothingOfKind,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Sig.of(context).muted),
                   ),
@@ -228,7 +229,9 @@ class _Hero extends StatelessWidget {
         Text(
           [
             if (view.battery case final b? when !notNearby)
-              '${b.level}%${b.charging ? ', charging' : ''}',
+              b.charging
+                  ? context.l10n.deviceBatteryCharging(b.level)
+                  : context.l10n.deviceBattery(b.level),
             d.description,
           ].join(' · '),
           textAlign: TextAlign.center,
@@ -277,7 +280,7 @@ class _Hero extends StatelessWidget {
                 const SizedBox(width: 5),
                 Flexible(
                   child: Text(
-                    'Reachable from away until ${formatDay(until)}',
+                    context.l10n.deviceReachableUntil(formatDay(until)),
                     style: const TextStyle(
                       fontSize: 13.5,
                       color: Colors.white70,
@@ -289,14 +292,14 @@ class _Hero extends StatelessWidget {
           ],
         if (c.lockWatchers.containsKey(d.id)) ...[
           const SizedBox(height: 6),
-          const Row(
+          Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Ph.lockSimple, size: 16, color: Colors.white70),
-              SizedBox(width: 5),
+              const Icon(Ph.lockSimple, size: 16, color: Colors.white70),
+              const SizedBox(width: 5),
               Text(
-                'Locks when you leave with this phone',
-                style: TextStyle(fontSize: 14, color: Colors.white70),
+                context.l10n.deviceLocksWhenLeave,
+                style: const TextStyle(fontSize: 14, color: Colors.white70),
               ),
             ],
           ),
@@ -350,11 +353,15 @@ class _Hero extends StatelessWidget {
                 children: [
                   button(
                     Ph.arrowLeft,
-                    'Back',
+                    context.l10n.deviceBack,
                     () => Navigator.of(context).maybePop(),
                   ),
                   const Spacer(),
-                  button(Ph.dotsThree, 'More', () => _more(context, d)),
+                  button(
+                    Ph.dotsThree,
+                    context.l10n.deviceMore,
+                    () => _more(context, d),
+                  ),
                 ],
               ),
             ),
@@ -388,15 +395,15 @@ class _Hero extends StatelessWidget {
                     style: sora(20, color: s.ink),
                   ),
                   Text(
-                    'ID ${d.shortId}',
+                    context.l10n.deviceShortId(d.shortId),
                     textAlign: TextAlign.center,
                     style: TextStyle(color: s.muted, fontSize: 13),
                   ),
                   const SizedBox(height: 20),
                   SigButton(
                     label: LinksyScope.read(context).pictures.containsKey(d.id)
-                        ? 'Change picture'
-                        : 'Add a picture',
+                        ? context.l10n.deviceChangePicture
+                        : context.l10n.deviceAddPicture,
                     icon: Ph.images,
                     kind: SigButtonKind.secondary,
                     expand: true,
@@ -408,7 +415,7 @@ class _Hero extends StatelessWidget {
                   if (LinksyScope.read(context).pictures.containsKey(d.id)) ...[
                     const SizedBox(height: 10),
                     SigButton(
-                      label: 'Remove picture',
+                      label: context.l10n.deviceRemovePicture,
                       kind: SigButtonKind.quiet,
                       expand: true,
                       onTap: () {
@@ -419,7 +426,7 @@ class _Hero extends StatelessWidget {
                   ],
                   const SizedBox(height: 10),
                   SigButton(
-                    label: 'Forget this device',
+                    label: context.l10n.deviceForgetThis,
                     icon: Ph.linkBreak,
                     kind: SigButtonKind.secondary,
                     expand: true,
@@ -453,26 +460,25 @@ class _Hero extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Forget ${d.name}?',
+                  dialog.l10n.deviceForgetTitle(d.name),
                   textAlign: TextAlign.center,
                   style: sora(21, color: s.ink),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'You’ll need to pair again to share with it. Its activity on '
-                  'this phone is cleared too.',
+                  dialog.l10n.deviceForgetBody,
                   textAlign: TextAlign.center,
                   style: TextStyle(color: s.muted, height: 1.4),
                 ),
                 const SizedBox(height: 24),
                 SigButton(
-                  label: 'Forget',
+                  label: dialog.l10n.deviceForget,
                   kind: SigButtonKind.danger,
                   expand: true,
                   onTap: () => Navigator.of(dialog).pop(true),
                 ),
                 SigButton(
-                  label: 'Cancel',
+                  label: dialog.l10n.deviceCancel,
                   kind: SigButtonKind.quiet,
                   expand: true,
                   onTap: () => Navigator.of(dialog).pop(false),
@@ -505,7 +511,7 @@ class _Actions extends StatelessWidget {
         children: [
           Pressable(
             onTap: () => pickAndSend(context, id),
-            semanticLabel: 'Send files',
+            semanticLabel: context.l10n.deviceSendFiles,
             child: Container(
               padding: const EdgeInsets.fromLTRB(20, 18, 18, 18),
               // White on the blue header it overlaps; the blue is in the button.
@@ -519,10 +525,13 @@ class _Actions extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Send files', style: sora(21, color: s.ink)),
+                        Text(
+                          context.l10n.deviceSendFiles,
+                          style: sora(21, color: s.ink),
+                        ),
                         const SizedBox(height: 2),
                         Text(
-                          'Photos, documents, anything',
+                          context.l10n.deviceSendFilesCaption,
                           style: TextStyle(fontSize: 13.5, color: s.muted),
                         ),
                       ],
@@ -551,8 +560,8 @@ class _Actions extends StatelessWidget {
               Expanded(
                 child: _SmallAction(
                   icon: Ph.clipboardText,
-                  title: 'Clipboard',
-                  caption: 'Send what you copied',
+                  title: context.l10n.deviceClipboard,
+                  caption: context.l10n.deviceClipboardCaption,
                   onTap: () => report(context, c.sendClipboard(id)),
                 ),
               ),
@@ -560,8 +569,8 @@ class _Actions extends StatelessWidget {
               Expanded(
                 child: _SmallAction(
                   icon: Ph.bellRinging,
-                  title: 'Ping',
-                  caption: 'Make it chime',
+                  title: context.l10n.devicePing,
+                  caption: context.l10n.devicePingCaption,
                   onTap: () => report(context, c.ping(id)),
                 ),
               ),
@@ -574,8 +583,8 @@ class _Actions extends StatelessWidget {
               Expanded(
                 child: _SmallAction(
                   icon: Ph.mouseSimple,
-                  title: 'Remote',
-                  caption: 'Touchpad and slides',
+                  title: context.l10n.deviceRemote,
+                  caption: context.l10n.deviceRemoteCaption,
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (_) => RemoteScreen(device: view.device),
@@ -641,8 +650,10 @@ class _FindAction extends StatelessWidget {
     final ringing = c.isFinding(id);
     return _SmallAction(
       icon: ringing ? PhFill.bellRinging : Ph.binoculars,
-      title: ringing ? 'Ringing…' : 'Find it',
-      caption: ringing ? 'Tap to stop' : 'Make it ring loudly',
+      title: ringing ? context.l10n.deviceRinging : context.l10n.deviceFindIt,
+      caption: ringing
+          ? context.l10n.deviceTapToStop
+          : context.l10n.deviceFindItCaption,
       active: ringing,
       onTap: () => report(context, ringing ? c.stopFinding(id) : c.find(id)),
     );
@@ -740,14 +751,16 @@ class _NowPlaying extends StatelessWidget {
               ],
             ),
           ),
-          if (p.canPrevious) control(PhFill.skipBack, 'Previous', 'previous'),
+          if (p.canPrevious)
+            control(PhFill.skipBack, context.l10n.devicePrevious, 'previous'),
           control(
             p.playing ? PhFill.pause : PhFill.play,
-            p.playing ? 'Pause' : 'Play',
+            p.playing ? context.l10n.devicePause : context.l10n.devicePlay,
             'play_pause',
             big: true,
           ),
-          if (p.canNext) control(PhFill.skipForward, 'Next', 'next'),
+          if (p.canNext)
+            control(PhFill.skipForward, context.l10n.deviceNext, 'next'),
         ],
       ),
     );
@@ -772,7 +785,7 @@ class _WatchScreen extends StatelessWidget {
         kind: control ? SigButtonKind.primary : SigButtonKind.secondary,
         height: 44,
         onTap: () {
-          showMessage(context, 'Allow it on ${view.device.name}…');
+          showMessage(context, context.l10n.deviceAllowOn(view.device.name));
           report(context, c.watchScreen(id, control: control));
         },
       ),
@@ -790,10 +803,13 @@ class _WatchScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('See its screen', style: sora(16, color: s.ink)),
+                    Text(
+                      context.l10n.deviceSeeScreen,
+                      style: sora(16, color: s.ink),
+                    ),
                     const SizedBox(height: 2),
                     Text(
-                      'Watch it here, or control it with touch',
+                      context.l10n.deviceSeeScreenCaption,
                       style: TextStyle(fontSize: 12.5, color: s.muted),
                     ),
                   ],
@@ -804,9 +820,9 @@ class _WatchScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              button('Watch', false),
+              button(context.l10n.deviceWatch, false),
               const SizedBox(width: 10),
-              button('Control', true),
+              button(context.l10n.deviceControl, true),
             ],
           ),
         ],
@@ -844,14 +860,15 @@ class _TerminalCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Terminal', style: sora(16, color: s.ink)),
+                Text(
+                  context.l10n.deviceTerminal,
+                  style: sora(16, color: s.ink),
+                ),
                 const SizedBox(height: 2),
                 Text(
                   open == 0
-                      ? 'A shell on ${view.device.name}, locked by its code'
-                      : open == 1
-                      ? '1 terminal open'
-                      : '$open terminals open',
+                      ? context.l10n.deviceTerminalShell(view.device.name)
+                      : context.l10n.deviceTerminalsOpen(open),
                   style: TextStyle(fontSize: 12.5, color: s.muted),
                 ),
               ],
@@ -874,26 +891,31 @@ class _Filters extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
-    const options = [
-      ('All', null),
-      ('Files', ActivityKind.files),
-      ('Clipboard', ActivityKind.clipboard),
-      ('Links', ActivityKind.link),
+    final l10n = context.l10n;
+    final options = [
+      (l10n.deviceFilterAll, l10n.deviceFilterShowAll, null),
+      (l10n.deviceFilterFiles, l10n.deviceFilterShowFiles, ActivityKind.files),
+      (
+        l10n.deviceFilterClipboard,
+        l10n.deviceFilterShowClipboard,
+        ActivityKind.clipboard,
+      ),
+      (l10n.deviceFilterLinks, l10n.deviceFilterShowLinks, ActivityKind.link),
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionLabel('Activity'),
+        SectionLabel(l10n.deviceActivity),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18),
           child: Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (final (label, kind) in options)
+              for (final (label, semantic, kind) in options)
                 Pressable(
                   onTap: () => onSelected(kind),
-                  semanticLabel: 'Show $label',
+                  semanticLabel: semantic,
                   child: Container(
                     height: 38,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -942,7 +964,7 @@ class _PhoneAs extends StatelessWidget {
     final display = c.displays.values
         .where((e) => e.peer.id == d.id && e.kind == SessionKind.display)
         .firstOrNull;
-    final ready = 'Ready when ${d.name} asks';
+    final ready = context.l10n.deviceReadyWhenAsks(d.name);
     final size = c.screenSize;
 
     Widget action(String label, VoidCallback onTap, {bool primary = false}) =>
@@ -965,13 +987,13 @@ class _PhoneAs extends StatelessWidget {
       if (d.can('camera'))
         _PhoneAsRow(
           icon: Ph.videoCamera,
-          title: 'Webcam',
+          title: context.l10n.deviceWebcam,
           live: camera != null,
-          detail: camera != null ? 'In use now' : ready,
+          detail: camera != null ? context.l10n.deviceInUseNow : ready,
           action: camera == null
               ? null
               : action(
-                  'Controls',
+                  context.l10n.deviceControls,
                   () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (_) => WebcamScreen(share: camera),
@@ -982,23 +1004,26 @@ class _PhoneAs extends StatelessWidget {
       if (d.can('microphone'))
         _PhoneAsRow(
           icon: Ph.microphone,
-          title: 'Microphone',
+          title: context.l10n.deviceMicrophone,
           live: mic != null,
-          detail: mic != null ? 'In use now' : ready,
+          detail: mic != null ? context.l10n.deviceInUseNow : ready,
           action: mic == null
               ? null
-              : action('Stop', () => c.stopSharing(mic.session)),
+              : action(
+                  context.l10n.deviceStop,
+                  () => c.stopSharing(mic.session),
+                ),
         ),
       if (d.can('display'))
         _PhoneAsRow(
           icon: Ph.monitor,
-          title: 'Second display',
+          title: context.l10n.deviceSecondDisplay,
           live: display != null,
           detail: display != null
-              ? 'Showing now'
+              ? context.l10n.deviceShowingNow
               : size == null
               ? ready
-              : 'Ready · ${size.$1} × ${size.$2}',
+              : context.l10n.deviceReadySize(size.$1, size.$2),
         ),
     ];
     if (rows.isEmpty) return const SizedBox.shrink();
@@ -1012,10 +1037,13 @@ class _PhoneAs extends StatelessWidget {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Expanded(
-                child: Text('This phone as', style: sora(16, color: s.ink)),
+                child: Text(
+                  context.l10n.devicePhoneAs,
+                  style: sora(16, color: s.ink),
+                ),
               ),
               Text(
-                'Started on ${d.name}',
+                context.l10n.deviceStartedOn(d.name),
                 style: TextStyle(fontSize: 12.5, color: s.muted),
               ),
             ],
@@ -1028,7 +1056,7 @@ class _PhoneAs extends StatelessWidget {
           if (!view.usb) ...[
             const SizedBox(height: 4),
             Text(
-              'Faster and steadier over a USB cable.',
+              context.l10n.deviceFasterOverUsb,
               style: TextStyle(fontSize: 12.5, color: s.muted),
             ),
           ],
@@ -1135,15 +1163,17 @@ class _Switches extends StatelessWidget {
     final rows = [
       _SwitchRow(
         icon: Ph.images,
-        title: 'Back up photos',
+        title: context.l10n.deviceBackUpPhotos,
         detail: !photos
-            ? 'New photos go to $name’s Pictures folder'
+            ? context.l10n.devicePhotosGoTo(name)
             : declined
-            ? '$name doesn’t take photos. Turn on “Import Photos From '
-                  'Phones” there.'
+            ? context.l10n.devicePhotosDeclined(name)
             : [
-                'From ${c.photosFolder ?? 'your camera folder'}',
-                if (at != null) 'last ${formatClock(at)}',
+                if (c.photosFolder case final folder?)
+                  context.l10n.devicePhotosFrom(folder)
+                else
+                  context.l10n.devicePhotosFromCamera,
+                if (at != null) context.l10n.devicePhotosLast(formatClock(at)),
               ].join(' · '),
         warn: declined,
         value: photos,
@@ -1152,17 +1182,17 @@ class _Switches extends StatelessWidget {
       if (view.device.features.contains('clipboard_watch'))
         _SwitchRow(
           icon: Ph.clipboard,
-          title: 'Get its clipboard',
-          detail: 'Text copied on $name lands here while connected',
+          title: context.l10n.deviceGetClipboard,
+          detail: context.l10n.deviceGetClipboardDetail(name),
           value: c.watchesClipboard(id),
           onChanged: (v) => c.setClipboardWatch(id, v),
         ),
       _SwitchRow(
         icon: Ph.globeHemisphereWest,
-        title: 'Allow everything from away',
+        title: context.l10n.deviceAwayAll,
         detail: view.awayAll
-            ? 'From away too: this screen, webcam, microphone and files'
-            : 'From away: clipboard, links, files and ring only',
+            ? context.l10n.deviceAwayAllOn
+            : context.l10n.deviceAwayAllOff,
         value: view.awayAll,
         onChanged: (v) => report(context, c.setAwayAll(id, v)),
       ),
@@ -1307,11 +1337,10 @@ class _NoActivity extends StatelessWidget {
         children: [
           Icon(Ph.arrowsLeftRight, size: 34, color: s.faint),
           const SizedBox(height: 12),
-          Text('Nothing shared yet', style: sora(17, color: s.ink)),
+          Text(context.l10n.deviceNothingShared, style: sora(17, color: s.ink)),
           const SizedBox(height: 6),
           Text(
-            'Files, clipboard text and pings between this phone and $name '
-            'line up here.',
+            context.l10n.deviceNothingSharedBody(name),
             textAlign: TextAlign.center,
             style: TextStyle(color: s.muted, height: 1.4),
           ),

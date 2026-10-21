@@ -1,0 +1,632 @@
+{
+  "deviceNothingOfKind": "Nothing of that kind yet.",
+  "@deviceNothingOfKind": {
+    "description": "Device timeline: the selected filter has no entries"
+  },
+  "deviceBattery": "{level}%",
+  "@deviceBattery": {
+    "description": "Device page: battery level",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceBatteryCharging": "{level}%, charging",
+  "@deviceBatteryCharging": {
+    "description": "Device page: battery level while charging",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceReachableUntil": "Reachable from away until {day}",
+  "@deviceReachableUntil": {
+    "description": "Device page: away access expiry; day is a formatted day",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceLocksWhenLeave": "Locks when you leave with this phone",
+  "@deviceLocksWhenLeave": {
+    "description": "Device page: the computer locks when the phone goes away"
+  },
+  "deviceBack": "Back",
+  "@deviceBack": {
+    "description": "Tooltip of the back button"
+  },
+  "deviceMore": "More",
+  "@deviceMore": {
+    "description": "Tooltip of the device menu button"
+  },
+  "deviceShortId": "ID {id}",
+  "@deviceShortId": {
+    "description": "Device menu: the device's short ID",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceChangePicture": "Change picture",
+  "@deviceChangePicture": {
+    "description": "Device menu: replace the device's banner picture"
+  },
+  "deviceAddPicture": "Add a picture",
+  "@deviceAddPicture": {
+    "description": "Device menu: set a banner picture for the device"
+  },
+  "deviceRemovePicture": "Remove picture",
+  "@deviceRemovePicture": {
+    "description": "Device menu: remove the banner picture"
+  },
+  "deviceForgetThis": "Forget this device",
+  "@deviceForgetThis": {
+    "description": "Device menu: unpair the device"
+  },
+  "deviceForgetTitle": "Forget {name}?",
+  "@deviceForgetTitle": {
+    "description": "Forget dialog title; name is the device",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceForgetBody": "You’ll need to pair again to share with it. Its activity on this phone is cleared too.",
+  "@deviceForgetBody": {
+    "description": "Forget dialog body"
+  },
+  "deviceForget": "Forget",
+  "@deviceForget": {
+    "description": "Forget dialog: confirm button"
+  },
+  "deviceCancel": "Cancel",
+  "@deviceCancel": {
+    "description": "Forget dialog: cancel button"
+  },
+  "deviceSendFiles": "Send files",
+  "@deviceSendFiles": {
+    "description": "Device page: main action to send files"
+  },
+  "deviceSendFilesCaption": "Photos, documents, anything",
+  "@deviceSendFilesCaption": {
+    "description": "Caption under Send files"
+  },
+  "deviceClipboard": "Clipboard",
+  "@deviceClipboard": {
+    "description": "Device page action: send the clipboard"
+  },
+  "deviceClipboardCaption": "Send what you copied",
+  "@deviceClipboardCaption": {
+    "description": "Caption of the Clipboard action"
+  },
+  "devicePing": "Ping",
+  "@devicePing": {
+    "description": "Device page action: make the device chime"
+  },
+  "devicePingCaption": "Make it chime",
+  "@devicePingCaption": {
+    "description": "Caption of the Ping action"
+  },
+  "deviceRemote": "Remote",
+  "@deviceRemote": {
+    "description": "Device page action: touchpad / slide remote"
+  },
+  "deviceRemoteCaption": "Touchpad and slides",
+  "@deviceRemoteCaption": {
+    "description": "Caption of the Remote action"
+  },
+  "deviceRinging": "Ringing…",
+  "@deviceRinging": {
+    "description": "Find action while the device rings"
+  },
+  "deviceFindIt": "Find it",
+  "@deviceFindIt": {
+    "description": "Find action: ring the device to find it"
+  },
+  "deviceTapToStop": "Tap to stop",
+  "@deviceTapToStop": {
+    "description": "Caption of the Find action while ringing"
+  },
+  "deviceFindItCaption": "Make it ring loudly",
+  "@deviceFindItCaption": {
+    "description": "Caption of the Find action"
+  },
+  "devicePrevious": "Previous",
+  "@devicePrevious": {
+    "description": "Media control: previous track"
+  },
+  "devicePause": "Pause",
+  "@devicePause": {
+    "description": "Media control: pause"
+  },
+  "devicePlay": "Play",
+  "@devicePlay": {
+    "description": "Media control: play"
+  },
+  "deviceNext": "Next",
+  "@deviceNext": {
+    "description": "Media control: next track"
+  },
+  "deviceAllowOn": "Allow it on {name}…",
+  "@deviceAllowOn": {
+    "description": "Message after asking to see a computer's screen; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceSeeScreen": "See its screen",
+  "@deviceSeeScreen": {
+    "description": "Card title: view the computer's screen"
+  },
+  "deviceSeeScreenCaption": "Watch it here, or control it with touch",
+  "@deviceSeeScreenCaption": {
+    "description": "Caption of the See its screen card"
+  },
+  "deviceWatch": "Watch",
+  "@deviceWatch": {
+    "description": "Button: watch the computer's screen"
+  },
+  "deviceControl": "Control",
+  "@deviceControl": {
+    "description": "Button: control the computer's screen with touch"
+  },
+  "deviceTerminal": "Terminal",
+  "@deviceTerminal": {
+    "description": "Card title: a shell on the computer"
+  },
+  "deviceTerminalShell": "A shell on {name}, locked by its code",
+  "@deviceTerminalShell": {
+    "description": "Terminal card caption when none is open; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceTerminalsOpen": "{count, plural, =1{1 terminal open} other{{count} terminals open}}",
+  "@deviceTerminalsOpen": {
+    "description": "Terminal card caption: how many terminals are open",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceFilterAll": "All",
+  "@deviceFilterAll": {
+    "description": "Timeline filter: everything"
+  },
+  "deviceFilterFiles": "Files",
+  "@deviceFilterFiles": {
+    "description": "Timeline filter: files"
+  },
+  "deviceFilterClipboard": "Clipboard",
+  "@deviceFilterClipboard": {
+    "description": "Timeline filter: clipboard"
+  },
+  "deviceFilterLinks": "Links",
+  "@deviceFilterLinks": {
+    "description": "Timeline filter: links"
+  },
+  "deviceFilterShowAll": "Show All",
+  "@deviceFilterShowAll": {
+    "description": "Screen reader label of the All filter"
+  },
+  "deviceFilterShowFiles": "Show Files",
+  "@deviceFilterShowFiles": {
+    "description": "Screen reader label of the Files filter"
+  },
+  "deviceFilterShowClipboard": "Show Clipboard",
+  "@deviceFilterShowClipboard": {
+    "description": "Screen reader label of the Clipboard filter"
+  },
+  "deviceFilterShowLinks": "Show Links",
+  "@deviceFilterShowLinks": {
+    "description": "Screen reader label of the Links filter"
+  },
+  "deviceActivity": "Activity",
+  "@deviceActivity": {
+    "description": "Section heading above the device's timeline"
+  },
+  "deviceReadyWhenAsks": "Ready when {name} asks",
+  "@deviceReadyWhenAsks": {
+    "description": "This phone as webcam/mic/display: idle state; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceWebcam": "Webcam",
+  "@deviceWebcam": {
+    "description": "This phone as: webcam row"
+  },
+  "deviceInUseNow": "In use now",
+  "@deviceInUseNow": {
+    "description": "This phone as: the webcam or microphone is live"
+  },
+  "deviceControls": "Controls",
+  "@deviceControls": {
+    "description": "Button: open the webcam controls"
+  },
+  "deviceMicrophone": "Microphone",
+  "@deviceMicrophone": {
+    "description": "This phone as: microphone row"
+  },
+  "deviceStop": "Stop",
+  "@deviceStop": {
+    "description": "Button: stop the microphone"
+  },
+  "deviceSecondDisplay": "Second display",
+  "@deviceSecondDisplay": {
+    "description": "This phone as: second display row"
+  },
+  "deviceShowingNow": "Showing now",
+  "@deviceShowingNow": {
+    "description": "This phone as: the second display is live"
+  },
+  "deviceReadySize": "Ready · {width} × {height}",
+  "@deviceReadySize": {
+    "description": "Second display idle, with this phone's screen size in pixels",
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      }
+    }
+  },
+  "devicePhoneAs": "This phone as",
+  "@devicePhoneAs": {
+    "description": "Card title: what this phone can be for the computer"
+  },
+  "deviceStartedOn": "Started on {name}",
+  "@deviceStartedOn": {
+    "description": "Card note: these are started from the computer; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceFasterOverUsb": "Faster and steadier over a USB cable.",
+  "@deviceFasterOverUsb": {
+    "description": "Hint under This phone as"
+  },
+  "deviceBackUpPhotos": "Back up photos",
+  "@deviceBackUpPhotos": {
+    "description": "Switch: back up photos to the computer"
+  },
+  "devicePhotosGoTo": "New photos go to {name}’s Pictures folder",
+  "@devicePhotosGoTo": {
+    "description": "Photo backup off; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicePhotosDeclined": "{name} doesn’t take photos. Turn on “Import Photos From Phones” there.",
+  "@devicePhotosDeclined": {
+    "description": "Photo backup refused by the computer; the quoted text is the desktop app's setting name",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicePhotosFrom": "From {folder}",
+  "@devicePhotosFrom": {
+    "description": "Photo backup on: the folder photos are taken from",
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "devicePhotosFromCamera": "From your camera folder",
+  "@devicePhotosFromCamera": {
+    "description": "Photo backup on, default folder"
+  },
+  "devicePhotosLast": "last {time}",
+  "@devicePhotosLast": {
+    "description": "Photo backup: time of the last backup, shown after a separator",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceGetClipboard": "Get its clipboard",
+  "@deviceGetClipboard": {
+    "description": "Switch: receive the computer's clipboard"
+  },
+  "deviceGetClipboardDetail": "Text copied on {name} lands here while connected",
+  "@deviceGetClipboardDetail": {
+    "description": "Detail of Get its clipboard; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceAwayAll": "Allow everything from away",
+  "@deviceAwayAll": {
+    "description": "Switch: allow all features when not on the same network"
+  },
+  "deviceAwayAllOn": "From away too: this screen, webcam, microphone and files",
+  "@deviceAwayAllOn": {
+    "description": "Detail of Allow everything from away, on"
+  },
+  "deviceAwayAllOff": "From away: clipboard, links, files and ring only",
+  "@deviceAwayAllOff": {
+    "description": "Detail of Allow everything from away, off"
+  },
+  "deviceNothingShared": "Nothing shared yet",
+  "@deviceNothingShared": {
+    "description": "Empty device timeline title"
+  },
+  "deviceNothingSharedBody": "Files, clipboard text and pings between this phone and {name} line up here.",
+  "@deviceNothingSharedBody": {
+    "description": "Empty device timeline body; name is the device",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityItems": "{count, plural, =1{1 item} other{{count} items}}",
+  "@activityItems": {
+    "description": "Timeline title: several files sent at once",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityQuoted": "“{text}”",
+  "@activityQuoted": {
+    "description": "Timeline title: clipboard text, quoted",
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "activityClipboardText": "Clipboard text",
+  "@activityClipboardText": {
+    "description": "Timeline title: clipboard text without content"
+  },
+  "activityPing": "Ping",
+  "@activityPing": {
+    "description": "Timeline title: a ping"
+  },
+  "activityYourScreen": "Your screen",
+  "@activityYourScreen": {
+    "description": "Timeline title: this phone's screen was shared"
+  },
+  "activityYourCamera": "Your camera",
+  "@activityYourCamera": {
+    "description": "Timeline title: this phone's camera was used as a webcam"
+  },
+  "activitySecondDisplay": "Second display",
+  "@activitySecondDisplay": {
+    "description": "Timeline title: this phone was a second display"
+  },
+  "activityLink": "Link",
+  "@activityLink": {
+    "description": "Timeline title fallback for a link"
+  },
+  "activityRangThisPhone": "Rang this phone",
+  "@activityRangThisPhone": {
+    "description": "Timeline title: the computer rang this phone"
+  },
+  "activityRangIt": "Rang it",
+  "@activityRangIt": {
+    "description": "Timeline title: this phone rang the computer"
+  },
+  "activityTouchpadKeyboard": "Touchpad and keyboard",
+  "@activityTouchpadKeyboard": {
+    "description": "Timeline title: remote control session"
+  },
+  "activityItsScreen": "Its screen",
+  "@activityItsScreen": {
+    "description": "Timeline title: the computer's screen was watched"
+  },
+  "activityYourMicrophone": "Your microphone",
+  "@activityYourMicrophone": {
+    "description": "Timeline title: this phone's microphone was used"
+  },
+  "activityWhereThisPhone": "Where this phone is",
+  "@activityWhereThisPhone": {
+    "description": "Timeline title: location request"
+  },
+  "activityWatchingNow": "Watching now",
+  "@activityWatchingNow": {
+    "description": "Timeline detail: screen being watched"
+  },
+  "activityWatched": "Watched",
+  "@activityWatched": {
+    "description": "Timeline detail: screen was watched"
+  },
+  "activityInUseWebcam": "In use as a webcam",
+  "@activityInUseWebcam": {
+    "description": "Timeline detail: camera live as webcam"
+  },
+  "activityUsedWebcam": "Used as a webcam",
+  "@activityUsedWebcam": {
+    "description": "Timeline detail: camera was a webcam"
+  },
+  "activityBeingControlled": "Being controlled now",
+  "@activityBeingControlled": {
+    "description": "Timeline detail: screen being controlled"
+  },
+  "activityWatchedControlled": "Watched and controlled",
+  "@activityWatchedControlled": {
+    "description": "Timeline detail: screen was watched and controlled"
+  },
+  "activityWatchedFromPhone": "Watched from this phone",
+  "@activityWatchedFromPhone": {
+    "description": "Timeline detail: the computer's screen was watched"
+  },
+  "activityInUseNow": "In use now",
+  "@activityInUseNow": {
+    "description": "Timeline detail: session live"
+  },
+  "activityWasTouchpad": "This phone was its touchpad",
+  "@activityWasTouchpad": {
+    "description": "Timeline detail: remote control ended"
+  },
+  "activityWasSecondDisplay": "This phone was its second display",
+  "@activityWasSecondDisplay": {
+    "description": "Timeline detail: second display ended"
+  },
+  "activityLinkReceived": "Link received",
+  "@activityLinkReceived": {
+    "description": "Timeline detail: incoming link"
+  },
+  "activityOpenedOnComputer": "Opened on the computer",
+  "@activityOpenedOnComputer": {
+    "description": "Timeline detail: link sent and opened"
+  },
+  "activityInUseMicrophone": "In use as a microphone",
+  "@activityInUseMicrophone": {
+    "description": "Timeline detail: microphone live"
+  },
+  "activityUsedMicrophone": "Used as a microphone",
+  "@activityUsedMicrophone": {
+    "description": "Timeline detail: microphone ended"
+  },
+  "activityNotTold": "Not told",
+  "@activityNotTold": {
+    "description": "Timeline detail: location request declined"
+  },
+  "activityToldWhere": "Told it where this phone is",
+  "@activityToldWhere": {
+    "description": "Timeline detail: location shared"
+  },
+  "activityAskedToFind": "Asked to find this phone",
+  "@activityAskedToFind": {
+    "description": "Timeline detail: the computer rang this phone"
+  },
+  "activityToFindIt": "To find it",
+  "@activityToFindIt": {
+    "description": "Timeline detail: this phone rang the computer"
+  },
+  "activityDeclined": "Declined",
+  "@activityDeclined": {
+    "description": "Timeline status: declined"
+  },
+  "activityFailed": "Failed",
+  "@activityFailed": {
+    "description": "Timeline status: failed"
+  },
+  "activityInProgress": "In progress",
+  "@activityInProgress": {
+    "description": "Timeline status: in progress"
+  },
+  "activityCopiedHere": "Copied here",
+  "@activityCopiedHere": {
+    "description": "Timeline status: clipboard received on this phone"
+  },
+  "activityReceived": "Received",
+  "@activityReceived": {
+    "description": "Timeline status: received"
+  },
+  "activitySent": "Sent",
+  "@activitySent": {
+    "description": "Timeline status: sent"
+  },
+  "activityStop": "Stop",
+  "@activityStop": {
+    "description": "Tooltip: stop a live session"
+  },
+  "activityCancel": "Cancel",
+  "@activityCancel": {
+    "description": "Tooltip: cancel a transfer"
+  },
+  "activityCopyAgain": "Copy again",
+  "@activityCopyAgain": {
+    "description": "Tooltip: copy clipboard text again"
+  },
+  "activityCopied": "Copied",
+  "@activityCopied": {
+    "description": "Message after copying"
+  },
+  "activityCopyLink": "Copy link",
+  "@activityCopyLink": {
+    "description": "Tooltip: copy a link"
+  },
+  "activityLinkCopied": "Link copied",
+  "@activityLinkCopied": {
+    "description": "Message after copying a link"
+  },
+  "activityNoAppForLink": "No app here opens that link.",
+  "@activityNoAppForLink": {
+    "description": "Error: no app can open the link"
+  },
+  "activityFiles": "{count, plural, =1{1 file} other{{count} files}}",
+  "@activityFiles": {
+    "description": "Sheet title listing received files",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityFileMissing": "{name} isn’t there anymore.",
+  "@activityFileMissing": {
+    "description": "Error: the received file was moved or deleted; name is the file",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityNoAppForFile": "No app on this phone opens {name}.",
+  "@activityNoAppForFile": {
+    "description": "Error: no app opens the file; name is the file",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityWaitingForYou": "Waiting for you to accept…",
+  "@activityWaitingForYou": {
+    "description": "Transfer waiting for this phone's user"
+  },
+  "activityWaitingForDevice": "Waiting for the device to accept…",
+  "@activityWaitingForDevice": {
+    "description": "Transfer waiting for an unknown device"
+  },
+  "activityWaitingFor": "Waiting for {name} to accept…",
+  "@activityWaitingFor": {
+    "description": "Transfer waiting for the other device; name is the device",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityProgress": "{done} of {total}",
+  "@activityProgress": {
+    "description": "Transfer progress; both are formatted sizes like 2.1 MB",
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  }
+}

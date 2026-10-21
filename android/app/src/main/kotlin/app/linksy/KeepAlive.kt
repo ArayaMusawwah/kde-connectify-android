@@ -54,7 +54,7 @@ class KeepAlive : Service() {
         val manager = getSystemService(NotificationManager::class.java)
         if (Build.VERSION.SDK_INT >= 26) {
             manager.createNotificationChannel(
-                NotificationChannel(CHANNEL, "Staying connected", NotificationManager.IMPORTANCE_MIN),
+                NotificationChannel(CHANNEL, Lang.str(this, R.string.channel_staying), NotificationManager.IMPORTANCE_MIN),
             )
         }
         val open = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)

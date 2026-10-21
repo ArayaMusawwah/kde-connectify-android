@@ -7,6 +7,7 @@ import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 import '../device/activity_tile.dart' show linkLabel;
 
@@ -51,28 +52,29 @@ class _ShareSheetState extends State<ShareSheet> {
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
+    final l10n = context.l10n;
     final c = LinksyScope.of(context);
     final shared = widget.shared;
     final link = shared is SharedText ? findWebLink(shared.text) : null;
     final (icon, title, detail) = switch (shared) {
       SharedFiles(:final paths) when _toClipboard => (
         Ph.clipboard,
-        'Put on a clipboard',
+        l10n.shareSheetPutOnClipboard,
         paths.single.split('/').last,
       ),
       SharedFiles(:final paths) => (
         Ph.files,
-        paths.length == 1 ? 'Send a file' : 'Send ${paths.length} files',
+        l10n.shareSheetSendFiles(paths.length),
         paths.length == 1 ? paths.single.split('/').last : null,
       ),
       SharedText() when link != null && !_asText => (
         Ph.globe,
-        'Open on a computer',
+        l10n.shareSheetOpenOnComputer,
         linkLabel(link),
       ),
       SharedText(:final text) => (
         Ph.clipboardText,
-        'Send to a clipboard',
+        l10n.shareSheetSendToClipboard,
         text.trim(),
       ),
     };
@@ -117,9 +119,8 @@ class _ShareSheetState extends State<ShareSheet> {
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Text(
                   _toClipboard
-                      ? 'None of your computers takes files on its clipboard '
-                            'yet. Update Linksy there.'
-                      : 'Pair a computer first, then share to it from any app.',
+                      ? l10n.shareSheetNoClipboardFiles
+                      : l10n.shareSheetNoComputers,
                   textAlign: TextAlign.center,
                   style: TextStyle(color: s.muted, height: 1.4),
                 ),
@@ -183,8 +184,8 @@ class _ShareSheetState extends State<ShareSheet> {
             if (_clippable)
               SigButton(
                 label: _toClipboard
-                    ? 'Send the file instead'
-                    : 'Put it on the computer’s clipboard instead',
+                    ? l10n.shareSheetSendFileInstead
+                    : l10n.shareSheetClipboardInstead,
                 kind: SigButtonKind.quiet,
                 expand: true,
                 height: 46,
@@ -193,8 +194,8 @@ class _ShareSheetState extends State<ShareSheet> {
             if (link != null)
               SigButton(
                 label: _asText
-                    ? 'Open the link instead'
-                    : 'Send as text to the clipboard instead',
+                    ? l10n.shareSheetOpenLinkInstead
+                    : l10n.shareSheetSendAsTextInstead,
                 kind: SigButtonKind.quiet,
                 expand: true,
                 height: 46,
@@ -209,22 +210,29 @@ class _ShareSheetState extends State<ShareSheet> {
   Future<void> _send(String deviceId, String? link) async {
     final c = LinksyScope.read(context);
     final messenger = ScaffoldMessenger.of(context);
-    final name = c.device(deviceId)?.device.name ?? 'the computer';
+    final l10n = context.l10n;
+    final name = c.device(deviceId)?.device.name;
     Navigator.of(context).pop();
     final shared = widget.shared;
     final (error, done) = switch (shared) {
       SharedFiles(:final paths) when _toClipboard => (
         await c.sendToClipboard(deviceId, paths.single),
-        'Putting it on $name’s clipboard',
+        name == null
+            ? l10n.shareSheetPuttingOnClipboardUnnamed
+            : l10n.shareSheetPuttingOnClipboard(name),
       ),
       SharedFiles(:final paths) => (await c.sendFiles(deviceId, paths), null),
       SharedText() when link != null && !_asText => (
         await c.openUrl(deviceId, link),
-        'Opened on $name',
+        name == null
+            ? l10n.shareSheetOpenedUnnamed
+            : l10n.shareSheetOpened(name),
       ),
       SharedText(:final text) => (
         await c.sendText(deviceId, text),
-        'Sent to $name’s clipboard',
+        name == null
+            ? l10n.shareSheetSentToClipboardUnnamed
+            : l10n.shareSheetSentToClipboard(name),
       ),
     };
     final message = error ?? done;
@@ -258,7 +266,7 @@ class LinkReceivedDialog extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             Text(
-              '${event.from.name} sent a link',
+              context.l10n.shareSheetSentALink(event.from.name),
               textAlign: TextAlign.center,
               style: sora(21, color: s.ink, height: 1.2),
             ),
@@ -272,7 +280,7 @@ class LinkReceivedDialog extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             SigButton(
-              label: 'Open',
+              label: context.l10n.shareSheetOpen,
               icon: Ph.arrowSquareOut,
               expand: true,
               onTap: () async {
@@ -281,20 +289,19 @@ class LinkReceivedDialog extends StatelessWidget {
               },
             ),
             SigButton(
-              label: 'Copy link',
+              label: context.l10n.shareSheetCopyLink,
               kind: SigButtonKind.quiet,
               expand: true,
               onTap: () async {
                 final messenger = ScaffoldMessenger.of(context);
+                final copied = context.l10n.shareSheetLinkCopied;
                 Navigator.of(context).pop();
                 await Clipboard.setData(ClipboardData(text: event.url));
-                messenger.showSnackBar(
-                  const SnackBar(content: Text('Link copied')),
-                );
+                messenger.showSnackBar(SnackBar(content: Text(copied)));
               },
             ),
             SigButton(
-              label: 'Not now',
+              label: context.l10n.commonNotNow,
               kind: SigButtonKind.quiet,
               expand: true,
               onTap: () => Navigator.of(context).pop(),

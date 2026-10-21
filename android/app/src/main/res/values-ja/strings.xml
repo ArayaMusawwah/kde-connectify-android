@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android's own text (notifications); the app's is in lib/l10n. -->
+<resources>
+    <string name="channel_incoming_files">受信ファイル</string>
+    <string name="accept">受け入れる</string>
+    <string name="decline">断る</string>
+    <string name="keep_alive_default">Linksy は接続中です</string>
+    <string name="your_computer">あなたのコンピュータ</string>
+    <string name="locate_not_allowed">Linksy はこの電話の位置情報を使えません</string>
+    <string name="locate_off">この電話の位置情報がオフです</string>
+    <string name="locate_timeout">この電話は時間内に現在地を特定できませんでした</string>
+    <string name="locate_open_app">電話で Linksy を開くと現在地を共有できます</string>
+    <string name="channel_news">Linksy からのお知らせ</string>
+    <string name="channel_staying">接続を維持中</string>
+    <string name="camera_didnt_start">カメラが起動しませんでした。</string>
+    <string name="camera_unavailable">カメラを使用できません。</string>
+    <string name="sharing_screen">%1$s と画面を共有中</string>
+    <string name="using_microphone">%1$s がマイクを使用中</string>
+    <string name="using_camera">%1$s がカメラを使用中</string>
+    <string name="channel_sharing">画面とカメラの共有</string>
+    <string name="stop_sharing">共有を停止</string>
+    <string name="switch_camera">カメラを切り替え</string>
+</resources>

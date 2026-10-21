@@ -84,11 +84,13 @@ class _LinksyAppState extends State<LinksyApp> {
   Future<void> _pairWith(String link) async {
     final invite = Invite.tryParse(link);
     if (invite == null) {
-      _say('That pairing link isn’t valid.');
+      _say(tr.appInvalidPairingLink);
       return;
     }
     _say(
-      'Pairing with ${invite.name.isEmpty ? 'the other device' : invite.name}…',
+      invite.name.isEmpty
+          ? tr.pairingWithOtherDevice
+          : tr.pairingWith(invite.name),
     );
     final error = await widget.controller.pairWithInvite(link);
     if (error != null) _say(error);
@@ -133,11 +135,11 @@ class _LinksyAppState extends State<LinksyApp> {
         }
         _say(
           device == null
-              ? 'Pairing failed: $reason'
-              : 'Couldn’t pair with ${device.name}: $reason',
+              ? tr.appPairingFailed(reason)
+              : tr.appCouldntPair(device.name, reason),
         );
       case Paired(:final device):
-        _say('Paired with ${device.name}');
+        _say(tr.appPairedWith(device.name));
       case SessionStarted(kind: SessionKind.camera) when e.sharing:
         _openWebcam(e);
       case SessionStarted() when !e.sharing && e.kind != SessionKind.input:
@@ -160,11 +162,11 @@ class _LinksyAppState extends State<LinksyApp> {
           builder: (_) => IncomingFilesSheet(request: e),
         );
       case NotificationReceived(:final from, :final title, :final body):
-        _say(body.isEmpty ? '${from.name}: $title' : '${from.name}: $body');
+        _say(tr.appNotification(from.name, body.isEmpty ? title : body));
       case ClipboardReceived(:final from):
-        _say('Copied text from ${from.name}');
+        _say(tr.appCopiedText(from.name));
       case ClipboardFileReceived(:final from, :final path):
-        _say('Copied ${path.split('/').last} from ${from.name}');
+        _say(tr.appCopiedFile(path.split('/').last, from.name));
       case OpenUrlReceived():
         showDialog<void>(
           context: context,
@@ -225,7 +227,7 @@ class StartupFailedApp extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Linksy couldn’t start',
+                    tr.appCouldntStart,
                     style: sora(24, color: s.ink),
                     textAlign: TextAlign.center,
                   ),

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../core/models.dart';
 import 'format.dart';
 import 'icons.dart';
+import 'l10n.dart';
 import 'sig.dart';
 
 export 'icons.dart';
@@ -261,9 +262,9 @@ Color presenceColor(Sig s, Presence p, {bool onBlue = false}) => switch (p) {
 };
 
 String presenceLabel(Presence p) => switch (p) {
-  Presence.connected => 'Connected',
-  Presence.nearby => 'Nearby',
-  Presence.notNearby => 'Not nearby',
+  Presence.connected => tr.commonConnected,
+  Presence.nearby => tr.commonNearby,
+  Presence.notNearby => tr.commonNotNearby,
 };
 
 /// [presenceLabel], saying how a connection goes: the USB cable, or the
@@ -271,15 +272,15 @@ String presenceLabel(Presence p) => switch (p) {
 /// How a device is reached, for lists: the cable, the internet, or the same
 /// network.
 String linkWords(DeviceView v) => switch (v) {
-  DeviceView(connected: true, usb: true) => 'USB cable',
-  DeviceView(connected: true, away: true) => 'Away from home',
-  DeviceView(presence: Presence.notNearby) => 'Not nearby',
-  _ => 'Same Wi-Fi',
+  DeviceView(connected: true, usb: true) => tr.commonUsbCable,
+  DeviceView(connected: true, away: true) => tr.commonAwayFromHome,
+  DeviceView(presence: Presence.notNearby) => tr.commonNotNearby,
+  _ => tr.commonSameWifi,
 };
 
 String presenceText(DeviceView v) => switch (v) {
-  DeviceView(connected: true, usb: true) => 'Connected by USB',
-  DeviceView(connected: true, away: true) => 'Connected away from home',
+  DeviceView(connected: true, usb: true) => tr.commonConnectedByUsb,
+  DeviceView(connected: true, away: true) => tr.commonConnectedAway,
   _ => presenceLabel(v.presence),
 };
 
@@ -355,7 +356,9 @@ class Orb extends StatelessWidget {
     if (ring == null) return orb;
     if (battery case final b?) {
       return Semantics(
-        label: 'Battery ${b.level} percent${b.charging ? ', charging' : ''}',
+        label: b.charging
+            ? context.l10n.commonBatteryCharging(b.level)
+            : context.l10n.commonBattery(b.level),
         child: CustomPaint(
           painter: _BatteryRing(
             level: b.level / 100,

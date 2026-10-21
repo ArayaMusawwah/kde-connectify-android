@@ -1,0 +1,766 @@
+{
+  "webcamBack": "Back",
+  "@webcamBack": {
+    "description": "Tooltip: go back from the webcam screen"
+  },
+  "webcamTitle": "Webcam",
+  "@webcamTitle": {
+    "description": "Webcam screen title"
+  },
+  "webcamLiveOn": "Live on {name}",
+  "@webcamLiveOn": {
+    "description": "Webcam screen subtitle; name is the computer receiving the picture",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamStopSemantic": "Stop the webcam",
+  "@webcamStopSemantic": {
+    "description": "Accessibility label of the Stop button"
+  },
+  "webcamStop": "Stop",
+  "@webcamStop": {
+    "description": "Button that stops the webcam"
+  },
+  "webcamBadgeLive": "LIVE",
+  "@webcamBadgeLive": {
+    "description": "Badge over the preview while streaming (uppercase)"
+  },
+  "webcamBadgeLock": "AE/AF LOCK",
+  "@webcamBadgeLock": {
+    "description": "Badge: auto exposure / auto focus locked (uppercase)"
+  },
+  "webcamBadgeManualFocus": "MF",
+  "@webcamBadgeManualFocus": {
+    "description": "Badge: manual focus (short abbreviation)"
+  },
+  "webcamBadgeTorch": "TORCH",
+  "@webcamBadgeTorch": {
+    "description": "Badge: the flashlight is on (uppercase)"
+  },
+  "webcamFacingFront": "Front",
+  "@webcamFacingFront": {
+    "description": "Action label: the front camera is in use"
+  },
+  "webcamFacingBack": "Back",
+  "@webcamFacingBack": {
+    "description": "Action label: the back camera is in use"
+  },
+  "webcamTorch": "Torch",
+  "@webcamTorch": {
+    "description": "Action: turn the flashlight on/off"
+  },
+  "webcamPortrait": "Portrait",
+  "@webcamPortrait": {
+    "description": "Orientation: upright"
+  },
+  "webcamLandscape": "Landscape",
+  "@webcamLandscape": {
+    "description": "Orientation: sideways"
+  },
+  "webcamLocked": "Locked",
+  "@webcamLocked": {
+    "description": "Action label: exposure and white balance are locked"
+  },
+  "webcamLock": "Lock",
+  "@webcamLock": {
+    "description": "Action: lock exposure and white balance"
+  },
+  "webcamTabLight": "Light",
+  "@webcamTabLight": {
+    "description": "Settings tab: exposure"
+  },
+  "webcamTabFocus": "Focus",
+  "@webcamTabFocus": {
+    "description": "Settings tab: focus"
+  },
+  "webcamTabColor": "Color",
+  "@webcamTabColor": {
+    "description": "Settings tab: white balance"
+  },
+  "webcamTabStream": "Stream",
+  "@webcamTabStream": {
+    "description": "Settings tab: stream format"
+  },
+  "webcamBrightness": "Brightness",
+  "@webcamBrightness": {
+    "description": "Setting title: exposure compensation"
+  },
+  "webcamExposureValue": "{value} EV",
+  "@webcamExposureValue": {
+    "description": "Exposure compensation value; value is a signed number like +0.7",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamExposureAuto": "This camera sets exposure by itself.",
+  "@webcamExposureAuto": {
+    "description": "Shown when the camera has no exposure control"
+  },
+  "webcamLockExposure": "Lock exposure",
+  "@webcamLockExposure": {
+    "description": "Setting title"
+  },
+  "webcamLockExposureDetail": "Keeps the brightness as it is now. Hold the picture to lock on a spot.",
+  "@webcamLockExposureDetail": {
+    "description": "Lock exposure explanation"
+  },
+  "webcamFocus": "Focus",
+  "@webcamFocus": {
+    "description": "Setting title"
+  },
+  "webcamFocusFixed": "This camera has fixed focus.",
+  "@webcamFocusFixed": {
+    "description": "Shown when focus cannot be changed"
+  },
+  "webcamFocusSpotDetail": "Held where you tapped. Double-tap the picture for auto.",
+  "@webcamFocusSpotDetail": {
+    "description": "Focus explanation in spot mode"
+  },
+  "webcamFocusManualDetail": "Set by hand below.",
+  "@webcamFocusManualDetail": {
+    "description": "Focus explanation in manual mode"
+  },
+  "webcamFocusAutoDetail": "Follows the picture. Tap it to focus on a spot.",
+  "@webcamFocusAutoDetail": {
+    "description": "Focus explanation in auto mode"
+  },
+  "webcamFocusAuto": "Auto",
+  "@webcamFocusAuto": {
+    "description": "Focus mode option"
+  },
+  "webcamFocusSpot": "Spot",
+  "@webcamFocusSpot": {
+    "description": "Focus mode option: focus on a tapped point"
+  },
+  "webcamFocusManual": "Manual",
+  "@webcamFocusManual": {
+    "description": "Focus mode option"
+  },
+  "webcamDistance": "Distance",
+  "@webcamDistance": {
+    "description": "Setting title: manual focus distance"
+  },
+  "webcamFar": "Far",
+  "@webcamFar": {
+    "description": "Left end of the focus distance slider"
+  },
+  "webcamNear": "Near",
+  "@webcamNear": {
+    "description": "Right end of the focus distance slider"
+  },
+  "webcamWbAuto": "Auto",
+  "@webcamWbAuto": {
+    "description": "White balance option"
+  },
+  "webcamWbDaylight": "Daylight",
+  "@webcamWbDaylight": {
+    "description": "White balance option"
+  },
+  "webcamWbCloudy": "Cloudy",
+  "@webcamWbCloudy": {
+    "description": "White balance option"
+  },
+  "webcamWbShade": "Shade",
+  "@webcamWbShade": {
+    "description": "White balance option"
+  },
+  "webcamWbIncandescent": "Warm light",
+  "@webcamWbIncandescent": {
+    "description": "White balance option: incandescent bulbs"
+  },
+  "webcamWbFluorescent": "Office light",
+  "@webcamWbFluorescent": {
+    "description": "White balance option: fluorescent tubes"
+  },
+  "webcamWhiteBalance": "White balance",
+  "@webcamWhiteBalance": {
+    "description": "Setting title"
+  },
+  "webcamLockColors": "Lock colors",
+  "@webcamLockColors": {
+    "description": "Setting title: white balance lock"
+  },
+  "webcamLockColorsDetail": "Stops the colors shifting as the light changes.",
+  "@webcamLockColorsDetail": {
+    "description": "Lock colors explanation"
+  },
+  "webcamOrientation": "Orientation",
+  "@webcamOrientation": {
+    "description": "Setting title"
+  },
+  "webcamOrientationPortraitDetail": "Hold the phone upright; bars at the sides.",
+  "@webcamOrientationPortraitDetail": {
+    "description": "Portrait orientation explanation"
+  },
+  "webcamOrientationLandscapeDetail": "Hold the phone sideways; it fills the frame.",
+  "@webcamOrientationLandscapeDetail": {
+    "description": "Landscape orientation explanation"
+  },
+  "webcamFrameRate": "Frame rate",
+  "@webcamFrameRate": {
+    "description": "Setting title"
+  },
+  "webcamFps60Detail": "Smoother motion; uses more data and battery.",
+  "@webcamFps60Detail": {
+    "description": "Explanation of 60 fps"
+  },
+  "webcamFps30Detail": "Steady for video calls.",
+  "@webcamFps30Detail": {
+    "description": "Explanation of 30 fps"
+  },
+  "webcamFpsOnly30": "This camera does up to 30 fps.",
+  "@webcamFpsOnly30": {
+    "description": "Shown when 60 fps is not available"
+  },
+  "webcamFps": "{fps} fps",
+  "@webcamFps": {
+    "description": "Frame rate option; fps is a number like 30",
+    "placeholders": {
+      "fps": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamResolution": "Resolution",
+  "@webcamResolution": {
+    "description": "Setting title"
+  },
+  "webcamResolution1080Detail": "Full HD, for a big screen; more data.",
+  "@webcamResolution1080Detail": {
+    "description": "Explanation of 1080p"
+  },
+  "webcamResolution720Detail": "HD, right for video calls.",
+  "@webcamResolution720Detail": {
+    "description": "Explanation of 720p"
+  },
+  "webcamResolutionOnly720": "This camera streams 720p.",
+  "@webcamResolutionOnly720": {
+    "description": "Shown when 1080p is not available"
+  },
+  "webcamQuality": "Quality",
+  "@webcamQuality": {
+    "description": "Setting title: bitrate"
+  },
+  "webcamQualitySaverDetail": "{mbps} Mbps, for a busy Wi-Fi.",
+  "@webcamQualitySaverDetail": {
+    "description": "Saver quality explanation; mbps is a number",
+    "placeholders": {
+      "mbps": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamQualityHighDetail": "{mbps} Mbps, the most detail.",
+  "@webcamQualityHighDetail": {
+    "description": "High quality explanation; mbps is a number",
+    "placeholders": {
+      "mbps": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamQualityStandardDetail": "{mbps} Mbps, sharp for video calls.",
+  "@webcamQualityStandardDetail": {
+    "description": "Standard quality explanation; mbps is a number",
+    "placeholders": {
+      "mbps": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamQualitySaver": "Saver",
+  "@webcamQualitySaver": {
+    "description": "Quality option: low bitrate"
+  },
+  "webcamQualityStandard": "Standard",
+  "@webcamQualityStandard": {
+    "description": "Quality option"
+  },
+  "webcamQualityHigh": "High",
+  "@webcamQualityHigh": {
+    "description": "Quality option: high bitrate"
+  },
+  "webcamStabilization": "Stabilization",
+  "@webcamStabilization": {
+    "description": "Setting title: video stabilization"
+  },
+  "webcamStabilizationDetail": "Smooths out hand shake.",
+  "@webcamStabilizationDetail": {
+    "description": "Stabilization explanation"
+  },
+  "webcamMirror": "Mirror the preview",
+  "@webcamMirror": {
+    "description": "Setting title (front camera)"
+  },
+  "webcamMirrorDetail": "On this phone only; the computer gets it unmirrored.",
+  "@webcamMirrorDetail": {
+    "description": "Mirror explanation"
+  },
+  "webcamFormat": "Format",
+  "@webcamFormat": {
+    "description": "Setting title: the stream format summary"
+  },
+  "webcamFormatValue": "{width}×{height} · {fps} fps · H.264",
+  "@webcamFormatValue": {
+    "description": "Stream format summary, e.g. 1280×720 · 30 fps · H.264",
+    "placeholders": {
+      "width": {
+        "type": "String"
+      },
+      "height": {
+        "type": "String"
+      },
+      "fps": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamReset": "Reset",
+  "@webcamReset": {
+    "description": "Button: reset a setting to its default"
+  },
+  "webcamResetSetting": "Reset {setting}",
+  "@webcamResetSetting": {
+    "description": "Accessibility label of Reset; setting is the setting title",
+    "placeholders": {
+      "setting": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamZoomTo": "Zoom {zoom}",
+  "@webcamZoomTo": {
+    "description": "Accessibility label of a zoom chip; zoom is like 2×",
+    "placeholders": {
+      "zoom": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingScreenRequestTitle": "{name} wants to see your screen",
+  "@sharingScreenRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingScreenRequestDetail": "Everything on this phone’s screen shows on {name} until you stop. Android asks you to confirm next.",
+  "@sharingScreenRequestDetail": {
+    "description": "Screen share request explanation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingControlRequestTitle": "{name} wants to control your screen",
+  "@sharingControlRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingControlRequestDetail": "{name} sees this phone’s screen and can tap, swipe and type on it until you stop. Android asks you to confirm next.",
+  "@sharingControlRequestDetail": {
+    "description": "Remote control request explanation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingCameraRequestTitle": "{name} wants to use your camera",
+  "@sharingCameraRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingCameraRequestDetail": "{name} gets this phone’s camera as a webcam until you stop. Zoom, focus, light, lenses and rotation are in Linksy while it runs.",
+  "@sharingCameraRequestDetail": {
+    "description": "Webcam request explanation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingInputRequestTitle": "{name} wants to use this phone as a touchpad",
+  "@sharingInputRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingInputRequestDetail": "Unexpected: computers don’t ask this. Don’t allow it.",
+  "@sharingInputRequestDetail": {
+    "description": "Touchpad request warning"
+  },
+  "sharingMicrophoneRequestTitle": "{name} wants to use your microphone",
+  "@sharingMicrophoneRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingMicrophoneRequestDetail": "{name} hears this phone’s microphone until you stop, as a microphone any of its apps can use. Android asks you to confirm next.",
+  "@sharingMicrophoneRequestDetail": {
+    "description": "Microphone request explanation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingDisplayRequestTitle": "{name} wants to use this screen as a second display",
+  "@sharingDisplayRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingDisplayRequestDetail": "This phone shows a screen of {name} full screen. Touch it to click and drag; scroll with two fingers. Go back to stop.",
+  "@sharingDisplayRequestDetail": {
+    "description": "Second display request explanation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingAllow": "Allow",
+  "@sharingAllow": {
+    "description": "Request dialog: accept"
+  },
+  "sharingDontAllow": "Don’t allow",
+  "@sharingDontAllow": {
+    "description": "Request dialog: refuse"
+  },
+  "sharingProtectionHint": "Top bar or notifications black on the computer? Android’s screen share protection hides them. Turn on “Disable screen share protections” in Developer options, then share again.",
+  "@sharingProtectionHint": {
+    "description": "Hint about Android 15 screen share protection; the quoted text is the Android setting name"
+  },
+  "sharingGotIt": "Got it",
+  "@sharingGotIt": {
+    "description": "Dismiss the hint"
+  },
+  "sharingDeveloperOptions": "Developer options",
+  "@sharingDeveloperOptions": {
+    "description": "Opens Android's Developer options"
+  },
+  "sharingControlling": "{name} is controlling your screen",
+  "@sharingControlling": {
+    "description": "Live share banner",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingUsingCamera": "{name} is using your camera",
+  "@sharingUsingCamera": {
+    "description": "Live share banner",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingUsingMicrophone": "{name} is using your microphone",
+  "@sharingUsingMicrophone": {
+    "description": "Live share banner",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingScreenWith": "Sharing your screen with {name}",
+  "@sharingScreenWith": {
+    "description": "Live share banner",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingTapForCameraControls": "Tap for camera controls",
+  "@sharingTapForCameraControls": {
+    "description": "Webcam banner subtitle"
+  },
+  "sharingSwitchCamera": "Switch camera",
+  "@sharingSwitchCamera": {
+    "description": "Tooltip: flip between front and back camera"
+  },
+  "sharingStopSharing": "Stop sharing",
+  "@sharingStopSharing": {
+    "description": "Accessibility label of Stop on the banner"
+  },
+  "sharingStop": "Stop",
+  "@sharingStop": {
+    "description": "Banner button that stops the share"
+  },
+  "sharingCameraControls": "Camera controls",
+  "@sharingCameraControls": {
+    "description": "Accessibility label: opens the webcam screen"
+  },
+  "displaySecondHint": "{name}’s second display · go back to stop",
+  "@displaySecondHint": {
+    "description": "Hint over the second display; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "displayControlHint": "{name}’s screen · touch to click · go back to stop",
+  "@displayControlHint": {
+    "description": "Hint while controlling a computer's screen",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "displayWatchHint": "{name}’s screen · go back to stop",
+  "@displayWatchHint": {
+    "description": "Hint while watching a computer's screen",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalTabClosed": "“{title}” closed",
+  "@terminalTabClosed": {
+    "description": "Message: a terminal tab was closed here",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalTabEnded": "“{title}” ended on {name}",
+  "@terminalTabEnded": {
+    "description": "Message: the shell ended on the computer",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalCloseTitle": "Close this terminal?",
+  "@terminalCloseTitle": {
+    "description": "Confirm dialog title"
+  },
+  "terminalCloseDetail": "The shell ends on {name}, with anything still running in it. To come back to it later, keep it running instead.",
+  "@terminalCloseDetail": {
+    "description": "Confirm dialog text; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalKeepRunning": "Keep running",
+  "@terminalKeepRunning": {
+    "description": "Dialog button: detach instead of closing"
+  },
+  "terminalClose": "Close",
+  "@terminalClose": {
+    "description": "Button: close the terminal"
+  },
+  "terminalTheComputer": "the computer",
+  "@terminalTheComputer": {
+    "description": "Fallback name when the computer's name is unknown, used inside sentences"
+  },
+  "terminalDetached": "Detached",
+  "@terminalDetached": {
+    "description": "Card title: the shell runs without this phone attached"
+  },
+  "terminalDetachedDetail": "Still running on {name}. Reattach to see it again; the code is asked again.",
+  "@terminalDetachedDetail": {
+    "description": "Detached card text",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalReattach": "Reattach",
+  "@terminalReattach": {
+    "description": "Button: reconnect to a running shell"
+  },
+  "terminalOn": "Terminal on {name}",
+  "@terminalOn": {
+    "description": "Header status",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalDetachedOn": "Detached · still running on {name}",
+  "@terminalDetachedOn": {
+    "description": "Header status",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalOpeningOn": "Opening on {name}…",
+  "@terminalOpeningOn": {
+    "description": "Header status",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalWaitingForCode": "Waiting for the code",
+  "@terminalWaitingForCode": {
+    "description": "Header status"
+  },
+  "terminalEnded": "Ended",
+  "@terminalEnded": {
+    "description": "Header status: the shell has ended"
+  },
+  "terminalBack": "Back",
+  "@terminalBack": {
+    "description": "Tooltip: go back"
+  },
+  "terminalTitle": "Terminal",
+  "@terminalTitle": {
+    "description": "Header title when no tab is open"
+  },
+  "terminalMenu": "Terminal menu",
+  "@terminalMenu": {
+    "description": "Tooltip of the menu button"
+  },
+  "terminalDetachMenu": "Leave it running (detach)",
+  "@terminalDetachMenu": {
+    "description": "Menu item"
+  },
+  "terminalCloseTab": "Close {title}",
+  "@terminalCloseTab": {
+    "description": "Accessibility label: close a tab",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalNew": "New terminal",
+  "@terminalNew": {
+    "description": "Button: open a new terminal"
+  },
+  "terminalShellOn": "A shell on {name}",
+  "@terminalShellOn": {
+    "description": "Start screen title",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalShellDetail": "Runs as you on the computer, in your home folder. Each time it opens, it asks for the terminal code set there.",
+  "@terminalShellDetail": {
+    "description": "Start screen explanation"
+  },
+  "terminalStillRunning": "STILL RUNNING",
+  "@terminalStillRunning": {
+    "description": "Section header (uppercase): shells still running on the computer"
+  },
+  "terminalReattachTab": "Reattach {title}",
+  "@terminalReattachTab": {
+    "description": "Accessibility label: reattach a running shell",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalStarted": "Started {time}",
+  "@terminalStarted": {
+    "description": "When a running shell was started; time is a formatted clock time",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalKeyLeft": "Left",
+  "@terminalKeyLeft": {
+    "description": "Key bar: left arrow key"
+  },
+  "terminalKeyUp": "Up",
+  "@terminalKeyUp": {
+    "description": "Key bar: up arrow key"
+  },
+  "terminalKeyDown": "Down",
+  "@terminalKeyDown": {
+    "description": "Key bar: down arrow key"
+  },
+  "terminalKeyRight": "Right",
+  "@terminalKeyRight": {
+    "description": "Key bar: right arrow key"
+  },
+  "terminalCodeTitle": "Terminal code",
+  "@terminalCodeTitle": {
+    "description": "Code sheet title"
+  },
+  "terminalCodeDetail": "The code set on {name} in Preferences › Terminal. Linksy never keeps it.",
+  "@terminalCodeDetail": {
+    "description": "Code sheet explanation; Preferences › Terminal is the desktop app's menu path",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalCodePassphrase": "Passphrase",
+  "@terminalCodePassphrase": {
+    "description": "Code field hint when letters are allowed"
+  },
+  "terminalCodeDigitsHint": "6 or more digits",
+  "@terminalCodeDigitsHint": {
+    "description": "Code field hint for a numeric code"
+  },
+  "terminalCodeUseDigits": "Use digits",
+  "@terminalCodeUseDigits": {
+    "description": "Switch the keyboard to numbers"
+  },
+  "terminalCodeUseLetters": "Use letters",
+  "@terminalCodeUseLetters": {
+    "description": "Switch the keyboard to letters"
+  },
+  "terminalOpening": "Opening…",
+  "@terminalOpening": {
+    "description": "Button while opening the terminal"
+  },
+  "terminalOpen": "Open terminal",
+  "@terminalOpen": {
+    "description": "Button: open the terminal with the code"
+  }
+}

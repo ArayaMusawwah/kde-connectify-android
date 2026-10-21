@@ -5,6 +5,8 @@ library;
 
 import 'dart:typed_data';
 
+import '../ui/l10n.dart';
+
 enum DeviceKind {
   desktop,
   laptop,
@@ -45,7 +47,12 @@ class DeviceInfo {
   String get shortId => shortDeviceId(id);
 
   /// "Linux laptop", "Android phone".
-  String get description => '${osLabel(os)} ${kind.name}';
+  String get description => tr.modelDescription(osLabel(os), switch (kind) {
+    DeviceKind.desktop => tr.modelKindDesktop,
+    DeviceKind.laptop => tr.modelKindLaptop,
+    DeviceKind.phone => tr.modelKindPhone,
+    DeviceKind.tablet => tr.modelKindTablet,
+  });
 
   DeviceInfo copyWith({String? name}) => DeviceInfo(
     id: id,
@@ -68,7 +75,7 @@ String osLabel(String os) => switch (os) {
   'macos' => 'macOS',
   'windows' => 'Windows',
   'ios' => 'iOS',
-  _ => os.isEmpty ? 'Unknown' : os[0].toUpperCase() + os.substring(1),
+  _ => os.isEmpty ? tr.modelOsUnknown : os[0].toUpperCase() + os.substring(1),
 };
 
 enum Presence { connected, nearby, notNearby }

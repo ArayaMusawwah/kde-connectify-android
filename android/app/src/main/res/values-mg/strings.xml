@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android's own text (notifications); the app's is in lib/l10n. -->
+<resources>
+    <string name="channel_incoming_files">Rakitra miditra</string>
+    <string name="accept">Ekena</string>
+    <string name="decline">Lavina</string>
+    <string name="keep_alive_default">Mifandray i Linksy</string>
+    <string name="your_computer">Ny solosainao</string>
+    <string name="locate_not_allowed">Tsy nahazo alalana hampiasa ny toerana misy ity finday ity i Linksy</string>
+    <string name="locate_off">Maty ny toerana (localisation) amin\'ity finday ity</string>
+    <string name="locate_timeout">Tsy hitan\'ity finday ity ara-potoana ny toerana misy azy</string>
+    <string name="locate_open_app">Sokafy i Linksy amin\'ny finday hizarana ny toerana misy azy</string>
+    <string name="channel_news">Vaovao avy amin\'i Linksy</string>
+    <string name="channel_staying">Mitoetra mifandray</string>
+    <string name="camera_didnt_start">Tsy nandeha ny fakantsary.</string>
+    <string name="camera_unavailable">Tsy misy ny fakantsary.</string>
+    <string name="sharing_screen">Mizara ny efijerinao amin\'i %1$s</string>
+    <string name="using_microphone">Mampiasa ny mikrôfaonao i %1$s</string>
+    <string name="using_camera">Mampiasa ny fakantsarinao i %1$s</string>
+    <string name="channel_sharing">Fizarana efijery sy fakantsary</string>
+    <string name="stop_sharing">Atsaharo ny fizarana</string>
+    <string name="switch_camera">Ovay ny fakantsary</string>
+</resources>

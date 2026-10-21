@@ -5,6 +5,7 @@ import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 import 'webcam_screen.dart';
 
@@ -18,44 +19,38 @@ class SessionRequestDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
+    final l = context.l10n;
     final name = request.from.name;
     final (icon, title, detail) = switch (request.kind) {
       SessionKind.screen => (
         Ph.screencast,
-        '$name wants to see your screen',
-        'Everything on this phone’s screen shows on $name until you stop. '
-            'Android asks you to confirm next.',
+        l.sharingScreenRequestTitle(name),
+        l.sharingScreenRequestDetail(name),
       ),
       SessionKind.control => (
         Ph.cursorClick,
-        '$name wants to control your screen',
-        '$name sees this phone’s screen and can tap, swipe and type on it '
-            'until you stop. Android asks you to confirm next.',
+        l.sharingControlRequestTitle(name),
+        l.sharingControlRequestDetail(name),
       ),
       SessionKind.camera => (
         Ph.videoCamera,
-        '$name wants to use your camera',
-        '$name gets this phone’s camera as a webcam until you stop. '
-            'Zoom, focus, light, lenses and rotation are in Linksy while it '
-            'runs.',
+        l.sharingCameraRequestTitle(name),
+        l.sharingCameraRequestDetail(name),
       ),
       SessionKind.input => (
         Ph.mouseSimple,
-        '$name wants to use this phone as a touchpad',
-        'Unexpected: computers don’t ask this. Don’t allow it.',
+        l.sharingInputRequestTitle(name),
+        l.sharingInputRequestDetail,
       ),
       SessionKind.microphone => (
         Ph.microphone,
-        '$name wants to use your microphone',
-        '$name hears this phone’s microphone until you stop, as a '
-            'microphone any of its apps can use. Android asks you to confirm '
-            'next.',
+        l.sharingMicrophoneRequestTitle(name),
+        l.sharingMicrophoneRequestDetail(name),
       ),
       SessionKind.display => (
         Ph.monitor,
-        '$name wants to use this screen as a second display',
-        'This phone shows a screen of $name full screen. Touch it to click '
-            'and drag; scroll with two fingers. Go back to stop.',
+        l.sharingDisplayRequestTitle(name),
+        l.sharingDisplayRequestDetail(name),
       ),
     };
     return Dialog(
@@ -82,12 +77,12 @@ class SessionRequestDialog extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             SigButton(
-              label: 'Allow',
+              label: l.sharingAllow,
               expand: true,
               onTap: () => _answer(context, true),
             ),
             SigButton(
-              label: 'Don’t allow',
+              label: l.sharingDontAllow,
               kind: SigButtonKind.quiet,
               expand: true,
               onTap: () => _answer(context, false),
@@ -183,9 +178,7 @@ class _ProtectionHint extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Top bar or notifications black on the computer? Android’s '
-                  'screen share protection hides them. Turn on “Disable screen '
-                  'share protections” in Developer options, then share again.',
+                  context.l10n.sharingProtectionHint,
                   style: TextStyle(fontSize: 13, color: s.muted, height: 1.35),
                 ),
               ),
@@ -196,11 +189,11 @@ class _ProtectionHint extends StatelessWidget {
             children: [
               TextButton(
                 onPressed: controller.dismissShareHint,
-                child: const Text('Got it'),
+                child: Text(context.l10n.sharingGotIt),
               ),
               TextButton(
                 onPressed: LinksyPlatform.developerOptions,
-                child: const Text('Developer options'),
+                child: Text(context.l10n.sharingDeveloperOptions),
               ),
             ],
           ),
@@ -218,18 +211,13 @@ class _Banner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final name = share.peer.name;
     final (icon, text) = switch (share.kind) {
-      SessionKind.control => (
-        Ph.cursorClick,
-        '$name is controlling your screen',
-      ),
-      SessionKind.camera => (Ph.videoCamera, '$name is using your camera'),
-      SessionKind.microphone => (
-        Ph.microphone,
-        '$name is using your microphone',
-      ),
-      _ => (Ph.screencast, 'Sharing your screen with $name'),
+      SessionKind.control => (Ph.cursorClick, l.sharingControlling(name)),
+      SessionKind.camera => (Ph.videoCamera, l.sharingUsingCamera(name)),
+      SessionKind.microphone => (Ph.microphone, l.sharingUsingMicrophone(name)),
+      _ => (Ph.screencast, l.sharingScreenWith(name)),
     };
     final banner = Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
@@ -256,9 +244,12 @@ class _Banner extends StatelessWidget {
                   ),
                 ),
                 if (share.kind == SessionKind.camera)
-                  const Text(
-                    'Tap for camera controls',
-                    style: TextStyle(color: Colors.white70, fontSize: 12.5),
+                  Text(
+                    l.sharingTapForCameraControls,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12.5,
+                    ),
                   ),
               ],
             ),
@@ -266,10 +257,10 @@ class _Banner extends StatelessWidget {
           const SizedBox(width: 8),
           if (share.kind == SessionKind.camera) ...[
             Tooltip(
-              message: 'Switch camera',
+              message: l.sharingSwitchCamera,
               child: Pressable(
                 onTap: () => controller.switchCamera(share.session),
-                semanticLabel: 'Switch camera',
+                semanticLabel: l.sharingSwitchCamera,
                 child: Container(
                   width: 38,
                   height: 38,
@@ -289,16 +280,19 @@ class _Banner extends StatelessWidget {
           ],
           Pressable(
             onTap: () => controller.stopSharing(share.session),
-            semanticLabel: 'Stop sharing',
+            semanticLabel: l.sharingStopSharing,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(99),
               ),
-              child: const Text(
-                'Stop',
-                style: TextStyle(color: Sig.deep, fontWeight: FontWeight.w700),
+              child: Text(
+                l.sharingStop,
+                style: const TextStyle(
+                  color: Sig.deep,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
@@ -311,7 +305,7 @@ class _Banner extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute<void>(builder: (_) => WebcamScreen(share: share)),
       ),
-      semanticLabel: 'Camera controls',
+      semanticLabel: l.sharingCameraControls,
       child: banner,
     );
   }

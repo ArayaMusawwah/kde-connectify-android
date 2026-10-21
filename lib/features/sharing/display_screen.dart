@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
+import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 
 /// A computer's screen full screen in landscape: this phone as its second
@@ -217,12 +218,15 @@ class _DisplayScreenState extends State<DisplayScreen> {
                     ),
                     child: Text(
                       switch (widget.session.kind) {
-                        SessionKind.display =>
-                          '${widget.session.peer.name}’s second display · go back to stop',
-                        SessionKind.control =>
-                          '${widget.session.peer.name}’s screen · touch to click · go back to stop',
-                        _ =>
-                          '${widget.session.peer.name}’s screen · go back to stop',
+                        SessionKind.display => context.l10n.displaySecondHint(
+                          widget.session.peer.name,
+                        ),
+                        SessionKind.control => context.l10n.displayControlHint(
+                          widget.session.peer.name,
+                        ),
+                        _ => context.l10n.displayWatchHint(
+                          widget.session.peer.name,
+                        ),
                       },
                       style: const TextStyle(
                         color: Colors.white,

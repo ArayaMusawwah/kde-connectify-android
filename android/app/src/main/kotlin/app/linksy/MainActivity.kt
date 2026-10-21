@@ -95,7 +95,7 @@ class MainActivity : FlutterActivity() {
                     }
                     "keepAlive" -> {
                         if (call.argument<Boolean>("on") == true) {
-                            KeepAlive.start(this@MainActivity, call.argument<String>("text") ?: "Linksy is connected", call.argument<Boolean>("awake") == true)
+                            KeepAlive.start(this@MainActivity, call.argument<String>("text") ?: Lang.str(this@MainActivity, R.string.keep_alive_default), call.argument<Boolean>("awake") == true)
                         } else {
                             KeepAlive.stop(this@MainActivity)
                         }
@@ -213,7 +213,7 @@ class MainActivity : FlutterActivity() {
                             this@MainActivity,
                             call.argument<String>("session")!!,
                             call.argument<String>("kind")!!,
-                            call.argument<String>("peer") ?: "Your computer",
+                            call.argument<String>("peer") ?: Lang.str(this@MainActivity, R.string.your_computer),
                             call.argument<String>("peerId") ?: "",
                         )
                         result.success(null)

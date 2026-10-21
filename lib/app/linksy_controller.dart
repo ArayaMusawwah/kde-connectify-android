@@ -286,6 +286,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     );
   }
 
+  /// A small app setting (the terminal's text size…), kept by Android.
+  Future<void> setPref(String key, String? value) => _setPref(key, value);
+
   Future<void> _setPref(String key, String? value) async {
     if (value == null) {
       prefs.remove(key);
@@ -404,7 +407,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   Future<String?> sendToClipboard(String id, String path) async {
     final file = File(path);
     if (!file.existsSync() || file.lengthSync() > 10 * 1024 * 1024) {
-      return 'Only a file up to 10 MB fits on the clipboard.';
+      return tr.ctlClipboardFileTooBig;
     }
     try {
       final transfer = await node.sendClipboardFile(id, path);
@@ -438,7 +441,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         status: copied ? ActivityStatus.done : ActivityStatus.failed,
         names: [path.split('/').last],
         saved: [path],
-        reason: copied ? null : 'Couldn’t put it on the clipboard',
+        reason: copied ? null : tr.ctlClipboardCopyFailed,
       ),
     );
   }
@@ -456,7 +459,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   Future<void> _onLocate(DeviceInfo from) async {
     String? refused;
     if (!locatable) {
-      refused = 'Locating is turned off in Linksy on this phone';
+      refused = tr.ctlLocateOff;
     } else {
       final fix = await LinksyPlatform.locate();
       if (fix.error != null) {
@@ -516,7 +519,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   void dismissNotice(String id) => _setPref('notice.$id', '1');
 
-  String _name(String id) => device(id)?.device.name ?? 'your computer';
+  String _name(String id) => device(id)?.device.name ?? tr.ctlYourComputer;
 
   /// The quiet "stay connected" notification: while a computer locks when
   /// this phone leaves (CPU kept awake for heartbeats), or when the user
@@ -527,13 +530,10 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       LinksyPlatform.keepAlive(
         on: true,
         awake: true,
-        text: 'Keeping ${lockers.join(' and ')} locked when you leave',
+        text: tr.ctlKeepingLocked(lockers.join(' ${tr.ctlAnd} ')),
       );
     } else if (stayRunning) {
-      LinksyPlatform.keepAlive(
-        on: true,
-        text: 'Staying connected to your computers',
-      );
+      LinksyPlatform.keepAlive(on: true, text: tr.ctlStayingConnected);
     } else {
       LinksyPlatform.keepAlive(on: false);
     }
@@ -836,9 +836,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
             AppLifecycleState.resumed) {
           LinksyPlatform.noticeTransfer(
             transfer,
-            files.length == 1
-                ? '${from.name} wants to send you a file'
-                : '${from.name} wants to send you ${files.length} files',
+            tr.ctlTransferRequest(files.length, from.name),
             [
               if (files.length == 1) files.single.name,
               formatBytes(total),
@@ -1135,9 +1133,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<String?> sendClipboard(String deviceId) async {
     final text = (await Clipboard.getData(Clipboard.kTextPlain))?.text ?? '';
-    if (text.isEmpty) return 'The clipboard is empty.';
+    if (text.isEmpty) return tr.ctlClipboardEmpty;
     if (utf8.encode(text).length > maxClipboardBytes) {
-      return 'The clipboard holds too much text to send.';
+      return tr.ctlClipboardTooMuch;
     }
     return _run(() async {
       await node.sendClipboard(deviceId, text);
@@ -1146,8 +1144,8 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<String?> ping(String deviceId) => _run(() async {
-    await node.notify(deviceId, 'Ping', 'From ${node.info.name}');
-    _addLocal(deviceId, ActivityKind.ping, incoming: false, text: 'Ping');
+    await node.notify(deviceId, tr.ctlPing, tr.ctlPingFrom(node.info.name));
+    _addLocal(deviceId, ActivityKind.ping, incoming: false, text: tr.ctlPing);
   });
 
   /// "Find my computer": makes it ring until [stopFinding].
@@ -1176,7 +1174,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   /// Text shared from another app, to [deviceId]'s clipboard.
   Future<String?> sendText(String deviceId, String text) async {
     if (utf8.encode(text).length > maxClipboardBytes) {
-      return 'That’s too much text to send.';
+      return tr.ctlTextTooMuch;
     }
     return _run(() async {
       await node.sendClipboard(deviceId, text);
@@ -1193,7 +1191,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       _update(request, (a) {
         a
           ..status = ActivityStatus.declined
-          ..reason = 'Declined';
+          ..reason = tr.ctlDeclined;
       });
     }
     return error;
@@ -1213,19 +1211,17 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         case SessionKind.screen || SessionKind.control:
           allowed = await LinksyPlatform.requestScreenCapture(request.request);
           if (!allowed) {
-            error =
-                'Sharing the screen needs Android’s permission to capture it.';
+            error = tr.ctlScreenPermission;
           }
         case SessionKind.camera:
           allowed = await LinksyPlatform.requestCamera();
           if (!allowed) {
-            error = 'Linksy needs the camera permission to work as a webcam.';
+            error = tr.ctlCameraPermission;
           }
         case SessionKind.microphone:
           allowed = await LinksyPlatform.requestPermission('microphone');
           if (!allowed) {
-            error =
-                'Linksy needs the microphone permission to be a microphone.';
+            error = tr.ctlMicrophonePermission;
           }
         case SessionKind.display:
           // The monitor in this phone's shape (§4.8).

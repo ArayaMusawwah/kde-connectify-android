@@ -1,0 +1,371 @@
+{
+  "settingsBack": "Back",
+  "@settingsBack": {
+    "description": "Tooltip of the back button on the Settings screen"
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title of the Settings screen"
+  },
+  "settingsReceiving": "Receiving",
+  "@settingsReceiving": {
+    "description": "Settings section label: receiving files"
+  },
+  "settingsSaveLocation": "Save location",
+  "@settingsSaveLocation": {
+    "description": "Settings row: where received files are saved"
+  },
+  "settingsSaveLocationPath": "Downloads › Linksy",
+  "@settingsSaveLocationPath": {
+    "description": "Settings row caption: the folder received files go to (Downloads folder, then Linksy subfolder)"
+  },
+  "settingsAcceptFromMyDevices": "Accept from my devices",
+  "@settingsAcceptFromMyDevices": {
+    "description": "Settings switch: accept files from paired devices automatically"
+  },
+  "settingsAcceptFromMyDevicesCaption": "Files from paired devices arrive without asking.",
+  "@settingsAcceptFromMyDevicesCaption": {
+    "description": "Caption of the auto-accept switch"
+  },
+  "settingsConnection": "Connection",
+  "@settingsConnection": {
+    "description": "Settings section label"
+  },
+  "settingsStayConnected": "Stay connected",
+  "@settingsStayConnected": {
+    "description": "Settings switch: keep connections to nearby devices open"
+  },
+  "settingsStayConnectedCaption": "Faster sharing with nearby devices. Uses more battery.",
+  "@settingsStayConnectedCaption": {
+    "description": "Caption of the Stay connected switch"
+  },
+  "settingsKeepRunning": "Keep running in the background",
+  "@settingsKeepRunning": {
+    "description": "Settings switch: keep the app running when closed"
+  },
+  "settingsKeepRunningCaption": "Files, photo backup and calls keep working when Linksy is closed. Shows a quiet notification.",
+  "@settingsKeepRunningCaption": {
+    "description": "Caption of the background switch"
+  },
+  "settingsAwayFromHome": "Away from home",
+  "@settingsAwayFromHome": {
+    "description": "Settings switch: reach computers over the internet"
+  },
+  "settingsAwayFromHomeCaption": "Reach your computers over the internet when you’re not on the same network, for a week after you last were. Encrypted end to end.",
+  "@settingsAwayFromHomeCaption": {
+    "description": "Caption of the Away from home switch"
+  },
+  "settingsWithYourComputers": "With your computers",
+  "@settingsWithYourComputers": {
+    "description": "Settings section label: features shared with paired computers"
+  },
+  "settingsPauseMusic": "Pause music during calls",
+  "@settingsPauseMusic": {
+    "description": "Settings switch: computers pause media during phone calls"
+  },
+  "settingsPauseMusicCaption": "Your computers pause what plays while a call rings or goes on, and resume after.",
+  "@settingsPauseMusicCaption": {
+    "description": "Caption of the Pause music switch"
+  },
+  "settingsBrowseFiles": "Let computers browse files",
+  "@settingsBrowseFiles": {
+    "description": "Settings switch: share a phone folder with computers"
+  },
+  "settingsBrowseFilesChoose": "Choose a folder your computers can open in their Files app, like Documents (Android doesn’t allow Download).",
+  "@settingsBrowseFilesChoose": {
+    "description": "Caption when no shared folder is chosen yet"
+  },
+  "settingsSharesFolder": "Shares “{folder}”. Tap to choose another folder.",
+  "@settingsSharesFolder": {
+    "description": "Caption showing the folder shared with computers",
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPicture": "Picture of this phone",
+  "@settingsPicture": {
+    "description": "Settings row: the picture computers show for this phone"
+  },
+  "settingsPictureChoose": "Your computers show it for this phone. Tap to choose one.",
+  "@settingsPictureChoose": {
+    "description": "Caption when no picture is chosen"
+  },
+  "settingsPictureChange": "Your computers show it for this phone. Tap to change it.",
+  "@settingsPictureChange": {
+    "description": "Caption when a picture is chosen"
+  },
+  "settingsPictureRemove": "Remove",
+  "@settingsPictureRemove": {
+    "description": "Button that removes the phone picture"
+  },
+  "settingsLocate": "Let computers locate this phone",
+  "@settingsLocate": {
+    "description": "Settings switch: allow computers to ask for the phone location"
+  },
+  "settingsLocateCaption": "A computer can ask where this phone is, once, to find it. Nothing is kept or tracked. Works while Linksy is open.",
+  "@settingsLocateCaption": {
+    "description": "Caption of the locate switch"
+  },
+  "settingsLocatePermission": "Linksy needs the location permission for this.",
+  "@settingsLocatePermission": {
+    "description": "Message when the location permission was refused"
+  },
+  "settingsPhotoFolder": "Photo folder",
+  "@settingsPhotoFolder": {
+    "description": "Settings row: the camera folder backed up to computers"
+  },
+  "settingsPhotoFolderChoose": "Choose your camera folder (DCIM › Camera) to back up photos to a computer.",
+  "@settingsPhotoFolderChoose": {
+    "description": "Caption when no photo folder is chosen"
+  },
+  "settingsPhotoFolderBacksUp": "Backs up “{folder}”. Turn it on per computer, on its page.",
+  "@settingsPhotoFolderBacksUp": {
+    "description": "Caption showing the backed-up photo folder",
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsThisApp": "This app",
+  "@settingsThisApp": {
+    "description": "Settings section label: app preferences"
+  },
+  "settingsPermissions": "Permissions",
+  "@settingsPermissions": {
+    "description": "Settings section label"
+  },
+  "settingsDemo": "Demo",
+  "@settingsDemo": {
+    "description": "Settings section label for the demo tools"
+  },
+  "settingsDemoCaption": "Simulated devices until the Linksy core is connected. These start what another device would.",
+  "@settingsDemoCaption": {
+    "description": "Explanation of the demo section"
+  },
+  "settingsDemoReceiveFiles": "Receive files",
+  "@settingsDemoReceiveFiles": {
+    "description": "Demo action: simulate incoming files"
+  },
+  "settingsDemoReceivePairing": "Receive a pairing request",
+  "@settingsDemoReceivePairing": {
+    "description": "Demo action: simulate an incoming pairing request"
+  },
+  "settingsDemoReceiveClipboard": "Receive clipboard text",
+  "@settingsDemoReceiveClipboard": {
+    "description": "Demo action: simulate incoming clipboard text"
+  },
+  "settingsTagline": "Your devices, connected.\nNo account, no cloud.",
+  "@settingsTagline": {
+    "description": "App tagline at the bottom of Settings (two lines)"
+  },
+  "settingsNameTitle": "Name this phone",
+  "@settingsNameTitle": {
+    "description": "Title of the rename dialog"
+  },
+  "settingsNameCaption": "Your other devices see this name.",
+  "@settingsNameCaption": {
+    "description": "Subtitle of the rename dialog"
+  },
+  "settingsSave": "Save",
+  "@settingsSave": {
+    "description": "Button in the rename dialog"
+  },
+  "settingsCancel": "Cancel",
+  "@settingsCancel": {
+    "description": "Button in the rename dialog"
+  },
+  "settingsRename": "Rename {name}",
+  "@settingsRename": {
+    "description": "Accessibility label of the phone card; name is the phone name",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsThisPhone": "This phone · {shortId}",
+  "@settingsThisPhone": {
+    "description": "Under the phone name; shortId is a short device code",
+    "placeholders": {
+      "shortId": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPermissionsRow": "Notifications and camera",
+  "@settingsPermissionsRow": {
+    "description": "Settings row that opens the permissions sheet"
+  },
+  "settingsPermissionsWhat": "What Linksy asks Android for, and why.",
+  "@settingsPermissionsWhat": {
+    "description": "Caption of the permissions row while loading"
+  },
+  "settingsPermissionsBoth": "Both allowed.",
+  "@settingsPermissionsBoth": {
+    "description": "Caption when both permissions are allowed"
+  },
+  "settingsPermissionsSome": "{count, plural, other{{count} of 2 allowed. Tap to allow the rest.}}",
+  "@settingsPermissionsSome": {
+    "description": "Caption when some of the 2 permissions are allowed",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "permissionsTitle": "Permissions",
+  "@permissionsTitle": {
+    "description": "Title of the permissions sheet"
+  },
+  "permissionsIntro": "Linksy asks only for what it needs, and you can change any of these later in Settings.",
+  "@permissionsIntro": {
+    "description": "Intro text of the permissions sheet"
+  },
+  "permissionsNotifications": "Notifications",
+  "@permissionsNotifications": {
+    "description": "Permission name: notifications"
+  },
+  "permissionsNotificationsWhy": "Shows when a computer sees your screen or uses your camera, with a button to stop it.",
+  "@permissionsNotificationsWhy": {
+    "description": "Why the app needs the notifications permission"
+  },
+  "permissionsCamera": "Camera",
+  "@permissionsCamera": {
+    "description": "Permission name: camera"
+  },
+  "permissionsCameraWhy": "Scans the pairing QR code, and lets a computer use this phone as a webcam when you allow it.",
+  "@permissionsCameraWhy": {
+    "description": "Why the app needs the camera permission"
+  },
+  "permissionsAllow": "Allow",
+  "@permissionsAllow": {
+    "description": "Button that asks Android for a permission"
+  },
+  "permissionsAllowed": "Allowed",
+  "@permissionsAllowed": {
+    "description": "Shown when a permission is already granted"
+  },
+  "permissionsDone": "Done",
+  "@permissionsDone": {
+    "description": "Button that closes the permissions sheet"
+  },
+  "remoteBack": "Back",
+  "@remoteBack": {
+    "description": "Tooltip of the back button on the Remote screen"
+  },
+  "remoteTitle": "Remote",
+  "@remoteTitle": {
+    "description": "Title of the screen that uses the phone as a computer remote"
+  },
+  "remoteAllowOn": "Allow it on {name}",
+  "@remoteAllowOn": {
+    "description": "Title while waiting for the computer to allow remote control; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteAsks": "Linksy on {name} asks whether this phone may move its pointer and type.",
+  "@remoteAsks": {
+    "description": "Detail while waiting for the computer to allow remote control",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteFailed": "That didn’t work",
+  "@remoteFailed": {
+    "description": "Title when the remote could not start"
+  },
+  "remoteStopped": "The remote stopped",
+  "@remoteStopped": {
+    "description": "Title when the computer ended the remote"
+  },
+  "remoteEndedBy": "{name} ended it.",
+  "@remoteEndedBy": {
+    "description": "Detail when the computer ended the remote; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteTryAgain": "Try again",
+  "@remoteTryAgain": {
+    "description": "Button that retries starting the remote"
+  },
+  "remoteTouchpad": "Touchpad",
+  "@remoteTouchpad": {
+    "description": "Remote mode tab: touchpad"
+  },
+  "remoteSlides": "Slides",
+  "@remoteSlides": {
+    "description": "Remote mode tab: presentation remote"
+  },
+  "remoteTouchpadHint": "Move with one finger, tap to click\nTwo fingers scroll, two-finger tap right-clicks",
+  "@remoteTouchpadHint": {
+    "description": "Hint on the touchpad area (two lines)"
+  },
+  "remoteLeftClick": "Left click",
+  "@remoteLeftClick": {
+    "description": "Touchpad button"
+  },
+  "remoteRightClick": "Right click",
+  "@remoteRightClick": {
+    "description": "Touchpad button"
+  },
+  "remoteKeyboard": "Keyboard",
+  "@remoteKeyboard": {
+    "description": "Button that shows the keyboard to type on the computer"
+  },
+  "remoteNextSlide": "Next slide",
+  "@remoteNextSlide": {
+    "description": "Accessibility label of the Next button"
+  },
+  "remoteNext": "Next",
+  "@remoteNext": {
+    "description": "Big button: next slide"
+  },
+  "remotePreviousSlide": "Previous slide",
+  "@remotePreviousSlide": {
+    "description": "Accessibility label of the Back button"
+  },
+  "remoteSlideBack": "Back",
+  "@remoteSlideBack": {
+    "description": "Big button: previous slide"
+  },
+  "remoteStartShow": "Start (F5)",
+  "@remoteStartShow": {
+    "description": "Button that starts the slideshow (sends F5)"
+  },
+  "remoteEndShow": "End (Esc)",
+  "@remoteEndShow": {
+    "description": "Button that ends the slideshow (sends Esc)"
+  },
+  "remoteVolumeHint": "Volume down: next · Volume up: back. The screen stays on.",
+  "@remoteVolumeHint": {
+    "description": "Hint under the slide buttons"
+  },
+  "ringTitle": "Here I am!",
+  "@ringTitle": {
+    "description": "Big title while the phone rings because a computer is looking for it"
+  },
+  "ringLookingFor": "{name} is looking for this phone.",
+  "@ringLookingFor": {
+    "description": "Under the title; name is the computer that rings the phone",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ringFoundIt": "Found it",
+  "@ringFoundIt": {
+    "description": "Button that stops the ringing"
+  }
+}

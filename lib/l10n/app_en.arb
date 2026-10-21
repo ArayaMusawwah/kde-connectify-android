@@ -71,5 +71,2585 @@
   "settingsLanguage": "Language",
   "@settingsLanguage": {},
   "languageDone": "Done",
-  "@languageDone": {}
+  "@languageDone": {},
+  "ctlClipboardFileTooBig": "Only a file up to 10 MB fits on the clipboard.",
+  "@ctlClipboardFileTooBig": {
+    "description": "Error when sharing a file to a computer's clipboard that is too big"
+  },
+  "ctlClipboardCopyFailed": "Couldn’t put it on the clipboard",
+  "@ctlClipboardCopyFailed": {
+    "description": "Activity reason: a file received for the clipboard couldn't be copied"
+  },
+  "ctlLocateOff": "Locating is turned off in Linksy on this phone",
+  "@ctlLocateOff": {
+    "description": "Sent to the computer (and shown) when it asks for the phone's location but locating is off"
+  },
+  "ctlYourComputer": "your computer",
+  "@ctlYourComputer": {
+    "description": "Fallback name for a computer whose name is unknown, used inside sentences"
+  },
+  "ctlAnd": "and",
+  "@ctlAnd": {
+    "description": "Word joining device names in a list, e.g. 'fedora and macbook'"
+  },
+  "ctlKeepingLocked": "Keeping {names} locked when you leave",
+  "@ctlKeepingLocked": {
+    "description": "Persistent notification while computers lock when the phone leaves; names is an already joined list",
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "ctlStayingConnected": "Staying connected to your computers",
+  "@ctlStayingConnected": {
+    "description": "Persistent notification while Linksy keeps running in the background"
+  },
+  "ctlTransferRequest": "{count, plural, =1{{name} wants to send you a file} other{{name} wants to send you {count} files}}",
+  "@ctlTransferRequest": {
+    "description": "Notification when a device wants to send files",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ctlClipboardEmpty": "The clipboard is empty.",
+  "@ctlClipboardEmpty": {
+    "description": "Error when sending the clipboard but it is empty"
+  },
+  "ctlClipboardTooMuch": "The clipboard holds too much text to send.",
+  "@ctlClipboardTooMuch": {
+    "description": "Error when the clipboard text is too large to send"
+  },
+  "ctlPing": "Ping",
+  "@ctlPing": {
+    "description": "Title of a ping notification sent to a computer, and its timeline entry"
+  },
+  "ctlPingFrom": "From {name}",
+  "@ctlPingFrom": {
+    "description": "Body of a ping notification shown on the computer; name is this phone's name",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ctlTextTooMuch": "That’s too much text to send.",
+  "@ctlTextTooMuch": {
+    "description": "Error when shared text is too large to send"
+  },
+  "ctlDeclined": "Declined",
+  "@ctlDeclined": {
+    "description": "Activity reason after the user declined a request"
+  },
+  "ctlScreenPermission": "Sharing the screen needs Android’s permission to capture it.",
+  "@ctlScreenPermission": {
+    "description": "Error when Android screen capture permission was refused"
+  },
+  "ctlCameraPermission": "Linksy needs the camera permission to work as a webcam.",
+  "@ctlCameraPermission": {
+    "description": "Error when the camera permission was refused"
+  },
+  "ctlMicrophonePermission": "Linksy needs the microphone permission to be a microphone.",
+  "@ctlMicrophonePermission": {
+    "description": "Error when the microphone permission was refused"
+  },
+  "ctlTerminalTitle": "Terminal",
+  "@ctlTerminalTitle": {
+    "description": "Default title of a remote terminal tab"
+  },
+  "errorThatDevice": "That device",
+  "@errorThatDevice": {
+    "description": "Device name used in error sentences when the device is unknown"
+  },
+  "errorOtherDevice": "The other device",
+  "@errorOtherDevice": {
+    "description": "Device name used in error sentences when none is given"
+  },
+  "errorComputerOnCable": "The computer on the cable",
+  "@errorComputerOnCable": {
+    "description": "Device name in error sentences for a computer connected by USB cable"
+  },
+  "errorDeviceAt": "The device at {address}",
+  "@errorDeviceAt": {
+    "description": "Device name in error sentences when pairing by address",
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "errorUnreachable": "{name} isn't reachable. Check that it's on and on this network.",
+  "@errorUnreachable": {
+    "description": "Error: the device can't be reached",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDeclined": "{name} declined.",
+  "@errorDeclined": {
+    "description": "Error: the device declined the request",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorTimeout": "{name} didn't answer in time.",
+  "@errorTimeout": {
+    "description": "Error: the device didn't answer in time",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNotPaired": "{name} isn't paired anymore. Pair again to share.",
+  "@errorNotPaired": {
+    "description": "Error: the device is no longer paired",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorUnsupported": "{name} can't do that yet.",
+  "@errorUnsupported": {
+    "description": "Error: the device doesn't support this",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNotFromAway": "{name} allows that only on the same network. Its owner can allow everything from away for this phone.",
+  "@errorNotFromAway": {
+    "description": "Error: the device only allows this on the same network",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorInvalid": "That didn’t work.",
+  "@errorInvalid": {
+    "description": "Generic error for an invalid request"
+  },
+  "errorSomethingWrong": "Something went wrong.",
+  "@errorSomethingWrong": {
+    "description": "Generic error"
+  },
+  "errorSomethingWrongDetail": "Something went wrong: {detail}",
+  "@errorSomethingWrongDetail": {
+    "description": "Generic error with technical detail",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalRefusedComputer": "The computer",
+  "@terminalRefusedComputer": {
+    "description": "Fallback name of the computer in terminal refusal messages"
+  },
+  "terminalRefusedCode": "Wrong code.",
+  "@terminalRefusedCode": {
+    "description": "Terminal refused: the code was wrong"
+  },
+  "terminalRefusedCodeTries": "{count, plural, =1{Wrong code, 1 try left.} other{Wrong code, {count} tries left.}}",
+  "@terminalRefusedCodeTries": {
+    "description": "Terminal refused: wrong code, with tries left",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "terminalRefusedLocked": "Too many wrong codes. Unlock the terminal on {name}.",
+  "@terminalRefusedLocked": {
+    "description": "Terminal refused: locked after too many wrong codes",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalRefusedOff": "Turn on Allow Terminal for this phone on {name}.",
+  "@terminalRefusedOff": {
+    "description": "Terminal refused: the computer has terminal turned off for this phone; 'Allow Terminal' is a setting on the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalRefusedAway": "{name} allows a terminal only on the same network, unless “Allow Everything From Away” is on there.",
+  "@terminalRefusedAway": {
+    "description": "Terminal refused from away; “Allow Everything From Away” is a setting on the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalRefusedUnsupported": "{name} can't open a terminal.",
+  "@terminalRefusedUnsupported": {
+    "description": "Terminal refused: not supported",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalRefusedLimit": "8 terminals already run on {name} for this phone. Close one first.",
+  "@terminalRefusedLimit": {
+    "description": "Terminal refused: limit of 8 terminals reached",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalRefusedDeclined": "{name} didn’t allow it.",
+  "@terminalRefusedDeclined": {
+    "description": "Terminal refused: the computer's user declined",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modelDescription": "{os} {kind}",
+  "@modelDescription": {
+    "description": "Device description, e.g. 'Linux laptop'; os is the OS name, kind a device kind word",
+    "placeholders": {
+      "os": {
+        "type": "String"
+      },
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "modelKindDesktop": "desktop",
+  "@modelKindDesktop": {
+    "description": "Device kind, used inside modelDescription"
+  },
+  "modelKindLaptop": "laptop",
+  "@modelKindLaptop": {
+    "description": "Device kind, used inside modelDescription"
+  },
+  "modelKindPhone": "phone",
+  "@modelKindPhone": {
+    "description": "Device kind, used inside modelDescription"
+  },
+  "modelKindTablet": "tablet",
+  "@modelKindTablet": {
+    "description": "Device kind, used inside modelDescription"
+  },
+  "modelOsUnknown": "Unknown",
+  "@modelOsUnknown": {
+    "description": "OS name when the device's OS is unknown"
+  },
+  "deviceNothingOfKind": "Nothing of that kind yet.",
+  "@deviceNothingOfKind": {
+    "description": "Device timeline: the selected filter has no entries"
+  },
+  "deviceBattery": "{level}%",
+  "@deviceBattery": {
+    "description": "Device page: battery level",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceBatteryCharging": "{level}%, charging",
+  "@deviceBatteryCharging": {
+    "description": "Device page: battery level while charging",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceReachableUntil": "Reachable from away until {day}",
+  "@deviceReachableUntil": {
+    "description": "Device page: away access expiry; day is a formatted day",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceLocksWhenLeave": "Locks when you leave with this phone",
+  "@deviceLocksWhenLeave": {
+    "description": "Device page: the computer locks when the phone goes away"
+  },
+  "deviceBack": "Back",
+  "@deviceBack": {
+    "description": "Tooltip of the back button"
+  },
+  "deviceMore": "More",
+  "@deviceMore": {
+    "description": "Tooltip of the device menu button"
+  },
+  "deviceShortId": "ID {id}",
+  "@deviceShortId": {
+    "description": "Device menu: the device's short ID",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceChangePicture": "Change picture",
+  "@deviceChangePicture": {
+    "description": "Device menu: replace the device's banner picture"
+  },
+  "deviceAddPicture": "Add a picture",
+  "@deviceAddPicture": {
+    "description": "Device menu: set a banner picture for the device"
+  },
+  "deviceRemovePicture": "Remove picture",
+  "@deviceRemovePicture": {
+    "description": "Device menu: remove the banner picture"
+  },
+  "deviceForgetThis": "Forget this device",
+  "@deviceForgetThis": {
+    "description": "Device menu: unpair the device"
+  },
+  "deviceForgetTitle": "Forget {name}?",
+  "@deviceForgetTitle": {
+    "description": "Forget dialog title; name is the device",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceForgetBody": "You’ll need to pair again to share with it. Its activity on this phone is cleared too.",
+  "@deviceForgetBody": {
+    "description": "Forget dialog body"
+  },
+  "deviceForget": "Forget",
+  "@deviceForget": {
+    "description": "Forget dialog: confirm button"
+  },
+  "deviceCancel": "Cancel",
+  "@deviceCancel": {
+    "description": "Forget dialog: cancel button"
+  },
+  "deviceSendFiles": "Send files",
+  "@deviceSendFiles": {
+    "description": "Device page: main action to send files"
+  },
+  "deviceSendFilesCaption": "Photos, documents, anything",
+  "@deviceSendFilesCaption": {
+    "description": "Caption under Send files"
+  },
+  "deviceClipboard": "Clipboard",
+  "@deviceClipboard": {
+    "description": "Device page action: send the clipboard"
+  },
+  "deviceClipboardCaption": "Send what you copied",
+  "@deviceClipboardCaption": {
+    "description": "Caption of the Clipboard action"
+  },
+  "devicePing": "Ping",
+  "@devicePing": {
+    "description": "Device page action: make the device chime"
+  },
+  "devicePingCaption": "Make it chime",
+  "@devicePingCaption": {
+    "description": "Caption of the Ping action"
+  },
+  "deviceRemote": "Remote",
+  "@deviceRemote": {
+    "description": "Device page action: touchpad / slide remote"
+  },
+  "deviceRemoteCaption": "Touchpad and slides",
+  "@deviceRemoteCaption": {
+    "description": "Caption of the Remote action"
+  },
+  "deviceRinging": "Ringing…",
+  "@deviceRinging": {
+    "description": "Find action while the device rings"
+  },
+  "deviceFindIt": "Find it",
+  "@deviceFindIt": {
+    "description": "Find action: ring the device to find it"
+  },
+  "deviceTapToStop": "Tap to stop",
+  "@deviceTapToStop": {
+    "description": "Caption of the Find action while ringing"
+  },
+  "deviceFindItCaption": "Make it ring loudly",
+  "@deviceFindItCaption": {
+    "description": "Caption of the Find action"
+  },
+  "devicePrevious": "Previous",
+  "@devicePrevious": {
+    "description": "Media control: previous track"
+  },
+  "devicePause": "Pause",
+  "@devicePause": {
+    "description": "Media control: pause"
+  },
+  "devicePlay": "Play",
+  "@devicePlay": {
+    "description": "Media control: play"
+  },
+  "deviceNext": "Next",
+  "@deviceNext": {
+    "description": "Media control: next track"
+  },
+  "deviceAllowOn": "Allow it on {name}…",
+  "@deviceAllowOn": {
+    "description": "Message after asking to see a computer's screen; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceSeeScreen": "See its screen",
+  "@deviceSeeScreen": {
+    "description": "Card title: view the computer's screen"
+  },
+  "deviceSeeScreenCaption": "Watch it here, or control it with touch",
+  "@deviceSeeScreenCaption": {
+    "description": "Caption of the See its screen card"
+  },
+  "deviceWatch": "Watch",
+  "@deviceWatch": {
+    "description": "Button: watch the computer's screen"
+  },
+  "deviceControl": "Control",
+  "@deviceControl": {
+    "description": "Button: control the computer's screen with touch"
+  },
+  "deviceTerminal": "Terminal",
+  "@deviceTerminal": {
+    "description": "Card title: a shell on the computer"
+  },
+  "deviceTerminalShell": "A shell on {name}, locked by its code",
+  "@deviceTerminalShell": {
+    "description": "Terminal card caption when none is open; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceTerminalsOpen": "{count, plural, =1{1 terminal open} other{{count} terminals open}}",
+  "@deviceTerminalsOpen": {
+    "description": "Terminal card caption: how many terminals are open",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deviceFilterAll": "All",
+  "@deviceFilterAll": {
+    "description": "Timeline filter: everything"
+  },
+  "deviceFilterFiles": "Files",
+  "@deviceFilterFiles": {
+    "description": "Timeline filter: files"
+  },
+  "deviceFilterClipboard": "Clipboard",
+  "@deviceFilterClipboard": {
+    "description": "Timeline filter: clipboard"
+  },
+  "deviceFilterLinks": "Links",
+  "@deviceFilterLinks": {
+    "description": "Timeline filter: links"
+  },
+  "deviceFilterShowAll": "Show All",
+  "@deviceFilterShowAll": {
+    "description": "Screen reader label of the All filter"
+  },
+  "deviceFilterShowFiles": "Show Files",
+  "@deviceFilterShowFiles": {
+    "description": "Screen reader label of the Files filter"
+  },
+  "deviceFilterShowClipboard": "Show Clipboard",
+  "@deviceFilterShowClipboard": {
+    "description": "Screen reader label of the Clipboard filter"
+  },
+  "deviceFilterShowLinks": "Show Links",
+  "@deviceFilterShowLinks": {
+    "description": "Screen reader label of the Links filter"
+  },
+  "deviceActivity": "Activity",
+  "@deviceActivity": {
+    "description": "Section heading above the device's timeline"
+  },
+  "deviceReadyWhenAsks": "Ready when {name} asks",
+  "@deviceReadyWhenAsks": {
+    "description": "This phone as webcam/mic/display: idle state; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceWebcam": "Webcam",
+  "@deviceWebcam": {
+    "description": "This phone as: webcam row"
+  },
+  "deviceInUseNow": "In use now",
+  "@deviceInUseNow": {
+    "description": "This phone as: the webcam or microphone is live"
+  },
+  "deviceControls": "Controls",
+  "@deviceControls": {
+    "description": "Button: open the webcam controls"
+  },
+  "deviceMicrophone": "Microphone",
+  "@deviceMicrophone": {
+    "description": "This phone as: microphone row"
+  },
+  "deviceStop": "Stop",
+  "@deviceStop": {
+    "description": "Button: stop the microphone"
+  },
+  "deviceSecondDisplay": "Second display",
+  "@deviceSecondDisplay": {
+    "description": "This phone as: second display row"
+  },
+  "deviceShowingNow": "Showing now",
+  "@deviceShowingNow": {
+    "description": "This phone as: the second display is live"
+  },
+  "deviceReadySize": "Ready · {width} × {height}",
+  "@deviceReadySize": {
+    "description": "Second display idle, with this phone's screen size in pixels",
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      }
+    }
+  },
+  "devicePhoneAs": "This phone as",
+  "@devicePhoneAs": {
+    "description": "Card title: what this phone can be for the computer"
+  },
+  "deviceStartedOn": "Started on {name}",
+  "@deviceStartedOn": {
+    "description": "Card note: these are started from the computer; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceFasterOverUsb": "Faster and steadier over a USB cable.",
+  "@deviceFasterOverUsb": {
+    "description": "Hint under This phone as"
+  },
+  "deviceBackUpPhotos": "Back up photos",
+  "@deviceBackUpPhotos": {
+    "description": "Switch: back up photos to the computer"
+  },
+  "devicePhotosGoTo": "New photos go to {name}’s Pictures folder",
+  "@devicePhotosGoTo": {
+    "description": "Photo backup off; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicePhotosDeclined": "{name} doesn’t take photos. Turn on “Import Photos From Phones” there.",
+  "@devicePhotosDeclined": {
+    "description": "Photo backup refused by the computer; the quoted text is the desktop app's setting name",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicePhotosFrom": "From {folder}",
+  "@devicePhotosFrom": {
+    "description": "Photo backup on: the folder photos are taken from",
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "devicePhotosFromCamera": "From your camera folder",
+  "@devicePhotosFromCamera": {
+    "description": "Photo backup on, default folder"
+  },
+  "devicePhotosLast": "last {time}",
+  "@devicePhotosLast": {
+    "description": "Photo backup: time of the last backup, shown after a separator",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceGetClipboard": "Get its clipboard",
+  "@deviceGetClipboard": {
+    "description": "Switch: receive the computer's clipboard"
+  },
+  "deviceGetClipboardDetail": "Text copied on {name} lands here while connected",
+  "@deviceGetClipboardDetail": {
+    "description": "Detail of Get its clipboard; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceAwayAll": "Allow everything from away",
+  "@deviceAwayAll": {
+    "description": "Switch: allow all features when not on the same network"
+  },
+  "deviceAwayAllOn": "From away too: this screen, webcam, microphone and files",
+  "@deviceAwayAllOn": {
+    "description": "Detail of Allow everything from away, on"
+  },
+  "deviceAwayAllOff": "From away: clipboard, links, files and ring only",
+  "@deviceAwayAllOff": {
+    "description": "Detail of Allow everything from away, off"
+  },
+  "deviceNothingShared": "Nothing shared yet",
+  "@deviceNothingShared": {
+    "description": "Empty device timeline title"
+  },
+  "deviceNothingSharedBody": "Files, clipboard text and pings between this phone and {name} line up here.",
+  "@deviceNothingSharedBody": {
+    "description": "Empty device timeline body; name is the device",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityItems": "{count, plural, =1{1 item} other{{count} items}}",
+  "@activityItems": {
+    "description": "Timeline title: several files sent at once",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityQuoted": "“{text}”",
+  "@activityQuoted": {
+    "description": "Timeline title: clipboard text, quoted",
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "activityClipboardText": "Clipboard text",
+  "@activityClipboardText": {
+    "description": "Timeline title: clipboard text without content"
+  },
+  "activityPing": "Ping",
+  "@activityPing": {
+    "description": "Timeline title: a ping"
+  },
+  "activityYourScreen": "Your screen",
+  "@activityYourScreen": {
+    "description": "Timeline title: this phone's screen was shared"
+  },
+  "activityYourCamera": "Your camera",
+  "@activityYourCamera": {
+    "description": "Timeline title: this phone's camera was used as a webcam"
+  },
+  "activitySecondDisplay": "Second display",
+  "@activitySecondDisplay": {
+    "description": "Timeline title: this phone was a second display"
+  },
+  "activityLink": "Link",
+  "@activityLink": {
+    "description": "Timeline title fallback for a link"
+  },
+  "activityRangThisPhone": "Rang this phone",
+  "@activityRangThisPhone": {
+    "description": "Timeline title: the computer rang this phone"
+  },
+  "activityRangIt": "Rang it",
+  "@activityRangIt": {
+    "description": "Timeline title: this phone rang the computer"
+  },
+  "activityTouchpadKeyboard": "Touchpad and keyboard",
+  "@activityTouchpadKeyboard": {
+    "description": "Timeline title: remote control session"
+  },
+  "activityItsScreen": "Its screen",
+  "@activityItsScreen": {
+    "description": "Timeline title: the computer's screen was watched"
+  },
+  "activityYourMicrophone": "Your microphone",
+  "@activityYourMicrophone": {
+    "description": "Timeline title: this phone's microphone was used"
+  },
+  "activityWhereThisPhone": "Where this phone is",
+  "@activityWhereThisPhone": {
+    "description": "Timeline title: location request"
+  },
+  "activityWatchingNow": "Watching now",
+  "@activityWatchingNow": {
+    "description": "Timeline detail: screen being watched"
+  },
+  "activityWatched": "Watched",
+  "@activityWatched": {
+    "description": "Timeline detail: screen was watched"
+  },
+  "activityInUseWebcam": "In use as a webcam",
+  "@activityInUseWebcam": {
+    "description": "Timeline detail: camera live as webcam"
+  },
+  "activityUsedWebcam": "Used as a webcam",
+  "@activityUsedWebcam": {
+    "description": "Timeline detail: camera was a webcam"
+  },
+  "activityBeingControlled": "Being controlled now",
+  "@activityBeingControlled": {
+    "description": "Timeline detail: screen being controlled"
+  },
+  "activityWatchedControlled": "Watched and controlled",
+  "@activityWatchedControlled": {
+    "description": "Timeline detail: screen was watched and controlled"
+  },
+  "activityWatchedFromPhone": "Watched from this phone",
+  "@activityWatchedFromPhone": {
+    "description": "Timeline detail: the computer's screen was watched"
+  },
+  "activityInUseNow": "In use now",
+  "@activityInUseNow": {
+    "description": "Timeline detail: session live"
+  },
+  "activityWasTouchpad": "This phone was its touchpad",
+  "@activityWasTouchpad": {
+    "description": "Timeline detail: remote control ended"
+  },
+  "activityWasSecondDisplay": "This phone was its second display",
+  "@activityWasSecondDisplay": {
+    "description": "Timeline detail: second display ended"
+  },
+  "activityLinkReceived": "Link received",
+  "@activityLinkReceived": {
+    "description": "Timeline detail: incoming link"
+  },
+  "activityOpenedOnComputer": "Opened on the computer",
+  "@activityOpenedOnComputer": {
+    "description": "Timeline detail: link sent and opened"
+  },
+  "activityInUseMicrophone": "In use as a microphone",
+  "@activityInUseMicrophone": {
+    "description": "Timeline detail: microphone live"
+  },
+  "activityUsedMicrophone": "Used as a microphone",
+  "@activityUsedMicrophone": {
+    "description": "Timeline detail: microphone ended"
+  },
+  "activityNotTold": "Not told",
+  "@activityNotTold": {
+    "description": "Timeline detail: location request declined"
+  },
+  "activityToldWhere": "Told it where this phone is",
+  "@activityToldWhere": {
+    "description": "Timeline detail: location shared"
+  },
+  "activityAskedToFind": "Asked to find this phone",
+  "@activityAskedToFind": {
+    "description": "Timeline detail: the computer rang this phone"
+  },
+  "activityToFindIt": "To find it",
+  "@activityToFindIt": {
+    "description": "Timeline detail: this phone rang the computer"
+  },
+  "activityDeclined": "Declined",
+  "@activityDeclined": {
+    "description": "Timeline status: declined"
+  },
+  "activityFailed": "Failed",
+  "@activityFailed": {
+    "description": "Timeline status: failed"
+  },
+  "activityInProgress": "In progress",
+  "@activityInProgress": {
+    "description": "Timeline status: in progress"
+  },
+  "activityCopiedHere": "Copied here",
+  "@activityCopiedHere": {
+    "description": "Timeline status: clipboard received on this phone"
+  },
+  "activityReceived": "Received",
+  "@activityReceived": {
+    "description": "Timeline status: received"
+  },
+  "activitySent": "Sent",
+  "@activitySent": {
+    "description": "Timeline status: sent"
+  },
+  "activityStop": "Stop",
+  "@activityStop": {
+    "description": "Tooltip: stop a live session"
+  },
+  "activityCancel": "Cancel",
+  "@activityCancel": {
+    "description": "Tooltip: cancel a transfer"
+  },
+  "activityCopyAgain": "Copy again",
+  "@activityCopyAgain": {
+    "description": "Tooltip: copy clipboard text again"
+  },
+  "activityCopied": "Copied",
+  "@activityCopied": {
+    "description": "Message after copying"
+  },
+  "activityCopyLink": "Copy link",
+  "@activityCopyLink": {
+    "description": "Tooltip: copy a link"
+  },
+  "activityLinkCopied": "Link copied",
+  "@activityLinkCopied": {
+    "description": "Message after copying a link"
+  },
+  "activityNoAppForLink": "No app here opens that link.",
+  "@activityNoAppForLink": {
+    "description": "Error: no app can open the link"
+  },
+  "activityFiles": "{count, plural, =1{1 file} other{{count} files}}",
+  "@activityFiles": {
+    "description": "Sheet title listing received files",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityFileMissing": "{name} isn’t there anymore.",
+  "@activityFileMissing": {
+    "description": "Error: the received file was moved or deleted; name is the file",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityNoAppForFile": "No app on this phone opens {name}.",
+  "@activityNoAppForFile": {
+    "description": "Error: no app opens the file; name is the file",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityWaitingForYou": "Waiting for you to accept…",
+  "@activityWaitingForYou": {
+    "description": "Transfer waiting for this phone's user"
+  },
+  "activityWaitingForDevice": "Waiting for the device to accept…",
+  "@activityWaitingForDevice": {
+    "description": "Transfer waiting for an unknown device"
+  },
+  "activityWaitingFor": "Waiting for {name} to accept…",
+  "@activityWaitingFor": {
+    "description": "Transfer waiting for the other device; name is the device",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityProgress": "{done} of {total}",
+  "@activityProgress": {
+    "description": "Transfer progress; both are formatted sizes like 2.1 MB",
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "homeSettings": "Settings",
+  "@homeSettings": {
+    "description": "Tooltip of the gear button on the home screen that opens Settings."
+  },
+  "homeYourDevices": "Your devices",
+  "@homeYourDevices": {
+    "description": "Section label above the list of paired devices (shown in capitals)."
+  },
+  "homeNearbyNotPaired": "Nearby, not paired",
+  "@homeNearbyNotPaired": {
+    "description": "Section label above devices found on the network but not paired yet (shown in capitals)."
+  },
+  "homeAddDevice": "Add a device",
+  "@homeAddDevice": {
+    "description": "Floating button on the home screen that starts pairing a new device."
+  },
+  "homeVisible": "{name} is visible on this Wi-Fi",
+  "@homeVisible": {
+    "description": "Line under the top bar: this phone can be found by other devices. name is this phone's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Pixel 8"
+      }
+    }
+  },
+  "homeUpdateTitle": "Update Linksy to keep connecting",
+  "@homeUpdateTitle": {
+    "description": "Title of a warning card when the computers run a newer protocol than this app."
+  },
+  "homeUpdateBody": "Your computers now speak a newer Linksy than this app.",
+  "@homeUpdateBody": {
+    "description": "Body of the update warning card."
+  },
+  "homeGetUpdate": "Get the update",
+  "@homeGetUpdate": {
+    "description": "Button on the update warning card that opens the download page."
+  },
+  "homeSendFiles": "Send files",
+  "@homeSendFiles": {
+    "description": "Accessibility label of the round send button on a device row."
+  },
+  "homePair": "Pair",
+  "@homePair": {
+    "description": "Button on a nearby unpaired device row that starts pairing."
+  },
+  "homeStepOpen": "Open Linksy on your computer",
+  "@homeStepOpen": {
+    "description": "Step 1 of 'Connect your first device'."
+  },
+  "homeStepChoose": "Choose “Pair with QR Code”",
+  "@homeStepChoose": {
+    "description": "Step 2 of 'Connect your first device'. “Pair with QR Code” is the desktop app's menu item; translate it as the desktop app does."
+  },
+  "homeStepScan": "Scan it with this phone",
+  "@homeStepScan": {
+    "description": "Step 3 of 'Connect your first device'; 'it' is the QR code."
+  },
+  "homeConnectTitle": "Connect your\nfirst device",
+  "@homeConnectTitle": {
+    "description": "Large title on the empty home screen. Keep the line break where it reads well."
+  },
+  "homeConnectSubtitle": "Straight over your Wi-Fi. No account, no cloud.",
+  "@homeConnectSubtitle": {
+    "description": "Subtitle under 'Connect your first device'."
+  },
+  "homeScanQr": "Scan QR code",
+  "@homeScanQr": {
+    "description": "Main button on the empty home screen that opens the QR scanner."
+  },
+  "homePairByAddress": "Pair by address instead",
+  "@homePairByAddress": {
+    "description": "Secondary button on the empty home screen: pair by typing the computer's IP address."
+  },
+  "pairingAddDevice": "Add a device",
+  "@pairingAddDevice": {
+    "description": "Title of the 'Add a device' bottom sheet."
+  },
+  "pairingAddDeviceHint": "On the other device, open Linksy and choose “Pair with QR Code”.",
+  "@pairingAddDeviceHint": {
+    "description": "Hint in the 'Add a device' sheet. “Pair with QR Code” is the desktop app's menu item."
+  },
+  "pairingScanQr": "Scan QR code",
+  "@pairingScanQr": {
+    "description": "Option in the 'Add a device' sheet that opens the QR scanner."
+  },
+  "pairingScanQrCaption": "Fastest. Nothing to type.",
+  "@pairingScanQrCaption": {
+    "description": "Caption under 'Scan QR code' in the 'Add a device' sheet."
+  },
+  "pairingByAddress": "Pair by address",
+  "@pairingByAddress": {
+    "description": "Option in the 'Add a device' sheet, and title of the dialog to type a computer's IP address."
+  },
+  "pairingByAddressCaption": "When the other device can’t be found.",
+  "@pairingByAddressCaption": {
+    "description": "Caption under 'Pair by address' in the 'Add a device' sheet."
+  },
+  "pairingWith": "Pairing with {name}…",
+  "@pairingWith": {
+    "description": "Snack bar while pairing starts with a device. name is the device's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      }
+    }
+  },
+  "pairingWithOtherDevice": "Pairing with the other device…",
+  "@pairingWithOtherDevice": {
+    "description": "Snack bar while pairing starts from a pairing link that carries no device name."
+  },
+  "pairingAddressHint": "It’s in Linksy’s Preferences on the other device.",
+  "@pairingAddressHint": {
+    "description": "Hint in the 'Pair by address' dialog: where to find the address."
+  },
+  "pairingPortHint": "Port {port} unless you add another.",
+  "@pairingPortHint": {
+    "description": "Hint under the address field: the default network port. port is a number like 47200; do not format it.",
+    "placeholders": {
+      "port": {
+        "type": "String",
+        "example": "47200"
+      }
+    }
+  },
+  "pairingPair": "Pair",
+  "@pairingPair": {
+    "description": "Button in the 'Pair by address' dialog that starts pairing."
+  },
+  "pairingWantsToPair": "{name} wants to pair",
+  "@pairingWantsToPair": {
+    "description": "Title of the pairing dialog when another device asked to pair. name is that device's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      }
+    }
+  },
+  "pairingPairWith": "Pair with {name}",
+  "@pairingPairWith": {
+    "description": "Title of the pairing dialog when this phone asked to pair. name is the other device's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      }
+    }
+  },
+  "pairingCodeHint": "Both screens should show this code.",
+  "@pairingCodeHint": {
+    "description": "Under the pairing dialog title, above the 6-digit code."
+  },
+  "pairingCodeLabel": "Code {code}",
+  "@pairingCodeLabel": {
+    "description": "Accessibility label of the 6-digit pairing code. code is like '123 456'.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "123 456"
+      }
+    }
+  },
+  "pairingCodesMatch": "Codes match",
+  "@pairingCodesMatch": {
+    "description": "Button in the pairing dialog to accept: the codes on both screens are the same."
+  },
+  "scanNeedsCamera": "Linksy needs the camera to scan the pairing code. Allow it, or pair by address.",
+  "@scanNeedsCamera": {
+    "description": "Shown in the scanner when camera permission was refused."
+  },
+  "scanCameraUnavailable": "The camera isn’t available.",
+  "@scanCameraUnavailable": {
+    "description": "Shown in the scanner when the camera can't start."
+  },
+  "scanFlashlight": "Flashlight",
+  "@scanFlashlight": {
+    "description": "Tooltip of the flashlight button in the QR scanner."
+  },
+  "scanTitle": "Scan the code",
+  "@scanTitle": {
+    "description": "Large title over the QR scanner's camera view."
+  },
+  "scanWrongCode": "That’s not a Linksy code. On your computer, open Linksy → Pair with QR Code.",
+  "@scanWrongCode": {
+    "description": "Shown in the scanner when a QR code that isn't a Linksy pairing code was scanned. 'Pair with QR Code' is the desktop app's menu item."
+  },
+  "scanHint": "On your computer, open Linksy and choose “Pair with QR Code”.",
+  "@scanHint": {
+    "description": "Hint at the bottom of the QR scanner. “Pair with QR Code” is the desktop app's menu item."
+  },
+  "shareSheetPutOnClipboard": "Put on a clipboard",
+  "@shareSheetPutOnClipboard": {
+    "description": "Title of the share sheet when one shared file goes onto a computer's clipboard."
+  },
+  "shareSheetSendFiles": "{count, plural, =1{Send a file} other{Send {count} files}}",
+  "@shareSheetSendFiles": {
+    "description": "Title of the share sheet when files were shared to Linksy from another app.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareSheetOpenOnComputer": "Open on a computer",
+  "@shareSheetOpenOnComputer": {
+    "description": "Title of the share sheet when a web link was shared: it opens in a computer's browser."
+  },
+  "shareSheetSendToClipboard": "Send to a clipboard",
+  "@shareSheetSendToClipboard": {
+    "description": "Title of the share sheet when text was shared: it goes to a computer's clipboard."
+  },
+  "shareSheetNoClipboardFiles": "None of your computers takes files on its clipboard yet. Update Linksy there.",
+  "@shareSheetNoClipboardFiles": {
+    "description": "Share sheet, no computer supports files on its clipboard."
+  },
+  "shareSheetNoComputers": "Pair a computer first, then share to it from any app.",
+  "@shareSheetNoComputers": {
+    "description": "Share sheet, no paired computer yet."
+  },
+  "shareSheetSendFileInstead": "Send the file instead",
+  "@shareSheetSendFileInstead": {
+    "description": "Share sheet button: send the file normally rather than onto the clipboard."
+  },
+  "shareSheetClipboardInstead": "Put it on the computer’s clipboard instead",
+  "@shareSheetClipboardInstead": {
+    "description": "Share sheet button: put the one shared file onto the computer's clipboard."
+  },
+  "shareSheetOpenLinkInstead": "Open the link instead",
+  "@shareSheetOpenLinkInstead": {
+    "description": "Share sheet button: open the shared link in the computer's browser."
+  },
+  "shareSheetSendAsTextInstead": "Send as text to the clipboard instead",
+  "@shareSheetSendAsTextInstead": {
+    "description": "Share sheet button: send the shared link as text to the computer's clipboard."
+  },
+  "shareSheetPuttingOnClipboard": "Putting it on {name}’s clipboard",
+  "@shareSheetPuttingOnClipboard": {
+    "description": "Snack bar after sharing a file onto a computer's clipboard. name is the computer's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      }
+    }
+  },
+  "shareSheetPuttingOnClipboardUnnamed": "Putting it on the computer’s clipboard",
+  "@shareSheetPuttingOnClipboardUnnamed": {
+    "description": "Snack bar after sharing a file onto a computer's clipboard, when its name isn't known."
+  },
+  "shareSheetOpened": "Opened on {name}",
+  "@shareSheetOpened": {
+    "description": "Snack bar after a shared link was opened on a computer. name is the computer's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      }
+    }
+  },
+  "shareSheetOpenedUnnamed": "Opened on the computer",
+  "@shareSheetOpenedUnnamed": {
+    "description": "Snack bar after a shared link was opened on a computer whose name isn't known."
+  },
+  "shareSheetSentToClipboard": "Sent to {name}’s clipboard",
+  "@shareSheetSentToClipboard": {
+    "description": "Snack bar after shared text was sent to a computer's clipboard. name is the computer's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      }
+    }
+  },
+  "shareSheetSentToClipboardUnnamed": "Sent to the computer’s clipboard",
+  "@shareSheetSentToClipboardUnnamed": {
+    "description": "Snack bar after shared text was sent to a computer's clipboard, when its name isn't known."
+  },
+  "shareSheetSentALink": "{name} sent a link",
+  "@shareSheetSentALink": {
+    "description": "Title of the dialog when a computer sent a web link to this phone. name is the computer's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      }
+    }
+  },
+  "shareSheetOpen": "Open",
+  "@shareSheetOpen": {
+    "description": "Button in the received-link dialog: open the link on this phone."
+  },
+  "shareSheetCopyLink": "Copy link",
+  "@shareSheetCopyLink": {
+    "description": "Button in the received-link dialog: copy the link."
+  },
+  "shareSheetLinkCopied": "Link copied",
+  "@shareSheetLinkCopied": {
+    "description": "Snack bar after copying a received link."
+  },
+  "incomingSendingYou": "{name} is sending you {count, plural, =1{a file} other{{count} files}}",
+  "@incomingSendingYou": {
+    "description": "Title of the incoming-files sheet. name is the sending device's name (shown in a stronger color).",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "incomingTotal": "{size} in total",
+  "@incomingTotal": {
+    "description": "Total size of the incoming files. size is like '2.1 MB'.",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "2.1 MB"
+      }
+    }
+  },
+  "incomingMore": "+ {count} more",
+  "@incomingMore": {
+    "description": "Under the first few incoming file names: how many more files there are.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "incomingAccept": "Accept",
+  "@incomingAccept": {
+    "description": "Button in the incoming-files sheet: receive the files."
+  },
+  "appInvalidPairingLink": "That pairing link isn’t valid.",
+  "@appInvalidPairingLink": {
+    "description": "Snack bar when a linksy:// pairing link can't be read."
+  },
+  "appPairingFailed": "Pairing failed: {reason}",
+  "@appPairingFailed": {
+    "description": "Snack bar when pairing failed. reason is an explanation (may be in English).",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "appCouldntPair": "Couldn’t pair with {name}: {reason}",
+  "@appCouldntPair": {
+    "description": "Snack bar when pairing with a device failed. name is the device's name; reason is an explanation.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "appPairedWith": "Paired with {name}",
+  "@appPairedWith": {
+    "description": "Snack bar when pairing succeeded. name is the device's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      }
+    }
+  },
+  "appNotification": "{name}: {text}",
+  "@appNotification": {
+    "description": "Snack bar showing a notification a computer sent: its name, then the notification's text.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      },
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "appCopiedText": "Copied text from {name}",
+  "@appCopiedText": {
+    "description": "Snack bar when a computer put text on this phone's clipboard. name is the computer's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      }
+    }
+  },
+  "appCopiedFile": "Copied {file} from {name}",
+  "@appCopiedFile": {
+    "description": "Snack bar when a computer put a file on this phone's clipboard. file is the file name; name is the computer's name.",
+    "placeholders": {
+      "file": {
+        "type": "String",
+        "example": "photo.jpg"
+      },
+      "name": {
+        "type": "String",
+        "example": "Studio Desktop"
+      }
+    }
+  },
+  "appCouldntStart": "Linksy couldn’t start",
+  "@appCouldntStart": {
+    "description": "Title of the screen shown when the app fails to start; an error message follows."
+  },
+  "commonDismiss": "Dismiss",
+  "@commonDismiss": {
+    "description": "Tooltip of the close button on a notice card."
+  },
+  "commonCancel": "Cancel",
+  "@commonCancel": {
+    "description": "Generic Cancel button."
+  },
+  "commonDecline": "Decline",
+  "@commonDecline": {
+    "description": "Button to refuse a pairing request or incoming files."
+  },
+  "commonClose": "Close",
+  "@commonClose": {
+    "description": "Tooltip of a close (X) button."
+  },
+  "commonNotNow": "Not now",
+  "@commonNotNow": {
+    "description": "Button that closes a dialog without doing anything."
+  },
+  "commonConnected": "Connected",
+  "@commonConnected": {
+    "description": "A device's status: connected right now."
+  },
+  "commonNearby": "Nearby",
+  "@commonNearby": {
+    "description": "A device's status: found on the same network, not connected."
+  },
+  "commonNotNearby": "Not nearby",
+  "@commonNotNearby": {
+    "description": "A device's status: not found on the network."
+  },
+  "commonUsbCable": "USB cable",
+  "@commonUsbCable": {
+    "description": "How a device is reached, in lists: over a USB cable."
+  },
+  "commonAwayFromHome": "Away from home",
+  "@commonAwayFromHome": {
+    "description": "How a device is reached, in lists: over the internet (not on the same Wi-Fi)."
+  },
+  "commonSameWifi": "Same Wi-Fi",
+  "@commonSameWifi": {
+    "description": "How a device is reached, in lists: on the same Wi-Fi network."
+  },
+  "commonConnectedByUsb": "Connected by USB",
+  "@commonConnectedByUsb": {
+    "description": "A device's status: connected over a USB cable."
+  },
+  "commonConnectedAway": "Connected away from home",
+  "@commonConnectedAway": {
+    "description": "A device's status: connected over the internet."
+  },
+  "commonBattery": "Battery {level} percent",
+  "@commonBattery": {
+    "description": "Accessibility label of a device's battery ring. level is 0 to 100.",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "commonBatteryCharging": "Battery {level} percent, charging",
+  "@commonBatteryCharging": {
+    "description": "Accessibility label of a device's battery ring while it charges. level is 0 to 100.",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "formatBytesSmall": "{count, plural, other{{count} bytes}}",
+  "@formatBytesSmall": {
+    "description": "A size under 1 kB, like '512 bytes'.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "formatSecondsLeft": "{count, plural, =1{1 second left} other{{count} seconds left}}",
+  "@formatSecondsLeft": {
+    "description": "Time left in a transfer.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "formatMinutesLeft": "{count, plural, =1{1 minute left} other{{count} minutes left}}",
+  "@formatMinutesLeft": {
+    "description": "Time left in a transfer.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "formatHoursLeft": "{count, plural, =1{about 1 hour left} other{about {count} hours left}}",
+  "@formatHoursLeft": {
+    "description": "Time left in a transfer, rounded.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "formatToday": "Today",
+  "@formatToday": {
+    "description": "Day heading in a device's timeline."
+  },
+  "formatYesterday": "Yesterday",
+  "@formatYesterday": {
+    "description": "Day heading in a device's timeline."
+  },
+  "formatPhone": "Phone",
+  "@formatPhone": {
+    "description": "Name of this phone's main storage in folder paths, like 'Phone › Download › Linksy'."
+  },
+  "settingsBack": "Back",
+  "@settingsBack": {
+    "description": "Tooltip of the back button on the Settings screen"
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title of the Settings screen"
+  },
+  "settingsReceiving": "Receiving",
+  "@settingsReceiving": {
+    "description": "Settings section label: receiving files"
+  },
+  "settingsSaveLocation": "Save location",
+  "@settingsSaveLocation": {
+    "description": "Settings row: where received files are saved"
+  },
+  "settingsSaveLocationPath": "Downloads › Linksy",
+  "@settingsSaveLocationPath": {
+    "description": "Settings row caption: the folder received files go to (Downloads folder, then Linksy subfolder)"
+  },
+  "settingsAcceptFromMyDevices": "Accept from my devices",
+  "@settingsAcceptFromMyDevices": {
+    "description": "Settings switch: accept files from paired devices automatically"
+  },
+  "settingsAcceptFromMyDevicesCaption": "Files from paired devices arrive without asking.",
+  "@settingsAcceptFromMyDevicesCaption": {
+    "description": "Caption of the auto-accept switch"
+  },
+  "settingsConnection": "Connection",
+  "@settingsConnection": {
+    "description": "Settings section label"
+  },
+  "settingsStayConnected": "Stay connected",
+  "@settingsStayConnected": {
+    "description": "Settings switch: keep connections to nearby devices open"
+  },
+  "settingsStayConnectedCaption": "Faster sharing with nearby devices. Uses more battery.",
+  "@settingsStayConnectedCaption": {
+    "description": "Caption of the Stay connected switch"
+  },
+  "settingsKeepRunning": "Keep running in the background",
+  "@settingsKeepRunning": {
+    "description": "Settings switch: keep the app running when closed"
+  },
+  "settingsKeepRunningCaption": "Files, photo backup and calls keep working when Linksy is closed. Shows a quiet notification.",
+  "@settingsKeepRunningCaption": {
+    "description": "Caption of the background switch"
+  },
+  "settingsAwayFromHome": "Away from home",
+  "@settingsAwayFromHome": {
+    "description": "Settings switch: reach computers over the internet"
+  },
+  "settingsAwayFromHomeCaption": "Reach your computers over the internet when you’re not on the same network, for a week after you last were. Encrypted end to end.",
+  "@settingsAwayFromHomeCaption": {
+    "description": "Caption of the Away from home switch"
+  },
+  "settingsWithYourComputers": "With your computers",
+  "@settingsWithYourComputers": {
+    "description": "Settings section label: features shared with paired computers"
+  },
+  "settingsPauseMusic": "Pause music during calls",
+  "@settingsPauseMusic": {
+    "description": "Settings switch: computers pause media during phone calls"
+  },
+  "settingsPauseMusicCaption": "Your computers pause what plays while a call rings or goes on, and resume after.",
+  "@settingsPauseMusicCaption": {
+    "description": "Caption of the Pause music switch"
+  },
+  "settingsBrowseFiles": "Let computers browse files",
+  "@settingsBrowseFiles": {
+    "description": "Settings switch: share a phone folder with computers"
+  },
+  "settingsBrowseFilesChoose": "Choose a folder your computers can open in their Files app, like Documents (Android doesn’t allow Download).",
+  "@settingsBrowseFilesChoose": {
+    "description": "Caption when no shared folder is chosen yet"
+  },
+  "settingsSharesFolder": "Shares “{folder}”. Tap to choose another folder.",
+  "@settingsSharesFolder": {
+    "description": "Caption showing the folder shared with computers",
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPicture": "Picture of this phone",
+  "@settingsPicture": {
+    "description": "Settings row: the picture computers show for this phone"
+  },
+  "settingsPictureChoose": "Your computers show it for this phone. Tap to choose one.",
+  "@settingsPictureChoose": {
+    "description": "Caption when no picture is chosen"
+  },
+  "settingsPictureChange": "Your computers show it for this phone. Tap to change it.",
+  "@settingsPictureChange": {
+    "description": "Caption when a picture is chosen"
+  },
+  "settingsPictureRemove": "Remove",
+  "@settingsPictureRemove": {
+    "description": "Button that removes the phone picture"
+  },
+  "settingsLocate": "Let computers locate this phone",
+  "@settingsLocate": {
+    "description": "Settings switch: allow computers to ask for the phone location"
+  },
+  "settingsLocateCaption": "A computer can ask where this phone is, once, to find it. Nothing is kept or tracked. Works while Linksy is open.",
+  "@settingsLocateCaption": {
+    "description": "Caption of the locate switch"
+  },
+  "settingsLocatePermission": "Linksy needs the location permission for this.",
+  "@settingsLocatePermission": {
+    "description": "Message when the location permission was refused"
+  },
+  "settingsPhotoFolder": "Photo folder",
+  "@settingsPhotoFolder": {
+    "description": "Settings row: the camera folder backed up to computers"
+  },
+  "settingsPhotoFolderChoose": "Choose your camera folder (DCIM › Camera) to back up photos to a computer.",
+  "@settingsPhotoFolderChoose": {
+    "description": "Caption when no photo folder is chosen"
+  },
+  "settingsPhotoFolderBacksUp": "Backs up “{folder}”. Turn it on per computer, on its page.",
+  "@settingsPhotoFolderBacksUp": {
+    "description": "Caption showing the backed-up photo folder",
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsThisApp": "This app",
+  "@settingsThisApp": {
+    "description": "Settings section label: app preferences"
+  },
+  "settingsPermissions": "Permissions",
+  "@settingsPermissions": {
+    "description": "Settings section label"
+  },
+  "settingsDemo": "Demo",
+  "@settingsDemo": {
+    "description": "Settings section label for the demo tools"
+  },
+  "settingsDemoCaption": "Simulated devices until the Linksy core is connected. These start what another device would.",
+  "@settingsDemoCaption": {
+    "description": "Explanation of the demo section"
+  },
+  "settingsDemoReceiveFiles": "Receive files",
+  "@settingsDemoReceiveFiles": {
+    "description": "Demo action: simulate incoming files"
+  },
+  "settingsDemoReceivePairing": "Receive a pairing request",
+  "@settingsDemoReceivePairing": {
+    "description": "Demo action: simulate an incoming pairing request"
+  },
+  "settingsDemoReceiveClipboard": "Receive clipboard text",
+  "@settingsDemoReceiveClipboard": {
+    "description": "Demo action: simulate incoming clipboard text"
+  },
+  "settingsTagline": "Your devices, connected.\nNo account, no cloud.",
+  "@settingsTagline": {
+    "description": "App tagline at the bottom of Settings (two lines)"
+  },
+  "settingsNameTitle": "Name this phone",
+  "@settingsNameTitle": {
+    "description": "Title of the rename dialog"
+  },
+  "settingsNameCaption": "Your other devices see this name.",
+  "@settingsNameCaption": {
+    "description": "Subtitle of the rename dialog"
+  },
+  "settingsSave": "Save",
+  "@settingsSave": {
+    "description": "Button in the rename dialog"
+  },
+  "settingsCancel": "Cancel",
+  "@settingsCancel": {
+    "description": "Button in the rename dialog"
+  },
+  "settingsRename": "Rename {name}",
+  "@settingsRename": {
+    "description": "Accessibility label of the phone card; name is the phone name",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsThisPhone": "This phone · {shortId}",
+  "@settingsThisPhone": {
+    "description": "Under the phone name; shortId is a short device code",
+    "placeholders": {
+      "shortId": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPermissionsRow": "Notifications and camera",
+  "@settingsPermissionsRow": {
+    "description": "Settings row that opens the permissions sheet"
+  },
+  "settingsPermissionsWhat": "What Linksy asks Android for, and why.",
+  "@settingsPermissionsWhat": {
+    "description": "Caption of the permissions row while loading"
+  },
+  "settingsPermissionsBoth": "Both allowed.",
+  "@settingsPermissionsBoth": {
+    "description": "Caption when both permissions are allowed"
+  },
+  "settingsPermissionsSome": "{count, plural, other{{count} of 2 allowed. Tap to allow the rest.}}",
+  "@settingsPermissionsSome": {
+    "description": "Caption when some of the 2 permissions are allowed",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "permissionsTitle": "Permissions",
+  "@permissionsTitle": {
+    "description": "Title of the permissions sheet"
+  },
+  "permissionsIntro": "Linksy asks only for what it needs, and you can change any of these later in Settings.",
+  "@permissionsIntro": {
+    "description": "Intro text of the permissions sheet"
+  },
+  "permissionsNotifications": "Notifications",
+  "@permissionsNotifications": {
+    "description": "Permission name: notifications"
+  },
+  "permissionsNotificationsWhy": "Shows when a computer sees your screen or uses your camera, with a button to stop it.",
+  "@permissionsNotificationsWhy": {
+    "description": "Why the app needs the notifications permission"
+  },
+  "permissionsCamera": "Camera",
+  "@permissionsCamera": {
+    "description": "Permission name: camera"
+  },
+  "permissionsCameraWhy": "Scans the pairing QR code, and lets a computer use this phone as a webcam when you allow it.",
+  "@permissionsCameraWhy": {
+    "description": "Why the app needs the camera permission"
+  },
+  "permissionsAllow": "Allow",
+  "@permissionsAllow": {
+    "description": "Button that asks Android for a permission"
+  },
+  "permissionsAllowed": "Allowed",
+  "@permissionsAllowed": {
+    "description": "Shown when a permission is already granted"
+  },
+  "permissionsDone": "Done",
+  "@permissionsDone": {
+    "description": "Button that closes the permissions sheet"
+  },
+  "remoteBack": "Back",
+  "@remoteBack": {
+    "description": "Tooltip of the back button on the Remote screen"
+  },
+  "remoteTitle": "Remote",
+  "@remoteTitle": {
+    "description": "Title of the screen that uses the phone as a computer remote"
+  },
+  "remoteAllowOn": "Allow it on {name}",
+  "@remoteAllowOn": {
+    "description": "Title while waiting for the computer to allow remote control; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteAsks": "Linksy on {name} asks whether this phone may move its pointer and type.",
+  "@remoteAsks": {
+    "description": "Detail while waiting for the computer to allow remote control",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteFailed": "That didn’t work",
+  "@remoteFailed": {
+    "description": "Title when the remote could not start"
+  },
+  "remoteStopped": "The remote stopped",
+  "@remoteStopped": {
+    "description": "Title when the computer ended the remote"
+  },
+  "remoteEndedBy": "{name} ended it.",
+  "@remoteEndedBy": {
+    "description": "Detail when the computer ended the remote; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteTryAgain": "Try again",
+  "@remoteTryAgain": {
+    "description": "Button that retries starting the remote"
+  },
+  "remoteTouchpad": "Touchpad",
+  "@remoteTouchpad": {
+    "description": "Remote mode tab: touchpad"
+  },
+  "remoteSlides": "Slides",
+  "@remoteSlides": {
+    "description": "Remote mode tab: presentation remote"
+  },
+  "remoteTouchpadHint": "Move with one finger, tap to click\nTwo fingers scroll, two-finger tap right-clicks",
+  "@remoteTouchpadHint": {
+    "description": "Hint on the touchpad area (two lines)"
+  },
+  "remoteLeftClick": "Left click",
+  "@remoteLeftClick": {
+    "description": "Touchpad button"
+  },
+  "remoteRightClick": "Right click",
+  "@remoteRightClick": {
+    "description": "Touchpad button"
+  },
+  "remoteKeyboard": "Keyboard",
+  "@remoteKeyboard": {
+    "description": "Button that shows the keyboard to type on the computer"
+  },
+  "remoteNextSlide": "Next slide",
+  "@remoteNextSlide": {
+    "description": "Accessibility label of the Next button"
+  },
+  "remoteNext": "Next",
+  "@remoteNext": {
+    "description": "Big button: next slide"
+  },
+  "remotePreviousSlide": "Previous slide",
+  "@remotePreviousSlide": {
+    "description": "Accessibility label of the Back button"
+  },
+  "remoteSlideBack": "Back",
+  "@remoteSlideBack": {
+    "description": "Big button: previous slide"
+  },
+  "remoteStartShow": "Start (F5)",
+  "@remoteStartShow": {
+    "description": "Button that starts the slideshow (sends F5)"
+  },
+  "remoteEndShow": "End (Esc)",
+  "@remoteEndShow": {
+    "description": "Button that ends the slideshow (sends Esc)"
+  },
+  "remoteVolumeHint": "Volume down: next · Volume up: back. The screen stays on.",
+  "@remoteVolumeHint": {
+    "description": "Hint under the slide buttons"
+  },
+  "ringTitle": "Here I am!",
+  "@ringTitle": {
+    "description": "Big title while the phone rings because a computer is looking for it"
+  },
+  "ringLookingFor": "{name} is looking for this phone.",
+  "@ringLookingFor": {
+    "description": "Under the title; name is the computer that rings the phone",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ringFoundIt": "Found it",
+  "@ringFoundIt": {
+    "description": "Button that stops the ringing"
+  },
+  "webcamBack": "Back",
+  "@webcamBack": {
+    "description": "Tooltip: go back from the webcam screen"
+  },
+  "webcamTitle": "Webcam",
+  "@webcamTitle": {
+    "description": "Webcam screen title"
+  },
+  "webcamLiveOn": "Live on {name}",
+  "@webcamLiveOn": {
+    "description": "Webcam screen subtitle; name is the computer receiving the picture",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamStopSemantic": "Stop the webcam",
+  "@webcamStopSemantic": {
+    "description": "Accessibility label of the Stop button"
+  },
+  "webcamStop": "Stop",
+  "@webcamStop": {
+    "description": "Button that stops the webcam"
+  },
+  "webcamBadgeLive": "LIVE",
+  "@webcamBadgeLive": {
+    "description": "Badge over the preview while streaming (uppercase)"
+  },
+  "webcamBadgeLock": "AE/AF LOCK",
+  "@webcamBadgeLock": {
+    "description": "Badge: auto exposure / auto focus locked (uppercase)"
+  },
+  "webcamBadgeManualFocus": "MF",
+  "@webcamBadgeManualFocus": {
+    "description": "Badge: manual focus (short abbreviation)"
+  },
+  "webcamBadgeTorch": "TORCH",
+  "@webcamBadgeTorch": {
+    "description": "Badge: the flashlight is on (uppercase)"
+  },
+  "webcamFacingFront": "Front",
+  "@webcamFacingFront": {
+    "description": "Action label: the front camera is in use"
+  },
+  "webcamFacingBack": "Back",
+  "@webcamFacingBack": {
+    "description": "Action label: the back camera is in use"
+  },
+  "webcamTorch": "Torch",
+  "@webcamTorch": {
+    "description": "Action: turn the flashlight on/off"
+  },
+  "webcamPortrait": "Portrait",
+  "@webcamPortrait": {
+    "description": "Orientation: upright"
+  },
+  "webcamLandscape": "Landscape",
+  "@webcamLandscape": {
+    "description": "Orientation: sideways"
+  },
+  "webcamLocked": "Locked",
+  "@webcamLocked": {
+    "description": "Action label: exposure and white balance are locked"
+  },
+  "webcamLock": "Lock",
+  "@webcamLock": {
+    "description": "Action: lock exposure and white balance"
+  },
+  "webcamTabLight": "Light",
+  "@webcamTabLight": {
+    "description": "Settings tab: exposure"
+  },
+  "webcamTabFocus": "Focus",
+  "@webcamTabFocus": {
+    "description": "Settings tab: focus"
+  },
+  "webcamTabColor": "Color",
+  "@webcamTabColor": {
+    "description": "Settings tab: white balance"
+  },
+  "webcamTabStream": "Stream",
+  "@webcamTabStream": {
+    "description": "Settings tab: stream format"
+  },
+  "webcamBrightness": "Brightness",
+  "@webcamBrightness": {
+    "description": "Setting title: exposure compensation"
+  },
+  "webcamExposureValue": "{value} EV",
+  "@webcamExposureValue": {
+    "description": "Exposure compensation value; value is a signed number like +0.7",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamExposureAuto": "This camera sets exposure by itself.",
+  "@webcamExposureAuto": {
+    "description": "Shown when the camera has no exposure control"
+  },
+  "webcamLockExposure": "Lock exposure",
+  "@webcamLockExposure": {
+    "description": "Setting title"
+  },
+  "webcamLockExposureDetail": "Keeps the brightness as it is now. Hold the picture to lock on a spot.",
+  "@webcamLockExposureDetail": {
+    "description": "Lock exposure explanation"
+  },
+  "webcamFocus": "Focus",
+  "@webcamFocus": {
+    "description": "Setting title"
+  },
+  "webcamFocusFixed": "This camera has fixed focus.",
+  "@webcamFocusFixed": {
+    "description": "Shown when focus cannot be changed"
+  },
+  "webcamFocusSpotDetail": "Held where you tapped. Double-tap the picture for auto.",
+  "@webcamFocusSpotDetail": {
+    "description": "Focus explanation in spot mode"
+  },
+  "webcamFocusManualDetail": "Set by hand below.",
+  "@webcamFocusManualDetail": {
+    "description": "Focus explanation in manual mode"
+  },
+  "webcamFocusAutoDetail": "Follows the picture. Tap it to focus on a spot.",
+  "@webcamFocusAutoDetail": {
+    "description": "Focus explanation in auto mode"
+  },
+  "webcamFocusAuto": "Auto",
+  "@webcamFocusAuto": {
+    "description": "Focus mode option"
+  },
+  "webcamFocusSpot": "Spot",
+  "@webcamFocusSpot": {
+    "description": "Focus mode option: focus on a tapped point"
+  },
+  "webcamFocusManual": "Manual",
+  "@webcamFocusManual": {
+    "description": "Focus mode option"
+  },
+  "webcamDistance": "Distance",
+  "@webcamDistance": {
+    "description": "Setting title: manual focus distance"
+  },
+  "webcamFar": "Far",
+  "@webcamFar": {
+    "description": "Left end of the focus distance slider"
+  },
+  "webcamNear": "Near",
+  "@webcamNear": {
+    "description": "Right end of the focus distance slider"
+  },
+  "webcamWbAuto": "Auto",
+  "@webcamWbAuto": {
+    "description": "White balance option"
+  },
+  "webcamWbDaylight": "Daylight",
+  "@webcamWbDaylight": {
+    "description": "White balance option"
+  },
+  "webcamWbCloudy": "Cloudy",
+  "@webcamWbCloudy": {
+    "description": "White balance option"
+  },
+  "webcamWbShade": "Shade",
+  "@webcamWbShade": {
+    "description": "White balance option"
+  },
+  "webcamWbIncandescent": "Warm light",
+  "@webcamWbIncandescent": {
+    "description": "White balance option: incandescent bulbs"
+  },
+  "webcamWbFluorescent": "Office light",
+  "@webcamWbFluorescent": {
+    "description": "White balance option: fluorescent tubes"
+  },
+  "webcamWhiteBalance": "White balance",
+  "@webcamWhiteBalance": {
+    "description": "Setting title"
+  },
+  "webcamLockColors": "Lock colors",
+  "@webcamLockColors": {
+    "description": "Setting title: white balance lock"
+  },
+  "webcamLockColorsDetail": "Stops the colors shifting as the light changes.",
+  "@webcamLockColorsDetail": {
+    "description": "Lock colors explanation"
+  },
+  "webcamOrientation": "Orientation",
+  "@webcamOrientation": {
+    "description": "Setting title"
+  },
+  "webcamOrientationPortraitDetail": "Hold the phone upright; bars at the sides.",
+  "@webcamOrientationPortraitDetail": {
+    "description": "Portrait orientation explanation"
+  },
+  "webcamOrientationLandscapeDetail": "Hold the phone sideways; it fills the frame.",
+  "@webcamOrientationLandscapeDetail": {
+    "description": "Landscape orientation explanation"
+  },
+  "webcamFrameRate": "Frame rate",
+  "@webcamFrameRate": {
+    "description": "Setting title"
+  },
+  "webcamFps60Detail": "Smoother motion; uses more data and battery.",
+  "@webcamFps60Detail": {
+    "description": "Explanation of 60 fps"
+  },
+  "webcamFps30Detail": "Steady for video calls.",
+  "@webcamFps30Detail": {
+    "description": "Explanation of 30 fps"
+  },
+  "webcamFpsOnly30": "This camera does up to 30 fps.",
+  "@webcamFpsOnly30": {
+    "description": "Shown when 60 fps is not available"
+  },
+  "webcamFps": "{fps} fps",
+  "@webcamFps": {
+    "description": "Frame rate option; fps is a number like 30",
+    "placeholders": {
+      "fps": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamResolution": "Resolution",
+  "@webcamResolution": {
+    "description": "Setting title"
+  },
+  "webcamResolution1080Detail": "Full HD, for a big screen; more data.",
+  "@webcamResolution1080Detail": {
+    "description": "Explanation of 1080p"
+  },
+  "webcamResolution720Detail": "HD, right for video calls.",
+  "@webcamResolution720Detail": {
+    "description": "Explanation of 720p"
+  },
+  "webcamResolutionOnly720": "This camera streams 720p.",
+  "@webcamResolutionOnly720": {
+    "description": "Shown when 1080p is not available"
+  },
+  "webcamQuality": "Quality",
+  "@webcamQuality": {
+    "description": "Setting title: bitrate"
+  },
+  "webcamQualitySaverDetail": "{mbps} Mbps, for a busy Wi-Fi.",
+  "@webcamQualitySaverDetail": {
+    "description": "Saver quality explanation; mbps is a number",
+    "placeholders": {
+      "mbps": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamQualityHighDetail": "{mbps} Mbps, the most detail.",
+  "@webcamQualityHighDetail": {
+    "description": "High quality explanation; mbps is a number",
+    "placeholders": {
+      "mbps": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamQualityStandardDetail": "{mbps} Mbps, sharp for video calls.",
+  "@webcamQualityStandardDetail": {
+    "description": "Standard quality explanation; mbps is a number",
+    "placeholders": {
+      "mbps": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamQualitySaver": "Saver",
+  "@webcamQualitySaver": {
+    "description": "Quality option: low bitrate"
+  },
+  "webcamQualityStandard": "Standard",
+  "@webcamQualityStandard": {
+    "description": "Quality option"
+  },
+  "webcamQualityHigh": "High",
+  "@webcamQualityHigh": {
+    "description": "Quality option: high bitrate"
+  },
+  "webcamStabilization": "Stabilization",
+  "@webcamStabilization": {
+    "description": "Setting title: video stabilization"
+  },
+  "webcamStabilizationDetail": "Smooths out hand shake.",
+  "@webcamStabilizationDetail": {
+    "description": "Stabilization explanation"
+  },
+  "webcamMirror": "Mirror the preview",
+  "@webcamMirror": {
+    "description": "Setting title (front camera)"
+  },
+  "webcamMirrorDetail": "On this phone only; the computer gets it unmirrored.",
+  "@webcamMirrorDetail": {
+    "description": "Mirror explanation"
+  },
+  "webcamFormat": "Format",
+  "@webcamFormat": {
+    "description": "Setting title: the stream format summary"
+  },
+  "webcamFormatValue": "{width}×{height} · {fps} fps · H.264",
+  "@webcamFormatValue": {
+    "description": "Stream format summary, e.g. 1280×720 · 30 fps · H.264",
+    "placeholders": {
+      "width": {
+        "type": "String"
+      },
+      "height": {
+        "type": "String"
+      },
+      "fps": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamReset": "Reset",
+  "@webcamReset": {
+    "description": "Button: reset a setting to its default"
+  },
+  "webcamResetSetting": "Reset {setting}",
+  "@webcamResetSetting": {
+    "description": "Accessibility label of Reset; setting is the setting title",
+    "placeholders": {
+      "setting": {
+        "type": "String"
+      }
+    }
+  },
+  "webcamZoomTo": "Zoom {zoom}",
+  "@webcamZoomTo": {
+    "description": "Accessibility label of a zoom chip; zoom is like 2×",
+    "placeholders": {
+      "zoom": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingScreenRequestTitle": "{name} wants to see your screen",
+  "@sharingScreenRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingScreenRequestDetail": "Everything on this phone’s screen shows on {name} until you stop. Android asks you to confirm next.",
+  "@sharingScreenRequestDetail": {
+    "description": "Screen share request explanation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingControlRequestTitle": "{name} wants to control your screen",
+  "@sharingControlRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingControlRequestDetail": "{name} sees this phone’s screen and can tap, swipe and type on it until you stop. Android asks you to confirm next.",
+  "@sharingControlRequestDetail": {
+    "description": "Remote control request explanation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingCameraRequestTitle": "{name} wants to use your camera",
+  "@sharingCameraRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingCameraRequestDetail": "{name} gets this phone’s camera as a webcam until you stop. Zoom, focus, light, lenses and rotation are in Linksy while it runs.",
+  "@sharingCameraRequestDetail": {
+    "description": "Webcam request explanation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingInputRequestTitle": "{name} wants to use this phone as a touchpad",
+  "@sharingInputRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingInputRequestDetail": "Unexpected: computers don’t ask this. Don’t allow it.",
+  "@sharingInputRequestDetail": {
+    "description": "Touchpad request warning"
+  },
+  "sharingMicrophoneRequestTitle": "{name} wants to use your microphone",
+  "@sharingMicrophoneRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingMicrophoneRequestDetail": "{name} hears this phone’s microphone until you stop, as a microphone any of its apps can use. Android asks you to confirm next.",
+  "@sharingMicrophoneRequestDetail": {
+    "description": "Microphone request explanation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingDisplayRequestTitle": "{name} wants to use this screen as a second display",
+  "@sharingDisplayRequestTitle": {
+    "description": "Request dialog title; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingDisplayRequestDetail": "This phone shows a screen of {name} full screen. Touch it to click and drag; scroll with two fingers. Go back to stop.",
+  "@sharingDisplayRequestDetail": {
+    "description": "Second display request explanation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingAllow": "Allow",
+  "@sharingAllow": {
+    "description": "Request dialog: accept"
+  },
+  "sharingDontAllow": "Don’t allow",
+  "@sharingDontAllow": {
+    "description": "Request dialog: refuse"
+  },
+  "sharingProtectionHint": "Top bar or notifications black on the computer? Android’s screen share protection hides them. Turn on “Disable screen share protections” in Developer options, then share again.",
+  "@sharingProtectionHint": {
+    "description": "Hint about Android 15 screen share protection; the quoted text is the Android setting name"
+  },
+  "sharingGotIt": "Got it",
+  "@sharingGotIt": {
+    "description": "Dismiss the hint"
+  },
+  "sharingDeveloperOptions": "Developer options",
+  "@sharingDeveloperOptions": {
+    "description": "Opens Android's Developer options"
+  },
+  "sharingControlling": "{name} is controlling your screen",
+  "@sharingControlling": {
+    "description": "Live share banner",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingUsingCamera": "{name} is using your camera",
+  "@sharingUsingCamera": {
+    "description": "Live share banner",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingUsingMicrophone": "{name} is using your microphone",
+  "@sharingUsingMicrophone": {
+    "description": "Live share banner",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingScreenWith": "Sharing your screen with {name}",
+  "@sharingScreenWith": {
+    "description": "Live share banner",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharingTapForCameraControls": "Tap for camera controls",
+  "@sharingTapForCameraControls": {
+    "description": "Webcam banner subtitle"
+  },
+  "sharingSwitchCamera": "Switch camera",
+  "@sharingSwitchCamera": {
+    "description": "Tooltip: flip between front and back camera"
+  },
+  "sharingStopSharing": "Stop sharing",
+  "@sharingStopSharing": {
+    "description": "Accessibility label of Stop on the banner"
+  },
+  "sharingStop": "Stop",
+  "@sharingStop": {
+    "description": "Banner button that stops the share"
+  },
+  "sharingCameraControls": "Camera controls",
+  "@sharingCameraControls": {
+    "description": "Accessibility label: opens the webcam screen"
+  },
+  "displaySecondHint": "{name}’s second display · go back to stop",
+  "@displaySecondHint": {
+    "description": "Hint over the second display; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "displayControlHint": "{name}’s screen · touch to click · go back to stop",
+  "@displayControlHint": {
+    "description": "Hint while controlling a computer's screen",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "displayWatchHint": "{name}’s screen · go back to stop",
+  "@displayWatchHint": {
+    "description": "Hint while watching a computer's screen",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalTabClosed": "“{title}” closed",
+  "@terminalTabClosed": {
+    "description": "Message: a terminal tab was closed here",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalTabEnded": "“{title}” ended on {name}",
+  "@terminalTabEnded": {
+    "description": "Message: the shell ended on the computer",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalCloseTitle": "Close this terminal?",
+  "@terminalCloseTitle": {
+    "description": "Confirm dialog title"
+  },
+  "terminalCloseDetail": "The shell ends on {name}, with anything still running in it. To come back to it later, keep it running instead.",
+  "@terminalCloseDetail": {
+    "description": "Confirm dialog text; name is a computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalKeepRunning": "Keep running",
+  "@terminalKeepRunning": {
+    "description": "Dialog button: detach instead of closing"
+  },
+  "terminalClose": "Close",
+  "@terminalClose": {
+    "description": "Button: close the terminal"
+  },
+  "terminalTheComputer": "the computer",
+  "@terminalTheComputer": {
+    "description": "Fallback name when the computer's name is unknown, used inside sentences"
+  },
+  "terminalDetached": "Detached",
+  "@terminalDetached": {
+    "description": "Card title: the shell runs without this phone attached"
+  },
+  "terminalDetachedDetail": "Still running on {name}. Reattach to see it again; the code is asked again.",
+  "@terminalDetachedDetail": {
+    "description": "Detached card text",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalReattach": "Reattach",
+  "@terminalReattach": {
+    "description": "Button: reconnect to a running shell"
+  },
+  "terminalOn": "Terminal on {name}",
+  "@terminalOn": {
+    "description": "Header status",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalDetachedOn": "Detached · still running on {name}",
+  "@terminalDetachedOn": {
+    "description": "Header status",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalOpeningOn": "Opening on {name}…",
+  "@terminalOpeningOn": {
+    "description": "Header status",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalWaitingForCode": "Waiting for the code",
+  "@terminalWaitingForCode": {
+    "description": "Header status"
+  },
+  "terminalEnded": "Ended",
+  "@terminalEnded": {
+    "description": "Header status: the shell has ended"
+  },
+  "terminalBack": "Back",
+  "@terminalBack": {
+    "description": "Tooltip: go back"
+  },
+  "terminalTitle": "Terminal",
+  "@terminalTitle": {
+    "description": "Header title when no tab is open"
+  },
+  "terminalMenu": "Terminal menu",
+  "@terminalMenu": {
+    "description": "Tooltip of the menu button"
+  },
+  "terminalDetachMenu": "Leave it running (detach)",
+  "@terminalDetachMenu": {
+    "description": "Menu item"
+  },
+  "terminalCloseTab": "Close {title}",
+  "@terminalCloseTab": {
+    "description": "Accessibility label: close a tab",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalNew": "New terminal",
+  "@terminalNew": {
+    "description": "Button: open a new terminal"
+  },
+  "terminalShellOn": "A shell on {name}",
+  "@terminalShellOn": {
+    "description": "Start screen title",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalShellDetail": "Runs as you on the computer, in your home folder. Each time it opens, it asks for the terminal code set there.",
+  "@terminalShellDetail": {
+    "description": "Start screen explanation"
+  },
+  "terminalStillRunning": "STILL RUNNING",
+  "@terminalStillRunning": {
+    "description": "Section header (uppercase): shells still running on the computer"
+  },
+  "terminalReattachTab": "Reattach {title}",
+  "@terminalReattachTab": {
+    "description": "Accessibility label: reattach a running shell",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalStarted": "Started {time}",
+  "@terminalStarted": {
+    "description": "When a running shell was started; time is a formatted clock time",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalKeyLeft": "Left",
+  "@terminalKeyLeft": {
+    "description": "Key bar: left arrow key"
+  },
+  "terminalKeyUp": "Up",
+  "@terminalKeyUp": {
+    "description": "Key bar: up arrow key"
+  },
+  "terminalKeyDown": "Down",
+  "@terminalKeyDown": {
+    "description": "Key bar: down arrow key"
+  },
+  "terminalKeyRight": "Right",
+  "@terminalKeyRight": {
+    "description": "Key bar: right arrow key"
+  },
+  "terminalCodeTitle": "Terminal code",
+  "@terminalCodeTitle": {
+    "description": "Code sheet title"
+  },
+  "terminalCodeDetail": "The code set on {name} in Preferences › Terminal. Linksy never keeps it.",
+  "@terminalCodeDetail": {
+    "description": "Code sheet explanation; Preferences › Terminal is the desktop app's menu path",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalCodePassphrase": "Passphrase",
+  "@terminalCodePassphrase": {
+    "description": "Code field hint when letters are allowed"
+  },
+  "terminalCodeDigitsHint": "6 or more digits",
+  "@terminalCodeDigitsHint": {
+    "description": "Code field hint for a numeric code"
+  },
+  "terminalCodeUseDigits": "Use digits",
+  "@terminalCodeUseDigits": {
+    "description": "Switch the keyboard to numbers"
+  },
+  "terminalCodeUseLetters": "Use letters",
+  "@terminalCodeUseLetters": {
+    "description": "Switch the keyboard to letters"
+  },
+  "terminalOpening": "Opening…",
+  "@terminalOpening": {
+    "description": "Button while opening the terminal"
+  },
+  "terminalOpen": "Open terminal",
+  "@terminalOpen": {
+    "description": "Button: open the terminal with the code"
+  }
 }
