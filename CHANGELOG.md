@@ -2,6 +2,11 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.16] - 2026-10-21
+
+### Added
+- **Black top bar or notifications on the computer while sharing the screen?** On some phones (realme, for one) Android's screen share protection hides them from every app. While it's on, Linksy now says so under the sharing banner, with a button to Developer options, where "Disable screen share protections" brings them back.
+
 ## [0.1.15] - 2026-10-21
 
 ### Added
