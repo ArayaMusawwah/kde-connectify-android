@@ -10,7 +10,7 @@ import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import java.io.File
 
-/// Lets other apps open a file Linksy received (Android/data/app.linksy/
+/// Lets other apps open a file Linksy received (Android/data/app.linksy.mg/
 /// files/Received), read-only, through a one-time grant. Nothing else is
 /// reachable, and no storage permission is needed.
 class ReceivedFiles : ContentProvider() {
@@ -43,7 +43,8 @@ class ReceivedFiles : ContentProvider() {
     override fun update(uri: Uri, values: ContentValues?, selection: String?, args: Array<out String>?) = 0
 
     companion object {
-        const val AUTHORITY = "app.linksy.files"
+        /// The manifest's `${'$'}{applicationId}.files`.
+        fun authority(context: android.content.Context) = context.packageName + ".files"
 
         fun mime(name: String): String {
             val ext = name.substringAfterLast('.', "").lowercase()

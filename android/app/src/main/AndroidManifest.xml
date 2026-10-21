@@ -76,7 +76,7 @@
         <!-- Opens received files in other apps, read-only, without any storage permission. -->
         <provider
             android:name=".ReceivedFiles"
-            android:authorities="app.linksy.files"
+            android:authorities="${applicationId}.files"
             android:exported="false"
             android:grantUriPermissions="true"/>
         <service
@@ -87,6 +87,22 @@
             android:name=".KeepAlive"
             android:exported="false"
             android:foregroundServiceType="connectedDevice"/>
+        <!-- Push notifications (Firebase Cloud Messaging). No analytics. -->
+        <service
+            android:name=".Push"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_linksy"/>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="news"/>
+        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true"/>
+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false"/>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

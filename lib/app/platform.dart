@@ -202,6 +202,9 @@ abstract final class LinksyPlatform {
     return _volumeKeys.stream;
   }
 
+  /// This install's Firebase push token (null without Google Play services).
+  static Future<String?> pushToken() => _call<String>('pushToken');
+
   /// "Ring my phone": the alarm sound at full volume until [stopRing].
   static Future<void> startRing() => _call<void>('startRing');
 

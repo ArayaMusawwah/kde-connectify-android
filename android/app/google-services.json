@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1031596374654",
+    "project_id": "linksy-mg",
+    "storage_bucket": "linksy-mg.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031596374654:android:4a04bf69bb3d8ade95762f",
+        "android_client_info": {
+          "package_name": "app.linksy.mg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0qLzURZBx-v3_4CO4hGCueCjpRK_97lQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

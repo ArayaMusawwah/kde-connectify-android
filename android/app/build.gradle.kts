@@ -4,6 +4,7 @@ plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services")
 }
 
 // Release signing comes from android/key.properties (never committed).
@@ -23,7 +24,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "app.linksy"
+        applicationId = "app.linksy.mg"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
@@ -75,4 +76,8 @@ flutter {
 dependencies {
     // Decodes the pairing QR code on the phone (no Google services).
     implementation("com.google.zxing:core:3.5.3")
+    // Push notifications (Firebase Cloud Messaging), wired natively: no
+    // Flutter plugin, no analytics.
+    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+    implementation("com.google.firebase:firebase-messaging")
 }

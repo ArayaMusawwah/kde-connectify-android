@@ -23,7 +23,7 @@ keyframes, size, frame rate and rotation; input checked both ways).
 | Device list with presence, nearby unpaired devices | Share sheet entry point ("Share → Linksy") |
 | Device page: Send files, Clipboard, Ping, activity as a timeline | Notifications with Accept / Decline actions |
 | Pairing: in-app QR scanner, `linksy://pair` links from any camera app, by address, 6-digit code | Send from `content://` URIs without copying (needs a core API, docs/protocol.md §7) |
-| Incoming files prompt, live progress / speed / time left, cancel, open received files | Save received files into MediaStore Downloads (now: app folder, `Android/data/app.linksy/files/Received`) |
+| Incoming files prompt, live progress / speed / time left, cancel, open received files | Save received files into MediaStore Downloads (now: app folder, `Android/data/app.linksy.mg/files/Received`) |
 | Settings: name, auto-accept, stay connected | NsdManager discovery fallback for phones that filter multicast |
 | History kept on the phone (500 entries, clipboard text never on disk) | Watching the desktop's screen on the phone; front/back camera switch |
 | Sharing this phone's screen ("View Screen", exact shape, follows rotation) and camera ("Use as Webcam"), in a foreground service with a Stop notification | Second display at the phone's own size (the desktop sends 1920×1080 for now) |
@@ -58,7 +58,7 @@ flutter run
 flutter analyze && flutter test
 ```
 
-Android only for now (application id `app.linksy`). iOS comes later.
+Android only for now (application id `app.linksy.mg`; Kotlin packages stay `app.linksy`, the JNI names depend on them). iOS comes later.
 
 ## Layout
 
@@ -96,13 +96,17 @@ Linksy has its own look, "Signal", rather than stock Material:
 ## Lean on purpose
 
 What ships is only what runs. Dependencies are Flutter and `flutter_rust_bridge`, plus
-ZXing core (Java, offline) for reading QR codes. Everything else is the platform's own:
+ZXing core (Java, offline) for reading QR codes and Firebase Cloud Messaging for push
+(wired natively in `Push.kt`, analytics off; config in `android/app/google-services.json`,
+project `linksy-mg`; every install joins the `all` topic, so the console can send news). Everything else is the platform's own:
 Android's document picker for sending, a read-only `ReceivedFiles` provider for opening
 received files, Camera2 for the scanner and sharing, and folder paths over the
-platform channel. No Google Play services, ML Kit, telemetry or storage permissions.
+platform channel. No ML Kit, analytics or storage permissions; folders come from
+Android's folder picker.
 
-The APK declares: network and Wi-Fi multicast, camera, notifications, and foreground
-services for screen capture and camera (only while sharing). Check a build with
+The APK declares: network and Wi-Fi multicast, camera, notifications, vibration, push
+(`c2dm.permission.RECEIVE`), and foreground services for screen capture and camera
+(only while sharing) and for staying connected (lock when away, opt-in background). Check a build with
 `aapt2 dump permissions <apk>` before releasing.
 
 The Rust library is built for size (`opt-level = "z"`, fat LTO) except the hot paths,

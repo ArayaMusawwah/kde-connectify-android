@@ -55,6 +55,7 @@ class MainActivity : FlutterActivity() {
         pendingLink = linkFrom(intent)
         takeShared(intent)
         watchBattery()
+        Push.subscribe()
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "app.linksy/platform").apply {
             setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -115,6 +116,7 @@ class MainActivity : FlutterActivity() {
                         pendingShare = null
                     }
                     "battery" -> result.success(battery(null))
+                    "pushToken" -> Push.token { token -> runOnUiThread { result.success(token) } }
                     "openUrl" -> result.success(openUrl(call.argument<String>("url")!!))
                     "startRing" -> {
                         ring.start()
@@ -443,7 +445,7 @@ class MainActivity : FlutterActivity() {
         if (!file.isFile) return "missing"
         val root = java.io.File(getExternalFilesDir(null), "Received").canonicalPath
         val relative = file.canonicalPath.removePrefix(root).trimStart('/')
-        val uri = android.net.Uri.Builder().scheme("content").authority(ReceivedFiles.AUTHORITY)
+        val uri = android.net.Uri.Builder().scheme("content").authority(ReceivedFiles.authority(this))
             .encodedPath("/" + relative.split('/').joinToString("/") { android.net.Uri.encode(it) }).build()
         val view = Intent(Intent.ACTION_VIEW).setDataAndType(uri, ReceivedFiles.mime(file.name))
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)

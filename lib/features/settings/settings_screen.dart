@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../app/platform.dart';
 import '../../app/scope.dart';
@@ -146,6 +147,34 @@ class SettingsScreen extends StatelessWidget {
                             : 'Backs up “${c.photosFolder}”. Turn it on '
                                   'per computer, on its page.',
                         onTap: c.pickPhotosFolder,
+                      ),
+                    ],
+                  ),
+                  const SectionLabel('Notifications'),
+                  _Group(
+                    children: [
+                      _Row(
+                        icon: Ph.bellRinging,
+                        title: 'News from Linksy',
+                        caption:
+                            'Updates and announcements arrive as '
+                            'notifications. Tap to copy this phone’s push '
+                            'token (for a test message).',
+                        onTap: () async {
+                          final token = await LinksyPlatform.pushToken();
+                          if (!context.mounted) return;
+                          if (token == null) {
+                            showMessage(
+                              context,
+                              'Push needs Google Play services on this phone.',
+                            );
+                            return;
+                          }
+                          await Clipboard.setData(ClipboardData(text: token));
+                          if (context.mounted) {
+                            showMessage(context, 'Push token copied');
+                          }
+                        },
                       ),
                     ],
                   ),

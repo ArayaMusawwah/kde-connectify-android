@@ -2,6 +2,14 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.8] - 2026-10-21
+
+### Added
+- **Push notifications**: news and updates from Linksy arrive as notifications (Firebase Cloud Messaging; no analytics). Settings › News from Linksy copies this phone's push token for a test message.
+
+### Changed
+- **New app ID: `app.linksy.mg`.** Android sees this as a new app, so it doesn't update an earlier Linksy: install it, pair your computers again, then uninstall the old one. Received files now live in `Android/data/app.linksy.mg/files/Received`.
+
 ## [0.1.7] - 2026-10-20
 
 ### Added
