@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,7 +60,6 @@ class _DeviceScreenState extends State<DeviceScreen> {
       // Forgotten while open.
       return const Scaffold(body: SizedBox.shrink());
     }
-    final s = Sig.of(context);
     final days = _byDay(c.activityFor(deviceId));
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -72,7 +72,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
               toolbarHeight: 0,
               collapsedHeight: 0,
               systemOverlayStyle: overlayFor(Brightness.dark),
-              backgroundColor: s.heroTop,
+              backgroundColor: Sig.deep,
             ),
             // One box, so the actions paint over the hero they overlap.
             SliverToBoxAdapter(
@@ -147,92 +147,151 @@ class _Hero extends StatelessWidget {
 
   final DeviceView view;
 
+  /// Tall enough for the name and its lines, plus the 64 px the action card
+  /// overlaps at the bottom.
+  static const height = 330.0;
+
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
+    final c = LinksyScope.of(context);
     final d = view.device;
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
-        color: s.hero,
-      ),
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 64),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              RoundButton(
-                icon: Ph.arrowLeft,
-                tooltip: 'Back',
-                onDark: true,
-                onTap: () => Navigator.of(context).maybePop(),
+    final picture = c.pictures[d.id];
+
+    final details = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          d.name,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: sora(30, weight: FontWeight.w700, color: Colors.white),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (view.presence == Presence.notNearby)
+              Icon(Ph.wifiSlash, size: 15, color: Colors.white54)
+            else
+              PulseDot(
+                color: presenceColor(s, view.presence, onBlue: true),
+                size: 7,
               ),
-              const Spacer(),
-              RoundButton(
-                icon: Ph.dotsThree,
-                tooltip: 'More',
-                onDark: true,
-                onTap: () => _more(context, d),
+            const SizedBox(width: 4),
+            Text(
+              presenceLabel(view.presence),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: presenceColor(s, view.presence, onBlue: true),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Orb(device: d, size: 104, presence: view.presence, onBlue: true),
-          const SizedBox(height: 18),
-          Text(
-            d.name,
-            textAlign: TextAlign.center,
-            style: sora(30, weight: FontWeight.w700, color: Colors.white),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (view.presence == Presence.notNearby)
-                Icon(Ph.wifiSlash, size: 15, color: Colors.white54)
-              else
-                PulseDot(
-                  color: presenceColor(s, view.presence, onBlue: true),
-                  size: 7,
-                ),
-              const SizedBox(width: 4),
-              Text(
-                presenceLabel(view.presence),
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: presenceColor(s, view.presence, onBlue: true),
-                ),
-              ),
-              Text(
-                '   ${d.description}',
-                style: const TextStyle(fontSize: 14, color: Colors.white70),
-              ),
-            ],
-          ),
-          if (view.battery case final battery?
-              when view.presence != Presence.notNearby) ...[
-            const SizedBox(height: 6),
-            _BatteryLine(battery: battery),
-          ],
-          if (LinksyScope.of(context).lockWatchers.containsKey(d.id)) ...[
-            const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Ph.lockSimple, size: 16, color: Colors.white70),
-                const SizedBox(width: 5),
-                Text(
-                  'Locks when you leave with this phone',
-                  style: const TextStyle(fontSize: 14, color: Colors.white70),
-                ),
-              ],
+            ),
+            Text(
+              '   ${d.description}',
+              style: const TextStyle(fontSize: 14, color: Colors.white70),
             ),
           ],
+        ),
+        if (view.battery case final battery?
+            when view.presence != Presence.notNearby) ...[
+          const SizedBox(height: 6),
+          _BatteryLine(battery: battery),
         ],
+        if (c.lockWatchers.containsKey(d.id)) ...[
+          const SizedBox(height: 6),
+          const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Ph.lockSimple, size: 16, color: Colors.white70),
+              SizedBox(width: 5),
+              Text(
+                'Locks when you leave with this phone',
+                style: TextStyle(fontSize: 14, color: Colors.white70),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+
+    // Over a photo, the name and the buttons sit on a dark backdrop so they
+    // read whatever the picture is.
+    Widget button(IconData icon, String tip, VoidCallback onTap) {
+      final round = RoundButton(
+        icon: icon,
+        tooltip: tip,
+        onDark: true,
+        onTap: onTap,
+      );
+      if (picture == null) return round;
+      return DecoratedBox(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: _backdrop,
+        ),
+        child: round,
+      );
+    }
+
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
+      child: SizedBox(
+        height: height,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (picture != null)
+              Image.file(
+                File(picture),
+                key: ValueKey(c.pictureVersion),
+                fit: BoxFit.cover,
+                gaplessPlayback: true,
+              )
+            else
+              const _GridBanner(),
+            Positioned(
+              left: 16,
+              right: 16,
+              top: 8,
+              child: Row(
+                children: [
+                  button(
+                    Ph.arrowLeft,
+                    'Back',
+                    () => Navigator.of(context).maybePop(),
+                  ),
+                  const Spacer(),
+                  button(Ph.dotsThree, 'More', () => _more(context, d)),
+                ],
+              ),
+            ),
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 64,
+              child: Center(
+                child: picture == null
+                    ? details
+                    : Container(
+                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 14),
+                        decoration: BoxDecoration(
+                          color: _backdrop,
+                          borderRadius: BorderRadius.circular(Radii.lg),
+                        ),
+                        child: details,
+                      ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+
+  /// Deep ink, mostly opaque: flat, no gradient.
+  static const _backdrop = Color(0xB80A1024);
 
   Future<void> _more(BuildContext context, DeviceInfo d) =>
       showModalBottomSheet<void>(
@@ -257,6 +316,31 @@ class _Hero extends StatelessWidget {
                     style: TextStyle(color: s.muted, fontSize: 13),
                   ),
                   const SizedBox(height: 20),
+                  SigButton(
+                    label: LinksyScope.read(context).pictures.containsKey(d.id)
+                        ? 'Change picture'
+                        : 'Add a picture',
+                    icon: Ph.images,
+                    kind: SigButtonKind.secondary,
+                    expand: true,
+                    onTap: () {
+                      Navigator.of(sheet).pop();
+                      LinksyScope.read(context).pickPicture(d.id);
+                    },
+                  ),
+                  if (LinksyScope.read(context).pictures.containsKey(d.id)) ...[
+                    const SizedBox(height: 10),
+                    SigButton(
+                      label: 'Remove picture',
+                      kind: SigButtonKind.quiet,
+                      expand: true,
+                      onTap: () {
+                        Navigator.of(sheet).pop();
+                        LinksyScope.read(context).removePicture(d.id);
+                      },
+                    ),
+                  ],
+                  const SizedBox(height: 10),
                   SigButton(
                     label: 'Forget this device',
                     icon: Ph.linkBreak,
@@ -430,6 +514,40 @@ class _Actions extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The banner without a picture: deep blue with a fine grid. Flat.
+class _GridBanner extends StatelessWidget {
+  const _GridBanner();
+
+  @override
+  Widget build(BuildContext context) =>
+      const CustomPaint(painter: _Grid(), child: SizedBox.expand());
+}
+
+class _Grid extends CustomPainter {
+  const _Grid();
+
+  static const _cell = 28.0;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(Offset.zero & size, Paint()..color = Sig.deep);
+    final line = Paint()
+      ..color = Colors.white.withValues(alpha: 0.08)
+      ..strokeWidth = 1;
+    // Centered, so the grid sits evenly on any width.
+    final dx = (size.width % _cell) / 2;
+    for (var x = dx; x <= size.width; x += _cell) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), line);
+    }
+    for (var y = 0.0; y <= size.height; y += _cell) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), line);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_Grid oldDelegate) => false;
 }
 
 /// "Find my computer": rings it until stopped (or 30 s), so it can be found.

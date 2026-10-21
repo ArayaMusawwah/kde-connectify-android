@@ -73,6 +73,12 @@ app is open.
    the whole phone. Wording like "Linksy on Pixel (Documents)" would match. A small
    `fs_info` answer with the folder's name is easy to add on the phone if you want it.
 
+7. **Device pictures (optional).** Since 0.1.10 the phone lets the user give each
+   paired device a picture, shown as its avatar and as a banner on its page. It's
+   local to the phone. If the desktop wants the same, a `picture` message (a small
+   JPEG, base64, ≤ 128 KiB) that a device sends about *itself* after connecting would
+   let both sides show each other's picture without setting it twice.
+
 ## 3. What the phone can't build (please don't offer these for Android)
 
 | Feature | Why not |

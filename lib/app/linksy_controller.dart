@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
@@ -66,6 +67,12 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   /// Remote (touchpad and keyboard) sessions, by device.
   final Map<String, String> remotes = {};
+
+  /// Each paired device's picture (a file path), chosen on this phone.
+  Map<String, String> pictures = {};
+
+  /// Bumped when a picture changes, so images reload.
+  int pictureVersion = 0;
 
   /// Folders picked in Android's picker: shared with computers, backed up.
   String? filesFolder;
@@ -150,6 +157,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   /// no Android side).
   Future<void> _loadPlatform() async {
     prefs = await LinksyPlatform.prefs();
+    pictures = await LinksyPlatform.pictures();
     filesFolder = await LinksyPlatform.folder('files');
     photosFolder = await LinksyPlatform.folder('photos');
     await LinksyPlatform.shareFiles(sharingFiles && filesFolder != null);
@@ -891,7 +899,27 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   Future<String?> pairWithInvite(String uri) =>
       _run(() => node.pairWithInvite(uri));
 
+  /// Choose [deviceId]'s picture from the phone's photos. False if cancelled.
+  Future<bool> pickPicture(String deviceId) async {
+    final path = await LinksyPlatform.pickPicture(deviceId);
+    if (path == null) return false;
+    await FileImage(File(path)).evict();
+    pictures[deviceId] = path;
+    pictureVersion++;
+    notifyListeners();
+    return true;
+  }
+
+  Future<void> removePicture(String deviceId) async {
+    final path = pictures.remove(deviceId);
+    if (path != null) await FileImage(File(path)).evict();
+    pictureVersion++;
+    notifyListeners();
+    await LinksyPlatform.removePicture(deviceId);
+  }
+
   Future<String?> forget(String deviceId) async {
+    if (pictures.containsKey(deviceId)) await removePicture(deviceId);
     final error = await _run(() => node.forget(deviceId));
     _activity.removeWhere((a) => a.deviceId == deviceId);
     _changed();

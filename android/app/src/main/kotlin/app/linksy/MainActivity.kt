@@ -34,6 +34,8 @@ class MainActivity : FlutterActivity() {
 
     private val ring by lazy { RingPlayer(applicationContext) }
     private var calls: CallWatcher? = null
+    /// Waiting on the photo picker: which device, and Dart's reply.
+    private var pendingPicture: Pair<String, MethodChannel.Result>? = null
     /// Waiting on Android's folder picker: which folder, and Dart's reply.
     private var pendingFolder: Pair<String, MethodChannel.Result>? = null
     private var batteryReceiver: BroadcastReceiver? = null
@@ -66,6 +68,12 @@ class MainActivity : FlutterActivity() {
                     "takeLink" -> {
                         result.success(pendingLink)
                         pendingLink = null
+                    }
+                    "pictures" -> result.success(Pictures.all(this@MainActivity))
+                    "pickPicture" -> pickPicture(call.argument<String>("device")!!, result)
+                    "removePicture" -> {
+                        Pictures.remove(this@MainActivity, call.argument<String>("device")!!)
+                        result.success(null)
                     }
                     "pickFolder" -> pickFolder(call.argument<String>("kind")!!, result)
                     "folder" -> result.success(folderName(call.argument<String>("kind")!!))
@@ -262,6 +270,20 @@ class MainActivity : FlutterActivity() {
             contentResolver.query(doc, arrayOf(android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME), null, null, null)
                 ?.use { c -> if (c.moveToFirst()) c.getString(0) else null }
         }.getOrNull() ?: tree.lastPathSegment?.substringAfterLast(':')
+    }
+
+    /// Android's photo picker (no permission), or the document picker on
+    /// phones without it.
+    private fun pickPicture(device: String, result: MethodChannel.Result) {
+        pendingPicture?.second?.success(null)
+        pendingPicture = device to result
+        val intent = if (Build.VERSION.SDK_INT >= 33) {
+            Intent(android.provider.MediaStore.ACTION_PICK_IMAGES)
+        } else {
+            Intent(Intent.ACTION_GET_CONTENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE)
+        }
+        @Suppress("DEPRECATION")
+        startActivityForResult(intent, REQUEST_PICTURE)
     }
 
     /// Android's folder picker; the grant is kept across restarts.
@@ -499,6 +521,17 @@ class MainActivity : FlutterActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         @Suppress("DEPRECATION")
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_PICTURE) {
+            val (device, result) = pendingPicture ?: return
+            pendingPicture = null
+            val uri = data?.data
+            if (resultCode != RESULT_OK || uri == null) return result.success(null)
+            Thread {
+                val path = Pictures.save(applicationContext, device, uri)
+                runOnUiThread { result.success(path) }
+            }.start()
+            return
+        }
         if (requestCode == REQUEST_FOLDER) {
             val (kind, result) = pendingFolder ?: return
             pendingFolder = null
@@ -564,6 +597,7 @@ class MainActivity : FlutterActivity() {
         const val REQUEST_NOTIFICATIONS = 43
         const val REQUEST_PICK = 44
         const val REQUEST_FOLDER = 45
+        const val REQUEST_PICTURE = 46
 
         private var files: FileServer? = null
 

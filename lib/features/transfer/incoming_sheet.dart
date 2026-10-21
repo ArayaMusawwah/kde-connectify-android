@@ -43,7 +43,11 @@ class IncomingFilesSheet extends StatelessWidget {
           children: [
             Row(
               children: [
-                Orb(device: request.from, size: 56),
+                Orb(
+                  device: request.from,
+                  size: 56,
+                  picture: c.pictures[request.from.id],
+                ),
                 const SizedBox(width: 6),
                 const Icon(PhBold.arrowRight, color: Sig.incoming, size: 18),
                 const SizedBox(width: 6),

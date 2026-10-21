@@ -2,6 +2,14 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- **Device pictures**: give each of your devices a picture (⋯ › Add a picture). It shows as its avatar, and as a large banner on its page with the name on a dark backdrop. Without a picture, the banner is a dark blue grid.
+
+### Changed
+- A device's page no longer shows the round avatar in its header.
+
 ## [0.1.9] - 2026-10-21
 
 ### Added

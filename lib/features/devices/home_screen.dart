@@ -156,7 +156,12 @@ class _DeviceRow extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       child: Row(
         children: [
-          Orb(device: d, size: 46, presence: view.presence),
+          Orb(
+            device: d,
+            size: 46,
+            presence: view.presence,
+            picture: LinksyScope.of(context).pictures[d.id],
+          ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(

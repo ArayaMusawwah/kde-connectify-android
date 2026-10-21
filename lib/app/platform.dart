@@ -238,6 +238,19 @@ abstract final class LinksyPlatform {
   static Future<void> switchCamera(String session) =>
       _call<void>('switchCamera', {'session': session});
 
+  /// Each paired device's picture: id → file path.
+  static Future<Map<String, String>> pictures() async =>
+      (await _call<Map<Object?, Object?>>('pictures'))
+          ?.map((k, v) => MapEntry(k as String, v as String)) ??
+      {};
+
+  /// Android's photo picker; the picture saved for [device], or null.
+  static Future<String?> pickPicture(String device) =>
+      _call<String>('pickPicture', {'device': device});
+
+  static Future<void> removePicture(String device) =>
+      _call<void>('removePicture', {'device': device});
+
   /// This install's Firebase push token (null without Google Play services).
   static Future<String?> pushToken() => _call<String>('pushToken');
 

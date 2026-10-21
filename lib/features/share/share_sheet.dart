@@ -109,6 +109,7 @@ class _ShareSheetState extends State<ShareSheet> {
                           child: Row(
                             children: [
                               Orb(
+                                picture: c.pictures[v.device.id],
                                 device: v.device,
                                 size: 40,
                                 presence: v.presence,

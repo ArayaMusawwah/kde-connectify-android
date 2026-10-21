@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -275,11 +276,15 @@ class Orb extends StatelessWidget {
     this.size = 52,
     this.presence,
     this.onBlue = false,
+    this.picture,
   });
 
   final DeviceInfo device;
   final double size;
   final Presence? presence;
+
+  /// The device's picture (a file), shown instead of its initials.
+  final String? picture;
 
   /// Sits on a blue hero: a white edge keeps it apart from the background.
   final bool onBlue;
@@ -305,15 +310,25 @@ class Orb extends StatelessWidget {
             ? Border.all(color: Colors.white.withValues(alpha: 0.85), width: 2)
             : null,
       ),
-      child: Text(
-        initials(device.name),
-        style: sora(
-          size * 0.34,
-          weight: FontWeight.w700,
-          color: ink,
-          spacing: 0.5,
-        ),
-      ),
+      clipBehavior: picture == null ? Clip.none : Clip.antiAlias,
+      child: picture == null
+          ? Text(
+              initials(device.name),
+              style: sora(
+                size * 0.34,
+                weight: FontWeight.w700,
+                color: ink,
+                spacing: 0.5,
+              ),
+            )
+          : Image.file(
+              File(picture!),
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+              cacheWidth: (size * 3).round(),
+              gaplessPlayback: true,
+            ),
     );
     if (away) orb = Opacity(opacity: 0.45, child: orb);
     if (ring == null) return orb;

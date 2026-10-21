@@ -7,7 +7,6 @@ import '../../core/demo_node.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../permissions/permissions_sheet.dart';
-import '../../ui/format.dart';
 import '../../ui/sig.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -63,7 +62,9 @@ class SettingsScreen extends StatelessWidget {
                       _Row(
                         icon: Ph.folderSimple,
                         title: 'Save location',
-                        caption: friendlyPath(st.downloadDir),
+                        // Files land in the app's folder, then move to
+                        // Downloads (Android 10+).
+                        caption: 'Downloads › Linksy',
                       ),
                       _Row(
                         icon: Ph.shieldCheck,
