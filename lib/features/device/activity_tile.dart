@@ -7,6 +7,7 @@ import '../../app/scope.dart';
 import '../../ui/components.dart';
 import '../../ui/format.dart';
 import '../../ui/sig.dart';
+import '../sharing/webcam_screen.dart';
 
 IconData activityIcon(Activity a) => switch (a.kind) {
   ActivityKind.files when a.names.length > 1 => Ph.files,
@@ -111,9 +112,14 @@ class TimelineEntry extends StatelessWidget {
         : a.incoming
         ? Sig.incoming
         : Sig.outgoing;
+    final c = LinksyScope.of(context);
+    final webcam = a.kind == ActivityKind.camera && a.isLive
+        ? c.sharing[a.id]
+        : null;
     final openable =
         (a.incoming && a.saved.isNotEmpty) ||
-        (a.kind == ActivityKind.link && a.text != null);
+        (a.kind == ActivityKind.link && a.text != null) ||
+        webcam != null;
 
     return IntrinsicHeight(
       child: Row(
@@ -146,7 +152,16 @@ class TimelineEntry extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(4, 5, 16, 5),
               child: SigCard(
-                onTap: openable ? () => _open(context, a) : null,
+                onTap: !openable
+                    ? null
+                    : webcam != null
+                    // The webcam running: back to its controls.
+                    ? () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => WebcamScreen(share: webcam),
+                        ),
+                      )
+                    : () => _open(context, a),
                 padding: const EdgeInsets.fromLTRB(14, 12, 6, 12),
                 radius: Radii.md + 2,
                 child: Row(

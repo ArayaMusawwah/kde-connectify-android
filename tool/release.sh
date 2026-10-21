@@ -30,7 +30,10 @@ OUT=build/app/outputs/flutter-apk
 DIST="dist/$TAG"; rm -rf "$DIST"; mkdir -p "$DIST"
 flutter build apk --release --obfuscate --split-debug-info=build/symbols
 cp "$OUT/app-release.apk" "$DIST/$NAME-$V.apk"
-flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/symbols
+# Same version code as the universal APK (no 1000×ABI offset), so any of
+# them updates any other.
+flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/symbols \
+  -P force-version-code-ignoring-abi=true
 cp "$OUT/app-arm64-v8a-release.apk"   "$DIST/$NAME-$V-arm64.apk"
 cp "$OUT/app-armeabi-v7a-release.apk" "$DIST/$NAME-$V-armv7.apk"
 cp "$OUT/app-x86_64-release.apk"      "$DIST/$NAME-$V-x86_64.apk"

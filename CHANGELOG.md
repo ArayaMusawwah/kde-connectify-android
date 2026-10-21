@@ -2,6 +2,15 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.14] - 2026-10-21
+
+### Fixed
+- **Back to the webcam controls** after leaving them: the computer's page now shows the running webcam (and screen sharing) with its banner, and the live "Your camera" entry in its timeline opens the controls too.
+- **Updates install over any earlier Linksy APK.** `linksy.apk` and `linksy-arm64.apk` used to carry different version numbers, so a phone that once had the arm64 one refused later `linksy.apk` updates as a "downgrade". All APKs of a release now share one version number, higher than any before.
+
+### Added
+- The installed version at the bottom of Settings.
+
 ## [0.1.13] - 2026-10-21
 
 ### Fixed

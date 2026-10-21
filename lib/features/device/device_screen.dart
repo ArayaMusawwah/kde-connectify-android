@@ -13,6 +13,7 @@ import '../../ui/components.dart';
 import '../../ui/format.dart';
 import '../../ui/sig.dart';
 import '../remote/remote_screen.dart';
+import '../sharing/sharing.dart';
 import 'activity_tile.dart';
 
 /// Picks files and sends them to a device, reporting any error.
@@ -87,6 +88,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
                   Transform.translate(
                     offset: const Offset(0, -34),
                     child: _Actions(view: view),
+                  ),
+                  // What this phone shares with it right now (camera, screen),
+                  // with the way back to the webcam's controls.
+                  Transform.translate(
+                    offset: const Offset(0, -34),
+                    child: SharingBanners(controller: c, deviceId: deviceId),
                   ),
                   if (c.media[deviceId]?.players case final players?
                       when players.isNotEmpty)

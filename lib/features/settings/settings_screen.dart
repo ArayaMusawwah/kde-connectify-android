@@ -220,6 +220,16 @@ class SettingsScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(color: s.faint, fontSize: 13, height: 1.5),
                   ),
+                  const SizedBox(height: 6),
+                  // Which build is installed (updates from GitHub are manual).
+                  FutureBuilder<String?>(
+                    future: LinksyPlatform.appVersion(),
+                    builder: (context, v) => Text(
+                      v.data == null ? '' : 'Linksy ${v.data}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: s.faint, fontSize: 12),
+                    ),
+                  ),
                 ],
               ),
       ),

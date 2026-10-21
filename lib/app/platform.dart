@@ -296,6 +296,9 @@ abstract final class LinksyPlatform {
   static Future<void> removePicture(String device) =>
       _call<void>('removePicture', {'device': device});
 
+  /// "0.1.14 (3015)": the installed version and its version code.
+  static Future<String?> appVersion() => _call<String>('appVersion');
+
   /// This install's Firebase push token (null without Google Play services).
   static Future<String?> pushToken() => _call<String>('pushToken');
 

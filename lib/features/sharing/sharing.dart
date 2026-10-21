@@ -103,13 +103,18 @@ class SessionRequestDialog extends StatelessWidget {
 
 /// Live shares at the top of home, each with Stop.
 class SharingBanners extends StatelessWidget {
-  const SharingBanners({super.key, required this.controller});
+  const SharingBanners({super.key, required this.controller, this.deviceId});
 
   final LinksyController controller;
 
+  /// Only the shares with this device (its page), else all (home).
+  final String? deviceId;
+
   @override
   Widget build(BuildContext context) {
-    final shares = controller.sharing.values.toList();
+    final shares = controller.sharing.values
+        .where((s) => deviceId == null || s.peer.id == deviceId)
+        .toList();
     if (shares.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -156,13 +161,23 @@ class _Banner extends StatelessWidget {
           Icon(icon, color: Colors.white, size: 22),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 14.5,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.5,
+                  ),
+                ),
+                if (share.kind == SessionKind.camera)
+                  const Text(
+                    'Tap for camera controls',
+                    style: TextStyle(color: Colors.white70, fontSize: 12.5),
+                  ),
+              ],
             ),
           ),
           const SizedBox(width: 8),

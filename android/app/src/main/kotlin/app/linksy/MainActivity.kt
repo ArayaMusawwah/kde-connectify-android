@@ -68,6 +68,12 @@ class MainActivity : FlutterActivity() {
             setMethodCallHandler { call, result ->
                 when (call.method) {
                     "deviceName" -> result.success(deviceName())
+                    "appVersion" -> result.success(
+                        packageManager.getPackageInfo(packageName, 0).let {
+                            @Suppress("DEPRECATION")
+                            "${it.versionName} (${if (Build.VERSION.SDK_INT >= 28) it.longVersionCode else it.versionCode.toLong()})"
+                        },
+                    )
                     "takeLink" -> {
                         result.success(pendingLink)
                         pendingLink = null
