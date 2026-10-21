@@ -57,6 +57,9 @@ class MainActivity : FlutterActivity() {
         pendingLink = linkFrom(intent)
         takeShared(intent)
         watchBattery()
+        ShareService.webcamListener = { session, state ->
+            runOnUiThread { channel?.invokeMethod("webcamChanged", mapOf("session" to session, "state" to state.toString())) }
+        }
         TransferNotice.answer = { transfer, accept ->
             runOnUiThread { channel?.invokeMethod("transferAnswer", mapOf("transfer" to transfer, "accept" to accept)) }
         }
@@ -217,6 +220,17 @@ class MainActivity : FlutterActivity() {
                         inputWriter.execute { NativeSession.write(session, frames) }
                         result.success(null)
                     }
+                    "webcamState" -> result.success(
+                        ShareService.webcams[call.argument<String>("session")!!]?.state()?.toString(),
+                    )
+                    "webcamSet" -> {
+                        ShareService.webcams[call.argument<String>("session")!!]
+                            ?.set(org.json.JSONObject(call.argument<String>("controls")!!))
+                        result.success(null)
+                    }
+                    "webcamPreview" -> result.success(
+                        webcamPreview(call.argument<String>("session")!!, call.argument<Boolean>("on") == true),
+                    )
                     "switchCamera" -> {
                         ShareService.switchCamera(this@MainActivity, call.argument<String>("session")!!)
                         result.success(null)
@@ -248,6 +262,7 @@ class MainActivity : FlutterActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         takeShared(intent)
+        intent.getStringExtra(ShareService.EXTRA_WEBCAM)?.let { channel?.invokeMethod("openWebcam", it) }
         val link = linkFrom(intent) ?: return
         channel?.invokeMethod("link", link) ?: run { pendingLink = link }
     }
@@ -365,6 +380,35 @@ class MainActivity : FlutterActivity() {
         super.onStop()
     }
 
+    /// Webcam previews on screen, by session.
+    private val previews = mutableMapOf<String, io.flutter.view.TextureRegistry.SurfaceProducer>()
+
+    /// Shows a running webcam in a Flutter texture (its id), or stops.
+    private fun webcamPreview(session: String, on: Boolean): Long? {
+        val camera = ShareService.webcams[session]
+        if (!on || camera == null) {
+            camera?.setPreview(null)
+            previews.remove(session)?.release()
+            return null
+        }
+        previews[session]?.let { return it.id() }
+        val producer = engine?.renderer?.createSurfaceProducer() ?: return null
+        producer.setSize(camera.size.width, camera.size.height)
+        producer.setCallback(object : io.flutter.view.TextureRegistry.SurfaceProducer.Callback {
+            // The texture gets a new surface when the app comes back.
+            override fun onSurfaceAvailable() {
+                camera.setPreview(producer.surface)
+            }
+
+            override fun onSurfaceCleanup() {
+                camera.setPreview(null)
+            }
+        })
+        camera.setPreview(producer.surface)
+        previews[session] = producer
+        return producer.id()
+    }
+
     /// Decodes a second-display session into a new Flutter texture; returns
     /// its id for Dart's `Texture` widget.
     private fun startDisplay(session: String): Long? {
@@ -381,6 +425,8 @@ class MainActivity : FlutterActivity() {
 
     override fun onDestroy() {
         TransferNotice.answer = null
+        ShareService.webcamListener = null
+        previews.keys.toList().forEach { webcamPreview(it, false) }
         batteryReceiver?.let { runCatching { unregisterReceiver(it) } }
         batteryReceiver = null
         ring.stop()

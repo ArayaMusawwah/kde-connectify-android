@@ -5,6 +5,7 @@ import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../../ui/sig.dart';
+import 'webcam_screen.dart';
 
 /// "Studio Desktop wants to see your screen": Allow leads on to Android's own
 /// prompt (screen capture or camera permission).
@@ -34,8 +35,8 @@ class SessionRequestDialog extends StatelessWidget {
         Ph.videoCamera,
         '$name wants to use your camera',
         '$name gets this phone’s camera as a webcam until you stop. '
-            'Hold the phone sideways for a wide picture; switch to the front '
-            'camera from the notification.',
+            'Zoom, focus, light, lenses and rotation are in Linksy while it '
+            'runs.',
       ),
       SessionKind.input => (
         Ph.mouseSimple,
@@ -142,7 +143,7 @@ class _Banner extends StatelessWidget {
       SessionKind.camera => (Ph.videoCamera, '$name is using your camera'),
       _ => (Ph.screencast, 'Sharing your screen with $name'),
     };
-    return Container(
+    final banner = Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
       decoration: BoxDecoration(
         color: Sig.blue,
@@ -205,6 +206,15 @@ class _Banner extends StatelessWidget {
           ),
         ],
       ),
+    );
+    // A webcam's banner opens its controls.
+    if (share.kind != SessionKind.camera) return banner;
+    return Pressable(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => WebcamScreen(share: share)),
+      ),
+      semanticLabel: 'Camera controls',
+      child: banner,
     );
   }
 }

@@ -30,7 +30,7 @@ offer those features to Android phones.
 | Files sidebar (`fs`, §4.9) | Done | `/` is **one folder the user picked** (Android's folder picker), not shared storage. Android refuses Download and the storage root there. Until a folder is chosen and the switch is on, the phone answers `fs_error` "This phone doesn't share its files…" |
 | Touchpad / keyboard / slides (`input`) | Done | `pointer_by`, `button`, `scroll`, `text`, `key` (BackSpace, Return, Left/Right, F5, Escape). Volume keys change slides |
 | Phone shares its screen (`screen`) | Done | Always the **entire screen** (Android 14+ otherwise preselects "a single app" and the bars come out black) |
-| Phone as webcam (`camera`) | Done | Back camera, 1280×720 at 30 fps; **front/back switch** mid-session from the phone (same stream; a keyframe with SPS/PPS follows the switch) |
+| Phone as webcam (`camera`) | Done | 1280×720 at 30 fps, with full camera controls on the phone (lenses, zoom, torch, focus, exposure, white balance, stabilization, quality), live; the computer can send `camera_control` on the session (§2.8) |
 | Phone as second display (`display`) | Done | Decodes whole access units (AUD / first-slice boundaries), so any slicing works |
 | **Phone watches the computer's screen** (`screen`, and `control` with touch) | **New** | The phone *requests* `screen` or `control`. Touch in `control`: one finger = absolute `pointer` + left button held, two fingers = `scroll`. Uses the same receiver as `display` |
 | Remote control *of the phone* (`control` asked by the computer) | Not possible | Answered with `decline_unsupported` at once; see §3 |
@@ -79,6 +79,88 @@ app is open.
    JPEG, base64, ≤ 128 KiB) that a device sends about *itself* after connecting would
    let both sides show each other's picture without setting it twice.
 
+8. **Camera controls from the computer** (phone side done in 0.1.11). The phone's
+   webcam has a camera app's controls: lenses (front, back and every back camera the
+   phone exposes: ultra-wide, main, tele), zoom, torch, tap-to-focus and manual
+   focus, exposure compensation, exposure and white-balance locks, white-balance
+   presets, stabilization and stream quality. They work from the phone now; the
+   computer can drive them too.
+
+   **Computer → phone, already understood by the phone:** on the `camera` session,
+   write framed JSON on the computer's send side (u32 big-endian length + body, as
+   `ControlMsg` on a `control` session), at most 64 KiB each:
+
+   ```json
+   {"type":"camera_control","zoom":2.0}
+   {"type":"camera_control","facing":"front"}
+   {"type":"camera_control","lens":"2"}
+   {"type":"camera_control","torch":true}
+   {"type":"camera_control","focus_point":[0.42,0.61]}
+   {"type":"camera_control","focus":"manual","focus_distance":0.3}
+   {"type":"camera_control","focus":"auto"}
+   {"type":"camera_control","exposure":2,"exposure_lock":false}
+   {"type":"camera_control","white_balance":"daylight","white_balance_lock":true}
+   {"type":"camera_control","stabilization":false}
+   {"type":"camera_control","quality":"high"}
+   {"type":"camera_control","rotation":"auto"}
+   {"type":"camera_control","rotation":90,"fill":false}
+   ```
+
+   Any subset of the keys in one message; unknown keys are ignored.
+   - `zoom`: a ratio within `zoom_min`..`zoom_max` (below 1 reaches the ultra-wide on
+     phones whose main camera includes it). `facing`: `front` | `back`. `lens`: one of
+     the `lenses[].id`; switching resets zoom, focus and exposure.
+   - `focus`: `auto` (continuous) | `point` (with `focus_point`, held there) |
+     `manual` (with `focus_distance` 0 = far … 1 = nearest). `focus_point` is
+     `[x, y]`, 0..1 across and down **the picture as streamed** (not mirrored), and
+     also meters exposure there.
+   - `exposure`: compensation steps in `exposure_min`..`exposure_max`; in EV that's
+     `exposure * exposure_step`.
+   - `white_balance`: `auto` | `daylight` | `cloudy` | `shade` | `incandescent` |
+     `fluorescent` (only those in `white_balances`).
+   - `quality`: `saver` (2 Mbps) | `standard` (4) | `high` (8), applied live. The
+     size stays 1280×720 at 30 fps (see below).
+   - `rotation`: `"auto"` (default: kept upright for how the phone is held) or a
+     fixed `0` | `90` | `180` | `270` (clockwise). The stream keeps its 16:9 size;
+     an upright (portrait) picture is fitted with black bars at the sides, or with
+     `"fill": true` cropped to fill the frame. `focus_point` is on the stream as
+     shown, after rotation.
+   - Each change takes effect on the running stream: no restart. A lens or facing
+     change is followed by a keyframe with SPS/PPS.
+
+   **Phone → computer, needs the core:** what the camera can do and its current
+   values, so the computer can draw controls and follow changes made on the phone.
+   The phone has it as one JSON object (the same keys) and needs a connection
+   message to send it, for example `{"type":"camera_state","session":"<uuid>",
+   "state":{…}}` with `Event::CameraState { from, session, state }`, sent when the
+   session starts and after every change. The state:
+
+   ```json
+   {"width":1280,"height":720,"facing":"back","lens":"0",
+    "lenses":[{"id":"0","facing":"back","zoom":1.0,"main":true},
+              {"id":"2","facing":"back","zoom":0.6,"main":false},
+              {"id":"1","facing":"front","zoom":1.0,"main":true}],
+    "zoom":1.0,"zoom_min":0.6,"zoom_max":10.0,"zoom_presets":[0.6,1,2,5,10],
+    "torch":false,"has_torch":true,
+    "focus":"auto","focus_modes":["auto","point","manual"],"focus_distance":0.0,
+    "focus_point":null,
+    "exposure":0,"exposure_min":-12,"exposure_max":12,"exposure_step":0.1667,
+    "exposure_lock":false,
+    "white_balance":"auto","white_balances":["auto","daylight","cloudy","shade",
+     "incandescent","fluorescent"],"white_balance_lock":false,
+    "stabilization":true,"has_stabilization":true,"quality":"standard",
+    "rotation":90,"rotation_mode":"auto","fill":false}
+   ```
+
+   Suggested desktop UI: a camera panel next to "Use as Webcam" with the zoom chips
+   (`zoom_presets` plus the other `lenses`), a torch toggle, click-to-focus on the
+   preview, an exposure slider and white-balance menu, mirroring the phone's screen.
+
+   **Later, with the desktop:** other sizes (1080p) and 60 fps would need the webcam
+   device on the computer to follow a size change; the phone can restart its encoder
+   at a new size if the desktop can take it (`camera_control {"size":[1920,1080],
+   "fps":30}` is the proposed shape).
+
 ## 3. What the phone can't build (please don't offer these for Android)
 
 | Feature | Why not |
@@ -105,6 +187,8 @@ default SMS app.
 
 ## Changelog
 
+- **2026-10-21** — §2.8 camera controls: `camera_control` on the camera session
+  (the phone understands it now) and the proposed `camera_state` message.
 - **2026-10-21** — First version: phone status up to 0.1.8+ (watching the computer's
   screen, camera switch, Accept/Decline notifications, Downloads), requests to the
   desktop (§2), and what Android won't allow (§3).

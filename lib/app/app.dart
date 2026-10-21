@@ -11,6 +11,7 @@ import '../features/ring/ring_screen.dart';
 import '../features/share/share_sheet.dart';
 import '../features/sharing/display_screen.dart';
 import '../features/sharing/sharing.dart';
+import '../features/sharing/webcam_screen.dart';
 import '../features/transfer/incoming_sheet.dart';
 import '../ui/sig.dart';
 import 'linksy_controller.dart';
@@ -32,6 +33,7 @@ class _LinksyAppState extends State<LinksyApp> {
   StreamSubscription<LinksyEvent>? _prompts;
   StreamSubscription<String>? _links;
   StreamSubscription<SharedIn>? _shares;
+  StreamSubscription<String>? _webcams;
 
   /// The pairing dialog on screen, so a decline from the other side closes it.
   String? _openPairing;
@@ -48,6 +50,11 @@ class _LinksyAppState extends State<LinksyApp> {
     });
     // "Share → Linksy" from another app, before or while the app runs.
     _shares = LinksyPlatform.shares.listen(_shareOut);
+    // The webcam notification opens its controls.
+    _webcams = LinksyPlatform.openWebcam.listen((session) {
+      final share = widget.controller.sharing[session];
+      if (share != null) _openWebcam(share);
+    });
     LinksyPlatform.takeShare().then((shared) {
       if (shared != null) _shareOut(shared);
     });
@@ -63,6 +70,7 @@ class _LinksyAppState extends State<LinksyApp> {
     _prompts?.cancel();
     _links?.cancel();
     _shares?.cancel();
+    _webcams?.cancel();
     super.dispose();
   }
 
@@ -89,6 +97,10 @@ class _LinksyAppState extends State<LinksyApp> {
       builder: (_) => ShareSheet(shared: shared),
     );
   }
+
+  void _openWebcam(SessionStarted share) => _navigator.currentState?.push(
+    MaterialPageRoute<void>(builder: (_) => WebcamScreen(share: share)),
+  );
 
   void _say(String text) => _messenger.currentState
     ?..hideCurrentSnackBar()
@@ -119,6 +131,8 @@ class _LinksyAppState extends State<LinksyApp> {
         );
       case Paired(:final device):
         _say('Paired with ${device.name}');
+      case SessionStarted(kind: SessionKind.camera) when e.sharing:
+        _openWebcam(e);
       case SessionStarted() when !e.sharing && e.kind != SessionKind.input:
         _navigator.currentState?.push(
           MaterialPageRoute<void>(builder: (_) => DisplayScreen(session: e)),

@@ -45,14 +45,18 @@ class ShareService : Service() {
 
         val onEnded = { stopFromAnyThread(session) }
         try {
-            shares[session] = if (screen) {
+            val share = if (screen) {
                 val data = consents.remove(session) ?: error("no screen capture consent")
                 val manager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
                 val projection = manager.getMediaProjection(data.first, data.second) ?: error("screen capture refused")
                 ScreenShare(this, projection, session, onEnded)
             } else {
-                CameraShare(this, session, onEnded)
+                CameraShare(this, session, onEnded).also { camera ->
+                    webcams[session] = camera
+                    camera.onState = { state -> webcamListener?.invoke(session, state) }
+                }
             }
+            shares[session] = share
         } catch (e: Exception) {
             Log.w("linksy", "couldn't start sharing", e)
             stop(session)
@@ -64,6 +68,7 @@ class ShareService : Service() {
     }
 
     private fun stop(session: String) {
+        webcams.remove(session)
         shares.remove(session)?.let { runCatching { it.stop() } }
         NativeSession.finish(session)
         if (shares.isEmpty()) {
@@ -84,8 +89,12 @@ class ShareService : Service() {
                 NotificationChannel(CHANNEL, "Screen and camera sharing", NotificationManager.IMPORTANCE_LOW),
             )
         }
+        // A webcam's notification opens its controls.
         val open = PendingIntent.getActivity(
-            this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE,
+            this, session.hashCode() + 2,
+            Intent(this, MainActivity::class.java).apply { if (camera) putExtra(EXTRA_WEBCAM, session) }
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
         val stop = PendingIntent.getService(
             this, session.hashCode(),
@@ -120,6 +129,7 @@ class ShareService : Service() {
         private const val ACTION_START = "app.linksy.START_SHARE"
         private const val ACTION_STOP = "app.linksy.STOP_SHARE"
         private const val ACTION_SWITCH = "app.linksy.SWITCH_CAMERA"
+        const val EXTRA_WEBCAM = "app.linksy.webcam"
         private const val EXTRA_SESSION = "session"
         private const val EXTRA_KIND = "kind"
         private const val EXTRA_PEER = "peer"
@@ -127,6 +137,12 @@ class ShareService : Service() {
         /// Screen capture consents (result code, data) by session, from the
         /// system prompt until the share starts.
         val consents = mutableMapOf<String, Pair<Int, Intent>>()
+
+        /// Running webcams, by session, for the phone's camera controls.
+        val webcams = java.util.concurrent.ConcurrentHashMap<String, CameraShare>()
+
+        /// Hears every webcam change (session, state), while the app shows them.
+        @Volatile var webcamListener: ((String, org.json.JSONObject) -> Unit)? = null
 
         fun start(context: Context, session: String, kind: String, peer: String) {
             val intent = Intent(context, ShareService::class.java).setAction(ACTION_START)

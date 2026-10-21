@@ -50,7 +50,8 @@ pub(crate) fn run(mut session: Session) {
     // screen it asked for), and input when it's controlled. An `input`
     // session only writes.
     let watching = !session.sharing && session.kind != SessionKind::Input;
-    let reads = watching || (session.sharing && session.kind == SessionKind::Control);
+    // A computer may send `camera_control` on a camera session (docs/android-app.md).
+    let reads = watching || (session.sharing && matches!(session.kind, SessionKind::Control | SessionKind::Camera));
     // Video in ends the session when the sharer stops.
     let ends_with_input = watching;
     let (out, mut queued) = mpsc::channel::<Vec<u8>>(32);

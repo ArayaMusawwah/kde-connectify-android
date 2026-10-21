@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
@@ -34,6 +35,9 @@ abstract final class LinksyPlatform {
   static final _batteries = StreamController<Battery>.broadcast();
   static final _callStates = StreamController<String>.broadcast();
   static final _volumeKeys = StreamController<bool>.broadcast();
+  static final _webcamChanges =
+      StreamController<(String, Map<String, Object?>)>.broadcast();
+  static final _openWebcam = StreamController<String>.broadcast();
   static final _transferAnswers = StreamController<(String, bool)>.broadcast();
   static var _listening = false;
 
@@ -64,6 +68,14 @@ abstract final class LinksyPlatform {
           if (share != null) _shares.add(share);
         case 'callState' when call.arguments is String:
           _callStates.add(call.arguments as String);
+        case 'webcamChanged':
+          final a = call.arguments as Map;
+          _webcamChanges.add((
+            a['session'] as String,
+            (jsonDecode(a['state'] as String) as Map).cast<String, Object?>(),
+          ));
+        case 'openWebcam' when call.arguments is String:
+          _openWebcam.add(call.arguments as String);
         case 'transferAnswer':
           final a = call.arguments as Map;
           _transferAnswers.add((a['transfer'] as String, a['accept'] == true));
@@ -233,6 +245,39 @@ abstract final class LinksyPlatform {
         'paths': paths,
       }))?.cast<String>() ??
       paths;
+
+  /// A running webcam's capabilities and controls (see CameraShare.kt).
+  static Future<Map<String, Object?>?> webcamState(String session) async {
+    final raw = await _call<String>('webcamState', {'session': session});
+    return raw == null
+        ? null
+        : (jsonDecode(raw) as Map).cast<String, Object?>();
+  }
+
+  /// Changes any of the webcam's controls (same keys as the state).
+  static Future<void> webcamSet(
+    String session,
+    Map<String, Object?> controls,
+  ) => _call<void>('webcamSet', {
+    'session': session,
+    'controls': jsonEncode(controls),
+  });
+
+  /// Shows the webcam in a texture (its id), or stops showing it.
+  static Future<int?> webcamPreview(String session, {required bool on}) =>
+      _call<int>('webcamPreview', {'session': session, 'on': on});
+
+  /// Every webcam change, from the phone or from the computer.
+  static Stream<(String, Map<String, Object?>)> get webcamChanges {
+    _listen();
+    return _webcamChanges.stream;
+  }
+
+  /// The webcam notification was tapped: open its controls.
+  static Stream<String> get openWebcam {
+    _listen();
+    return _openWebcam.stream;
+  }
 
   /// Front ↔ back camera while the phone is a webcam.
   static Future<void> switchCamera(String session) =>

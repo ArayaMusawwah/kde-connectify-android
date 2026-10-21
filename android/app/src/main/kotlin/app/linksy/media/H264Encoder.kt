@@ -93,6 +93,13 @@ class H264Encoder(
         }
     }
 
+    /// A new target bitrate, live (stream quality).
+    fun setBitrate(bitsPerSecond: Int) {
+        runCatching {
+            codec.setParameters(android.os.Bundle().apply { putInt(MediaCodec.PARAMETER_KEY_VIDEO_BITRATE, bitsPerSecond) })
+        }
+    }
+
     /// A keyframe now (the picture changed completely: another camera).
     fun keyframe() {
         runCatching {

@@ -636,6 +636,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           ClipboardReceived() ||
           OpenUrlReceived():
         _prompts.add(e);
+      // The webcam's controls, when a computer starts using the camera.
+      case SessionStarted(kind: SessionKind.camera) when e.sharing:
+        _prompts.add(e);
       // The full-screen page for a second display or a computer's screen.
       case SessionStarted(:final kind)
           when !e.sharing && kind != SessionKind.input:
