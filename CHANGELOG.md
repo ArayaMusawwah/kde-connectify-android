@@ -2,6 +2,14 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.19] - 2026-10-22
+
+### Added
+- **Terminal, ready for Linksy 0.7 on the computer**: a shell on your computer from the phone. It asks for the terminal code set on the computer every time (never kept), says plainly why it can't open (wrong code and tries left, locked, not allowed), shows colours, follows the window title, has a key bar (Esc, Ctrl, Alt, Tab, arrows, `| ~ / -`), several tabs, and detaches when you leave: the shell keeps running on the computer and you reattach later. It appears on computers that offer it, so not before their Linksy 0.7.
+
+### Changed
+- Up to date with Linksy 0.6.4 on the computer.
+
 ## [0.1.18] - 2026-10-22
 
 ### Fixed
