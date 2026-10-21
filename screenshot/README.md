@@ -20,5 +20,7 @@ bar. Version 0.1.9+ (device pictures).
 | `terminal-live.png` | A live terminal with colours, and the key bar above the keyboard |
 | `terminal-tab-title.png` | The tab and header following the shell's window title ("top — ~") |
 | `terminal-detached.png` | Detached: still running on the computer, Reattach |
+| `terminal-close.png` | The Close button in the header and the × on each tab |
+| `terminal-close-confirm.png` | "Close this terminal?" with Keep running / Close |
 
 The device picture is a flat illustration in the brand colors, made for these shots.

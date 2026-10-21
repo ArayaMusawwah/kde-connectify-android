@@ -119,23 +119,34 @@ class TerminalTab extends ChangeNotifier {
   }
 
   Future<void> _ended() async {
+    final channel = _channel;
     _sub = null;
     _channel = null;
     if (state == TabState.ended) return;
     // Left on purpose, or the connection dropped while the shell runs on:
     // detached. Gone from the computer's list: it exited.
-    final running = _leaving
-        ? true
-        : (await _node
-                  .terminals(deviceId)
-                  .catchError((Object _) => const <RemoteTerminal>[]))
-              .any((t) => t.id == terminalId);
-    state = running ? TabState.detached : TabState.ended;
-    if (state == TabState.ended) {
-      term.write('\r\n\x1b[2m[Ended]\x1b[0m\r\n');
+    // Can't ask (the link dropped): it runs on, as far as we know.
+    final running =
+        _leaving ||
+        await _node
+            .terminals(deviceId)
+            .then((list) => list.any((t) => t.id == terminalId))
+            .catchError((Object _) => true);
+    if (running) {
+      state = TabState.detached;
+      notifyListeners();
+      return;
     }
+    // The shell exited (`exit`, Ctrl+D…): finish our side of the session too,
+    // so nothing is left open, and the tab goes.
+    state = TabState.ended;
+    await channel?.detach().catchError((Object _) {});
     notifyListeners();
+    onGone?.call(this);
   }
+
+  /// Called once this tab's shell is gone (closed here, or exited there).
+  void Function(TerminalTab)? onGone;
 
   /// Leaves the shell running on the computer.
   Future<void> detach() async {
@@ -143,13 +154,20 @@ class TerminalTab extends ChangeNotifier {
     await _channel?.detach();
   }
 
-  /// Ends the shell.
+  /// Ends the shell and the session (`term_close`, then our side of the
+  /// stream), so nothing stays open on either side. A detached tab has to be
+  /// reattached first (the screen asks for the code), or its shell runs on.
   Future<void> close() async {
     final channel = _channel;
+    _channel = null;
     state = TabState.ended;
     notifyListeners();
-    await channel?.close();
     await _sub?.cancel();
+    _sub = null;
+    if (channel != null) {
+      await channel.close().catchError((Object _) {});
+    }
+    onGone?.call(this);
   }
 
   @override
@@ -165,19 +183,28 @@ class Terminals extends ChangeNotifier {
 
   final LinksyNode _node;
   final Map<String, List<TerminalTab>> _tabs = {};
+  final _gone = StreamController<TerminalTab>.broadcast();
+
+  /// Tabs whose shell ended, as they go (to say so on screen).
+  Stream<TerminalTab> get gone => _gone.stream;
 
   List<TerminalTab> of(String deviceId) => _tabs[deviceId] ?? const [];
 
   /// A new tab, not opened yet (it asks for the code first).
   TerminalTab add(String deviceId) {
-    final tab = TerminalTab(deviceId, _node)..addListener(notifyListeners);
+    final tab = TerminalTab(deviceId, _node)
+      ..addListener(notifyListeners)
+      ..onGone = (t) {
+        if (!_gone.isClosed) _gone.add(t);
+        remove(t);
+      };
     (_tabs[deviceId] ??= []).add(tab);
     notifyListeners();
     return tab;
   }
 
   void remove(TerminalTab tab) {
-    _tabs[tab.deviceId]?.remove(tab);
+    if (!(_tabs[tab.deviceId]?.remove(tab) ?? false)) return;
     tab
       ..removeListener(notifyListeners)
       ..dispose();

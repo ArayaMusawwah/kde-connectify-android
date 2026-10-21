@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xterm/xterm.dart';
@@ -56,11 +58,68 @@ class TerminalScreen extends StatefulWidget {
 class _TerminalScreenState extends State<TerminalScreen> {
   TerminalTab? _current;
   final _focus = FocusNode();
+  StreamSubscription<TerminalTab>? _gone;
+
+  @override
+  void initState() {
+    super.initState();
+    // `exit` typed in the shell (or Close): the tab goes, and says so.
+    _gone = LinksyScope.read(context).terminals.gone.listen((t) {
+      if (!mounted || t.deviceId != widget.deviceId) return;
+      // Nothing to type into any more: the keyboard goes too.
+      if (LinksyScope.read(context).terminals.of(widget.deviceId).isEmpty) {
+        _focus.unfocus();
+      }
+      showMessage(context, '“${t.title}” closed');
+    });
+  }
 
   @override
   void dispose() {
+    _gone?.cancel();
     _focus.dispose();
     super.dispose();
+  }
+
+  /// Close, made obvious: asks first (a shell may be busy), offers to leave
+  /// it running instead. A detached one is reattached to end it.
+  Future<void> _close(TerminalTab tab) async {
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        title: const Text('Close this terminal?'),
+        content: Text(
+          'The shell ends on $_name, with anything still running in it. '
+          'To come back to it later, keep it running instead.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialog).pop('keep'),
+            child: const Text('Keep running'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialog).pop('close'),
+            style: TextButton.styleFrom(foregroundColor: Sig.of(context).red),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+    if (!mounted || choice == null) return;
+    if (choice == 'keep') {
+      if (tab.state == TabState.live) await tab.detach();
+      return;
+    }
+    if (tab.state == TabState.detached) {
+      // Ending it takes the shell itself: open it once more, then close.
+      if (!await askCodeAndOpen(context, tab, _name)) return;
+    }
+    if (!mounted) return;
+    if (tab.state == TabState.locked || tab.state == TabState.opening) {
+      LinksyScope.read(context).terminals.remove(tab);
+      return;
+    }
+    await tab.close();
   }
 
   String get _name =>
@@ -114,18 +173,13 @@ class _TerminalScreenState extends State<TerminalScreen> {
                     onDetach: tab == null || tab.state != TabState.live
                         ? null
                         : () => tab!.detach(),
-                    onClose: tab == null
-                        ? null
-                        : () async {
-                            final closing = tab!;
-                            await closing.close();
-                            terminals.remove(closing);
-                          },
+                    onClose: tab == null ? null : () => _close(tab!),
                   ),
                   _Tabs(
                     tabs: tabs,
                     current: tab,
                     onPick: (t) => setState(() => _current = t),
+                    onClose: _close,
                     onAdd: _newTab,
                   ),
                   Expanded(
@@ -171,13 +225,7 @@ class _TerminalScreenState extends State<TerminalScreen> {
                                   onAction: () => _reattach(tab!),
                                 ),
                               if (tab.state == TabState.ended)
-                                _StateCard(
-                                  icon: Ph.terminalWindow,
-                                  title: 'Ended',
-                                  detail: 'This shell has finished.',
-                                  action: 'Close tab',
-                                  onAction: () => terminals.remove(tab!),
-                                ),
+                                const SizedBox.shrink(),
                               if (tab.state == TabState.opening)
                                 const Center(
                                   child: CircularProgressIndicator(
@@ -263,30 +311,41 @@ class _Header extends StatelessWidget {
               ],
             ),
           ),
-          if (tab != null)
+          if (tab != null && onDetach != null)
             PopupMenuButton<String>(
               tooltip: 'Terminal menu',
               icon: const Icon(Ph.dotsThree, color: Colors.white),
               color: _panel,
               onSelected: (v) =>
                   v == 'detach' ? onDetach?.call() : onClose?.call(),
-              itemBuilder: (_) => [
-                if (onDetach != null)
-                  const PopupMenuItem(
-                    value: 'detach',
-                    child: Text(
-                      'Detach (keep it running)',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                const PopupMenuItem(
-                  value: 'close',
+              itemBuilder: (_) => const [
+                PopupMenuItem(
+                  value: 'detach',
                   child: Text(
-                    'Close terminal',
-                    style: TextStyle(color: Color(0xFFFF8A9A)),
+                    'Leave it running (detach)',
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ],
+            ),
+          if (tab != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: SizedBox(
+                height: 40,
+                child: TextButton.icon(
+                  onPressed: onClose,
+                  icon: const Icon(Ph.x, size: 16),
+                  label: const Text('Close'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFFFF8A9A),
+                    backgroundColor: const Color(0x26FF5C72),
+                    shape: const StadiumBorder(),
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
             ),
         ],
       ),
@@ -299,12 +358,14 @@ class _Tabs extends StatelessWidget {
     required this.tabs,
     required this.current,
     required this.onPick,
+    required this.onClose,
     required this.onAdd,
   });
 
   final List<TerminalTab> tabs;
   final TerminalTab? current;
   final ValueChanged<TerminalTab> onPick;
+  final ValueChanged<TerminalTab> onClose;
   final VoidCallback onAdd;
 
   @override
@@ -323,8 +384,8 @@ class _Tabs extends StatelessWidget {
                 onTap: () => onPick(t),
                 semanticLabel: t.title,
                 child: Container(
-                  constraints: const BoxConstraints(maxWidth: 180),
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  constraints: const BoxConstraints(maxWidth: 200),
+                  padding: const EdgeInsets.only(left: 14),
                   decoration: BoxDecoration(
                     color: t == current ? Sig.blue : _panel,
                     borderRadius: BorderRadius.circular(18),
@@ -355,6 +416,16 @@ class _Tabs extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                             fontSize: 13,
                           ),
+                        ),
+                      ),
+                      Pressable(
+                        onTap: () => onClose(t),
+                        scale: 0.85,
+                        semanticLabel: 'Close ${t.title}',
+                        child: const SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: Icon(Ph.x, color: Colors.white70, size: 15),
                         ),
                       ),
                     ],

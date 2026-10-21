@@ -38,6 +38,37 @@ void main() {
     expect(await node.terminals(studio.id), hasLength(1));
   });
 
+  test('exit in the shell closes the tab and its session', () async {
+    final node = DemoNode(name: 'Pixel', downloadDir: '/tmp');
+    final studio = (await node.devices())
+        .firstWhere((d) => d.device.name == 'Studio Desktop')
+        .device;
+    final terminals = Terminals(node);
+    final gone = <TerminalTab>[];
+    terminals.gone.listen(gone.add);
+    final tab = terminals.add(studio.id);
+    await tab.open(DemoNode.demoTerminalCode);
+    tab.key('exit\r');
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(gone, [tab]);
+    expect(terminals.of(studio.id), isEmpty);
+    expect(await node.terminals(studio.id), isEmpty);
+  });
+
+  test('Close ends the shell, nothing left on the computer', () async {
+    final node = DemoNode(name: 'Pixel', downloadDir: '/tmp');
+    final studio = (await node.devices())
+        .firstWhere((d) => d.device.name == 'Studio Desktop')
+        .device;
+    final terminals = Terminals(node);
+    final tab = terminals.add(studio.id);
+    await tab.open(DemoNode.demoTerminalCode);
+    await tab.close();
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(terminals.of(studio.id), isEmpty);
+    expect(await node.terminals(studio.id), isEmpty);
+  });
+
   test('refusal messages say what to do', () {
     expect(
       TerminalRefused(TerminalRefusal.off, name: 'fedora').message,
