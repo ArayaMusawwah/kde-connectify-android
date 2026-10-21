@@ -2,7 +2,7 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
-## [Unreleased]
+## [0.1.11] - 2026-10-21
 
 ### Added
 - **Webcam controls**, like a camera app's, with a live preview of what the computer sees:
