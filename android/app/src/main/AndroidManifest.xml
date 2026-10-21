@@ -11,6 +11,17 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA"/>
+    <!-- The phone as a computer's microphone, asked when a computer wants it. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+    <uses-feature android:name="android.hardware.microphone" android:required="false"/>
+    <!-- "Let computers locate this phone" (off by default): one fix when asked,
+         while the app is in use. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-feature android:name="android.hardware.location" android:required="false"/>
+    <!-- The USB cable to a computer: Android Open Accessory, no permission. -->
+    <uses-feature android:name="android.hardware.usb.accessory" android:required="false"/>
     <!-- Staying connected with the screen off while a computer locks itself when the
          phone leaves (heartbeats) or browses its files. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
@@ -52,6 +63,13 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="linksy" android:host="pair"/>
             </intent-filter>
+            <!-- A computer running Linksy on the USB cable (docs/protocol.md §4.11). -->
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter"/>
         </activity>
         <!-- "Share → Linksy" from other apps: links open on a computer, text goes to
              its clipboard, files are sent. Hands over to MainActivity. -->
@@ -82,7 +100,7 @@
         <service
             android:name=".media.ShareService"
             android:exported="false"
-            android:foregroundServiceType="mediaProjection|camera"/>
+            android:foregroundServiceType="mediaProjection|camera|microphone"/>
         <service
             android:name=".KeepAlive"
             android:exported="false"

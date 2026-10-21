@@ -10,9 +10,36 @@ import 'app/platform.dart';
 import 'core/demo_node.dart';
 import 'core/linksy_node.dart';
 import 'core/rust_node.dart';
+import 'core/service_info.dart';
 
 /// `--dart-define=LINKSY_DEMO=true` runs on made-up devices, for UI work.
 const _demo = bool.fromEnvironment('LINKSY_DEMO');
+
+/// What this phone does for computers (docs/protocol.md §4.10). Not `control`,
+/// `notifications` or `sms` (each needs a permission that gets sideloaded
+/// apps blocked at install), nor `media_state` or `clipboard_watch`
+/// (Android doesn't let apps watch either in the background).
+const _features = [
+  'files',
+  'clipboard',
+  'open_url',
+  'battery',
+  'ring',
+  'media_remote',
+  'call_state',
+  'heartbeat',
+  'import',
+  'fs',
+  'input',
+  'screen',
+  'display',
+  'camera',
+  'watch',
+  'clipboard_file',
+  'microphone',
+  'picture',
+  'locate',
+];
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +51,8 @@ Future<void> main() async {
     ..createSync(recursive: true);
   final name = await LinksyPlatform.deviceName();
 
+  final service = ServiceInfoStore(File('${support.path}/service.json'));
+
   final LinksyNode node;
   if (_demo) {
     node = DemoNode(name: name, downloadDir: received.path);
@@ -34,6 +63,9 @@ Future<void> main() async {
         dataDir: '${support.path}/node',
         downloadDir: received.path,
         name: name,
+        features: _features,
+        away: true,
+        relay: service.cached()?.relay ?? defaultRelay,
       );
     } on Object catch (e) {
       runApp(StartupFailedApp(message: '$e'));
@@ -44,6 +76,8 @@ Future<void> main() async {
   final controller = LinksyController(
     node,
     ActivityStore(File('${support.path}/history.json')),
+    service: service,
+    dir: support,
   );
   await controller.start();
   runApp(LinksyApp(controller: controller));

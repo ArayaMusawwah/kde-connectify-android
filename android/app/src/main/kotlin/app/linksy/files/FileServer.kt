@@ -42,6 +42,8 @@ class FileServer(private val context: Context) {
         val tree = root ?: return error(id, "No folder is shared.")
         val path = r.optString("path", "/")
         when (r.getString("op")) {
+            // The shared folder's name, for "Pixel 9 (Documents)" on the computer.
+            "info" -> reply(id, JSONObject().put("type", "fs_info").put("name", find(tree, "/")?.name ?: ""))
             "list" -> {
                 val doc = find(tree, path) ?: return notFound(id, path)
                 if (!doc.dir) return error(id, "That's a file, not a folder.")

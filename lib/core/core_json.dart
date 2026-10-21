@@ -12,6 +12,7 @@ DeviceInfo deviceFromJson(Json j) => DeviceInfo(
   name: j['name'] as String,
   kind: DeviceKind.parse(j['kind'] as String? ?? ''),
   os: j['os'] as String? ?? '',
+  features: (j['features'] as List? ?? const []).cast<String>(),
 );
 
 DeviceView deviceViewFromJson(Json j) => DeviceView(
@@ -21,6 +22,13 @@ DeviceView deviceViewFromJson(Json j) => DeviceView(
   nearby: j['nearby'] as bool? ?? false,
   battery: switch (j['battery']) {
     final Json b => batteryFromJson(b),
+    _ => null,
+  },
+  usb: j['usb'] as bool? ?? false,
+  away: j['away'] as bool? ?? false,
+  awayAll: j['away_all'] as bool? ?? false,
+  awayUntil: switch (j['away_until']) {
+    final num s => DateTime.fromMillisecondsSinceEpoch(s.toInt() * 1000),
     _ => null,
   },
 );
@@ -56,6 +64,7 @@ NodeSettings settingsFromJson(Json j) => NodeSettings(
   downloadDir: j['download_dir'] as String,
   stayConnected: j['stay_connected'] as bool? ?? false,
   autoAccept: j['auto_accept'] as bool? ?? false,
+  away: j['away'] as bool? ?? true,
 );
 
 Json settingsToJson(NodeSettings s) => {
@@ -63,6 +72,7 @@ Json settingsToJson(NodeSettings s) => {
   'download_dir': s.downloadDir,
   'stay_connected': s.stayConnected,
   'auto_accept': s.autoAccept,
+  'away': s.away,
 };
 
 List<OfferedFile> _files(Object? list) => [
@@ -164,6 +174,19 @@ LinksyEvent? eventFromJson(Json j) {
       from: device('from'),
       on: j['on'] as bool? ?? false,
       everyS: _int(j['every_s']),
+    ),
+    'picture' => PictureReceived(
+      from: device('from'),
+      image: j['image'] as String? ?? '',
+    ),
+    'locate_request' => LocateRequested(device('from')),
+    'clipboard_watch' => ClipboardWatchChanged(
+      from: device('from'),
+      on: j['on'] as bool? ?? false,
+    ),
+    'clipboard_file' => ClipboardFileReceived(
+      from: device('from'),
+      path: j['path'] as String,
     ),
     _ => null,
   };

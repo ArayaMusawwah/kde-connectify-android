@@ -604,11 +604,18 @@ class _WebcamScreenState extends State<WebcamScreen> {
     ];
   }
 
-  /// The bitrate a quality gets at the current frame rate (more at 60).
+  /// The bitrate a quality gets at the current frame rate and size (more at
+  /// 60 fps and at 1080p).
   String _mbps(int base) {
-    final v = _get('fps', 30) >= 60 ? base * 1.5 : base.toDouble();
+    var v = _get('fps', 30) >= 60 ? base * 1.5 : base.toDouble();
+    if (_get('width', 1280) >= 1920) v *= 1.5;
     return v == v.roundToDouble() ? '${v.round()}' : v.toStringAsFixed(1);
   }
+
+  /// The camera lists 1920×1080 in `size_options`.
+  bool get _can1080 =>
+      _list<Object?>('size_options')
+          .any((o) => o is List && o.isNotEmpty && (o.first as num) >= 1920);
 
   List<Widget> _stream() {
     final w = _get('width', 1280);
@@ -637,6 +644,23 @@ class _WebcamScreenState extends State<WebcamScreen> {
                 options: const [('30', '30 fps'), ('60', '60 fps')],
                 selected: '${_get('fps', 30)}',
                 onChanged: (f) => _set({'fps': int.parse(f)}),
+              )
+            : null,
+      ),
+      _Setting(
+        title: 'Resolution',
+        detail: _can1080
+            ? (w >= 1920
+                  ? 'Full HD, for a big screen; more data.'
+                  : 'HD, right for video calls.')
+            : 'This camera streams 720p.',
+        below: _can1080
+            ? _Segmented(
+                options: const [('720', '720p'), ('1080', '1080p')],
+                selected: w >= 1920 ? '1080' : '720',
+                onChanged: (r) => _set({
+                  'size': r == '1080' ? [1920, 1080] : [1280, 720],
+                }),
               )
             : null,
       ),

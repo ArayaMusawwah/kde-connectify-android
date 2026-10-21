@@ -57,7 +57,10 @@ class Activity {
     'bytes': bytes,
     'saved': saved,
     // Links are kept; clipboard text never is (it may be a password).
-    if (kind == ActivityKind.ping || kind == ActivityKind.link) 'text': text,
+    if (kind == ActivityKind.ping ||
+        kind == ActivityKind.link ||
+        kind == ActivityKind.locate)
+      'text': text,
     'reason': isLive ? 'Interrupted' : reason,
   };
 
@@ -105,6 +108,12 @@ enum ActivityKind {
 
   /// This phone watched (or drove) a computer's screen.
   watch,
+
+  /// A device used this phone as its microphone.
+  microphone,
+
+  /// A computer asked where this phone is ([Activity.text]: said or why not).
+  locate,
 }
 
 enum ActivityStatus { waiting, active, done, declined, failed }

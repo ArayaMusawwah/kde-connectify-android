@@ -95,6 +95,7 @@ pub(crate) fn reply(n: u64, json: &str, data: Vec<u8>) {
                 Err(_) => call.error("bad entry", false).await,
             },
             Some("fs_data") => call.data(&data).await,
+            Some("fs_info") => call.info(value["name"].as_str().unwrap_or("")).await,
             Some("fs_ok") => call.ok().await,
             _ => {
                 let message = value["message"].as_str().unwrap_or("That didn't work on the phone.");

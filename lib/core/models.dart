@@ -21,6 +21,7 @@ class DeviceInfo {
     required this.name,
     required this.kind,
     required this.os,
+    this.features = const [],
   });
 
   /// SHA-256 of the device certificate, 64 lowercase hex chars.
@@ -31,14 +32,26 @@ class DeviceInfo {
   /// `linux`, `android`, `macos`, `windows`, …
   final String os;
 
+  /// What it can do for others (docs/protocol.md §4.10). Empty: it didn't say (an
+  /// older version), so assume what it always could.
+  final List<String> features;
+
+  /// Whether it says it can do [feature]; true when it says nothing.
+  bool can(String feature) => features.isEmpty || features.contains(feature);
+
   /// First 4 bytes of the id, `XXXX-XXXX`.
   String get shortId => shortDeviceId(id);
 
   /// "Linux laptop", "Android phone".
   String get description => '${osLabel(os)} ${kind.name}';
 
-  DeviceInfo copyWith({String? name}) =>
-      DeviceInfo(id: id, name: name ?? this.name, kind: kind, os: os);
+  DeviceInfo copyWith({String? name}) => DeviceInfo(
+    id: id,
+    name: name ?? this.name,
+    kind: kind,
+    os: os,
+    features: features,
+  );
 }
 
 String shortDeviceId(String id) {
@@ -65,6 +78,10 @@ class DeviceView {
     required this.connected,
     required this.nearby,
     this.battery,
+    this.usb = false,
+    this.away = false,
+    this.awayAll = false,
+    this.awayUntil,
   });
 
   final DeviceInfo device;
@@ -74,6 +91,19 @@ class DeviceView {
 
   /// What the device last said about its battery, if it has one.
   final Battery? battery;
+
+  /// Connected through the USB cable (docs/protocol.md §4.11).
+  final bool usb;
+
+  /// Connected away from home, over the internet (§4.13).
+  final bool away;
+
+  /// Everything is allowed from away for it, not only the small things.
+  final bool awayAll;
+
+  /// Until when it may connect from away: a week after it was last on the
+  /// same network or cable.
+  final DateTime? awayUntil;
 
   Presence get presence => connected
       ? Presence.connected
@@ -104,6 +134,7 @@ class NodeSettings {
     required this.downloadDir,
     required this.stayConnected,
     required this.autoAccept,
+    this.away = true,
   });
 
   final String name;
@@ -111,16 +142,21 @@ class NodeSettings {
   final bool stayConnected;
   final bool autoAccept;
 
+  /// Reach paired computers away from home, over the internet (§4.13).
+  final bool away;
+
   NodeSettings copyWith({
     String? name,
     String? downloadDir,
     bool? stayConnected,
     bool? autoAccept,
+    bool? away,
   }) => NodeSettings(
     name: name ?? this.name,
     downloadDir: downloadDir ?? this.downloadDir,
     stayConnected: stayConnected ?? this.stayConnected,
     autoAccept: autoAccept ?? this.autoAccept,
+    away: away ?? this.away,
   );
 }
 
@@ -289,7 +325,10 @@ enum SessionKind {
 
   /// This phone drives the computer's pointer and keyboard (touchpad,
   /// keyboard, presentation remote); no video.
-  input;
+  input,
+
+  /// The receiver shares its microphone: raw 48 kHz mono PCM.
+  microphone;
 
   static SessionKind? parse(String value) =>
       SessionKind.values.where((k) => k.name == value).firstOrNull;
@@ -409,4 +448,32 @@ class HeartbeatWatchChanged extends LinksyEvent {
   final DeviceInfo from;
   final bool on;
   final int everyS;
+}
+
+/// A computer sent its picture (base64 JPEG or PNG) to show for it.
+class PictureReceived extends LinksyEvent {
+  const PictureReceived({required this.from, required this.image});
+  final DeviceInfo from;
+  final String image;
+}
+
+/// A computer asks where this phone is, once (§4.14).
+class LocateRequested extends LinksyEvent {
+  const LocateRequested(this.from);
+  final DeviceInfo from;
+}
+
+/// A computer wants this phone's clipboard as it changes, or no longer.
+class ClipboardWatchChanged extends LinksyEvent {
+  const ClipboardWatchChanged({required this.from, required this.on});
+  final DeviceInfo from;
+  final bool on;
+}
+
+/// A computer put a file (an image…) on this phone's clipboard; it's saved
+/// at [path].
+class ClipboardFileReceived extends LinksyEvent {
+  const ClipboardFileReceived({required this.from, required this.path});
+  final DeviceInfo from;
+  final String path;
 }

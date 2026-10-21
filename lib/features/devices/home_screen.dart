@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/activity.dart';
 import '../../app/linksy_controller.dart';
+import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
@@ -47,6 +48,7 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           SliverToBoxAdapter(child: _Visible(controller: c)),
+          SliverToBoxAdapter(child: _Notices(controller: c)),
           SliverToBoxAdapter(child: SharingBanners(controller: c)),
           if (paired.isEmpty)
             const SliverToBoxAdapter(child: _GetStarted())
@@ -129,6 +131,118 @@ class _Visible extends StatelessWidget {
   }
 }
 
+/// What Linksy's service says (docs/protocol.md §4.12): an update this phone needs
+/// to keep connecting, and notices, each shown until dismissed. Plain text.
+class _Notices extends StatelessWidget {
+  const _Notices({required this.controller});
+
+  final LinksyController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = controller;
+    final download = c.serviceInfo?.androidDownload;
+    final cards = [
+      if (c.outdated)
+        _Notice(
+          icon: Ph.warningCircle,
+          warning: true,
+          title: 'Update Linksy to keep connecting',
+          body: 'Your computers now speak a newer Linksy than this app.',
+          action: download == null ? null : 'Get the update',
+          onAction: download == null
+              ? null
+              : () => LinksyPlatform.openUrl(download),
+        ),
+      for (final n in c.notices)
+        _Notice(
+          icon: n.warning ? Ph.warningCircle : Ph.bellRinging,
+          warning: n.warning,
+          title: n.title,
+          body: n.body,
+          onDismiss: () => c.dismissNotice(n.id),
+        ),
+    ];
+    if (cards.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+      child: Column(
+        children: [
+          for (final card in cards)
+            Padding(padding: const EdgeInsets.only(bottom: 8), child: card),
+        ],
+      ),
+    );
+  }
+}
+
+class _Notice extends StatelessWidget {
+  const _Notice({
+    required this.icon,
+    required this.warning,
+    required this.title,
+    required this.body,
+    this.action,
+    this.onAction,
+    this.onDismiss,
+  });
+
+  final IconData icon;
+  final bool warning;
+  final String title;
+  final String body;
+  final String? action;
+  final VoidCallback? onAction;
+  final VoidCallback? onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final color = warning ? s.red : Sig.blue;
+    return SigCard(
+      padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (title.isNotEmpty)
+                  Text(title, style: sora(15.5, color: s.ink)),
+                if (body.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    body,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: s.muted,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+                if (action != null)
+                  TextButton(onPressed: onAction, child: Text(action!)),
+              ],
+            ),
+          ),
+          if (onDismiss != null)
+            IconButton(
+              tooltip: 'Dismiss',
+              onPressed: onDismiss,
+              icon: Icon(Ph.x, size: 18, color: s.faint),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class _DeviceRow extends StatelessWidget {
   const _DeviceRow({
     required this.view,
@@ -160,7 +274,7 @@ class _DeviceRow extends StatelessWidget {
             device: d,
             size: 46,
             presence: view.presence,
-            picture: LinksyScope.of(context).pictures[d.id],
+            picture: LinksyScope.of(context).pictureOf(d.id),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -179,7 +293,7 @@ class _DeviceRow extends StatelessWidget {
                     Icon(kindIcon(d.kind), size: 14, color: s.muted),
                     const SizedBox(width: 5),
                     Text(
-                      presenceLabel(view.presence),
+                      presenceText(view),
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,

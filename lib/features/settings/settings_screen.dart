@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -49,6 +51,8 @@ class SettingsScreen extends StatelessWidget {
                   _ThisPhone(
                     name: st.name,
                     shortId: c.node.info.shortId,
+                    picture: c.ownPicture,
+                    pictureVersion: c.pictureVersion,
                     onRename: () async {
                       final name = await _askName(context, st.name);
                       if (name != null && name.isNotEmpty && name != st.name) {
@@ -106,6 +110,18 @@ class SettingsScreen extends StatelessWidget {
                           onChanged: c.setStayRunning,
                         ),
                       ),
+                      _Row(
+                        icon: Ph.globeHemisphereWest,
+                        title: 'Away from home',
+                        caption:
+                            'Reach your computers over the internet when '
+                            'you’re not on the same network, for a week '
+                            'after you last were. Encrypted end to end.',
+                        trailing: Switch(
+                          value: st.away,
+                          onChanged: (v) => update(st.copyWith(away: v)),
+                        ),
+                      ),
                     ],
                   ),
                   const SectionLabel('With your computers'),
@@ -137,6 +153,42 @@ class SettingsScreen extends StatelessWidget {
                           onChanged: (v) => v && c.filesFolder == null
                               ? c.pickFilesFolder()
                               : c.setSharingFiles(v),
+                        ),
+                      ),
+                      _Row(
+                        icon: Ph.userCircle,
+                        title: 'Picture of this phone',
+                        caption: c.ownPicture == null
+                            ? 'Your computers show it for this phone. Tap '
+                                  'to choose one.'
+                            : 'Your computers show it for this phone. Tap '
+                                  'to change it.',
+                        onTap: c.pickOwnPicture,
+                        trailing: c.ownPicture == null
+                            ? null
+                            : TextButton(
+                                onPressed: c.removeOwnPicture,
+                                child: const Text('Remove'),
+                              ),
+                      ),
+                      _Row(
+                        icon: Ph.mapPin,
+                        title: 'Let computers locate this phone',
+                        caption:
+                            'A computer can ask where this phone is, once, '
+                            'to find it. Nothing is kept or tracked. Works '
+                            'while Linksy is open.',
+                        trailing: Switch(
+                          value: c.locatable,
+                          onChanged: (v) async {
+                            final ok = await c.setLocatable(v);
+                            if (!ok && context.mounted) {
+                              showMessage(
+                                context,
+                                'Linksy needs the location permission for this.',
+                              );
+                            }
+                          },
                         ),
                       ),
                       _Row(
@@ -294,11 +346,17 @@ class _ThisPhone extends StatelessWidget {
     required this.name,
     required this.shortId,
     required this.onRename,
+    this.picture,
+    this.pictureVersion = 0,
   });
 
   final String name;
   final String shortId;
   final VoidCallback onRename;
+
+  /// This phone's own picture, if chosen.
+  final String? picture;
+  final int pictureVersion;
 
   @override
   Widget build(BuildContext context) {
@@ -317,11 +375,18 @@ class _ThisPhone extends StatelessWidget {
             Container(
               width: 56,
               height: 56,
+              clipBehavior: Clip.antiAlias,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
-              child: const Center(child: LinksyMark(size: 32)),
+              child: picture == null
+                  ? const Center(child: LinksyMark(size: 32))
+                  : Image.file(
+                      File(picture!),
+                      key: ValueKey(pictureVersion),
+                      fit: BoxFit.cover,
+                    ),
             ),
             const SizedBox(width: 16),
             Expanded(

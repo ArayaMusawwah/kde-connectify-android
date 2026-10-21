@@ -266,6 +266,14 @@ String presenceLabel(Presence p) => switch (p) {
   Presence.notNearby => 'Not nearby',
 };
 
+/// [presenceLabel], saying how a connection goes: the USB cable, or the
+/// internet (away from home).
+String presenceText(DeviceView v) => switch (v) {
+  DeviceView(connected: true, usb: true) => 'Connected by USB',
+  DeviceView(connected: true, away: true) => 'Connected away from home',
+  _ => presenceLabel(v.presence),
+};
+
 /// A device as a disc in one of the brand's colors (blue, deep or cyan),
 /// initials in Sora. Its presence is the ring: cyan when connected, blue when
 /// nearby, none when away (and the disc dims).

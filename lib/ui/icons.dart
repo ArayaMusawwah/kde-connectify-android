@@ -84,6 +84,15 @@ abstract final class Ph {
     fontFamily: 'PhosphorRegular',
   );
   static const musicNotes = IconData(0xe340, fontFamily: 'PhosphorRegular');
+  static const microphone = IconData(0xe326, fontFamily: 'PhosphorRegular');
+  static const mapPin = IconData(0xe316, fontFamily: 'PhosphorRegular');
+  static const usb = IconData(0xe956, fontFamily: 'PhosphorRegular');
+  static const globeHemisphereWest = IconData(
+    0xe28c,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const clipboard = IconData(0xe196, fontFamily: 'PhosphorRegular');
+  static const userCircle = IconData(0xe4c4, fontFamily: 'PhosphorRegular');
 }
 
 abstract final class PhBold {

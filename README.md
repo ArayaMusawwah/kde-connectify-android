@@ -17,81 +17,22 @@ and BLAKE3 checks are the core's), clipboard and pings both ways, and screen, ca
 remote control and second-display sessions (streams checked for profile, SPS/PPS before
 keyframes, size, frame rate and rotation; input checked both ways).
 
-| Done | To do |
-|---|---|
-| linksy-core on the phone: discovery (mDNS, with a Wi-Fi multicast lock while open), pairing, transfers | Foreground service while a transfer or prompt is open (now: only while the app is on screen) |
-| Device list with presence, nearby unpaired devices | Share sheet entry point ("Share → Linksy") |
-| Device page: Send files, Clipboard, Ping, activity as a timeline | Notifications with Accept / Decline actions |
-| Pairing: in-app QR scanner, `linksy://pair` links from any camera app, by address, 6-digit code | Send from `content://` URIs without copying (needs a core API, docs/protocol.md §7) |
-| Incoming files prompt (also as a notification with Accept/Decline), live progress / speed / time left, cancel; received files moved to Downloads/Linksy and opened from the timeline | |
-| Settings: name, auto-accept, stay connected | NsdManager discovery fallback for phones that filter multicast |
-| History kept on the phone (500 entries, clipboard text never on disk) | Watching the desktop's screen on the phone; front/back camera switch |
-| Sharing this phone's screen ("View Screen", exact shape, follows rotation) and camera ("Use as Webcam"), in a foreground service with a Stop notification | Second display at the phone's own size (the desktop sends 1920×1080 for now) |
-| Permissions sheet (first launch, and Settings → Permissions): Android's own dialogs for notifications and camera, app settings once Android stops asking | Remote control (`control`): declined as unsupported. Android allows it only through an accessibility service, and Google's fraud protection blocks sideloaded apps that declare one at install, with no way to skip |
-| Second display (`display`): the desktop's virtual monitor full screen in landscape, touch as mouse, two-finger scroll | |
-| Signal design, light and dark, edge-to-edge, predictive back, reduced motion respected | |
+Up to date with desktop 0.6.0 (core `1c8ebe4`). Done on the phone:
 
-`flutter run --dart-define=LINKSY_DEMO=true` runs on `DemoNode` (made-up devices) for UI
-work; Settings → Demo then triggers what another device would. Widget tests use it too.
+- Discovery, pairing (QR scanner, `linksy://pair` links, address, 6-digit code), presence,
+  **away from home** over iroh and Linksy's relay, the **USB cable** (AOA bridge).
+- Files both ways (Accept/Decline also in the notification, Downloads/Linksy), share
+  sheet, clipboard text and **files**, clipboard watch from computers, ping, open links.
+- Battery, ring both ways, the computer's players, calls pause music, lock when away
+  (heartbeats), photo backup, the Files sidebar on a picked folder.
+- Sessions: screen sharing, **webcam** (full controls, 720p/1080p, 30/60 fps, controls
+  from the computer), **microphone**, second display in the phone's shape, watching and
+  controlling the computer's screen, touchpad/keyboard/slides.
+- Device pictures both ways, locate (opt-in), service notices, push news.
 
-## Releases
-
-Downloads are public at
-[LinkSy-mg/linksy-releases](https://github.com/LinkSy-mg/linksy-releases/releases/latest)
-(APKs and notes only; this repo stays private). To release:
-
-1. Add the version's section to `CHANGELOG.md` (user-facing: it becomes the public
-   release notes) and bump `version: X.Y.Z+N` in `pubspec.yaml`.
-2. Commit as `chore(release): vX.Y.Z`.
-3. Run `tool/release.sh`: it checks, builds the universal APK and one per ABI, tags,
-   publishes the release here, then `tool/publish_public.sh` puts the APKs on the public
-   repo under unversioned names (`…/releases/latest/download/linksy.apk`).
-
-The release key lives outside the repo in `~/Axel/linksy-mobile-keys/`;
-`android/key.properties` (ignored) points to it.
-
-## Run
-
-```sh
-flutter pub get
-flutter run
-flutter analyze && flutter test
-```
-
-Android only for now (application id `app.linksy.mg`; Kotlin packages stay `app.linksy`, the JNI names depend on them). iOS comes later.
-
-## Layout
-
-| Path | What it is |
-|---|---|
-| `lib/core/` | Node interface (`linksy_node.dart`, mirrors `linksy_core::Node`), models and events, invite parsing, `DemoNode` |
-| `lib/app/` | `LinksyController` (devices, settings, activity), history store, app shell that shows prompts |
-| `lib/features/` | Screens: devices, device page, pairing, incoming transfer, settings |
-| `lib/ui/` | The Signal design system: tokens and theme (`sig.dart`), components, icons, formatting |
-| `assets/brand/` | The "Sender" mark and the app icon from linksy-desktop, with inline colors |
-| `tool/make_icons.sh` | Renders the launcher icons (adaptive + themed) from the mark |
-
-## Design
-
-Linksy has its own look, "Signal", rather than stock Material:
-
-- **Flat, and only the brand's colors.** No gradients, shadows or glows. Blue
-  `#2563FF` is the sender, cyan `#22C3E6` the receiver (from the mark): outgoing things
-  are blue, incoming things cyan. Device headers are solid blue (deep `#1438B8` in dark
-  mode) with the mark in white and light cyan `#9FE6F5`. Devices are flat blue, deep or
-  cyan. Red only for failed or declined.
-- **The real logo.** `assets/brand/` holds the mark and the desktop app icon with inline
-  colors (flutter_svg ignores the `<style>` classes in linksy-desktop's SVGs). The
-  launcher icon is rendered from the same design by `tool/make_icons.sh`.
-- **Type.** Sora for names, titles and numbers; Inter for everything else. Both bundled
-  in `assets/fonts/` (OFL).
-- **Icons.** Phosphor (MIT), vendored as fonts in `assets/fonts/phosphor/` with the
-  icons in use declared in `lib/ui/icons.dart` (the `phosphor_flutter` package doesn't
-  build on current Flutter).
-- **Shapes.** Solid cards (no borders, no shadows), pill buttons, pressables that shrink
-  instead of rippling.
-- **Home stays simple.** A plain header (logo, name, settings) and the device list. No
-  decorative hero.
+Not possible in a sideloaded app (see [`docs/android-app.md`](docs/android-app.md) §3): texting, mirroring
+the phone's notifications or its media, remote control of the phone, watching its
+clipboard, background location.
 
 ## For the desktop side
 
@@ -109,9 +50,12 @@ received files, Camera2 for the scanner and sharing, and folder paths over the
 platform channel. No ML Kit, analytics or storage permissions; folders come from
 Android's folder picker.
 
-The APK declares: network and Wi-Fi multicast, camera, notifications, vibration, push
-(`c2dm.permission.RECEIVE`), and foreground services for screen capture and camera
-(only while sharing) and for staying connected (lock when away, opt-in background). Check a build with
+The APK declares: network and Wi-Fi multicast, camera, microphone (asked only when a
+computer wants it), location while in use (asked only when "Let computers locate this
+phone" is turned on), notifications, vibration, push (`c2dm.permission.RECEIVE`), and
+foreground services for screen capture, camera and microphone (only while sharing) and
+for staying connected (lock when away, opt-in background). No SMS, notification-listener,
+accessibility, background-location or storage permissions. Check a build with
 `aapt2 dump permissions <apk>` before releasing.
 
 The Rust library is built for size (`opt-level = "z"`, fat LTO) except the hot paths,

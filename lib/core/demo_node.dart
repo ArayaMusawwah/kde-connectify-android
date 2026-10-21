@@ -382,6 +382,45 @@ class DemoNode implements LinksyNode {
   Future<void> endSession(String session) async => _emit(SessionEnded(session));
 
   @override
+  Future<void> respondDisplay(
+    String requestId, {
+    required bool accept,
+    required int width,
+    required int height,
+  }) => respond(requestId, accept: accept);
+
+  @override
+  Future<void> sendPicture(String id, String image) async {}
+
+  @override
+  Future<void> watchClipboard(String id, {required bool on}) async {}
+
+  @override
+  Future<String> sendClipboardFile(String id, String path) =>
+      sendFiles(id, [path]);
+
+  @override
+  Future<void> sendLocation(
+    String id, {
+    required double lat,
+    required double lon,
+    double? accuracyM,
+    required DateTime at,
+  }) async {}
+
+  @override
+  Future<void> refuseLocation(String id, String reason) async {}
+
+  @override
+  Future<void> setAwayAll(String id, {required bool on}) async {}
+
+  @override
+  Future<void> connectAway(String id) async {}
+
+  @override
+  Future<void> connectAddress(String address) async {}
+
+  @override
   Future<void> shutdown() async {
     for (final t in _timers.values) {
       t.cancel();

@@ -23,12 +23,15 @@ IconData activityIcon(Activity a) => switch (a.kind) {
   ActivityKind.ring => Ph.bellSimpleRinging,
   ActivityKind.remote => Ph.mouseSimple,
   ActivityKind.watch => Ph.monitor,
+  ActivityKind.microphone => Ph.microphone,
+  ActivityKind.locate => Ph.mapPin,
 };
 
 /// File name, "N items", quoted clipboard text or the ping title.
 String activityTitle(Activity a) => switch (a.kind) {
   ActivityKind.files when a.names.length == 1 => a.names.first,
   ActivityKind.files => '${a.names.length} items',
+  ActivityKind.clipboard when a.names.isNotEmpty => a.names.first,
   ActivityKind.clipboard when a.text != null => '“${a.text!.trim()}”',
   ActivityKind.clipboard => 'Clipboard text',
   ActivityKind.ping => a.text ?? 'Ping',
@@ -40,6 +43,8 @@ String activityTitle(Activity a) => switch (a.kind) {
   ActivityKind.ring => a.incoming ? 'Rang this phone' : 'Rang it',
   ActivityKind.remote => 'Touchpad and keyboard',
   ActivityKind.watch => 'Its screen',
+  ActivityKind.microphone => 'Your microphone',
+  ActivityKind.locate => 'Where this phone is',
 };
 
 /// A link without its scheme, "example.com/page".
@@ -69,6 +74,14 @@ String activityDetail(Activity a) {
   }
   if (a.kind == ActivityKind.link) {
     return a.incoming ? 'Link received' : 'Opened on the computer';
+  }
+  if (a.kind == ActivityKind.microphone) {
+    return live ? 'In use as a microphone' : 'Used as a microphone';
+  }
+  if (a.kind == ActivityKind.locate) {
+    return a.status == ActivityStatus.declined
+        ? (a.text ?? 'Not told')
+        : 'Told it where this phone is';
   }
   if (a.kind == ActivityKind.ring) {
     return a.incoming ? 'Asked to find this phone' : 'To find it';

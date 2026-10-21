@@ -20,6 +20,9 @@ use tokio::sync::{Notify, mpsc};
 use crate::api::node::rt;
 
 struct Handle {
+    /// The device on the other side, and the session's id, for messages
+    /// about it (the camera's state).
+    peer: linksy_core::Fingerprint,
     /// Taken to end the session: a reader blocked in `read` may still hold
     /// the handle, so ending can't wait for it to be dropped.
     out: Mutex<Option<mpsc::Sender<Vec<u8>>>>,
@@ -60,6 +63,7 @@ pub(crate) fn run(mut session: Session) {
     sessions().lock().unwrap().insert(
         id.clone(),
         Arc::new(Handle {
+            peer: session.peer.id,
             out: Mutex::new(Some(out)),
             incoming: Mutex::new(reads.then_some(incoming)),
             closed: closed.clone(),
@@ -126,6 +130,19 @@ pub(crate) async fn write_async(id: &str, bytes: Vec<u8>) -> bool {
     out.send(bytes).await.is_ok()
 }
 
+/// The webcam's capabilities and controls (JSON), to the computer using it
+/// (`camera_state`, docs/protocol.md §4.8), sent on the core's runtime.
+pub(crate) fn camera_state(id: &str, json: &str) {
+    let (Some(h), Ok(session), Some(node)) = (handle(id), linksy_core::Uuid::parse_str(id), crate::api::node::running()) else { return };
+    let Ok(state) = serde_json::from_str::<serde_json::Value>(json) else { return };
+    let peer = h.peer;
+    rt().spawn(async move {
+        if let Err(e) = node.send_camera_state(&peer, session, state).await {
+            tracing::debug!(error = %e, "camera state didn't go out");
+        }
+    });
+}
+
 /// The next bytes from the other side, blocking; None once it's over.
 pub(crate) fn read(id: &str) -> Option<Vec<u8>> {
     let h = handle(id)?;
@@ -175,6 +192,17 @@ mod jni_api {
             Some(bytes) => env.byte_array_from_slice(&bytes).map(|a| a.into_raw()).unwrap_or(std::ptr::null_mut()),
             None => std::ptr::null_mut(),
         }
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "system" fn Java_app_linksy_media_NativeSession_cameraState(
+        mut env: JNIEnv,
+        _this: JClass,
+        session: JString,
+        json: JString,
+    ) {
+        let (Some(session), Some(json)) = (id(&mut env, &session), id(&mut env, &json)) else { return };
+        super::camera_state(&session, &json);
     }
 
     #[unsafe(no_mangle)]

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -31,6 +33,21 @@ class _ShareSheetState extends State<ShareSheet> {
   /// For a link: open it, or send the text to the clipboard instead.
   bool _asText = false;
 
+  /// For one file: onto the computer's clipboard instead of its Downloads.
+  bool _toClipboard = false;
+
+  /// One file small enough for a clipboard (≤ 10 MiB, §4.5).
+  bool get _clippable => switch (widget.shared) {
+    SharedFiles(:final paths) when paths.length == 1 => (() {
+      try {
+        return File(paths.single).lengthSync() <= 10 * 1024 * 1024;
+      } on FileSystemException {
+        return false;
+      }
+    })(),
+    _ => false,
+  };
+
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
@@ -38,6 +55,11 @@ class _ShareSheetState extends State<ShareSheet> {
     final shared = widget.shared;
     final link = shared is SharedText ? findWebLink(shared.text) : null;
     final (icon, title, detail) = switch (shared) {
+      SharedFiles(:final paths) when _toClipboard => (
+        Ph.clipboard,
+        'Put on a clipboard',
+        paths.single.split('/').last,
+      ),
       SharedFiles(:final paths) => (
         Ph.files,
         paths.length == 1 ? 'Send a file' : 'Send ${paths.length} files',
@@ -54,7 +76,13 @@ class _ShareSheetState extends State<ShareSheet> {
         text.trim(),
       ),
     };
-    final devices = c.paired;
+    // Only computers that take a file onto their clipboard.
+    final devices = _toClipboard
+        ? [
+            for (final v in c.paired)
+              if (v.device.features.contains('clipboard_file')) v,
+          ]
+        : c.paired;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
@@ -88,7 +116,10 @@ class _ShareSheetState extends State<ShareSheet> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Text(
-                  'Pair a computer first, then share to it from any app.',
+                  _toClipboard
+                      ? 'None of your computers takes files on its clipboard '
+                            'yet. Update Linksy there.'
+                      : 'Pair a computer first, then share to it from any app.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: s.muted, height: 1.4),
                 ),
@@ -109,7 +140,7 @@ class _ShareSheetState extends State<ShareSheet> {
                           child: Row(
                             children: [
                               Orb(
-                                picture: c.pictures[v.device.id],
+                                picture: c.pictureOf(v.device.id),
                                 device: v.device,
                                 size: 40,
                                 presence: v.presence,
@@ -128,7 +159,7 @@ class _ShareSheetState extends State<ShareSheet> {
                                       ),
                                     ),
                                     Text(
-                                      presenceLabel(v.presence),
+                                      presenceText(v),
                                       style: TextStyle(
                                         fontSize: 12.5,
                                         color: s.muted,
@@ -148,6 +179,16 @@ class _ShareSheetState extends State<ShareSheet> {
                       ),
                   ],
                 ),
+              ),
+            if (_clippable)
+              SigButton(
+                label: _toClipboard
+                    ? 'Send the file instead'
+                    : 'Put it on the computer’s clipboard instead',
+                kind: SigButtonKind.quiet,
+                expand: true,
+                height: 46,
+                onTap: () => setState(() => _toClipboard = !_toClipboard),
               ),
             if (link != null)
               SigButton(
@@ -172,6 +213,10 @@ class _ShareSheetState extends State<ShareSheet> {
     Navigator.of(context).pop();
     final shared = widget.shared;
     final (error, done) = switch (shared) {
+      SharedFiles(:final paths) when _toClipboard => (
+        await c.sendToClipboard(deviceId, paths.single),
+        'Putting it on $name’s clipboard',
+      ),
       SharedFiles(:final paths) => (await c.sendFiles(deviceId, paths), null),
       SharedText() when link != null && !_asText => (
         await c.openUrl(deviceId, link),

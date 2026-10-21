@@ -15,6 +15,10 @@ object NativeSession {
     /// for `display`), blocking; null once the session is over.
     external fun read(session: String): ByteArray?
 
+    /// Tells the computer what the camera in [session] can do and how it's
+    /// set (`camera_state`, docs/android-app.md §2.8).
+    external fun cameraState(session: String, json: String)
+
     /// Ends this side of the stream; the core then reports the session ended.
     external fun finish(session: String)
 }

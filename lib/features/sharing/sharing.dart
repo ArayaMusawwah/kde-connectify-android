@@ -43,6 +43,13 @@ class SessionRequestDialog extends StatelessWidget {
         '$name wants to use this phone as a touchpad',
         'Unexpected: computers don’t ask this. Don’t allow it.',
       ),
+      SessionKind.microphone => (
+        Ph.microphone,
+        '$name wants to use your microphone',
+        '$name hears this phone’s microphone until you stop, as a '
+            'microphone any of its apps can use. Android asks you to confirm '
+            'next.',
+      ),
       SessionKind.display => (
         Ph.monitor,
         '$name wants to use this screen as a second display',
@@ -146,6 +153,10 @@ class _Banner extends StatelessWidget {
         '$name is controlling your screen',
       ),
       SessionKind.camera => (Ph.videoCamera, '$name is using your camera'),
+      SessionKind.microphone => (
+        Ph.microphone,
+        '$name is using your microphone',
+      ),
       _ => (Ph.screencast, 'Sharing your screen with $name'),
     };
     final banner = Container(

@@ -45,6 +45,9 @@ class RustNode implements LinksyNode {
     required String dataDir,
     required String downloadDir,
     required String name,
+    required List<String> features,
+    required bool away,
+    String? relay,
   }) async {
     await RustLib.init();
     final node = await _guard(
@@ -52,6 +55,9 @@ class RustNode implements LinksyNode {
         dataDir: dataDir,
         downloadDir: downloadDir,
         name: name,
+        features: features,
+        away: away,
+        relay: relay,
       ),
     );
     return RustNode._(node);
@@ -96,6 +102,79 @@ class RustNode implements LinksyNode {
   Future<void> respond(String requestId, {required bool accept}) async {
     _node.respond(request: requestId, accept: accept);
   }
+
+  @override
+  Future<void> respondDisplay(
+    String requestId, {
+    required bool accept,
+    required int width,
+    required int height,
+  }) async {
+    _node.respondDisplay(
+      request: requestId,
+      accept: accept,
+      width: width,
+      height: height,
+    );
+  }
+
+  @override
+  Future<void> sendPicture(String id, String image) => _guard(
+    () => _node.sendPicture(id: id, image: image),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> watchClipboard(String id, {required bool on}) => _guard(
+    () => _node.watchClipboard(id: id, on_: on),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<String> sendClipboardFile(String id, String path) => _guard(
+    () => _node.sendClipboardFile(id: id, path: path),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> sendLocation(
+    String id, {
+    required double lat,
+    required double lon,
+    double? accuracyM,
+    required DateTime at,
+  }) => _guard(
+    () => _node.sendLocation(
+      id: id,
+      lat: lat,
+      lon: lon,
+      accuracyM: accuracyM,
+      atMs: BigInt.from(at.millisecondsSinceEpoch),
+    ),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> refuseLocation(String id, String reason) => _guard(
+    () => _node.refuseLocation(id: id, reason: reason),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> setAwayAll(String id, {required bool on}) => _guard(
+    () async => _node.setAwayAll(id: id, on_: on),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> connectAway(String id) =>
+      _guard(() => _node.connectAway(id: id), name: _nameOf(id));
+
+  @override
+  Future<void> connectAddress(String address) => _guard(
+    () => _node.connectAddress(address: address),
+    name: 'The computer on the cable',
+  );
 
   @override
   Future<String> sendFiles(String id, List<String> paths) => _guard(
@@ -243,6 +322,9 @@ String describeCoreError(String error, String name) {
     'timeout' => "$name didn't answer in time.",
     'not_paired' => "$name isn't paired anymore. Pair again to share.",
     'unsupported' => "$name can't do that yet.",
+    'not_from_away' =>
+      '$name allows that only on the same network. Its owner can allow '
+          'everything from away for this phone.',
     'invalid' => detail.isEmpty ? 'That didn’t work.' : detail,
     _ =>
       detail.isEmpty

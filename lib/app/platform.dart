@@ -39,6 +39,7 @@ abstract final class LinksyPlatform {
       StreamController<(String, Map<String, Object?>)>.broadcast();
   static final _openWebcam = StreamController<String>.broadcast();
   static final _transferAnswers = StreamController<(String, bool)>.broadcast();
+  static final _usbPorts = StreamController<int>.broadcast();
   static var _listening = false;
 
   /// Calls from Android: pairing links, second-display size and end, and
@@ -81,6 +82,8 @@ abstract final class LinksyPlatform {
           _transferAnswers.add((a['transfer'] as String, a['accept'] == true));
         case 'volumeKey' when call.arguments is String:
           _volumeKeys.add(call.arguments == 'up');
+        case 'usbPort' when call.arguments is int:
+          _usbPorts.add(call.arguments as int);
         case 'batteryChanged':
           final b = _battery(call.arguments);
           if (b != null) _batteries.add(b);
@@ -302,6 +305,62 @@ abstract final class LinksyPlatform {
   /// This install's Firebase push token (null without Google Play services).
   static Future<String?> pushToken() => _call<String>('pushToken');
 
+  /// This phone's screen in landscape (long side first), in pixels.
+  static Future<(int, int)?> screenSize() async {
+    final s = await _call<Map>('screenSize');
+    return s == null
+        ? null
+        : ((s['width'] as num).toInt(), (s['height'] as num).toInt());
+  }
+
+  /// Keeps the screen from timing out while a display or a computer's screen
+  /// shows, for [session]; on until every session lets go.
+  static Future<void> keepScreenOn(String session, {required bool on}) =>
+      _call<void>('keepScreenOn', {'session': session, 'on': on});
+
+  /// [path] as a JPEG small enough to send as a device picture
+  /// (≤ 128 KiB), base64.
+  static Future<String?> pictureJpeg(String path) =>
+      _call<String>('pictureJpeg', {'path': path});
+
+  /// Puts the file at [path] on Android's clipboard (an image, a file).
+  static Future<bool> clipboardFile(String path) async =>
+      await _call<bool>('clipboardFile', {'path': path}) ?? false;
+
+  /// One fresh location fix, or why not (`error`).
+  static Future<
+    ({double lat, double lon, double? accuracy, DateTime at, String? error})
+  >
+  locate() async {
+    final r = await _call<Map>('locate');
+    if (r == null || r['error'] is String) {
+      return (
+        lat: 0.0,
+        lon: 0.0,
+        accuracy: null,
+        at: DateTime.now(),
+        error: (r?['error'] as String?) ?? 'This phone can’t tell where it is.',
+      );
+    }
+    return (
+      lat: (r['lat'] as num).toDouble(),
+      lon: (r['lon'] as num).toDouble(),
+      accuracy: (r['accuracy'] as num?)?.toDouble(),
+      at: DateTime.fromMillisecondsSinceEpoch((r['at'] as num).toInt()),
+      error: null,
+    );
+  }
+
+  /// The local port of the USB cable's bridge each time a computer is
+  /// plugged in as an accessory (docs/protocol.md §4.11).
+  static Stream<int> get usbPorts {
+    _listen();
+    return _usbPorts.stream;
+  }
+
+  /// A cable plugged in before the app was listening.
+  static Future<int?> usbPort() => _call<int>('usbPort');
+
   /// "Ring my phone": the alarm sound at full volume until [stopRing].
   static Future<void> startRing() => _call<void>('startRing');
 
@@ -357,7 +416,8 @@ abstract final class LinksyPlatform {
   static Future<bool> firstPermissionsVisit() async =>
       await _call<bool>('firstPermissionsVisit') ?? false;
 
-  /// Android's own permission dialog for `camera` or `notifications` (or
+  /// Android's own permission dialog for `camera`, `notifications`,
+  /// `microphone` or `location` (or
   /// Linksy's app settings once Android stops showing it). True if granted.
   static Future<bool> requestPermission(String name) async =>
       await _call<bool>('requestPermission', {'name': name}) ?? false;

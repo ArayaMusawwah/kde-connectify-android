@@ -7,24 +7,35 @@ import '../frb_generated.dart';
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `fingerprint`, `json`, `kind`, `rt`, `run`
+// These functions are ignored because they are not marked as `pub`: `fingerprint`, `json`, `kind`, `rt`, `run`, `running`
 
-/// Starts this phone's node. Identity, paired devices and settings live in
-/// `data_dir` (app-private). Prefers the desktop's port 47200 and mDNS; falls
-/// back to a free port, then to no discovery, rather than not starting.
+/// `features`: what this phone can do (docs/protocol.md §4.10). `away`: reach paired
+/// computers over the internet through `relay` (§4.13).
 Future<LinksyNode> startNode({
   required String dataDir,
   required String downloadDir,
   required String name,
+  required List<String> features,
+  required bool away,
+  String? relay,
 }) => RustLib.instance.api.crateApiNodeStartNode(
   dataDir: dataDir,
   downloadDir: downloadDir,
   name: name,
+  features: features,
+  away: away,
+  relay: relay,
 );
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<LinksyNode>>
 abstract class LinksyNode implements RustOpaqueInterface {
   bool cancel({required String transfer});
+
+  /// Dials a paired computer at `addr` (the USB cable's bridge, §4.11).
+  Future<void> connectAddress({required String address});
+
+  /// Connect over the internet now (away from home).
+  Future<void> connectAway({required String id});
 
   /// Turns down a session this phone can't do at all (the desktop then says
   /// "can't" rather than "didn't allow it"). False if it already expired.
@@ -47,6 +58,9 @@ abstract class LinksyNode implements RustOpaqueInterface {
 
   /// This device, as `DeviceInfo` JSON.
   String infoJson();
+
+  /// How a device is connected: `usb`, `lan`, `away`, or empty.
+  String link({required String id});
 
   /// `command_json` in the core's shape: `{"action":"play_pause"}`.
   Future<void> mediaCommand({
@@ -75,8 +89,20 @@ abstract class LinksyNode implements RustOpaqueInterface {
   /// The port this node listens on, for "pair by address" from elsewhere.
   int port();
 
+  /// Answers `locate` with why not.
+  Future<void> refuseLocation({required String id, required String reason});
+
   /// Answer a pairing or transfer request. False if it already expired.
   bool respond({required String request, required bool accept});
+
+  /// Accepts a `display` request with this phone's landscape screen size,
+  /// so the computer makes the monitor in its shape (docs/protocol.md §4.8).
+  bool respondDisplay({
+    required String request,
+    required bool accept,
+    required int width,
+    required int height,
+  });
 
   /// "Find my computer": makes it ring (`on`), or stops it.
   Future<void> ring({required String id, required bool on_});
@@ -93,14 +119,32 @@ abstract class LinksyNode implements RustOpaqueInterface {
 
   Future<void> sendClipboard({required String id, required String text});
 
+  /// Puts a file (≤ 10 MiB) on a computer's clipboard; returns the transfer id.
+  Future<String> sendClipboardFile({required String id, required String path});
+
   /// Returns the transfer id.
   Future<String> sendFiles({required String id, required List<String> paths});
+
+  /// Answers `locate` with a position.
+  Future<void> sendLocation({
+    required String id,
+    required double lat,
+    required double lon,
+    double? accuracyM,
+    required BigInt atMs,
+  });
+
+  /// This phone's own picture (base64 JPEG/PNG ≤ 128 KiB) to a computer.
+  Future<void> sendPicture({required String id, required String image});
 
   /// Writes to a session (framed input messages). False once it has ended.
   Future<bool> sessionWrite({
     required String session,
     required List<int> bytes,
   });
+
+  /// Everything allowed from away for this device (screens, camera, files…).
+  void setAwayAll({required String id, required bool on_});
 
   String settingsJson();
 
@@ -120,6 +164,9 @@ abstract class LinksyNode implements RustOpaqueInterface {
   Future<String> startView({required String id, required bool control});
 
   Future<void> updateSettings({required String settingsJson});
+
+  /// Ask a computer to send its clipboard text as it changes (or stop).
+  Future<void> watchClipboard({required String id, required bool on_});
 
   /// Ask the computer for its players (`media_state` events) while `on`.
   Future<void> watchMedia({required String id, required bool on_});

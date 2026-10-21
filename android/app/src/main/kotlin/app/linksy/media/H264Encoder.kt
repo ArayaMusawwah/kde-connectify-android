@@ -44,6 +44,14 @@ class H264Encoder(
             setLong(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 100_000L)
             // Screens refresh at 60 Hz or more; the desktop expects up to 30.
             if (Build.VERSION.SDK_INT >= 29) setFloat(MediaFormat.KEY_MAX_FPS_TO_ENCODER, fps.toFloat())
+            // As little delay as the codec allows (docs/protocol.md §4.8, webcam
+            // latency): realtime, one frame in flight, no B-frames.
+            setInteger(MediaFormat.KEY_PRIORITY, 0)
+            if (Build.VERSION.SDK_INT >= 29) setInteger(MediaFormat.KEY_MAX_B_FRAMES, 0)
+            if (Build.VERSION.SDK_INT >= 30) {
+                setInteger(MediaFormat.KEY_LATENCY, 1)
+                setInteger(MediaFormat.KEY_LOW_LATENCY, 1)
+            }
         }
         val profiles = buildList {
             if (Build.VERSION.SDK_INT >= 27) add(CodecProfileLevel.AVCProfileConstrainedBaseline)
@@ -78,7 +86,10 @@ class H264Encoder(
                     continue
                 }
                 val key = info.flags and MediaCodec.BUFFER_FLAG_KEY_FRAME != 0
-                val out = if (key && config.isNotEmpty() && !startsWithSps(bytes)) config + bytes else bytes
+                val frame = if (key && config.isNotEmpty() && !startsWithSps(bytes)) config + bytes else bytes
+                // An access unit delimiter first: the computer can end each
+                // frame on it, without waiting for the next one (§4.8).
+                val out = if (frame.isEmpty() || startsWithAud(frame)) frame else AUD + frame
                 if (out.isNotEmpty() && !NativeSession.write(session, out)) {
                     running = false
                     onEnded()
@@ -129,6 +140,17 @@ class H264Encoder(
         }.getOrNull()
 
         /// Whether the encoder already put SPS (NAL type 7) in front.
+        private val AUD = byteArrayOf(0, 0, 0, 1, 0x09, 0xF0.toByte())
+
+        private fun startsWithAud(b: ByteArray): Boolean {
+            val at = when {
+                b.size > 4 && b[0].toInt() == 0 && b[1].toInt() == 0 && b[2].toInt() == 0 && b[3].toInt() == 1 -> 4
+                b.size > 3 && b[0].toInt() == 0 && b[1].toInt() == 0 && b[2].toInt() == 1 -> 3
+                else -> return false
+            }
+            return b[at].toInt() and 0x1f == 9
+        }
+
         private fun startsWithSps(b: ByteArray): Boolean {
             val start = when {
                 b.size > 4 && b[0].toInt() == 0 && b[1].toInt() == 0 && b[2].toInt() == 0 && b[3].toInt() == 1 -> 4

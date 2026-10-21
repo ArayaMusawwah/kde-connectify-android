@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 
 import '../core/linksy_node.dart';
 import '../core/models.dart';
+import '../core/service_info.dart';
 import '../ui/format.dart';
 import 'activity.dart';
 import 'platform.dart';
@@ -16,10 +17,29 @@ import 'platform.dart';
 /// device's activity. Consent prompts and notices go out on [prompts] for the
 /// UI to show.
 class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
-  LinksyController(this.node, this._store);
+  LinksyController(this.node, this._store, {this.service, Directory? dir})
+    : _peerPictures = dir == null
+          ? null
+          : Directory('${dir.path}/peer_pictures');
 
   final LinksyNode node;
   final ActivityStore _store;
+
+  /// Linksy's service information (§4.12): notices, newer versions.
+  final ServiceInfoStore? service;
+  ServiceInfo? serviceInfo;
+
+  /// Pictures computers sent of themselves (§4.5 `picture`), by device.
+  final Directory? _peerPictures;
+  final Map<String, String> _received = {};
+
+  /// Computers this phone has told its picture since they connected.
+  final _toldPicture = <String>{};
+  String? _ownPictureData;
+
+  /// Computers whose clipboard comes here as it changes, while connected.
+  final _clipWatching = <String>{};
+  StreamSubscription<int>? _usbSub;
 
   List<DeviceView> devices = const [];
   NodeSettings? settings;
@@ -86,6 +106,21 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   StreamSubscription<(String, bool)>? _answerSub;
 
   bool get pauseOnCalls => prefs['pause_calls'] != 'off';
+  bool get locatable => prefs['locate'] == 'on';
+  String? get ownPicture => prefs['own_picture'];
+  bool watchesClipboard(String id) => prefs['clip_watch.$id'] == 'on';
+
+  /// The picture to show for [id]: the one chosen here, else its own.
+  String? pictureOf(String id) => pictures[id] ?? _received[id];
+
+  /// Service notices not dismissed yet, the newest first.
+  List<ServiceNotice> get notices => [
+    for (final n in serviceInfo?.notices ?? const <ServiceNotice>[])
+      if (prefs['notice.${n.id}'] == null) n,
+  ];
+
+  /// The service says this app is too old to keep connecting.
+  bool get outdated => serviceInfo?.outdated ?? false;
   bool get stayRunning => prefs['stay_running'] == 'on';
   bool get sharingFiles => prefs['share_files'] == 'on';
   bool backsUpPhotos(String id) => prefs['photos.$id'] == 'on';
@@ -136,6 +171,15 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       (a) => respond(a.$1, accept: a.$2),
     );
     unawaited(_loadPlatform());
+    unawaited(_loadPeerPictures());
+    serviceInfo = service?.cached();
+    unawaited(
+      service?.refresh().then((info) {
+        if (info == null) return;
+        serviceInfo = info;
+        notifyListeners();
+      }),
+    );
     WidgetsBinding.instance.addObserver(this);
     unawaited(
       LinksyPlatform.battery().then((b) {
@@ -169,13 +213,20 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         sharing: true,
       );
     }
-    pictures = await LinksyPlatform.pictures();
+    pictures = await LinksyPlatform.pictures()
+      ..remove(_self);
     filesFolder = await LinksyPlatform.folder('files');
     photosFolder = await LinksyPlatform.folder('photos');
     await LinksyPlatform.shareFiles(sharingFiles && filesFolder != null);
     await LinksyPlatform.watchCalls(pauseOnCalls);
     _updateKeepAlive();
     notifyListeners();
+    _usbSub = LinksyPlatform.usbPorts.listen(_onUsb);
+    final usb = await LinksyPlatform.usbPort();
+    if (usb != null) _onUsb(usb);
+    for (final v in devices) {
+      if (v.connected) _onConnected(v.device.id);
+    }
     _importAll();
     _importTimer = Timer.periodic(
       const Duration(minutes: 15),
@@ -192,6 +243,226 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
     await LinksyPlatform.setPref(key, value);
   }
+
+  Future<void> _loadPeerPictures() async {
+    final dir = _peerPictures;
+    if (dir == null || !dir.existsSync()) return;
+    await for (final f in dir.list()) {
+      final name = f.uri.pathSegments.last;
+      if (f is File && name.endsWith('.img')) {
+        _received[name.substring(0, name.length - 4)] = f.path;
+      }
+    }
+    pictureVersion++;
+    notifyListeners();
+  }
+
+  /// The key this phone's own picture is kept under, beside the devices'.
+  static const _self = 'self';
+
+  // Pictures (§4.5): this phone's goes to each computer once connected; a
+  // computer's own shows unless one was chosen for it here.
+
+  Future<bool> pickOwnPicture() async {
+    final path = await LinksyPlatform.pickPicture(_self);
+    if (path == null) return false;
+    await FileImage(File(path)).evict();
+    _ownPictureData = null;
+    await _setPref('own_picture', path);
+    pictureVersion++;
+    _toldPicture.clear();
+    for (final v in devices) {
+      if (v.connected) _tellPicture(v.device.id);
+    }
+    return true;
+  }
+
+  Future<void> removeOwnPicture() async {
+    _ownPictureData = null;
+    await _setPref('own_picture', null);
+    await LinksyPlatform.removePicture(_self);
+    pictureVersion++;
+    notifyListeners();
+  }
+
+  Future<void> _tellPicture(String id) async {
+    final path = ownPicture;
+    final v = device(id);
+    if (path == null ||
+        v == null ||
+        !v.trusted ||
+        !v.device.can('picture') ||
+        !_toldPicture.add(id)) {
+      return;
+    }
+    final data = _ownPictureData ??= await LinksyPlatform.pictureJpeg(path);
+    if (data == null) return;
+    try {
+      await node.sendPicture(id, data);
+    } on LinksyException {
+      _toldPicture.remove(id);
+    }
+  }
+
+  Future<void> _onPicture(DeviceInfo from, String image) async {
+    final dir = _peerPictures;
+    if (dir == null || image.isEmpty) return;
+    try {
+      final bytes = base64Decode(image);
+      if (bytes.length > 192 * 1024) return;
+      await dir.create(recursive: true);
+      final file = File('${dir.path}/${from.id}.img');
+      await file.writeAsBytes(bytes, flush: true);
+      await FileImage(file).evict();
+      _received[from.id] = file.path;
+      pictureVersion++;
+      notifyListeners();
+    } on FormatException {
+      // Not base64: ignore it.
+    }
+  }
+
+  // Clipboard (§4.5): a computer's clipboard text as it changes, where its
+  // desktop allows it (`clipboard_watch`).
+
+  Future<void> setClipboardWatch(String id, bool on) async {
+    await _setPref('clip_watch.$id', on ? 'on' : null);
+    if (on) {
+      _watchClipboard(id);
+    } else if (_clipWatching.remove(id)) {
+      await node.watchClipboard(id, on: false).catchError((Object _) {});
+    }
+  }
+
+  void _watchClipboard(String id) {
+    final v = device(id);
+    if (v == null ||
+        !v.connected ||
+        !watchesClipboard(id) ||
+        !v.device.features.contains('clipboard_watch') ||
+        !_clipWatching.add(id)) {
+      return;
+    }
+    node.watchClipboard(id, on: true).catchError((Object _) {
+      _clipWatching.remove(id);
+    });
+  }
+
+  /// One file (an image…) onto [id]'s clipboard, from the share sheet.
+  Future<String?> sendToClipboard(String id, String path) async {
+    final file = File(path);
+    if (!file.existsSync() || file.lengthSync() > 10 * 1024 * 1024) {
+      return 'Only a file up to 10 MB fits on the clipboard.';
+    }
+    try {
+      final transfer = await node.sendClipboardFile(id, path);
+      _add(
+        Activity(
+          id: transfer,
+          deviceId: id,
+          kind: ActivityKind.clipboard,
+          incoming: false,
+          time: DateTime.now(),
+          status: ActivityStatus.waiting,
+          names: [path.split('/').last],
+          total: file.lengthSync(),
+        ),
+      );
+      return null;
+    } on LinksyException catch (e) {
+      return e.message;
+    }
+  }
+
+  Future<void> _onClipboardFile(DeviceInfo from, String path) async {
+    final copied = await LinksyPlatform.clipboardFile(path);
+    _add(
+      Activity(
+        id: '${DateTime.now().microsecondsSinceEpoch}',
+        deviceId: from.id,
+        kind: ActivityKind.clipboard,
+        incoming: true,
+        time: DateTime.now(),
+        status: copied ? ActivityStatus.done : ActivityStatus.failed,
+        names: [path.split('/').last],
+        saved: [path],
+        reason: copied ? null : 'Couldn’t put it on the clipboard',
+      ),
+    );
+  }
+
+  // Locate (§4.14): one fix when a computer asks, only if allowed here.
+
+  Future<bool> setLocatable(bool on) async {
+    if (on && !await LinksyPlatform.requestPermission('location')) {
+      return false;
+    }
+    await _setPref('locate', on ? 'on' : null);
+    return true;
+  }
+
+  Future<void> _onLocate(DeviceInfo from) async {
+    String? refused;
+    if (!locatable) {
+      refused = 'Locating is turned off in Linksy on this phone';
+    } else {
+      final fix = await LinksyPlatform.locate();
+      if (fix.error != null) {
+        refused = fix.error;
+      } else {
+        await node
+            .sendLocation(
+              from.id,
+              lat: fix.lat,
+              lon: fix.lon,
+              accuracyM: fix.accuracy,
+              at: fix.at,
+            )
+            .catchError((Object _) {});
+      }
+    }
+    if (refused != null) {
+      await node.refuseLocation(from.id, refused).catchError((Object _) {});
+    }
+    _addLocal(
+      from.id,
+      ActivityKind.locate,
+      incoming: true,
+      status: refused == null ? ActivityStatus.done : ActivityStatus.declined,
+      text: refused,
+    );
+  }
+
+  // Away from home (§4.13).
+
+  Future<String?> setAwayAll(String id, bool on) => _run(() async {
+    await node.setAwayAll(id, on: on);
+    await refresh();
+  });
+
+  Future<String?> connectAway(String id) => _run(() async {
+    await node.connectAway(id);
+    await refresh();
+  });
+
+  // USB cable (§4.11): the bridge is up; dial the computer through it.
+
+  void _onUsb(int port) {
+    node
+        .connectAddress('127.0.0.1:$port')
+        .then((_) => refresh())
+        .catchError((Object _) {});
+  }
+
+  /// A computer connected (again): what it should know straight away.
+  void _onConnected(String id) {
+    _tellBattery(id, always: true);
+    _tellPicture(id);
+    _watchClipboard(id);
+    _importTo(id);
+  }
+
+  void dismissNotice(String id) => _setPref('notice.$id', '1');
 
   String _name(String id) => device(id)?.device.name ?? 'your computer';
 
@@ -430,10 +701,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   void _onEvent(LinksyEvent e) {
     switch (e) {
       case Connected(:final id):
-        refresh().then((_) {
-          _tellBattery(id, always: true);
-          _importTo(id);
-        });
+        refresh().then((_) => _onConnected(id));
       case Paired(:final device):
         refresh().then((_) => _tellBattery(device.id, always: true));
       case DeviceFound(:final device):
@@ -444,7 +712,19 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         });
       case Disconnected(:final id):
         media.remove(id);
+        _toldPicture.remove(id);
+        _clipWatching.remove(id);
         refresh();
+      case PictureReceived(:final from, :final image):
+        _onPicture(from, image);
+      case LocateRequested(:final from):
+        _onLocate(from);
+      case ClipboardFileReceived(:final from, :final path):
+        _onClipboardFile(from, path);
+      case ClipboardWatchChanged():
+        // Android doesn't let apps watch the clipboard in the background,
+        // and this phone doesn't announce `clipboard_watch`.
+        break;
       case DeviceLost() || DeviceUpdated():
         refresh();
       case MediaStateReceived(:final from, :final state):
@@ -467,6 +747,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           when !e.sharing &&
               (e.kind == SessionKind.screen || e.kind == SessionKind.control):
         displays[session] = e;
+        LinksyPlatform.keepScreenOn(session, on: true);
         _addSession(e);
       case SessionStarted(:final session, :final peer, kind: SessionKind.input):
         remotes[peer.id] = session;
@@ -584,8 +865,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
             ..bytes = a.total
             ..saved = saved;
         });
-        // Into Downloads/Linksy, where other apps find them.
-        if (saved.isNotEmpty) {
+        // Into Downloads/Linksy, where other apps find them. Not a file put
+        // on the clipboard: no timeline entry was made for its transfer.
+        if (saved.isNotEmpty && _activity.any((a) => a.id == transfer)) {
           LinksyPlatform.publishDownloads(saved).then((moved) {
             _update(transfer, (a) => a.saved = moved);
           });
@@ -604,6 +886,15 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         _lastSample.remove(transfer);
       case ClipboardReceived(:final from, :final text):
         Clipboard.setData(ClipboardData(text: text));
+        // Watched clipboards change often: one entry, kept current.
+        final last = lastActivity(from.id);
+        if (_clipWatching.contains(from.id) &&
+            last != null &&
+            last.kind == ActivityKind.clipboard &&
+            last.incoming &&
+            last.names.isEmpty) {
+          _activity.remove(last);
+        }
         _addLocal(from.id, ActivityKind.clipboard, incoming: true, text: text);
       case NotificationReceived(:final from, :final title):
         _addLocal(from.id, ActivityKind.ping, incoming: true, text: title);
@@ -615,6 +906,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       case SessionStarted(:final session, kind: SessionKind.display)
           when !e.sharing:
         displays[session] = e;
+        LinksyPlatform.keepScreenOn(session, on: true);
         _addSession(e);
       case SessionEnded(:final session):
         if (remotes.containsValue(session)) {
@@ -630,6 +922,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           _update(session, (a) => a.status = ActivityStatus.done);
         }
         if (displays.remove(session) != null) {
+          LinksyPlatform.keepScreenOn(session, on: false);
           _update(session, (a) => a.status = ActivityStatus.done);
         }
       case PairingRequest() ||
@@ -645,8 +938,11 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           Paired() ||
           TransferRequest() ||
           NotificationReceived() ||
-          ClipboardReceived() ||
+          ClipboardFileReceived() ||
           OpenUrlReceived():
+        _prompts.add(e);
+      // Each change of a watched clipboard would be a snack bar too many.
+      case ClipboardReceived(:final from) when !_clipWatching.contains(from.id):
         _prompts.add(e);
       // The webcam's controls, when a computer starts using the camera.
       case SessionStarted(kind: SessionKind.camera) when e.sharing:
@@ -696,6 +992,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         SessionKind.control => ActivityKind.control,
         SessionKind.display => ActivityKind.display,
         SessionKind.input => ActivityKind.remote,
+        SessionKind.microphone => ActivityKind.microphone,
       },
       // Video coming in: a second display, or a computer's screen watched.
       incoming: !e.sharing && e.kind != SessionKind.input,
@@ -872,7 +1169,25 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           if (!allowed) {
             error = 'Linksy needs the camera permission to work as a webcam.';
           }
-        case SessionKind.display || SessionKind.input:
+        case SessionKind.microphone:
+          allowed = await LinksyPlatform.requestPermission('microphone');
+          if (!allowed) {
+            error =
+                'Linksy needs the microphone permission to be a microphone.';
+          }
+        case SessionKind.display:
+          // The monitor in this phone's shape (§4.8).
+          final size = await LinksyPlatform.screenSize();
+          if (size != null) {
+            await node.respondDisplay(
+              request.request,
+              accept: true,
+              width: size.$1,
+              height: size.$2,
+            );
+            return null;
+          }
+        case SessionKind.input:
           break;
       }
     }
@@ -891,6 +1206,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   /// Leaves a second display (back from its full-screen page).
   Future<void> stopDisplay(String session) async {
+    await LinksyPlatform.keepScreenOn(session, on: false);
     await LinksyPlatform.stopDisplay(session);
     await node.endSession(session);
   }
@@ -961,6 +1277,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _batterySub?.cancel();
     _callSub?.cancel();
     _answerSub?.cancel();
+    _usbSub?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _importTimer?.cancel();
     _ringTimer?.cancel();

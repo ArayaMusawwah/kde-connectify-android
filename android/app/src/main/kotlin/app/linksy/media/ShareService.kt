@@ -36,25 +36,36 @@ class ShareService : Service() {
         val kind = intent.getStringExtra(EXTRA_KIND) ?: return
         val peer = intent.getStringExtra(EXTRA_PEER) ?: "Your computer"
         active[session] = mapOf("session" to session, "kind" to kind, "peer" to (intent.getStringExtra(EXTRA_PEER_ID) ?: ""))
-        val screen = kind == "screen"
-        val text = if (screen) "Sharing your screen with $peer" else "$peer is using your camera"
+        val screen = kind == "screen" || kind == "control"
+        val mic = kind == "microphone"
+        val text = when {
+            screen -> "Sharing your screen with $peer"
+            mic -> "$peer is using your microphone"
+            else -> "$peer is using your camera"
+        }
+        kinds[session] = kind
         // Android 14: foreground with the right type before touching the
-        // projection or the camera.
-        val type = if (screen) ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION else ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA
-        if (Build.VERSION.SDK_INT >= 29) startForeground(NOTIFICATION, notification(text, session, !screen), type)
-        else startForeground(NOTIFICATION, notification(text, session, !screen))
+        // projection, camera or microphone; every running share's type.
+        if (Build.VERSION.SDK_INT >= 29) startForeground(NOTIFICATION, notification(text, session, kind == "camera"), foregroundType())
+        else startForeground(NOTIFICATION, notification(text, session, kind == "camera"))
 
         val onEnded = { stopFromAnyThread(session) }
         try {
-            val share = if (screen) {
-                val data = consents.remove(session) ?: error("no screen capture consent")
-                val manager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-                val projection = manager.getMediaProjection(data.first, data.second) ?: error("screen capture refused")
-                ScreenShare(this, projection, session, onEnded)
-            } else {
-                CameraShare(this, session, onEnded).also { camera ->
+            val share = when {
+                screen -> {
+                    val data = consents.remove(session) ?: error("no screen capture consent")
+                    val manager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                    val projection = manager.getMediaProjection(data.first, data.second) ?: error("screen capture refused")
+                    ScreenShare(this, projection, session, onEnded)
+                }
+                mic -> MicShare(session, onEnded)
+                else -> CameraShare(this, session, onEnded).also { camera ->
                     webcams[session] = camera
-                    camera.onState = { state -> webcamListener?.invoke(session, state) }
+                    camera.onState = { state ->
+                        webcamListener?.invoke(session, state)
+                        // The computer's camera controls follow it too (docs/android-app.md §2.8).
+                        NativeSession.cameraState(session, state.toString())
+                    }
                 }
             }
             shares[session] = share
@@ -64,6 +75,21 @@ class ShareService : Service() {
         }
     }
 
+    /// Running shares by session → kind, for the foreground service type.
+    private val kinds = mutableMapOf<String, String>()
+
+    private fun foregroundType(): Int {
+        var type = 0
+        for (k in kinds.values) {
+            type = type or when (k) {
+                "screen", "control" -> ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
+                "microphone" -> if (Build.VERSION.SDK_INT >= 30) ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE else 0
+                else -> if (Build.VERSION.SDK_INT >= 30) ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA else 0
+            }
+        }
+        return if (type == 0 && Build.VERSION.SDK_INT >= 29) ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION else type
+    }
+
     private fun stopFromAnyThread(session: String) {
         startService(Intent(this, ShareService::class.java).setAction(ACTION_STOP).putExtra(EXTRA_SESSION, session))
     }
@@ -71,6 +97,7 @@ class ShareService : Service() {
     private fun stop(session: String) {
         webcams.remove(session)
         active.remove(session)
+        kinds.remove(session)
         shares.remove(session)?.let { runCatching { it.stop() } }
         NativeSession.finish(session)
         if (shares.isEmpty()) {

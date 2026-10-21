@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What the computer announces when it switches the phone to accessory mode. -->
+<resources>
+    <usb-accessory manufacturer="Linksy" model="Linksy"/>
+</resources>

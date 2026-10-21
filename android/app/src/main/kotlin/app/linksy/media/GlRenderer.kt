@@ -25,9 +25,13 @@ import java.nio.FloatBuffer
 class GlRenderer(
     camera: android.util.Size,
     private val output: Surface,
-    private val outW: Int,
-    private val outH: Int,
+    outW: Int,
+    outH: Int,
 ) {
+    /// The stream's size (1280×720 or 1920×1080); changes with [setOutput].
+    @Volatile private var outW = outW
+    @Volatile private var outH = outH
+
     private val thread = HandlerThread("linksy-gl").apply { start() }
     private val handler = Handler(thread.looper)
     private lateinit var display: EGLDisplay
@@ -106,11 +110,13 @@ class GlRenderer(
         input = Surface(surfaceTexture)
     }
 
-    /// A new encoder's surface to draw into (another frame rate), in place
-    /// of the old one, before the old encoder stops.
-    fun setOutput(surface: Surface) {
+    /// A new encoder's surface to draw into (another frame rate or size), in
+    /// place of the old one, before the old encoder stops.
+    fun setOutput(surface: Surface, width: Int = outW, height: Int = outH) {
         val done = java.util.concurrent.CountDownLatch(1)
         handler.post {
+            outW = width
+            outH = height
             EGL14.eglMakeCurrent(display, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT)
             EGL14.eglDestroySurface(display, encoderSurface)
             encoderSurface = EGL14.eglCreateWindowSurface(display, config, surface, intArrayOf(EGL14.EGL_NONE), 0)

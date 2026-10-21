@@ -44,7 +44,10 @@ class CameraShare(
     private val handler = Handler(thread.looper)
     private val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private var encoder: H264Encoder
-    val size: Size
+    /// The stream: 1280×720, or 1920×1080 when the computer asks and the
+    /// camera has it (desktop 0.6.0).
+    @Volatile var size: Size
+        private set
     private var device: CameraDevice? = null
     private var capture: CameraCaptureSession? = null
     @Volatile private var stopped = false
@@ -91,10 +94,10 @@ class CameraShare(
         lenses = findLenses()
         lens = lenses.firstOrNull { it.facing == "back" && it.main } ?: lenses.first()
         chars = manager.getCameraCharacteristics(lens.id)
-        // The stream is always 1280×720; each camera delivers its own size,
-        // fitted into it without stretching.
-        size = Size(1280, 720)
-        input = cameraSize(chars, fps)
+        // The stream is 1280×720 to start; each camera delivers its own
+        // size, fitted into it without stretching.
+        size = HD
+        input = cameraSize(chars, fps, size)
         encoder = H264Encoder(size.width, size.height, bitrate = bitrate(quality), fps = fps, session = session, onEnded = onEnded)
         renderer = GlRenderer(input, encoder.inputSurface, size.width, size.height)
         orientation = object : android.view.OrientationEventListener(context) {
@@ -178,7 +181,7 @@ class CameraShare(
         capture = null
         // A size this camera really delivers for this frame rate: anything
         // else, Android rounds to another shape and the picture stretches.
-        input = cameraSize(chars, fps)
+        input = cameraSize(chars, fps, size)
         renderer.setCamera(input, chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90)
         val outputs = listOf(renderer.input)
         @Suppress("DEPRECATION")
@@ -354,14 +357,14 @@ class CameraShare(
         "saver" -> 2_000_000
         "high" -> 8_000_000
         else -> 4_000_000
-    } * (if (fps >= 60) 3 else 2) / 2
+    } * (if (fps >= 60) 3 else 2) / 2 * (if (size.width >= 1920) 3 else 2) / 2
 
     /// A new encoder at the current frame rate; the renderer draws into it
     /// before the old one stops, so the stream goes on (with a keyframe).
     private fun restartEncoder() {
         val old = encoder
         encoder = H264Encoder(size.width, size.height, bitrate = bitrate(quality), fps = fps, session = session, onEnded = onEnded)
-        renderer.setOutput(encoder.inputSurface)
+        renderer.setOutput(encoder.inputSurface, size.width, size.height)
         old.stop()
     }
 
@@ -378,6 +381,11 @@ class CameraShare(
     private fun can60(): Boolean =
         chars.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES).orEmpty().any { it.upper >= 60 } &&
             outputSizes(chars, 60).isNotEmpty()
+
+    /// Whether this camera delivers a full 1920-wide 16:9 picture at the
+    /// current frame rate (else 1080p would only be scaled up).
+    private fun can1080(): Boolean =
+        outputSizes(chars, fps).any { it.width >= 1920 && it.width * 9 == it.height * 16 }
 
     /// Zoom presets like a camera app's: the widest the camera reaches
     /// (0.6× on a logical camera with an ultra-wide), 1×, 2×, 3×, 5×, 10×
@@ -432,6 +440,10 @@ class CameraShare(
             .put("quality", quality)
             .put("fps", fps)
             .put("fps_options", org.json.JSONArray(if (can60()) listOf(30, 60) else listOf(30)))
+            .put("size_options", org.json.JSONArray().apply {
+                put(org.json.JSONArray(listOf(HD.width, HD.height)))
+                if (can1080()) put(org.json.JSONArray(listOf(FULL_HD.width, FULL_HD.height)))
+            })
             .put("camera_width", input.width).put("camera_height", input.height)
             .put("rotation", renderer.rotation)
             .put("orientation", orientationMode)
@@ -473,6 +485,15 @@ class CameraShare(
             val wanted = if (c.optInt("fps", 30) >= 60 && can60()) 60 else 30
             if (wanted != fps) {
                 fps = wanted
+                reconfigure = true
+            }
+        }
+        // 1080p: a new encoder at that size, SPS/PPS and a keyframe first.
+        if (c.has("size")) {
+            val asked = c.optJSONArray("size")
+            val wanted = if (asked != null && asked.optInt(0) >= 1920 && can1080()) FULL_HD else HD
+            if (wanted != size) {
+                size = wanted
                 reconfigure = true
             }
         }
@@ -572,6 +593,9 @@ class CameraShare(
     }
 
     private companion object {
+        val HD = Size(1280, 720)
+        val FULL_HD = Size(1920, 1080)
+
         /// Sizes this camera delivers to a texture at [fps], up to 1920 wide.
         fun outputSizes(chars: CameraCharacteristics, fps: Int): List<Size> {
             val map = chars.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?: return emptyList()
@@ -585,12 +609,12 @@ class CameraShare(
         /// offers it, else the closest 16:9 size (the smallest at least 1280
         /// wide, or the largest below), else the closest shape. The renderer
         /// fits whatever it gets, so it never stretches.
-        fun cameraSize(chars: CameraCharacteristics, fps: Int): Size {
+        fun cameraSize(chars: CameraCharacteristics, fps: Int, stream: Size): Size {
             val sizes = outputSizes(chars, fps).ifEmpty { outputSizes(chars, 30) }
-            if (sizes.isEmpty()) return Size(1280, 720)
-            Size(1280, 720).takeIf { it in sizes }?.let { return it }
+            if (sizes.isEmpty()) return stream
+            stream.takeIf { it in sizes }?.let { return it }
             val wide = sizes.filter { it.width * 9 == it.height * 16 }
-            wide.filter { it.width >= 1280 }.minByOrNull { it.width }?.let { return it }
+            wide.filter { it.width >= stream.width }.minByOrNull { it.width }?.let { return it }
             wide.maxByOrNull { it.width }?.let { return it }
             return sizes.minWith(
                 compareBy<Size> { kotlin.math.abs(it.width.toFloat() / it.height - 16f / 9) }.thenByDescending { it.width },

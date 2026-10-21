@@ -24,6 +24,15 @@ abstract interface class LinksyNode {
 
   Future<void> respond(String requestId, {required bool accept});
 
+  /// Accepts or turns down a `display` request, giving this phone's landscape
+  /// size so the computer makes the monitor in its shape (§4.8).
+  Future<void> respondDisplay(
+    String requestId, {
+    required bool accept,
+    required int width,
+    required int height,
+  });
+
   /// Returns the transfer id.
   Future<String> sendFiles(String id, List<String> paths);
 
@@ -67,6 +76,36 @@ abstract interface class LinksyNode {
 
   /// Photo auto-import into [id]'s picture library; returns the transfer id.
   Future<String> importFiles(String id, List<String> paths);
+
+  /// This phone's own picture (base64 JPEG, ≤ 128 KiB) for [id] to show.
+  Future<void> sendPicture(String id, String image);
+
+  /// Ask [id] for its clipboard text as it changes, while [on].
+  Future<void> watchClipboard(String id, {required bool on});
+
+  /// Puts one file (≤ 10 MiB) on [id]'s clipboard; returns the transfer id.
+  Future<String> sendClipboardFile(String id, String path);
+
+  /// Answers a locate request with a fix.
+  Future<void> sendLocation(
+    String id, {
+    required double lat,
+    required double lon,
+    double? accuracyM,
+    required DateTime at,
+  });
+
+  /// Answers a locate request with why not.
+  Future<void> refuseLocation(String id, String reason);
+
+  /// Allow everything from away for [id] (screens, files, camera…).
+  Future<void> setAwayAll(String id, {required bool on});
+
+  /// Connect to [id] over the internet now.
+  Future<void> connectAway(String id);
+
+  /// Dials a paired computer at [address] (the USB cable's bridge).
+  Future<void> connectAddress(String address);
 
   Future<NodeSettings> settings();
 

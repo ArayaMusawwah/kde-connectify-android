@@ -156,6 +156,8 @@ class _LinksyAppState extends State<LinksyApp> {
         _say(body.isEmpty ? '${from.name}: $title' : '${from.name}: $body');
       case ClipboardReceived(:final from):
         _say('Copied text from ${from.name}');
+      case ClipboardFileReceived(:final from, :final path):
+        _say('Copied ${path.split('/').last} from ${from.name}');
       case OpenUrlReceived():
         showDialog<void>(
           context: context,

@@ -111,6 +111,35 @@ class _DeviceScreenState extends State<DeviceScreen> {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       child: _PhotoBackup(view: view),
                     ),
+                    if (view.device.features.contains('clipboard_watch'))
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                        child: _SwitchCard(
+                          icon: Ph.clipboard,
+                          title: 'Get its clipboard',
+                          detail:
+                              'Text copied on ${view.device.name} lands on '
+                              'this phone’s clipboard while connected',
+                          value: c.watchesClipboard(deviceId),
+                          onChanged: (v) => c.setClipboardWatch(deviceId, v),
+                        ),
+                      ),
+                    if (view.trusted)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                        child: _SwitchCard(
+                          icon: Ph.globeHemisphereWest,
+                          title: 'Allow everything from away',
+                          detail: view.awayAll
+                              ? 'From away too, ${view.device.name} can use '
+                                    'this screen, camera, microphone and files'
+                              : 'From away, ${view.device.name} gets '
+                                    'clipboard, links, files and ring only',
+                          value: view.awayAll,
+                          onChanged: (v) =>
+                              report(context, c.setAwayAll(deviceId, v)),
+                        ),
+                      ),
                   ],
                 ],
               ),
@@ -168,7 +197,7 @@ class _Hero extends StatelessWidget {
     final s = Sig.of(context);
     final c = LinksyScope.of(context);
     final d = view.device;
-    final picture = c.pictures[d.id];
+    final picture = c.pictureOf(d.id);
 
     final details = Column(
       mainAxisSize: MainAxisSize.min,
@@ -193,19 +222,50 @@ class _Hero extends StatelessWidget {
               ),
             const SizedBox(width: 4),
             Text(
-              presenceLabel(view.presence),
+              presenceText(view),
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: presenceColor(s, view.presence, onBlue: true),
               ),
             ),
-            Text(
-              '   ${d.description}',
-              style: const TextStyle(fontSize: 14, color: Colors.white70),
+            Flexible(
+              child: Text(
+                '   ${d.description}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 14, color: Colors.white70),
+              ),
             ),
           ],
         ),
+        if (view.presence == Presence.notNearby &&
+            (c.settings?.away ?? false) &&
+            view.trusted)
+          if (view.awayUntil case final until?
+              when until.isAfter(DateTime.now())) ...[
+            const SizedBox(height: 6),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Ph.globeHemisphereWest,
+                  size: 16,
+                  color: Colors.white70,
+                ),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Text(
+                    'Reachable from away until ${formatDay(until)}',
+                    style: const TextStyle(
+                      fontSize: 13.5,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         if (view.battery case final battery?
             when view.presence != Presence.notNearby) ...[
           const SizedBox(height: 6),
@@ -785,6 +845,48 @@ class _PhotoBackup extends StatelessWidget {
             ),
           ),
           Switch(value: on, onChanged: (v) => c.setPhotoBackup(id, v)),
+        ],
+      ),
+    );
+  }
+}
+
+/// A card with one switch, like [_PhotoBackup].
+class _SwitchCard extends StatelessWidget {
+  const _SwitchCard({
+    required this.icon,
+    required this.title,
+    required this.detail,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final IconData icon;
+  final String title;
+  final String detail;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    return SigCard(
+      padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+      child: Row(
+        children: [
+          IconCircle(icon: icon, color: Sig.blue, size: 40),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: sora(16, color: s.ink)),
+                const SizedBox(height: 2),
+                Text(detail, style: TextStyle(fontSize: 12.5, color: s.muted)),
+              ],
+            ),
+          ),
+          Switch(value: value, onChanged: onChanged),
         ],
       ),
     );

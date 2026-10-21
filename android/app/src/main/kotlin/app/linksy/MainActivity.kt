@@ -56,6 +56,7 @@ class MainActivity : FlutterActivity() {
         engine = flutterEngine
         pendingLink = linkFrom(intent)
         takeShared(intent)
+        if (intent?.action == android.hardware.usb.UsbManager.ACTION_USB_ACCESSORY_ATTACHED) openUsb(intent)
         watchBattery()
         ShareService.webcamListener = { session, state ->
             runOnUiThread { channel?.invokeMethod("webcamChanged", mapOf("session" to session, "state" to state.toString())) }
@@ -118,10 +119,23 @@ class MainActivity : FlutterActivity() {
                     }
                     "presentation" -> {
                         presenting = call.argument<Boolean>("on") == true
-                        if (presenting) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                        else window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                        updateScreenOn()
                         result.success(null)
                     }
+                    "keepScreenOn" -> {
+                        val session = call.argument<String>("session")!!
+                        if (call.argument<Boolean>("on") == true) screenOn += session else screenOn -= session
+                        updateScreenOn()
+                        result.success(null)
+                    }
+                    "screenSize" -> result.success(screenSize())
+                    "pictureJpeg" -> {
+                        val path = call.argument<String>("path")!!
+                        Thread { Clip.pictureJpeg(path).let { runOnUiThread { result.success(it) } } }.start()
+                    }
+                    "clipboardFile" -> result.success(Clip.put(this@MainActivity, call.argument<String>("path")!!))
+                    "locate" -> Locator.fix(this@MainActivity) { result.success(it) }
+                    "usbPort" -> result.success(UsbBridge.current?.port ?: openUsb(null))
                     "prefs" -> result.success(
                         prefs().all.filterKeys { it.startsWith("app.") }.mapKeys { it.key.removePrefix("app.") },
                     )
@@ -170,6 +184,8 @@ class MainActivity : FlutterActivity() {
                     "requestCamera" -> requestPermission(Manifest.permission.CAMERA, REQUEST_CAMERA, result)
                     "requestPermission" -> when (call.argument<String>("name")) {
                         "camera" -> requestPermission(Manifest.permission.CAMERA, REQUEST_CAMERA, result)
+                        "microphone" -> requestPermission(Manifest.permission.RECORD_AUDIO, REQUEST_MICROPHONE, result)
+                        "location" -> requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_LOCATION, result)
                         "notifications" -> if (Build.VERSION.SDK_INT >= 33) {
                             requestPermission(Manifest.permission.POST_NOTIFICATIONS, REQUEST_NOTIFICATIONS, result)
                         } else {
@@ -256,6 +272,41 @@ class MainActivity : FlutterActivity() {
     /// Presentation remote: the volume keys change slides instead of volume.
     private var presenting = false
 
+    /// Sessions that keep the screen on: a second display, a computer's
+    /// screen watched (docs/protocol.md §4.8: the timeout ended them).
+    private val screenOn = mutableSetOf<String>()
+
+    private fun updateScreenOn() {
+        val flag = android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        if (presenting || screenOn.isNotEmpty()) window.addFlags(flag) else window.clearFlags(flag)
+    }
+
+    /// The screen in landscape, long side first, in pixels.
+    private fun screenSize(): Map<String, Int> {
+        val (w, h) = if (Build.VERSION.SDK_INT >= 30) {
+            windowManager.maximumWindowMetrics.bounds.let { it.width() to it.height() }
+        } else {
+            val m = android.util.DisplayMetrics()
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.getRealMetrics(m)
+            m.widthPixels to m.heightPixels
+        }
+        return mapOf("width" to maxOf(w, h), "height" to minOf(w, h))
+    }
+
+    /// A Linksy computer on the USB cable (§4.11): opens the bridge and
+    /// tells Dart its port, so the node dials the computer through it.
+    private fun openUsb(intent: Intent?): Int? {
+        val accessory = intent?.let {
+            @Suppress("DEPRECATION")
+            if (Build.VERSION.SDK_INT >= 33) it.getParcelableExtra(android.hardware.usb.UsbManager.EXTRA_ACCESSORY, android.hardware.usb.UsbAccessory::class.java)
+            else it.getParcelableExtra(android.hardware.usb.UsbManager.EXTRA_ACCESSORY)
+        }
+        val port = if (accessory != null) UsbBridge.open(this, accessory) else UsbBridge.openAttached(this)
+        if (port != null) channel?.invokeMethod("usbPort", port)
+        return port
+    }
+
     override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
         val code = event.keyCode
         if (presenting && (code == android.view.KeyEvent.KEYCODE_VOLUME_UP || code == android.view.KeyEvent.KEYCODE_VOLUME_DOWN)) {
@@ -270,6 +321,7 @@ class MainActivity : FlutterActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         takeShared(intent)
+        if (intent.action == android.hardware.usb.UsbManager.ACTION_USB_ACCESSORY_ATTACHED) openUsb(intent)
         intent.getStringExtra(ShareService.EXTRA_WEBCAM)?.let { channel?.invokeMethod("openWebcam", it) }
         val link = linkFrom(intent) ?: return
         channel?.invokeMethod("link", link) ?: run { pendingLink = link }
@@ -471,7 +523,10 @@ class MainActivity : FlutterActivity() {
     /// stops showing it, opens Linksy's app settings instead, where it can
     /// still be turned on. Replies true only if granted now.
     private fun requestPermission(permission: String, code: Int, result: MethodChannel.Result) {
-        if (granted(permission)) {
+        // Android 12+ shows the location dialog only when coarse is asked too;
+        // either is enough for one fix.
+        val also = if (permission == Manifest.permission.ACCESS_FINE_LOCATION) Manifest.permission.ACCESS_COARSE_LOCATION else null
+        if (granted(permission) || (also != null && granted(also))) {
             result.success(true)
             return
         }
@@ -486,7 +541,7 @@ class MainActivity : FlutterActivity() {
         prefs.edit().putBoolean(permission, true).apply()
         pendingPermissions.remove(code)?.success(false)
         pendingPermissions[code] = result
-        requestPermissions(arrayOf(permission), code)
+        requestPermissions(listOfNotNull(permission, also).toTypedArray(), code)
     }
 
     /// The sharing notification (and its Stop button) needs this on Android
@@ -633,7 +688,7 @@ class MainActivity : FlutterActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         pendingPermissions.remove(requestCode)
-            ?.success(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
+            ?.success(grantResults.any { it == PackageManager.PERMISSION_GRANTED })
     }
 
     private fun linkFrom(intent: Intent?): String? =
@@ -649,6 +704,8 @@ class MainActivity : FlutterActivity() {
         const val REQUEST_CAPTURE = 41
         const val REQUEST_CAMERA = 42
         const val REQUEST_NOTIFICATIONS = 43
+        const val REQUEST_MICROPHONE = 48
+        const val REQUEST_LOCATION = 49
         const val REQUEST_PICK = 44
         const val REQUEST_FOLDER = 45
         const val REQUEST_PICTURE = 46

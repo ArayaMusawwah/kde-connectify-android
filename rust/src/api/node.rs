@@ -10,6 +10,7 @@ use std::sync::OnceLock;
 
 use flutter_rust_bridge::frb;
 use linksy_core::{Battery, CallState, Config, DeviceKind, Error, Fingerprint, MediaCommand, Node, SessionKind, Settings, Uuid};
+use linksy_core::Link;
 use tokio::runtime::Runtime;
 use tokio::sync::broadcast::error::RecvError;
 
@@ -39,6 +40,7 @@ fn kind(e: Error) -> String {
         Error::Timeout => "timeout".into(),
         Error::NotPaired => "not_paired".into(),
         Error::Unsupported => "unsupported".into(),
+        Error::NotFromAway => "not_from_away".into(),
         Error::Invalid(m) => format!("invalid:{m}"),
         Error::NotFound(m) => format!("invalid:{m}"),
         other => format!("other:{other}"),
@@ -76,11 +78,27 @@ pub struct LinksyNode {
 /// Starts this phone's node. Identity, paired devices and settings live in
 /// `data_dir` (app-private). Prefers the desktop's port 47200 and mDNS; falls
 /// back to a free port, then to no discovery, rather than not starting.
-pub async fn start_node(data_dir: String, download_dir: String, name: String) -> Result<LinksyNode, String> {
+/// The node this process runs, for code that isn't called from Dart (media
+/// sessions reporting the camera's state).
+static RUNNING: std::sync::Mutex<Option<Node>> = std::sync::Mutex::new(None);
+
+pub(crate) fn running() -> Option<Node> {
+    RUNNING.lock().unwrap().clone()
+}
+
+/// `features`: what this phone can do (docs/protocol.md §4.10). `away`: reach paired
+/// computers over the internet through `relay` (§4.13).
+pub async fn start_node(
+    data_dir: String,
+    download_dir: String,
+    name: String,
+    features: Vec<String>,
+    away: bool,
+    relay: Option<String>,
+) -> Result<LinksyNode, String> {
     // Android may recreate the activity, which runs the app's main() again in
     // the same process: hand back the node that's already running instead of
     // starting a second one on another port.
-    static RUNNING: std::sync::Mutex<Option<Node>> = std::sync::Mutex::new(None);
     if let Some(node) = RUNNING.lock().unwrap().clone() {
         return Ok(LinksyNode { node });
     }
@@ -90,6 +108,9 @@ pub async fn start_node(data_dir: String, download_dir: String, name: String) ->
         config.kind = DeviceKind::Phone;
         config.port = port;
         config.discovery = discovery;
+        config.features = features.clone();
+        config.away = away;
+        config.relay = relay.clone();
         match run(Node::start(config)).await {
             Ok(node) => {
                 crate::sessions::collect(&node);
@@ -302,6 +323,82 @@ impl LinksyNode {
     #[frb(sync)]
     pub fn share_files(&self, on: bool) {
         crate::files::set_sharing(on);
+    }
+
+    /// Accepts a `display` request with this phone's landscape screen size,
+    /// so the computer makes the monitor in its shape (docs/protocol.md §4.8).
+    #[frb(sync)]
+    pub fn respond_display(&self, request: String, accept: bool, width: u32, height: u32) -> bool {
+        let size = (width > 0 && height > 0).then_some((width, height));
+        Uuid::parse_str(&request).is_ok_and(|id| self.node.respond_session(id, accept, size))
+    }
+
+    /// This phone's own picture (base64 JPEG/PNG ≤ 128 KiB) to a computer.
+    pub async fn send_picture(&self, id: String, image: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.send_picture(&id, &image).await }).await
+    }
+
+    /// Ask a computer to send its clipboard text as it changes (or stop).
+    pub async fn watch_clipboard(&self, id: String, on: bool) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.watch_clipboard(&id, on).await }).await
+    }
+
+    /// Puts a file (≤ 10 MiB) on a computer's clipboard; returns the transfer id.
+    pub async fn send_clipboard_file(&self, id: String, path: String) -> Result<String, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.send_clipboard_file(&id, PathBuf::from(path)).await.map(|t| t.to_string()) }).await
+    }
+
+    /// Answers `locate` with a position.
+    pub async fn send_location(&self, id: String, lat: f64, lon: f64, accuracy_m: Option<f64>, at_ms: u64) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.send_location(&id, lat, lon, accuracy_m, at_ms).await }).await
+    }
+
+    /// Answers `locate` with why not.
+    pub async fn refuse_location(&self, id: String, reason: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.refuse_location(&id, &reason).await }).await
+    }
+
+    /// Everything allowed from away for this device (screens, camera, files…).
+    #[frb(sync)]
+    pub fn set_away_all(&self, id: String, on: bool) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        self.node.set_away_all(&id, on).map_err(kind)
+    }
+
+    /// Connect over the internet now (away from home).
+    pub async fn connect_away(&self, id: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.connect_away(&id).await.map(|_| ()) }).await
+    }
+
+    /// How a device is connected: `usb`, `lan`, `away`, or empty.
+    #[frb(sync)]
+    pub fn link(&self, id: String) -> String {
+        let Ok(id) = fingerprint(&id) else { return String::new() };
+        match self.node.link(&id) {
+            Some(Link::Usb) => "usb".into(),
+            Some(Link::Lan) => "lan".into(),
+            Some(Link::Away) => "away".into(),
+            None => String::new(),
+        }
+    }
+
+    /// Dials a paired computer at `addr` (the USB cable's bridge, §4.11).
+    pub async fn connect_address(&self, address: String) -> Result<(), String> {
+        let addr: SocketAddr = address.parse().map_err(|_| "invalid:bad address".to_string())?;
+        let node = self.node.clone();
+        run(async move { node.connect(addr).await.map(|_| ()) }).await
     }
 
     #[frb(sync)]
