@@ -2,6 +2,23 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.15] - 2026-10-21
+
+### Added
+- **Up to date with Linksy 0.6 on the computer** (new core).
+- **Away from home**: reach your computers over the internet when you're not on the same Wi-Fi, encrypted end to end through Linksy's relay. A switch in Settings; per computer, "Allow everything from away" (screen, webcam, microphone and files from away too); "Connected away from home" and "Reachable from away until …" on its page.
+- **Phone as microphone**: a computer can use this phone as its microphone once you allow it. Keeps going with the screen off; Stop from the banner or the notification.
+- **1080p webcam** where the camera does it (Webcam › Stream › Resolution, or from the computer), and lower webcam latency.
+- **Picture of this phone** (Settings): your computers show it for this phone. Computers' own pictures now show here too, unless you chose one.
+- **Files and images on the clipboard**: a file a computer puts on this phone's clipboard is ready to paste; share one file (up to 10 MB) and choose "Put it on the computer's clipboard".
+- **Get its clipboard**: text copied on a computer arrives here automatically while connected, where the computer allows it.
+- **Let computers locate this phone** (Settings, off by default): a computer can ask where the phone is, once; nothing is kept.
+- **USB cable**: plug the phone into a computer running Linksy to connect over the cable, no Wi-Fi needed ("Connected by USB").
+- News and update notices from Linksy on the home screen.
+
+### Changed
+- A second display now takes this phone's shape, and the screen stays on while it shows (or while you watch a computer's screen).
+
 ## [0.1.14] - 2026-10-21
 
 ### Fixed
