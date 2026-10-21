@@ -2,7 +2,7 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
-## [Unreleased]
+## [0.1.9] - 2026-10-21
 
 ### Added
 - **See your computer's screen** on the phone, from its page: just watch, or control it with touch (tap to click, drag, two fingers to scroll).
