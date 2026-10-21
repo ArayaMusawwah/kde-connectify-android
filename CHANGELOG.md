@@ -2,6 +2,15 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.12] - 2026-10-21
+
+### Added
+- **60 fps webcam** on phones whose camera does it (Webcam › Stream › Frame rate), with more bitrate to match.
+
+### Fixed
+- **Stretched webcam picture** on phones whose camera doesn't deliver exactly 1280×720 (often the front camera): each camera now uses a size it really offers, fitted into the stream without stretching.
+- If Android restarts Linksy's screen while the webcam or screen sharing runs, the app finds the running share again (banner, controls, Stop).
+
 ## [0.1.11] - 2026-10-21
 
 ### Added

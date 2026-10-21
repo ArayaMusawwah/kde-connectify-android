@@ -315,12 +315,26 @@ abstract final class LinksyPlatform {
   /// Starts encoding the screen or camera into [session] (a foreground
   /// service, so it goes on in other apps). `control` also plays the other
   /// side's input.
-  static Future<void> startShare(String session, String kind, String peer) =>
-      _call<void>('startShare', {
-        'session': session,
-        'kind': kind,
-        'peer': peer,
-      });
+  static Future<void> startShare(
+    String session,
+    String kind,
+    String peer,
+    String peerId,
+  ) => _call<void>('startShare', {
+    'session': session,
+    'kind': kind,
+    'peer': peer,
+    'peerId': peerId,
+  });
+
+  /// Shares Android's service runs now: (session, kind, peer id). The app
+  /// may have restarted while one went on.
+  static Future<List<(String, String, String)>> activeShares() async => [
+    for (final m
+        in (await _call<List<Object?>>('activeShares') ?? const [])
+            .cast<Map<Object?, Object?>>())
+      (m['session'] as String, m['kind'] as String, m['peer'] as String),
+  ];
 
   static Future<void> stopShare(String session) =>
       _call<void>('stopShare', {'session': session});

@@ -103,6 +103,7 @@ app is open.
    {"type":"camera_control","stabilization":false}
    {"type":"camera_control","quality":"high"}
    {"type":"camera_control","orientation":"portrait"}
+   {"type":"camera_control","fps":60}
    ```
 
    Any subset of the keys in one message; unknown keys are ignored.
@@ -117,8 +118,13 @@ app is open.
      `exposure * exposure_step`.
    - `white_balance`: `auto` | `daylight` | `cloudy` | `shade` | `incandescent` |
      `fluorescent` (only those in `white_balances`).
-   - `quality`: `saver` (2 Mbps) | `standard` (4) | `high` (8), applied live. The
-     size stays 1280×720 at 30 fps (see below).
+   - `quality`: `saver` (2 Mbps) | `standard` (4) | `high` (8), applied live; at 60
+     fps each gets half as much again (3 / 6 / 12).
+   - `fps`: `30` (default) | `60`, offered only when the camera does 60 at a usable
+     size (`fps_options`). The phone restarts its encoder at the new rate: the
+     stream goes on with SPS/PPS and a keyframe, same 1280×720. **Desktop:** the
+     virtual webcam is offered as YUY2 at 30 fps today; at 60 it should either
+     advertise 60 fps or drop every other frame.
    - `orientation`: `landscape` (default: the picture fills the 16:9 frame, upright
      with the phone held sideways either way round) | `portrait` (an upright
      portrait picture with black bars at the sides, phone held upright). The stream
@@ -148,17 +154,22 @@ app is open.
     "white_balance":"auto","white_balances":["auto","daylight","cloudy","shade",
      "incandescent","fluorescent"],"white_balance_lock":false,
     "stabilization":true,"has_stabilization":true,"quality":"standard",
-    "orientation":"landscape","rotation":0}
+    "orientation":"landscape","rotation":0,
+    "fps":30,"fps_options":[30,60],"camera_width":1280,"camera_height":720}
    ```
 
    Suggested desktop UI: a camera panel next to "Use as Webcam" with the zoom chips
    (`zoom_presets` plus the other `lenses`), a torch toggle, click-to-focus on the
    preview, an exposure slider and white-balance menu, mirroring the phone's screen.
 
-   **Later, with the desktop:** other sizes (1080p) and 60 fps would need the webcam
-   device on the computer to follow a size change; the phone can restart its encoder
-   at a new size if the desktop can take it (`camera_control {"size":[1920,1080],
-   "fps":30}` is the proposed shape).
+   The stream is always 1280×720. Each camera delivers its own size (`camera_width`
+   × `camera_height`, informative); the phone fits it into the stream without
+   stretching (bars if its shape differs).
+
+   **Later, with the desktop:** 1080p would need the webcam device on the computer
+   to follow a size change; the phone can restart its encoder at a new size if the
+   desktop can take it (`camera_control {"size":[1920,1080]}` is the proposed
+   shape).
 
 ## 3. What the phone can't build (please don't offer these for Android)
 
@@ -186,6 +197,9 @@ default SMS app.
 
 ## Changelog
 
+- **2026-10-21** — Webcam: 30 or 60 fps (`fps`), the phone fits each camera's real
+  output size into the 1280×720 stream (fixes a stretched picture on phones whose
+  camera doesn't offer 1280×720), `orientation` landscape | portrait.
 - **2026-10-21** — §2.8 camera controls: `camera_control` on the camera session
   (the phone understands it now) and the proposed `camera_state` message.
 - **2026-10-21** — First version: phone status up to 0.1.8+ (watching the computer's

@@ -35,6 +35,7 @@ class ShareService : Service() {
     private fun start(intent: Intent, session: String) {
         val kind = intent.getStringExtra(EXTRA_KIND) ?: return
         val peer = intent.getStringExtra(EXTRA_PEER) ?: "Your computer"
+        active[session] = mapOf("session" to session, "kind" to kind, "peer" to (intent.getStringExtra(EXTRA_PEER_ID) ?: ""))
         val screen = kind == "screen"
         val text = if (screen) "Sharing your screen with $peer" else "$peer is using your camera"
         // Android 14: foreground with the right type before touching the
@@ -69,6 +70,7 @@ class ShareService : Service() {
 
     private fun stop(session: String) {
         webcams.remove(session)
+        active.remove(session)
         shares.remove(session)?.let { runCatching { it.stop() } }
         NativeSession.finish(session)
         if (shares.isEmpty()) {
@@ -133,6 +135,11 @@ class ShareService : Service() {
         private const val EXTRA_SESSION = "session"
         private const val EXTRA_KIND = "kind"
         private const val EXTRA_PEER = "peer"
+        private const val EXTRA_PEER_ID = "peer_id"
+
+        /// What runs now (session, kind, peer id), for an app that restarts
+        /// mid-share to find its shares again.
+        val active = java.util.concurrent.ConcurrentHashMap<String, Map<String, String>>()
 
         /// Screen capture consents (result code, data) by session, from the
         /// system prompt until the share starts.
@@ -144,9 +151,10 @@ class ShareService : Service() {
         /// Hears every webcam change (session, state), while the app shows them.
         @Volatile var webcamListener: ((String, org.json.JSONObject) -> Unit)? = null
 
-        fun start(context: Context, session: String, kind: String, peer: String) {
+        fun start(context: Context, session: String, kind: String, peer: String, peerId: String) {
             val intent = Intent(context, ShareService::class.java).setAction(ACTION_START)
                 .putExtra(EXTRA_SESSION, session).putExtra(EXTRA_KIND, kind).putExtra(EXTRA_PEER, peer)
+                .putExtra(EXTRA_PEER_ID, peerId)
             if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(intent) else context.startService(intent)
         }
 

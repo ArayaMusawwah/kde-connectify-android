@@ -190,9 +190,11 @@ class MainActivity : FlutterActivity() {
                             call.argument<String>("session")!!,
                             call.argument<String>("kind")!!,
                             call.argument<String>("peer") ?: "Your computer",
+                            call.argument<String>("peerId") ?: "",
                         )
                         result.success(null)
                     }
+                    "activeShares" -> result.success(ShareService.active.values.toList())
                     // Where the node and history live, and where received files go.
                     "paths" -> result.success(
                         mapOf("support" to filesDir.path, "external" to getExternalFilesDir(null)?.path),

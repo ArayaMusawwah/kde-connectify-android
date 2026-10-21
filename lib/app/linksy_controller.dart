@@ -157,6 +157,18 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   /// no Android side).
   Future<void> _loadPlatform() async {
     prefs = await LinksyPlatform.prefs();
+    // Shares that went on while the app's screen was recreated.
+    for (final (session, kind, peerId) in await LinksyPlatform.activeShares()) {
+      final peer = device(peerId)?.device;
+      final k = SessionKind.parse(kind);
+      if (peer == null || k == null || sharing.containsKey(session)) continue;
+      sharing[session] = SessionStarted(
+        session: session,
+        peer: peer,
+        kind: k,
+        sharing: true,
+      );
+    }
     pictures = await LinksyPlatform.pictures();
     filesFolder = await LinksyPlatform.folder('files');
     photosFolder = await LinksyPlatform.folder('photos');
@@ -598,7 +610,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       case SessionStarted(:final session, :final peer, :final kind)
           when e.sharing && kind != SessionKind.display:
         sharing[session] = e;
-        LinksyPlatform.startShare(session, kind.name, peer.name);
+        LinksyPlatform.startShare(session, kind.name, peer.name, peer.id);
         _addSession(e);
       case SessionStarted(:final session, kind: SessionKind.display)
           when !e.sharing:

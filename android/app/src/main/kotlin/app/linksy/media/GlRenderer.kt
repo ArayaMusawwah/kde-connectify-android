@@ -23,7 +23,7 @@ import java.nio.FloatBuffer
 /// picture into the phone's preview. The stream keeps its size whatever the
 /// rotation, so the computer's webcam never changes shape.
 class GlRenderer(
-    private val camera: android.util.Size,
+    camera: android.util.Size,
     private val output: Surface,
     private val outW: Int,
     private val outH: Int,
@@ -42,6 +42,10 @@ class GlRenderer(
     /// Where the camera draws.
     lateinit var input: Surface
         private set
+
+    /// The size the camera delivers (its own shape, which may not be the
+    /// stream's): the picture is fitted by it, never stretched.
+    @Volatile private var camera = camera
 
     @Volatile var rotation = 0
     @Volatile var fill = false
@@ -94,6 +98,32 @@ class GlRenderer(
             setOnFrameAvailableListener({ draw() }, handler)
         }
         input = Surface(surfaceTexture)
+    }
+
+    /// A new encoder's surface to draw into (another frame rate), in place
+    /// of the old one, before the old encoder stops.
+    fun setOutput(surface: Surface) {
+        val done = java.util.concurrent.CountDownLatch(1)
+        handler.post {
+            EGL14.eglMakeCurrent(display, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT)
+            EGL14.eglDestroySurface(display, encoderSurface)
+            encoderSurface = EGL14.eglCreateWindowSurface(display, config, surface, intArrayOf(EGL14.EGL_NONE), 0)
+            EGL14.eglMakeCurrent(display, encoderSurface, encoderSurface, context)
+            done.countDown()
+        }
+        done.await(500, java.util.concurrent.TimeUnit.MILLISECONDS)
+    }
+
+    /// The camera's output size, before a capture session starts with it.
+    /// Waits until the texture has it, so the first frames are sized right.
+    fun setCamera(size: android.util.Size) {
+        val done = java.util.concurrent.CountDownLatch(1)
+        handler.post {
+            camera = size
+            surfaceTexture.setDefaultBufferSize(size.width, size.height)
+            done.countDown()
+        }
+        done.await(500, java.util.concurrent.TimeUnit.MILLISECONDS)
     }
 
     /// Shows the stream on the phone too ([surface] null: stops).

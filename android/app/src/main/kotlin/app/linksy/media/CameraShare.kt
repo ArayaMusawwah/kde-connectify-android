@@ -43,7 +43,7 @@ class CameraShare(
     private val thread = HandlerThread("linksy-camera").apply { start() }
     private val handler = Handler(thread.looper)
     private val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-    private val encoder: H264Encoder
+    private var encoder: H264Encoder
     val size: Size
     private var device: CameraDevice? = null
     private var capture: CameraCaptureSession? = null
@@ -71,6 +71,9 @@ class CameraShare(
     private var whiteBalanceLock = false
     private var stabilization = true
     private var quality = "standard"
+    private var fps = 30
+    /// What the current camera delivers (its own size and shape).
+    private var input = Size(1280, 720)
     /// The picture's shape: landscape (fills the frame) or portrait (bars at
     /// the sides). Either way it's kept upright for how the phone is held.
     private var orientationMode = "landscape"
@@ -88,9 +91,12 @@ class CameraShare(
         lenses = findLenses()
         lens = lenses.firstOrNull { it.facing == "back" && it.main } ?: lenses.first()
         chars = manager.getCameraCharacteristics(lens.id)
-        size = pickSize(chars)
-        encoder = H264Encoder(size.width, size.height, bitrate = bitrate(quality), fps = 30, session = session, onEnded = onEnded)
-        renderer = GlRenderer(size, encoder.inputSurface, size.width, size.height)
+        // The stream is always 1280×720; each camera delivers its own size,
+        // fitted into it without stretching.
+        size = Size(1280, 720)
+        input = cameraSize(chars, fps)
+        encoder = H264Encoder(size.width, size.height, bitrate = bitrate(quality), fps = fps, session = session, onEnded = onEnded)
+        renderer = GlRenderer(input, encoder.inputSurface, size.width, size.height)
         orientation = object : android.view.OrientationEventListener(context) {
             override fun onOrientationChanged(degrees: Int) {
                 if (degrees == ORIENTATION_UNKNOWN) return
@@ -170,6 +176,10 @@ class CameraShare(
         val camera = device ?: return
         runCatching { capture?.close() }
         capture = null
+        // A size this camera really delivers for this frame rate: anything
+        // else, Android rounds to another shape and the picture stretches.
+        input = cameraSize(chars, fps)
+        renderer.setCamera(input)
         val outputs = listOf(renderer.input)
         @Suppress("DEPRECATION")
         camera.createCaptureSession(outputs, object : CameraCaptureSession.StateCallback() {
@@ -192,9 +202,7 @@ class CameraShare(
         val camera = device ?: return null
         return camera.createCaptureRequest(CameraDevice.TEMPLATE_RECORD).apply {
             addTarget(renderer.input)
-            chars.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES)
-                ?.filter { it.upper == 30 }?.maxByOrNull { it.lower }
-                ?.let { set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, it) }
+            fpsRange(fps)?.let { set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, it) }
 
             // Zoom: the ratio API (Android 11+, which also reaches the
             // ultra-wide on logical cameras), else a crop.
@@ -294,8 +302,9 @@ class CameraShare(
             Rect(active.width() / 2 - w / 2, active.height() / 2 - h / 2, active.width() / 2 + w / 2, active.height() / 2 + h / 2)
         }
         // The stream is a 16:9 cut of the sensor's picture.
-        val visibleH = min(area.height().toFloat(), area.width() * size.height / size.width.toFloat())
-        val visibleW = min(area.width().toFloat(), area.height() * size.width / size.height.toFloat())
+        // The camera delivers a cut of its sensor in its output's shape.
+        val visibleH = min(area.height().toFloat(), area.width() * input.height / input.width.toFloat())
+        val visibleW = min(area.width().toFloat(), area.height() * input.width / input.height.toFloat())
         val x = area.left + (area.width() - visibleW) / 2 + point.first * visibleW
         val y = area.top + (area.height() - visibleH) / 2 + point.second * visibleH
         val half = max(area.width(), area.height()) / 20
@@ -340,11 +349,35 @@ class CameraShare(
     private fun awbMode(name: String) = awbNames[name]?.takeIf { it in (chars.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES)?.toSet().orEmpty()) }
         ?: CameraMetadata.CONTROL_AWB_MODE_AUTO
 
+    /// More frames need more bits for the same sharpness.
     private fun bitrate(quality: String) = when (quality) {
         "saver" -> 2_000_000
         "high" -> 8_000_000
         else -> 4_000_000
+    } * (if (fps >= 60) 3 else 2) / 2
+
+    /// A new encoder at the current frame rate; the renderer draws into it
+    /// before the old one stops, so the stream goes on (with a keyframe).
+    private fun restartEncoder() {
+        val old = encoder
+        encoder = H264Encoder(size.width, size.height, bitrate = bitrate(quality), fps = fps, session = session, onEnded = onEnded)
+        renderer.setOutput(encoder.inputSurface)
+        old.stop()
     }
+
+    // Frame rate.
+
+    /// The auto-exposure range for [target] fps: steady at it if possible.
+    private fun fpsRange(target: Int): Range<Int>? {
+        val ranges = chars.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES).orEmpty()
+        return ranges.filter { it.upper == target }.maxByOrNull { it.lower }
+            ?: ranges.filter { it.upper >= target }.minByOrNull { it.upper }
+    }
+
+    /// Whether this camera does 60 fps in an ordinary session at a usable size.
+    private fun can60(): Boolean =
+        chars.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES).orEmpty().any { it.upper >= 60 } &&
+            outputSizes(chars, 60).isNotEmpty()
 
     /// Zoom presets like a camera app's: the widest the camera reaches
     /// (0.6× on a logical camera with an ultra-wide), 1×, 2×, 3×, 5×, 10×
@@ -397,6 +430,9 @@ class CameraShare(
             .put("stabilization", stabilization)
             .put("has_stabilization", videoStabilization() || opticalStabilization())
             .put("quality", quality)
+            .put("fps", fps)
+            .put("fps_options", org.json.JSONArray(if (can60()) listOf(30, 60) else listOf(30)))
+            .put("camera_width", input.width).put("camera_height", input.height)
             .put("rotation", renderer.rotation)
             .put("orientation", orientationMode)
     }
@@ -432,16 +468,29 @@ class CameraShare(
         if (c.has("white_balance_lock")) whiteBalanceLock = c.getBoolean("white_balance_lock")
         if (c.has("stabilization")) stabilization = c.getBoolean("stabilization")
         if (c.has("orientation")) orientationMode = if (c.getString("orientation") == "portrait") "portrait" else "landscape"
-        if (c.has("quality")) {
-            quality = c.getString("quality")
-            encoder.setBitrate(bitrate(quality))
+        var reconfigure = false
+        if (c.has("fps")) {
+            val wanted = if (c.optInt("fps", 30) >= 60 && can60()) 60 else 30
+            if (wanted != fps) {
+                fps = wanted
+                reconfigure = true
+            }
         }
+        if (c.has("quality")) quality = c.getString("quality")
+        if (c.has("quality") && !reconfigure) encoder.setBitrate(bitrate(quality))
         turn()
-        if (reopen != null) {
-            switchTo(reopen)
-        } else {
-            clamp()
-            apply(trigger)
+        when {
+            reopen != null -> switchTo(reopen)
+            // Another frame rate may need another camera size: a new session.
+            reconfigure -> {
+                clamp()
+                restartEncoder()
+                configure()
+            }
+            else -> {
+                clamp()
+                apply(trigger)
+            }
         }
     }
 
@@ -466,6 +515,10 @@ class CameraShare(
         focusPoint = null
         exposure = 0
         if (!hasFlash()) torch = false
+        if (fps == 60 && !can60()) {
+            fps = 30
+            restartEncoder()
+        }
         clamp()
         turn()
         open()
@@ -519,15 +572,29 @@ class CameraShare(
     }
 
     private companion object {
-        /// 1280×720 when the camera offers it, else the largest 16:9 size up
-        /// to 1920 wide, else 1280×720 anyway (the encoder scales).
-        fun pickSize(chars: CameraCharacteristics): Size {
-            val sizes = chars.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                ?.getOutputSizes(MediaCodec::class.java).orEmpty()
-            val wanted = Size(1280, 720)
-            if (sizes.contains(wanted)) return wanted
-            return sizes.filter { it.width * 9 == it.height * 16 && it.width <= 1920 }
-                .maxByOrNull { it.width } ?: wanted
+        /// Sizes this camera delivers to a texture at [fps], up to 1920 wide.
+        fun outputSizes(chars: CameraCharacteristics, fps: Int): List<Size> {
+            val map = chars.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?: return emptyList()
+            val frame = 1_000_000_000L / fps + 500_000 // ns, a little slack
+            return map.getOutputSizes(android.graphics.SurfaceTexture::class.java).orEmpty()
+                .filter { it.width <= 1920 && it.height <= 1920 }
+                .filter { runCatching { map.getOutputMinFrameDuration(android.graphics.SurfaceTexture::class.java, it) }.getOrDefault(0L) <= frame }
+        }
+
+        /// The camera's output for the 1280×720 stream: exactly that when it
+        /// offers it, else the closest 16:9 size (the smallest at least 1280
+        /// wide, or the largest below), else the closest shape. The renderer
+        /// fits whatever it gets, so it never stretches.
+        fun cameraSize(chars: CameraCharacteristics, fps: Int): Size {
+            val sizes = outputSizes(chars, fps).ifEmpty { outputSizes(chars, 30) }
+            if (sizes.isEmpty()) return Size(1280, 720)
+            Size(1280, 720).takeIf { it in sizes }?.let { return it }
+            val wide = sizes.filter { it.width * 9 == it.height * 16 }
+            wide.filter { it.width >= 1280 }.minByOrNull { it.width }?.let { return it }
+            wide.maxByOrNull { it.width }?.let { return it }
+            return sizes.minWith(
+                compareBy<Size> { kotlin.math.abs(it.width.toFloat() / it.height - 16f / 9) }.thenByDescending { it.width },
+            )
         }
     }
 }

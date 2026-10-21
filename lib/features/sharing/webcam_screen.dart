@@ -604,6 +604,12 @@ class _WebcamScreenState extends State<WebcamScreen> {
     ];
   }
 
+  /// The bitrate a quality gets at the current frame rate (more at 60).
+  String _mbps(int base) {
+    final v = _get('fps', 30) >= 60 ? base * 1.5 : base.toDouble();
+    return v == v.roundToDouble() ? '${v.round()}' : v.toStringAsFixed(1);
+  }
+
   List<Widget> _stream() {
     final w = _get('width', 1280);
     final h = _get('height', 720);
@@ -620,11 +626,26 @@ class _WebcamScreenState extends State<WebcamScreen> {
         ),
       ),
       _Setting(
+        title: 'Frame rate',
+        detail: _list<num>('fps_options').contains(60)
+            ? (_get('fps', 30) >= 60
+                  ? 'Smoother motion; uses more data and battery.'
+                  : 'Steady for video calls.')
+            : 'This camera does up to 30 fps.',
+        below: _list<num>('fps_options').contains(60)
+            ? _Segmented(
+                options: const [('30', '30 fps'), ('60', '60 fps')],
+                selected: '${_get('fps', 30)}',
+                onChanged: (f) => _set({'fps': int.parse(f)}),
+              )
+            : null,
+      ),
+      _Setting(
         title: 'Quality',
         detail: switch (_get('quality', 'standard')) {
-          'saver' => '2 Mbps, for a busy Wi-Fi.',
-          'high' => '8 Mbps, the most detail.',
-          _ => '4 Mbps, sharp for video calls.',
+          'saver' => '${_mbps(2)} Mbps, for a busy Wi-Fi.',
+          'high' => '${_mbps(8)} Mbps, the most detail.',
+          _ => '${_mbps(4)} Mbps, sharp for video calls.',
         },
         below: _Segmented(
           options: const [
@@ -654,7 +675,10 @@ class _WebcamScreenState extends State<WebcamScreen> {
             onChanged: (v) => setState(() => _mirror = v),
           ),
         ),
-      _Setting(title: 'Format', value: '$w×$h · 30 fps · H.264'),
+      _Setting(
+        title: 'Format',
+        value: '$w×$h · ${_get('fps', 30)} fps · H.264',
+      ),
     ];
   }
 }
