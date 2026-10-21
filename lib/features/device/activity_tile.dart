@@ -141,11 +141,14 @@ class TimelineEntry extends StatelessWidget {
           SizedBox(
             width: 64,
             child: Padding(
-              padding: const EdgeInsets.only(top: 22, right: 6),
-              child: Text(
-                formatClock(a.time),
-                textAlign: TextAlign.right,
-                style: sora(12.5, weight: FontWeight.w500, color: s.muted),
+              padding: const EdgeInsets.only(right: 6),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  formatClock(a.time),
+                  textAlign: TextAlign.right,
+                  style: sora(12.5, weight: FontWeight.w500, color: s.muted),
+                ),
               ),
             ),
           ),
@@ -392,28 +395,28 @@ class _Rail extends CustomPainter {
   final bool last;
   final bool live;
 
-  static const _nodeY = 30.0;
-
   @override
   void paint(Canvas canvas, Size size) {
     final x = size.width / 2;
+    // Level with the entry's icon, which its row centers.
+    final nodeY = size.height / 2;
     final rail = Paint()
       ..color = line
       ..strokeWidth = 2;
     canvas.drawLine(
-      Offset(x, first ? _nodeY : 0),
-      Offset(x, last ? _nodeY : size.height),
+      Offset(x, first ? nodeY : 0),
+      Offset(x, last ? nodeY : size.height),
       rail,
     );
     if (live) {
       canvas.drawCircle(
-        Offset(x, _nodeY),
+        Offset(x, nodeY),
         10,
         Paint()..color = color.withValues(alpha: 0.2),
       );
     }
-    canvas.drawCircle(Offset(x, _nodeY), 6, Paint()..color = color);
-    canvas.drawCircle(Offset(x, _nodeY), 2.4, Paint()..color = Colors.white);
+    canvas.drawCircle(Offset(x, nodeY), 6, Paint()..color = color);
+    canvas.drawCircle(Offset(x, nodeY), 2.4, Paint()..color = Colors.white);
   }
 
   @override
