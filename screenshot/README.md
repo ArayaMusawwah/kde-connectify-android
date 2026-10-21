@@ -7,8 +7,8 @@ bar. Version 0.1.9+ (device pictures).
 | File | What it shows |
 |---|---|
 | `home.png`, `home-dark.png` | Home: paired devices (one with a picture), a device nearby to pair |
-| `device.png`, `device-dark.png` | A computer's page with its picture as the banner, the name on a backdrop |
-| `device-no-picture.png`, `device-no-picture-dark.png` | A computer's page without a picture: the dark blue grid banner |
+| `device.png`, `device-dark.png` | A computer’s page with its picture as the banner, fading into a shadow under the name |
+| `device-no-picture.png`, `device-no-picture-dark.png` | A computer's page without a picture: the dark blue grid banner fading into the same shadow |
 | `device-timeline.png` | The same page scrolled: actions, See its screen, photo backup, and the timeline |
 | `incoming-files.png` | "Studio Desktop is sending you 3 files", Accept / Decline |
 | `remote.png` | Remote: the phone as touchpad and keyboard |

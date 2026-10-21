@@ -72,7 +72,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
               toolbarHeight: 0,
               collapsedHeight: 0,
               systemOverlayStyle: overlayFor(Brightness.dark),
-              backgroundColor: Sig.deep,
+              // The banner's top under its shadow, so the two meet without
+              // a seam.
+              backgroundColor: Color.alphaBlend(
+                const Color(0x590A1024),
+                Sig.deep,
+              ),
             ),
             // One box, so the actions paint over the hero they overlap.
             SliverToBoxAdapter(
@@ -216,24 +221,8 @@ class _Hero extends StatelessWidget {
       ],
     );
 
-    // Over a photo, the name and the buttons sit on a dark backdrop so they
-    // read whatever the picture is.
-    Widget button(IconData icon, String tip, VoidCallback onTap) {
-      final round = RoundButton(
-        icon: icon,
-        tooltip: tip,
-        onDark: true,
-        onTap: onTap,
-      );
-      if (picture == null) return round;
-      return DecoratedBox(
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: _backdrop,
-        ),
-        child: round,
-      );
-    }
+    Widget button(IconData icon, String tip, VoidCallback onTap) =>
+        RoundButton(icon: icon, tooltip: tip, onDark: true, onTap: onTap);
 
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
@@ -251,6 +240,25 @@ class _Hero extends StatelessWidget {
               )
             else
               const _GridBanner(),
+            // An inner shadow: deep at the bottom, where the name sits, and
+            // light at the top, under the buttons; the picture or the grid
+            // fades into it. (The one gradient in the app, on purpose.)
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0x590A1024),
+                    Color(0x000A1024),
+                    Color(0x000A1024),
+                    Color(0xCC0A1024),
+                    Color(0xF20A1024),
+                  ],
+                  stops: [0, 0.22, 0.38, 0.72, 1],
+                ),
+              ),
+            ),
             Positioned(
               left: 16,
               right: 16,
@@ -271,27 +279,13 @@ class _Hero extends StatelessWidget {
               left: 16,
               right: 16,
               bottom: 64,
-              child: Center(
-                child: picture == null
-                    ? details
-                    : Container(
-                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 14),
-                        decoration: BoxDecoration(
-                          color: _backdrop,
-                          borderRadius: BorderRadius.circular(Radii.lg),
-                        ),
-                        child: details,
-                      ),
-              ),
+              child: Center(child: details),
             ),
           ],
         ),
       ),
     );
   }
-
-  /// Deep ink, mostly opaque: flat, no gradient.
-  static const _backdrop = Color(0xB80A1024);
 
   Future<void> _more(BuildContext context, DeviceInfo d) =>
       showModalBottomSheet<void>(
@@ -516,7 +510,8 @@ class _Actions extends StatelessWidget {
   }
 }
 
-/// The banner without a picture: deep blue with a fine grid. Flat.
+/// The banner without a picture: deep blue with a fine grid, which the
+/// banner's shadow fades out toward the name.
 class _GridBanner extends StatelessWidget {
   const _GridBanner();
 
@@ -534,7 +529,7 @@ class _Grid extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.drawRect(Offset.zero & size, Paint()..color = Sig.deep);
     final line = Paint()
-      ..color = Colors.white.withValues(alpha: 0.08)
+      ..color = Colors.white.withValues(alpha: 0.13)
       ..strokeWidth = 1;
     // Centered, so the grid sits evenly on any width.
     final dx = (size.width % _cell) / 2;

@@ -5,7 +5,7 @@ All notable changes to Linksy for Android. Format: [Keep a Changelog](https://ke
 ## [Unreleased]
 
 ### Added
-- **Device pictures**: give each of your devices a picture (⋯ › Add a picture). It shows as its avatar, and as a large banner on its page with the name on a dark backdrop. Without a picture, the banner is a dark blue grid.
+- **Device pictures**: give each of your devices a picture (⋯ › Add a picture). It shows as its avatar, and as a large banner on its page that fades into a soft shadow under the name. Without a picture, the banner is a dark blue grid fading into the same shadow.
 
 ### Changed
 - A device's page no longer shows the round avatar in its header.
