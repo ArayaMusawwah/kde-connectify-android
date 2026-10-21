@@ -107,6 +107,25 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   bool get pauseOnCalls => prefs['pause_calls'] != 'off';
   bool get locatable => prefs['locate'] == 'on';
+
+  /// Android 15's screen share protections (see [LinksyPlatform]); on some
+  /// phones they black out the status bar and the notification shade.
+  String? shareProtections;
+
+  /// Whether to say so under a screen share's banner.
+  bool get warnShareProtections =>
+      (shareProtections == 'on' || shareProtections == 'unknown') &&
+      prefs['share_hint'] != 'dismissed';
+
+  Future<void> dismissShareHint() => _setPref('share_hint', 'dismissed');
+
+  Future<void> _readShareProtections() async {
+    final now = await LinksyPlatform.shareProtections();
+    if (now == shareProtections) return;
+    shareProtections = now;
+    notifyListeners();
+  }
+
   String? get ownPicture => prefs['own_picture'];
   bool watchesClipboard(String id) => prefs['clip_watch.$id'] == 'on';
 
@@ -194,7 +213,11 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   /// Back in the app: new photos may be waiting.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _importAll();
+    if (state == AppLifecycleState.resumed) {
+      _importAll();
+      // Back from Developer options, maybe.
+      _readShareProtections();
+    }
   }
 
   /// Android-side settings and folders; not awaited by [start] (tests have
@@ -213,6 +236,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         sharing: true,
       );
     }
+    await _readShareProtections();
     pictures = await LinksyPlatform.pictures()
       ..remove(_self);
     filesFolder = await LinksyPlatform.folder('files');

@@ -129,6 +129,8 @@ class MainActivity : FlutterActivity() {
                         result.success(null)
                     }
                     "screenSize" -> result.success(screenSize())
+                    "shareProtections" -> result.success(shareProtections())
+                    "developerOptions" -> result.success(openDeveloperOptions())
                     "pictureJpeg" -> {
                         val path = call.argument<String>("path")!!
                         Thread { Clip.pictureJpeg(path).let { runOnUiThread { result.success(it) } } }.start()
@@ -279,6 +281,30 @@ class MainActivity : FlutterActivity() {
     private fun updateScreenOn() {
         val flag = android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         if (presenting || screenOn.isNotEmpty()) window.addFlags(flag) else window.clearFlags(flag)
+    }
+
+    /// Android 15's screen share protections, which some phones (realme…)
+    /// extend to the status bar and the notification shade: they come out
+    /// black on the computer. "on", "off", "unknown" (the setting can't be
+    /// read), or null before Android 15.
+    private fun shareProtections(): String? {
+        if (Build.VERSION.SDK_INT < 35) return null
+        return try {
+            when (Settings.Global.getInt(contentResolver, "disable_screen_share_protections_for_apps_and_notifications", 0)) {
+                0 -> "on"
+                else -> "off"
+            }
+        } catch (_: Exception) {
+            "unknown"
+        }
+    }
+
+    /// Developer options if they're on, else About phone (tap Build number
+    /// seven times there).
+    private fun openDeveloperOptions(): Boolean {
+        val on = Settings.Global.getInt(contentResolver, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0) != 0
+        val action = if (on) Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS else Settings.ACTION_DEVICE_INFO_SETTINGS
+        return runCatching { startActivity(Intent(action).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }.isSuccess
     }
 
     /// The screen in landscape, long side first, in pixels.

@@ -318,6 +318,14 @@ abstract final class LinksyPlatform {
   static Future<void> keepScreenOn(String session, {required bool on}) =>
       _call<void>('keepScreenOn', {'session': session, 'on': on});
 
+  /// Android 15's screen share protections: `on`, `off`, `unknown`, or null
+  /// before Android 15.
+  static Future<String?> shareProtections() =>
+      _call<String>('shareProtections');
+
+  /// Developer options (or About phone while they're off).
+  static Future<void> developerOptions() => _call<void>('developerOptions');
+
   /// [path] as a JPEG small enough to send as a device picture
   /// (≤ 128 KiB), base64.
   static Future<String?> pictureJpeg(String path) =>

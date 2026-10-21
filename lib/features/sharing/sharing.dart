@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/linksy_controller.dart';
+import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
@@ -127,11 +128,72 @@ class SharingBanners extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Column(
         children: [
-          for (final share in shares)
+          for (final share in shares) ...[
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: _Banner(share: share, controller: controller),
             ),
+            if ((share.kind == SessionKind.screen ||
+                    share.kind == SessionKind.control) &&
+                controller.warnShareProtections)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: _ProtectionHint(controller: controller),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Android 15 hides parts of the screen from screen sharing; some phones
+/// (realme, among others) black out the whole status bar and notification
+/// shade. A developer option turns that off.
+class _ProtectionHint extends StatelessWidget {
+  const _ProtectionHint({required this.controller});
+
+  final LinksyController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    return SigCard(
+      padding: const EdgeInsets.fromLTRB(16, 12, 8, 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 1),
+                child: Icon(Ph.warningCircle, color: Sig.blue, size: 20),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Top bar or notifications black on the computer? Android’s '
+                  'screen share protection hides them. Turn on “Disable screen '
+                  'share protections” in Developer options, then share again.',
+                  style: TextStyle(fontSize: 13, color: s.muted, height: 1.35),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: controller.dismissShareHint,
+                child: const Text('Got it'),
+              ),
+              TextButton(
+                onPressed: LinksyPlatform.developerOptions,
+                child: const Text('Developer options'),
+              ),
+            ],
+          ),
         ],
       ),
     );
