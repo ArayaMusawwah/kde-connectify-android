@@ -179,7 +179,7 @@ class CameraShare(
         // A size this camera really delivers for this frame rate: anything
         // else, Android rounds to another shape and the picture stretches.
         input = cameraSize(chars, fps)
-        renderer.setCamera(input)
+        renderer.setCamera(input, chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90)
         val outputs = listOf(renderer.input)
         @Suppress("DEPRECATION")
         camera.createCaptureSession(outputs, object : CameraCaptureSession.StateCallback() {

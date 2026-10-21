@@ -2,6 +2,11 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.13] - 2026-10-21
+
+### Fixed
+- **Webcam picture stretched and sideways** on real phones since 0.1.11: Android hands the camera's picture over already turned upright for a phone held upright (and mirrored for the front camera), and Linksy turned it once more. It now takes that into account: the picture keeps its true shape, upright in Landscape (phone sideways) and Portrait (phone upright), and the front camera isn't mirrored to the computer.
+
 ## [0.1.12] - 2026-10-21
 
 ### Added

@@ -47,6 +47,12 @@ class GlRenderer(
     /// stream's): the picture is fitted by it, never stretched.
     @Volatile private var camera = camera
 
+    /// The camera's sensor orientation (clockwise, 0/90/180/270).
+    @Volatile private var sensor = 90
+    private var logged = false
+
+    /// Clockwise turn of the camera's raw picture (as the sensor sees it)
+    /// that makes the stream; see [render] for the texture's own turn.
     @Volatile var rotation = 0
     @Volatile var fill = false
     @Volatile private var stopped = false
@@ -116,10 +122,12 @@ class GlRenderer(
 
     /// The camera's output size, before a capture session starts with it.
     /// Waits until the texture has it, so the first frames are sized right.
-    fun setCamera(size: android.util.Size) {
+    fun setCamera(size: android.util.Size, sensorOrientation: Int) {
         val done = java.util.concurrent.CountDownLatch(1)
         handler.post {
             camera = size
+            sensor = sensorOrientation
+            logged = false
             surfaceTexture.setDefaultBufferSize(size.width, size.height)
             done.countDown()
         }
@@ -171,24 +179,53 @@ class GlRenderer(
             if (picture < frame) sx = picture / frame else sy = frame / picture
         }
 
+        // A camera drawing into a texture hands over its picture already
+        // turned upright for the phone's natural (portrait) orientation, and
+        // mirrored for a front camera: that's in the texture's transform, not
+        // in the pixels we index. Find that turn (texture) and mirror, so the
+        // raw picture's points below can be found in the texture.
+        val m = stMatrix
+        val swapped = kotlin.math.abs(m[0]) < kotlin.math.abs(m[1])
+        // The standard transform flips vertically (determinant < 0); one
+        // that also mirrors has a positive determinant.
+        val mirrored = m[0] * m[5] - m[4] * m[1] > 0
+        val turn = when {
+            swapped -> if (sensor % 180 == 90) sensor else 90
+            (m[0] > 0) != mirrored -> 0
+            else -> 180
+        }
+        if (!logged) {
+            logged = true
+            Log.i("linksy", "camera texture: turned $turn°, mirrored $mirrored, sensor $sensor°, ${camera.width}x${camera.height}")
+        }
+
         quad.clear()
         // Corners in the turned picture (u right, v down) and their place on screen.
         for ((u, v) in listOf(0f to 0f, 1f to 0f, 0f to 1f, 1f to 1f)) {
             val x = (u * 2 - 1) * sx
             val y = (1 - v * 2) * sy
-            // The camera picture's point shown there, before turning.
-            val (cx, cy) = when (rotation) {
+            // The raw camera picture's point shown there, before turning.
+            val (rx, ry) = when (rotation) {
                 90 -> v to 1 - u
                 180 -> 1 - u to 1 - v
                 270 -> 1 - v to u
                 else -> u to v
             }
+            // The same point in the texture's picture: the raw picture turned
+            // by [turn] clockwise, then mirrored if it is.
+            var (cx, cy) = when (turn) {
+                90 -> 1 - ry to rx
+                180 -> 1 - rx to 1 - ry
+                270 -> ry to 1 - rx
+                else -> rx to ry
+            }
+            if (mirrored) cx = 1 - cx
             // Texture space has its origin at the bottom left.
             val s = cx
             val t = 1 - cy
             quad.put(x).put(y)
-            quad.put(stMatrix[0] * s + stMatrix[4] * t + stMatrix[12])
-            quad.put(stMatrix[1] * s + stMatrix[5] * t + stMatrix[13])
+            quad.put(m[0] * s + m[4] * t + m[12])
+            quad.put(m[1] * s + m[5] * t + m[13])
         }
         quad.position(0)
 
