@@ -2,6 +2,11 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.18] - 2026-10-22
+
+### Fixed
+- In a computer's activity, the time and the dot on the timeline now line up with each entry's icon.
+
 ## [0.1.17] - 2026-10-21
 
 ### Changed
