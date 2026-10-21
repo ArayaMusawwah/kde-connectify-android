@@ -2,6 +2,13 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.20] - 2026-10-22
+
+### Changed
+- **Closing a terminal is obvious**: a Close button at the top and a × on each tab. It asks first, and offers to keep it running instead. Closing ends the shell on the computer and the connection behind it, so nothing is left hanging; a detached terminal is reopened (with the code) to end it.
+- **Typing `exit`** (or anything that ends the shell) closes its tab here too, and says so.
+- If the connection drops, a terminal shows as detached (still running on the computer) instead of ended.
+
 ## [0.1.19] - 2026-10-22
 
 ### Added
