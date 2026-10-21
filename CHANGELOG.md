@@ -2,6 +2,16 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.1.17] - 2026-10-21
+
+### Changed
+- **Clearer computer pages**, in the spirit of the new desktop design:
+  - How it's connected sits above the name ("Same Wi-Fi", "Away from home", "USB cable"), with its battery and kind on one line below.
+  - **This phone as**: one card shows the webcam, microphone and second display, what's in use (with Controls or Stop) and what's ready.
+  - Photo backup, "Get its clipboard" and "Allow everything from away" share one card instead of three.
+  - **Activity** has filters (All, Files, Clipboard, Links); files and what's running keep their card, small things (pings, links, copied text) are plain lines.
+- **Home**: each computer's battery is a ring around its picture, and the list says how it's connected ("Same Wi-Fi · 82%").
+
 ## [0.1.16] - 2026-10-21
 
 ### Added
