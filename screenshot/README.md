@@ -14,5 +14,11 @@ bar. Version 0.1.9+ (device pictures).
 | `remote.png` | Remote: the phone as touchpad and keyboard |
 | `remote-slides.png` | Remote: presentation mode (Next / Back, volume keys) |
 | `settings.png` | Settings: this phone, saving to Downloads, background, calls |
+| `terminal-entry.png` | A computer's page with the Terminal card (shown only for computers announcing `terminal`) |
+| `terminal-start.png` | Terminal: start screen, "A shell on Studio Desktop", New terminal |
+| `terminal-wrong-code.png` | The terminal code prompt after a wrong code: "Wrong code, 4 tries left" |
+| `terminal-live.png` | A live terminal with colours, and the key bar above the keyboard |
+| `terminal-tab-title.png` | The tab and header following the shell's window title ("top — ~") |
+| `terminal-detached.png` | Detached: still running on the computer, Reattach |
 
 The device picture is a flat illustration in the brand colors, made for these shots.

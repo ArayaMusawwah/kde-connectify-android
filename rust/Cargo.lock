@@ -1736,8 +1736,8 @@ checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
 
 [[package]]
 name = "linksy-core"
-version = "0.6.0"
-source = "git+ssh://git@github.com/LinkSy-mg/linksy-desktop.git?rev=1c8ebe4b1b7bedffaa7198f5102149c6ccc0af2e#1c8ebe4b1b7bedffaa7198f5102149c6ccc0af2e"
+version = "0.6.4"
+source = "git+ssh://git@github.com/LinkSy-mg/linksy-desktop.git?rev=61b08e0cf28d26168e59404c93e8111375b4978d#61b08e0cf28d26168e59404c93e8111375b4978d"
 dependencies = [
  "blake3",
  "hex",

@@ -3,6 +3,8 @@
 /// bridge can map onto them one to one.
 library;
 
+import 'dart:typed_data';
+
 enum DeviceKind {
   desktop,
   laptop,
@@ -476,4 +478,63 @@ class ClipboardFileReceived extends LinksyEvent {
   const ClipboardFileReceived({required this.from, required this.path});
   final DeviceInfo from;
   final String path;
+}
+
+/// A terminal still running on a computer, from `terminal_list` (§4.15).
+class RemoteTerminal {
+  const RemoteTerminal({
+    required this.id,
+    required this.title,
+    required this.started,
+  });
+  final String id;
+
+  /// The shell's window title ("claude — ~/Project").
+  final String title;
+  final DateTime started;
+}
+
+/// Why a computer turned a terminal down (`session_decline` reasons, §4.15).
+enum TerminalRefusal {
+  /// Terminal isn't allowed for this phone on the computer.
+  off,
+
+  /// Wrong code; see [TerminalRefused.triesLeft].
+  code,
+
+  /// Too many wrong codes: unlock it on the computer.
+  locked,
+
+  /// Asked from away, where it isn't allowed.
+  away,
+
+  /// The computer can't do terminals.
+  unsupported,
+
+  /// Its user said no.
+  declined,
+}
+
+/// A terminal open on a computer: its output as it comes, and what this
+/// phone sends back (framed JSON on the session, §4.15).
+abstract interface class TerminalChannel {
+  /// The terminal's id on the computer, for `resume`.
+  String get terminalId;
+
+  /// Raw pseudo-terminal output (UTF-8 with escape sequences). Done when the
+  /// shell exits or the stream drops.
+  Stream<Uint8List> get output;
+
+  /// Typed text, keys as xterm sequences (`term_input`).
+  Future<bool> input(String data);
+
+  /// The view's size changed (`term_resize`).
+  Future<bool> resize(int cols, int rows);
+
+  /// Ends the shell (`term_close`).
+  Future<void> close();
+
+  /// Leaves it running on the computer: ends the stream without
+  /// `term_close`, to `resume` later.
+  Future<void> detach();
 }

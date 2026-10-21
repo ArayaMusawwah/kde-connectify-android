@@ -93,6 +93,9 @@ abstract final class Ph {
   );
   static const clipboard = IconData(0xe196, fontFamily: 'PhosphorRegular');
   static const userCircle = IconData(0xe4c4, fontFamily: 'PhosphorRegular');
+  static const terminalWindow = IconData(0xeae8, fontFamily: 'PhosphorRegular');
+  static const arrowUp = IconData(0xe08e, fontFamily: 'PhosphorRegular');
+  static const arrowDown = IconData(0xe03e, fontFamily: 'PhosphorRegular');
 }
 
 abstract final class PhBold {

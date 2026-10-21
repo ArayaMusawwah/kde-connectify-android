@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:async';
 import 'dart:io';
@@ -46,6 +47,18 @@ class DemoNode implements LinksyNode {
         name: 'Studio Desktop',
         kind: DeviceKind.desktop,
         os: 'linux',
+        features: [
+          'files',
+          'clipboard',
+          'open_url',
+          'ring',
+          'screen',
+          'control',
+          'display',
+          'camera',
+          'microphone',
+          'terminal',
+        ],
       ),
       trusted: true,
       connected: false,
@@ -420,6 +433,58 @@ class DemoNode implements LinksyNode {
   @override
   Future<void> connectAddress(String address) async {}
 
+  // Terminal (§4.15): a pretend shell, code 123456, so the screens can be
+  // tried without a computer that has terminals.
+
+  static const demoTerminalCode = '123456';
+  int _terminalTries = 5;
+  final _shells = <String, _DemoShell>{};
+
+  @override
+  Future<TerminalChannel> openTerminal(
+    String id, {
+    required String code,
+    required int cols,
+    required int rows,
+    String? resume,
+  }) async {
+    final v = _reachable(id);
+    final name = v.device.name;
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    if (!v.device.features.contains('terminal')) {
+      throw TerminalRefused(TerminalRefusal.unsupported, name: name);
+    }
+    if (_terminalTries <= 0) {
+      throw TerminalRefused(TerminalRefusal.locked, name: name);
+    }
+    if (code != demoTerminalCode) {
+      _terminalTries--;
+      throw _terminalTries <= 0
+          ? TerminalRefused(TerminalRefusal.locked, name: name)
+          : TerminalRefused(
+              TerminalRefusal.code,
+              triesLeft: _terminalTries,
+              name: name,
+            );
+    }
+    _terminalTries = 5;
+    final old = resume == null ? null : _shells[resume];
+    if (old != null) return old..attach();
+    final shell = _DemoShell(
+      _uuid(),
+      onExit: (s) => _shells.remove(s.terminalId),
+    );
+    _shells[shell.terminalId] = shell;
+    return shell..attach();
+  }
+
+  @override
+  Future<List<RemoteTerminal>> terminals(String id) async => [
+    for (final s in _shells.values)
+      if (s.detached)
+        RemoteTerminal(id: s.terminalId, title: s.title, started: s.started),
+  ];
+
   @override
   Future<void> shutdown() async {
     for (final t in _timers.values) {
@@ -476,5 +541,148 @@ class DemoNode implements LinksyNode {
     _emit(
       ClipboardReceived(from: from, text: 'https://linksy.app/docs/pairing'),
     );
+  }
+}
+
+/// A pretend shell for demo mode: echoes, edits a line, knows a few
+/// commands. Nothing runs anywhere.
+class _DemoShell implements TerminalChannel {
+  _DemoShell(this.terminalId, {required this.onExit});
+
+  @override
+  final String terminalId;
+  final void Function(_DemoShell) onExit;
+  final started = DateTime.now();
+  String title = 'bash — ~';
+  bool detached = false;
+  StreamController<Uint8List>? _out;
+  final _line = StringBuffer();
+  final _screen = StringBuffer();
+
+  static const _prompt = '\x1b[1;34maxel@studio\x1b[0m:\x1b[1;36m~\x1b[0m\$ ';
+
+  void attach() {
+    detached = false;
+    _out = StreamController<Uint8List>();
+    if (_screen.isEmpty) {
+      _say(
+        '\x1b]0;bash — ~\x07'
+        '\x1b[2mDemo terminal: nothing here runs on a computer. '
+        'Try ls, top or help.\x1b[0m\r\n$_prompt',
+      );
+    } else {
+      // Reattached: the computer redraws the screen.
+      final again = _screen.toString();
+      Future<void>.microtask(() => _out?.add(_utf8(again)));
+    }
+  }
+
+  @override
+  Stream<Uint8List> get output => _out!.stream;
+
+  void _say(String text) {
+    _screen.write(text);
+    final out = _out;
+    if (out != null && !out.isClosed) {
+      Future<void>.microtask(() {
+        if (!out.isClosed) out.add(_utf8(text));
+      });
+    }
+  }
+
+  static Uint8List _utf8(String s) => utf8.encode(s);
+
+  @override
+  Future<bool> input(String data) async {
+    if (data.startsWith('\x1b')) return true; // arrows and such: ignored here
+    for (final ch in data.split('')) {
+      switch (ch) {
+        case '\r':
+          final cmd = _line.toString().trim();
+          _line.clear();
+          _say('\r\n');
+          _run(cmd);
+        case '\x7f':
+          if (_line.isNotEmpty) {
+            final t = _line.toString();
+            _line
+              ..clear()
+              ..write(t.substring(0, t.length - 1));
+            _say('\b \b');
+          }
+        case '\x03':
+          _line.clear();
+          _say('^C\r\n$_prompt');
+        case '\t':
+          break;
+        default:
+          if (ch.codeUnitAt(0) >= 0x20) {
+            _line.write(ch);
+            _say(ch);
+          }
+      }
+    }
+    return true;
+  }
+
+  void _run(String cmd) {
+    final word = cmd.split(' ').first;
+    final rest = cmd.length > word.length ? cmd.substring(word.length + 1) : '';
+    switch (word) {
+      case '':
+        break;
+      case 'help':
+        _say('ls  pwd  date  whoami  echo  top  clear  exit\r\n');
+      case 'ls':
+        _say(
+          '\x1b[1;34mDesktop\x1b[0m  \x1b[1;34mDocuments\x1b[0m  '
+          '\x1b[1;34mProjects\x1b[0m  notes.md  \x1b[1;32mbuild.sh\x1b[0m\r\n',
+        );
+      case 'pwd':
+        _say('/home/axel\r\n');
+      case 'whoami':
+        _say('axel\r\n');
+      case 'date':
+        _say('${DateTime.now()}\r\n');
+      case 'echo':
+        _say('$rest\r\n');
+      case 'top':
+        title = 'top — ~';
+        _say('\x1b]0;top — ~\x07');
+        _say(
+          '\x1b[7m  PID USER      %CPU %MEM COMMAND             \x1b[0m\r\n'
+          ' 2041 axel      \x1b[1;31m42.0\x1b[0m  3.1 cargo               \r\n'
+          ' 1873 axel      \x1b[33m12.5\x1b[0m  8.4 firefox             \r\n'
+          '  988 axel       \x1b[32m1.2\x1b[0m  0.9 linksyd             \r\n',
+        );
+      case 'clear':
+        _screen.clear();
+        _say('\x1b[2J\x1b[H');
+      case 'exit':
+        _end();
+        return;
+      default:
+        _say('$word: command not found\r\n');
+    }
+    _say(_prompt);
+  }
+
+  void _end() {
+    _out?.close();
+    _out = null;
+    onExit(this);
+  }
+
+  @override
+  Future<bool> resize(int cols, int rows) async => true;
+
+  @override
+  Future<void> close() async => _end();
+
+  @override
+  Future<void> detach() async {
+    detached = true;
+    await _out?.close();
+    _out = null;
   }
 }

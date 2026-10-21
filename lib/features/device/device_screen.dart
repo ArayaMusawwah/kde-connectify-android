@@ -15,6 +15,8 @@ import '../../ui/sig.dart';
 import '../remote/remote_screen.dart';
 import '../sharing/sharing.dart';
 import '../sharing/webcam_screen.dart';
+import '../terminal/terminal_screen.dart';
+import '../../app/terminals.dart';
 import 'activity_tile.dart';
 
 /// Picks files and sends them to a device, reporting any error.
@@ -111,6 +113,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       child: _WatchScreen(view: view),
                     ),
+                    // Only computers that announce it (desktop 0.7, §4.15).
+                    if (view.device.features.contains('terminal'))
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                        child: _TerminalCard(view: view),
+                      ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       child: _PhoneAs(view: view),
@@ -809,6 +817,55 @@ class _WatchScreen extends StatelessWidget {
               button('Control', true),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A shell on the computer, behind its terminal code.
+class _TerminalCard extends StatelessWidget {
+  const _TerminalCard({required this.view});
+
+  final DeviceView view;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final c = LinksyScope.of(context);
+    final open = c.terminals
+        .of(view.device.id)
+        .where((t) => t.state != TabState.ended)
+        .length;
+    return SigCard(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => TerminalScreen(deviceId: view.device.id),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+      child: Row(
+        children: [
+          IconCircle(icon: Ph.terminalWindow, color: Sig.blue, size: 40),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Terminal', style: sora(16, color: s.ink)),
+                const SizedBox(height: 2),
+                Text(
+                  open == 0
+                      ? 'A shell on ${view.device.name}, locked by its code'
+                      : open == 1
+                      ? '1 terminal open'
+                      : '$open terminals open',
+                  style: TextStyle(fontSize: 12.5, color: s.muted),
+                ),
+              ],
+            ),
+          ),
+          Icon(Ph.caretRight, color: s.faint, size: 18),
         ],
       ),
     );

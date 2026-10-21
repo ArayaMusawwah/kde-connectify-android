@@ -267,6 +267,22 @@ class RustNode implements LinksyNode {
     name: _nameOf(id),
   );
 
+  // Terminal (§4.15) needs a core with the `terminal` session (desktop
+  // 0.7); computers don't announce it before, so the app doesn't offer it.
+
+  @override
+  Future<TerminalChannel> openTerminal(
+    String id, {
+    required String code,
+    required int cols,
+    required int rows,
+    String? resume,
+  }) async =>
+      throw TerminalRefused(TerminalRefusal.unsupported, name: _nameOf(id));
+
+  @override
+  Future<List<RemoteTerminal>> terminals(String id) async => const [];
+
   @override
   Future<NodeSettings> settings() async =>
       settingsFromJson(jsonDecode(_node.settingsJson()) as Json);

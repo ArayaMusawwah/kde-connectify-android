@@ -107,6 +107,20 @@ abstract interface class LinksyNode {
   /// Dials a paired computer at [address] (the USB cable's bridge).
   Future<void> connectAddress(String address);
 
+  /// Opens a terminal on computer [id] (§4.15) with the code its user set
+  /// there, or reattaches to [resume]. Throws [TerminalRefused] when the
+  /// computer says no.
+  Future<TerminalChannel> openTerminal(
+    String id, {
+    required String code,
+    required int cols,
+    required int rows,
+    String? resume,
+  });
+
+  /// The terminals still running on [id] for this phone.
+  Future<List<RemoteTerminal>> terminals(String id);
+
   Future<NodeSettings> settings();
 
   Future<void> updateSettings(NodeSettings settings);
@@ -136,4 +150,32 @@ class LinksyException implements Exception {
 
   @override
   String toString() => message;
+}
+
+/// A computer turned a terminal down, saying why.
+class TerminalRefused extends LinksyException {
+  TerminalRefused(this.reason, {this.triesLeft, String name = 'The computer'})
+    : super(_say(reason, triesLeft, name));
+
+  final TerminalRefusal reason;
+  final int? triesLeft;
+
+  static String _say(TerminalRefusal reason, int? tries, String name) =>
+      switch (reason) {
+        TerminalRefusal.code =>
+          tries == null
+              ? 'Wrong code.'
+              : tries == 1
+              ? 'Wrong code, 1 try left.'
+              : 'Wrong code, $tries tries left.',
+        TerminalRefusal.locked =>
+          'Too many wrong codes. Unlock the terminal on $name.',
+        TerminalRefusal.off =>
+          'Turn on Allow Terminal for this phone on $name.',
+        TerminalRefusal.away =>
+          '$name allows a terminal only on the same network, unless '
+              '“Allow Everything From Away” is on there.',
+        TerminalRefusal.unsupported => "$name can't open a terminal.",
+        TerminalRefusal.declined => '$name didn’t allow it.',
+      };
 }

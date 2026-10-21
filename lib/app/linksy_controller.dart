@@ -12,6 +12,7 @@ import '../core/service_info.dart';
 import '../ui/format.dart';
 import 'activity.dart';
 import 'platform.dart';
+import 'terminals.dart';
 
 /// App state on top of a [LinksyNode]: the device list, settings and every
 /// device's activity. Consent prompts and notices go out on [prompts] for the
@@ -24,6 +25,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   final LinksyNode node;
   final ActivityStore _store;
+
+  /// Terminals on computers (§4.15), by device, kept while the app runs.
+  late final terminals = Terminals(node);
 
   /// Linksy's service information (§4.12): notices, newer versions.
   final ServiceInfoStore? service;
