@@ -71,8 +71,13 @@ class CameraShare(
     private var whiteBalanceLock = false
     private var stabilization = true
     private var quality = "standard"
-    private var rotationMode = "auto" // auto, or fixed: 0, 90, 180, 270
-    private var fill = false
+    /// The picture's shape: landscape (fills the frame) or portrait (bars at
+    /// the sides). Either way it's kept upright for how the phone is held.
+    private var orientationMode = "landscape"
+    /// The last upright rotation for each shape, kept while the phone is held
+    /// the other way (landscape asked for with the phone upright, say).
+    private var lastLandscape = 0
+    private var lastPortrait = -1
 
     /// Every change, as [state] JSON, on the camera thread.
     @Volatile var onState: ((JSONObject) -> Unit)? = null
@@ -92,7 +97,7 @@ class CameraShare(
                 val snapped = ((degrees + 45) / 90 * 90) % 360
                 if (snapped != held) handler.post {
                     held = snapped
-                    if (rotationMode == "auto") turn()
+                    turn()
                 }
             }
         }
@@ -260,18 +265,22 @@ class CameraShare(
         onState?.invoke(state())
     }
 
-    /// The picture's rotation now: what the user chose, or upright for how
-    /// the phone is held (the camera's own formula for photo orientation).
+    /// The picture's rotation now: upright for how the phone is held (the
+    /// camera's own formula for photo orientation), within the chosen shape.
     private fun turn() {
-        renderer.rotation = when (rotationMode) {
-            "auto" -> {
-                val sensor = chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
-                val device = if (lens.facing == "front") -held else held
-                (sensor + device + 360) % 360
-            }
-            else -> rotationMode.toIntOrNull()?.let { ((it % 360) + 360) % 360 / 90 * 90 } ?: 0
+        val sensor = chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
+        val device = if (lens.facing == "front") -held else held
+        val upright = (sensor + device + 360) % 360
+        val landscapeHeld = upright % 180 == 0
+        renderer.rotation = if (orientationMode == "portrait") {
+            if (!landscapeHeld) lastPortrait = upright
+            // Never held upright yet: the usual upright hold.
+            if (lastPortrait >= 0) lastPortrait else if (sensor % 180 == 90) sensor else (sensor + 90) % 360
+        } else {
+            if (landscapeHeld) lastLandscape = upright
+            lastLandscape
         }
-        renderer.fill = fill
+        renderer.fill = false
     }
 
     /// A point of the camera's picture (0..1 across and down) as a
@@ -389,8 +398,7 @@ class CameraShare(
             .put("has_stabilization", videoStabilization() || opticalStabilization())
             .put("quality", quality)
             .put("rotation", renderer.rotation)
-            .put("rotation_mode", rotationMode)
-            .put("fill", fill)
+            .put("orientation", orientationMode)
     }
 
     /// Applies any of the controls in [c] (the same names as [state]).
@@ -423,10 +431,7 @@ class CameraShare(
         if (c.has("white_balance")) whiteBalance = c.getString("white_balance")
         if (c.has("white_balance_lock")) whiteBalanceLock = c.getBoolean("white_balance_lock")
         if (c.has("stabilization")) stabilization = c.getBoolean("stabilization")
-        if (c.has("rotation")) {
-            rotationMode = c.get("rotation").toString().let { if (it == "auto") "auto" else (it.toIntOrNull() ?: 0).let { d -> (((d % 360) + 360) % 360 / 90 * 90).toString() } }
-        }
-        if (c.has("fill")) fill = c.getBoolean("fill")
+        if (c.has("orientation")) orientationMode = if (c.getString("orientation") == "portrait") "portrait" else "landscape"
         if (c.has("quality")) {
             quality = c.getString("quality")
             encoder.setBitrate(bitrate(quality))

@@ -102,8 +102,7 @@ app is open.
    {"type":"camera_control","white_balance":"daylight","white_balance_lock":true}
    {"type":"camera_control","stabilization":false}
    {"type":"camera_control","quality":"high"}
-   {"type":"camera_control","rotation":"auto"}
-   {"type":"camera_control","rotation":90,"fill":false}
+   {"type":"camera_control","orientation":"portrait"}
    ```
 
    Any subset of the keys in one message; unknown keys are ignored.
@@ -120,11 +119,11 @@ app is open.
      `fluorescent` (only those in `white_balances`).
    - `quality`: `saver` (2 Mbps) | `standard` (4) | `high` (8), applied live. The
      size stays 1280×720 at 30 fps (see below).
-   - `rotation`: `"auto"` (default: kept upright for how the phone is held) or a
-     fixed `0` | `90` | `180` | `270` (clockwise). The stream keeps its 16:9 size;
-     an upright (portrait) picture is fitted with black bars at the sides, or with
-     `"fill": true` cropped to fill the frame. `focus_point` is on the stream as
-     shown, after rotation.
+   - `orientation`: `landscape` (default: the picture fills the 16:9 frame, upright
+     with the phone held sideways either way round) | `portrait` (an upright
+     portrait picture with black bars at the sides, phone held upright). The stream
+     keeps its 1280×720 size either way. `rotation` in the state is the clockwise
+     turn applied now (0/90/180/270). `focus_point` is on the stream as shown.
    - Each change takes effect on the running stream: no restart. A lens or facing
      change is followed by a keyframe with SPS/PPS.
 
@@ -149,7 +148,7 @@ app is open.
     "white_balance":"auto","white_balances":["auto","daylight","cloudy","shade",
      "incandescent","fluorescent"],"white_balance_lock":false,
     "stabilization":true,"has_stabilization":true,"quality":"standard",
-    "rotation":90,"rotation_mode":"auto","fill":false}
+    "orientation":"landscape","rotation":0}
    ```
 
    Suggested desktop UI: a camera panel next to "Use as Webcam" with the zoom chips

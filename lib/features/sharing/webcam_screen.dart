@@ -89,6 +89,8 @@ class _WebcamScreenState extends State<WebcamScreen> {
 
   bool get _front => _get('facing', 'back') == 'front';
 
+  bool get _portrait => _get('orientation', 'landscape') == 'portrait';
+
   void _set(Map<String, Object?> controls) {
     // Show it at once; the camera's report follows.
     setState(() => _state = {..._state, ...controls});
@@ -349,14 +351,11 @@ class _WebcamScreenState extends State<WebcamScreen> {
           onTap: () => _set({'stabilization': !_get('stabilization', false)}),
         ),
         _Toggle(
-          icon: Ph.arrowClockwise,
-          label: _get('rotation_mode', 'auto') == 'auto'
-              ? 'Auto'
-              : '${_get('rotation', 0)}°',
-          on: _get('rotation_mode', 'auto') != 'auto',
-          // Each tap turns it a quarter clockwise; hold for automatic.
-          onTap: () => _set({'rotation': (_get('rotation', 0) + 90) % 360}),
-          onLongPress: () => _set({'rotation': 'auto'}),
+          icon: _portrait ? Ph.deviceMobile : Ph.monitor,
+          label: _portrait ? 'Portrait' : 'Landscape',
+          on: _portrait,
+          onTap: () =>
+              _set({'orientation': _portrait ? 'landscape' : 'portrait'}),
         ),
         _Toggle(
           icon: Ph.arrowsLeftRight,
@@ -623,59 +622,37 @@ class _WebcamScreenState extends State<WebcamScreen> {
     );
     final w = _get('width', 1280);
     final h = _get('height', 720);
-    final auto = _get('rotation_mode', 'auto') == 'auto';
-    final rotation = _get('rotation', 0);
-    final fill = _get('fill', false);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Rotation', style: sora(15, color: s.ink)),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            _Chip(
-              label: 'Auto',
-              selected: auto,
-              onTap: () => _set({'rotation': 'auto'}),
-            ),
-            for (final d in const [0, 90, 180, 270])
-              _Chip(
-                label: '$d°',
-                selected: !auto && rotation == d,
-                onTap: () => _set({'rotation': d}),
-              ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        _Note(
-          s,
-          auto
-              ? 'Auto keeps the picture upright however you hold the phone '
-                    '(now $rotation°).'
-              : 'Fixed at $rotation°, whatever way the phone is held.',
-        ),
-        const SizedBox(height: 14),
-        Text('When the picture is upright', style: sora(15, color: s.ink)),
+        Text('Orientation', style: sora(15, color: s.ink)),
         const SizedBox(height: 10),
         Row(
           children: [
             Expanded(
               child: _Chip(
-                label: 'Fit (whole picture)',
-                selected: !fill,
-                onTap: () => _set({'fill': false}),
+                label: 'Landscape',
+                selected: !_portrait,
+                onTap: () => _set({'orientation': 'landscape'}),
               ),
             ),
             Expanded(
               child: _Chip(
-                label: 'Fill (crop)',
-                selected: fill,
-                onTap: () => _set({'fill': true}),
+                label: 'Portrait',
+                selected: _portrait,
+                onTap: () => _set({'orientation': 'portrait'}),
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 8),
+        _Note(
+          s,
+          _portrait
+              ? 'Hold the phone upright. The picture stays upright, with bars '
+                    'at the sides.'
+              : 'Hold the phone sideways. The picture fills the frame and '
+                    'stays upright either way round.',
         ),
         const SizedBox(height: 16),
         Text('Quality', style: sora(15, color: s.ink)),
@@ -819,7 +796,6 @@ class _Toggle extends StatelessWidget {
     required this.on,
     required this.onTap,
     this.enabled = true,
-    this.onLongPress,
   });
 
   final IconData icon;
@@ -827,40 +803,36 @@ class _Toggle extends StatelessWidget {
   final bool on;
   final bool enabled;
   final VoidCallback onTap;
-  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     return Opacity(
       opacity: enabled ? 1 : 0.35,
-      child: GestureDetector(
-        onLongPress: enabled ? onLongPress : null,
-        child: Pressable(
-          onTap: enabled ? onTap : null,
-          semanticLabel: label,
-          child: Column(
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: on ? Sig.blue : s.card,
-                ),
-                child: Icon(icon, size: 22, color: on ? Colors.white : s.ink),
+      child: Pressable(
+        onTap: enabled ? onTap : null,
+        semanticLabel: label,
+        child: Column(
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: on ? Sig.blue : s.card,
               ),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: on ? s.ink : s.muted,
-                ),
+              child: Icon(icon, size: 22, color: on ? Colors.white : s.ink),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: on ? s.ink : s.muted,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

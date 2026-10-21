@@ -9,7 +9,7 @@ All notable changes to Linksy for Android. Format: [Keep a Changelog](https://ke
   - Zoom with lens chips (0.6× / 1× / 2× / 5×… as the phone allows), a fine slider and pinch; every back camera the phone exposes, and front/back.
   - Tap to focus (and meter) on a spot, double-tap for auto, hold to lock exposure and focus; manual focus.
   - Torch, brightness (exposure compensation), exposure and white-balance locks, white-balance presets, stabilization.
-  - **Rotation**: automatic (upright however you hold the phone) or fixed at 0/90/180/270°, with the upright picture fitted or cropped.
+  - **Landscape or portrait**: the picture stays upright either way round; portrait gets bars at the sides.
   - Stream quality (2, 4 or 8 Mbps), live.
   - Opens by itself when a computer starts the webcam, and from the banner or notification. The computer can drive the same controls once Linksy on the desktop supports it.
 
