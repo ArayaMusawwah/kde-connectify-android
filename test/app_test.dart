@@ -4,6 +4,8 @@ import 'package:linksy/app/activity.dart';
 import 'package:linksy/app/app.dart';
 import 'package:linksy/app/linksy_controller.dart';
 import 'package:linksy/core/demo_node.dart';
+import 'package:linksy/features/terminal/terminal_screen.dart';
+import 'package:xterm/xterm.dart';
 
 /// Pumps frames for half a second, for screens with something that never
 /// stops animating (an indeterminate progress bar).
@@ -71,5 +73,42 @@ void main() {
     await tester.tap(find.text('Decline'));
     await frames(tester);
     expect(title, findsNothing);
+  });
+
+  testWidgets('pinching the terminal resizes its text, kept', (tester) async {
+    final (c, _) = await pumpApp(tester);
+    final studio = c.devices.firstWhere(
+      (v) => v.device.name == 'Studio Desktop',
+    );
+    final tab = c.terminals.add(studio.device.id);
+    await tester.runAsync(() => tab.open(DemoNode.demoTerminalCode));
+    final nav = tester.state<NavigatorState>(find.byType(Navigator).first);
+    nav.push(
+      PageRouteBuilder<void>(
+        pageBuilder: (_, _, _) => TerminalScreen(deviceId: studio.device.id),
+      ),
+    );
+    await frames(tester);
+    double size() => tester
+        .widget<TerminalView>(find.byType(TerminalView))
+        .textStyle
+        .fontSize;
+    final before = size();
+    final center = tester.getCenter(find.byType(TerminalView));
+    final a = await tester.startGesture(
+      center - const Offset(40, 0),
+      pointer: 7,
+    );
+    final b = await tester.startGesture(
+      center + const Offset(40, 0),
+      pointer: 8,
+    );
+    await a.moveTo(center - const Offset(20, 0));
+    await b.moveTo(center + const Offset(20, 0));
+    await a.up();
+    await b.up();
+    await frames(tester);
+    expect(size(), lessThan(before));
+    expect(c.prefs['term_font'], '${size()}');
   });
 }

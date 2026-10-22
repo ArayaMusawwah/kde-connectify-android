@@ -65,8 +65,8 @@ class _LanguageWheelState extends State<LanguageWheel> {
             controller: _scroll,
             itemExtent: _extent,
             physics: const FixedExtentScrollPhysics(),
-            diameterRatio: 1.7,
-            perspective: 0.004,
+            diameterRatio: 2.6,
+            perspective: 0.002,
             overAndUnderCenterOpacity: 0.4,
             onSelectedItemChanged: (i) {
               HapticFeedback.selectionClick();
