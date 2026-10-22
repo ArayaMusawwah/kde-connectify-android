@@ -262,12 +262,12 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String terminalRefusedOff(String name) {
-    return 'Alefaso ny Allow Terminal ho an\'ity finday ity ao amin\'i $name.';
+    return 'Ao amin’i $name, sokafy ny pejin’ity finday ity ary avelao ny terminal ao.';
   }
 
   @override
   String terminalRefusedAway(String name) {
-    return 'Amin\'ny tambajotra iray ihany no avelan\'i $name ny terminal, raha tsy alefa ao ny “Allow Everything From Away”.';
+    return 'Amin’ny tambajotra iray ihany no avelan’i $name ny terminal, raha tsy alefa ao ny “Avelao avy lavitra ny zava-drehetra”.';
   }
 
   @override
@@ -530,7 +530,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String devicePhotosDeclined(String name) {
-    return 'Tsy mandray sary $name. Alefaso ao ny “Import Photos From Phones”.';
+    return 'Tsy mandray sary $name. Alefaso ao ny “Ampidiro ny sary avy amin’ny finday”.';
   }
 
   @override
@@ -794,7 +794,7 @@ class AppLocalizationsMg extends AppLocalizations {
   String get homeStepOpen => 'Sokafy i Linksy ao amin\'ny solosainao';
 
   @override
-  String get homeStepChoose => 'Safidio ny “Pair with QR Code”';
+  String get homeStepChoose => 'Safidio ny “Hanampy fitaovana”';
 
   @override
   String get homeStepScan => 'Vakio amin\'ity finday ity';
@@ -817,7 +817,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get pairingAddDeviceHint =>
-      'Ao amin\'ilay fitaovana iray, sokafy i Linksy ary safidio ny “Pair with QR Code”.';
+      'Ao amin’ilay fitaovana iray, sokafy i Linksy ary safidio ny “Hanampy fitaovana”.';
 
   @override
   String get pairingScanQr => 'Vakio ny QR code';
@@ -893,7 +893,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get scanHint =>
-      'Ao amin\'ny solosainao, sokafy i Linksy ary safidio ny “Pair with QR Code”.';
+      'Ao amin’ny solosainao, sokafy i Linksy ary safidio ny “Hanampy fitaovana”.';
 
   @override
   String get shareSheetPutOnClipboard => 'Apetraho amin\'ny clipboard';
@@ -1918,7 +1918,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String terminalCodeDetail(String name) {
-    return 'Ilay kaody napetraka tao amin\'i $name ao amin\'ny Preferences › Terminal. Tsy tehirizin\'i Linksy mihitsy.';
+    return 'Ilay kaody napetraka tao amin’i $name ao amin’ny Fikirana › Terminal. Tsy tehirizin’i Linksy mihitsy.';
   }
 
   @override
@@ -1950,4 +1950,19 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get settingsThemeDark => 'Maizina';
+
+  @override
+  String usbConnectedTo(String name) {
+    return 'Mifandray amin’i $name amin’ny tariby USB';
+  }
+
+  @override
+  String get usbPairTitle => 'Misy solosaina amin’ny tariby';
+
+  @override
+  String get usbPairBody =>
+      'Mbola tsy mifamatotra amin’ity finday ity izy. Ampifamatorina amin’ny tariby ve? Samy mampiseho kaody hampitahaina ny efijery roa.';
+
+  @override
+  String get usbPairAction => 'Ampifamatory';
 }

@@ -280,7 +280,7 @@
       }
     }
   },
-  "terminalRefusedOff": "Turn on Allow Terminal for this phone on {name}.",
+  "terminalRefusedOff": "On {name}, open this phone’s page and allow the terminal there.",
   "@terminalRefusedOff": {
     "description": "Terminal refused: the computer has terminal turned off for this phone; 'Allow Terminal' is a setting on the computer",
     "placeholders": {
@@ -1037,7 +1037,7 @@
   "@homeStepOpen": {
     "description": "Step 1 of 'Connect your first device'."
   },
-  "homeStepChoose": "Choose “Pair with QR Code”",
+  "homeStepChoose": "Choose “Add Device”",
   "@homeStepChoose": {
     "description": "Step 2 of 'Connect your first device'. “Pair with QR Code” is the desktop app's menu item; translate it as the desktop app does."
   },
@@ -1065,7 +1065,7 @@
   "@pairingAddDevice": {
     "description": "Title of the 'Add a device' bottom sheet."
   },
-  "pairingAddDeviceHint": "On the other device, open Linksy and choose “Pair with QR Code”.",
+  "pairingAddDeviceHint": "On the other device, open Linksy and choose “Add Device”.",
   "@pairingAddDeviceHint": {
     "description": "Hint in the 'Add a device' sheet. “Pair with QR Code” is the desktop app's menu item."
   },
@@ -1175,7 +1175,7 @@
   "@scanWrongCode": {
     "description": "Shown in the scanner when a QR code that isn't a Linksy pairing code was scanned. 'Pair with QR Code' is the desktop app's menu item."
   },
-  "scanHint": "On your computer, open Linksy and choose “Pair with QR Code”.",
+  "scanHint": "On your computer, open Linksy and choose “Add Device”.",
   "@scanHint": {
     "description": "Hint at the bottom of the QR scanner. “Pair with QR Code” is the desktop app's menu item."
   },
@@ -2663,5 +2663,26 @@
     "description": "Theme follows the phone's setting."
   },
   "@settingsThemeLight": {},
-  "@settingsThemeDark": {}
+  "@settingsThemeDark": {},
+  "usbConnectedTo": "Connected to {name} by USB cable",
+  "usbPairTitle": "A computer is on the cable",
+  "usbPairBody": "It isn’t paired with this phone yet. Pair with it over the cable? Both screens show a code to compare.",
+  "usbPairAction": "Pair",
+  "@usbConnectedTo": {
+    "description": "Brief message when a computer connects through the USB cable",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@usbPairTitle": {
+    "description": "Dialog title: an unpaired computer is on the USB cable"
+  },
+  "@usbPairBody": {
+    "description": "Dialog text offering to pair over the USB cable"
+  },
+  "@usbPairAction": {
+    "description": "Button: pair with the computer on the cable"
+  }
 }

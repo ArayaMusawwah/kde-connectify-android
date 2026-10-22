@@ -263,7 +263,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String terminalRefusedOff(String name) {
-    return 'Schalte auf $name „Terminal erlauben“ für dieses Handy ein.';
+    return 'Öffne auf $name die Seite dieses Handys und erlaube dort das Terminal.';
   }
 
   @override
@@ -792,7 +792,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get homeStepOpen => 'Öffne Linksy auf deinem Computer';
 
   @override
-  String get homeStepChoose => 'Wähle „Mit QR-Code koppeln“';
+  String get homeStepChoose => 'Wähle „Gerät hinzufügen“';
 
   @override
   String get homeStepScan => 'Scanne ihn mit diesem Handy';
@@ -815,7 +815,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get pairingAddDeviceHint =>
-      'Öffne Linksy auf dem anderen Gerät und wähle „Mit QR-Code koppeln“.';
+      'Öffne Linksy auf dem anderen Gerät und wähle „Gerät hinzufügen“.';
 
   @override
   String get pairingScanQr => 'QR-Code scannen';
@@ -890,7 +890,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get scanHint =>
-      'Öffne Linksy auf deinem Computer und wähle „Mit QR-Code koppeln“.';
+      'Öffne Linksy auf deinem Computer und wähle „Gerät hinzufügen“.';
 
   @override
   String get shareSheetPutOnClipboard => 'In eine Zwischenablage legen';
@@ -1943,4 +1943,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsThemeDark => 'Dunkel';
+
+  @override
+  String usbConnectedTo(String name) {
+    return 'Mit $name per USB-Kabel verbunden';
+  }
+
+  @override
+  String get usbPairTitle => 'Ein Computer hängt am Kabel';
+
+  @override
+  String get usbPairBody =>
+      'Er ist noch nicht mit diesem Handy gekoppelt. Über das Kabel koppeln? Beide Bildschirme zeigen einen Code zum Vergleichen.';
+
+  @override
+  String get usbPairAction => 'Koppeln';
 }

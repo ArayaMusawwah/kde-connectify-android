@@ -264,12 +264,12 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String terminalRefusedOff(String name) {
-    return 'Activez « Allow Terminal » pour ce téléphone sur $name.';
+    return 'Sur $name, ouvrez la page de ce téléphone et autorisez-y le terminal.';
   }
 
   @override
   String terminalRefusedAway(String name) {
-    return '$name n’autorise le terminal que sur le même réseau, sauf si « Allow Everything From Away » y est activé.';
+    return '$name n’autorise le terminal que sur le même réseau, sauf si « Tout autoriser à distance » y est activé.';
   }
 
   @override
@@ -532,7 +532,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String devicePhotosDeclined(String name) {
-    return '$name n’accepte pas les photos. Activez-y « Import Photos From Phones ».';
+    return '$name n’accepte pas les photos. Activez-y « Importer les photos des téléphones ».';
   }
 
   @override
@@ -795,7 +795,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeStepOpen => 'Ouvrez Linksy sur votre ordinateur';
 
   @override
-  String get homeStepChoose => 'Choisissez « Pair with QR Code »';
+  String get homeStepChoose => 'Choisissez « Ajouter un appareil »';
 
   @override
   String get homeStepScan => 'Scannez-le avec ce téléphone';
@@ -818,7 +818,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pairingAddDeviceHint =>
-      'Sur l’autre appareil, ouvrez Linksy et choisissez « Pair with QR Code ».';
+      'Sur l’autre appareil, ouvrez Linksy et choisissez « Ajouter un appareil ».';
 
   @override
   String get pairingScanQr => 'Scanner le QR code';
@@ -893,7 +893,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get scanHint =>
-      'Sur votre ordinateur, ouvrez Linksy et choisissez « Pair with QR Code ».';
+      'Sur votre ordinateur, ouvrez Linksy et choisissez « Ajouter un appareil ».';
 
   @override
   String get shareSheetPutOnClipboard => 'Mettre dans un presse-papiers';
@@ -1919,7 +1919,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String terminalCodeDetail(String name) {
-    return 'Le code défini sur $name dans Preferences › Terminal. Linksy ne le conserve jamais.';
+    return 'Le code défini sur $name dans Préférences › Terminal. Linksy ne le conserve jamais.';
   }
 
   @override
@@ -1951,4 +1951,19 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsThemeDark => 'Sombre';
+
+  @override
+  String usbConnectedTo(String name) {
+    return 'Connecté à $name par câble USB';
+  }
+
+  @override
+  String get usbPairTitle => 'Un ordinateur est sur le câble';
+
+  @override
+  String get usbPairBody =>
+      'Il n’est pas encore associé à ce téléphone. L’associer par le câble ? Les deux écrans affichent un code à comparer.';
+
+  @override
+  String get usbPairAction => 'Associer';
 }

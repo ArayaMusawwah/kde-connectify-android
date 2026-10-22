@@ -56,7 +56,6 @@ class MainActivity : FlutterActivity() {
         engine = flutterEngine
         pendingLink = linkFrom(intent)
         takeShared(intent)
-        if (intent?.action == android.hardware.usb.UsbManager.ACTION_USB_ACCESSORY_ATTACHED) openUsb(intent)
         watchBattery()
         ShareService.webcamListener = { session, state ->
             runOnUiThread { channel?.invokeMethod("webcamChanged", mapOf("session" to session, "state" to state.toString())) }
@@ -269,6 +268,9 @@ class MainActivity : FlutterActivity() {
                 }
             }
         }
+        // After the channel: a bridge opened now reaches Dart.
+        watchUsb()
+        openUsb(intent?.takeIf { it.action == android.hardware.usb.UsbManager.ACTION_USB_ACCESSORY_ATTACHED })
     }
 
     /// Presentation remote: the volume keys change slides instead of volume.
@@ -328,9 +330,72 @@ class MainActivity : FlutterActivity() {
             if (Build.VERSION.SDK_INT >= 33) it.getParcelableExtra(android.hardware.usb.UsbManager.EXTRA_ACCESSORY, android.hardware.usb.UsbAccessory::class.java)
             else it.getParcelableExtra(android.hardware.usb.UsbManager.EXTRA_ACCESSORY)
         }
+        val before = UsbBridge.current
         val port = if (accessory != null) UsbBridge.open(this, accessory) else UsbBridge.openAttached(this)
-        if (port != null) channel?.invokeMethod("usbPort", port)
+        if (port != null && UsbBridge.current !== before) {
+            channel?.invokeMethod("usbPort", port)
+            // The step people get stuck on: show Linksy, now on the cable.
+            if (!resumed) runCatching {
+                startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
+        }
         return port
+    }
+
+    private var usbReceiver: BroadcastReceiver? = null
+    private var resumed = false
+    private val usbPoll = android.os.Handler(android.os.Looper.getMainLooper())
+    private val usbTick = object : Runnable {
+        override fun run() {
+            if (UsbBridge.current == null) openUsb(null)
+            if (resumed) usbPoll.postDelayed(this, 1500)
+        }
+    }
+
+    /// Some phones (realme/ColorOS) never deliver USB_ACCESSORY_ATTACHED or
+    /// show the "open with" prompt, but list the accessory: watch for it
+    /// while the app runs, and hear the permission answer and unplugging.
+    private fun watchUsb() {
+        if (usbReceiver != null) return
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                when (intent.action) {
+                    UsbBridge.ACTION_PERMISSION -> {
+                        val granted = intent.getBooleanExtra(android.hardware.usb.UsbManager.EXTRA_PERMISSION_GRANTED, false)
+                        UsbBridge.answered(granted)
+                        android.util.Log.i("linksy", "usb cable: permission ${if (granted) "granted" else "refused"}")
+                        if (granted) openUsb(intent)
+                    }
+                    android.hardware.usb.UsbManager.ACTION_USB_ACCESSORY_ATTACHED -> openUsb(intent)
+                    android.hardware.usb.UsbManager.ACTION_USB_ACCESSORY_DETACHED -> {
+                        android.util.Log.i("linksy", "usb cable: unplugged")
+                        UsbBridge.detached()
+                    }
+                }
+            }
+        }
+        val filter = IntentFilter().apply {
+            addAction(UsbBridge.ACTION_PERMISSION)
+            addAction(android.hardware.usb.UsbManager.ACTION_USB_ACCESSORY_ATTACHED)
+            addAction(android.hardware.usb.UsbManager.ACTION_USB_ACCESSORY_DETACHED)
+        }
+        // Not exported: the permission answer comes from the system's PendingIntent.
+        if (Build.VERSION.SDK_INT >= 33) registerReceiver(receiver, filter, RECEIVER_NOT_EXPORTED)
+        else registerReceiver(receiver, filter)
+        usbReceiver = receiver
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resumed = true
+        usbPoll.removeCallbacks(usbTick)
+        usbPoll.post(usbTick)
+    }
+
+    override fun onPause() {
+        resumed = false
+        usbPoll.removeCallbacks(usbTick)
+        super.onPause()
     }
 
     override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
@@ -515,6 +580,9 @@ class MainActivity : FlutterActivity() {
         previews.keys.toList().forEach { webcamPreview(it, false) }
         batteryReceiver?.let { runCatching { unregisterReceiver(it) } }
         batteryReceiver = null
+        usbReceiver?.let { runCatching { unregisterReceiver(it) } }
+        usbReceiver = null
+        usbPoll.removeCallbacks(usbTick)
         ring.stop()
         scanner?.stop()
         displays.values.forEach { it.stop() }

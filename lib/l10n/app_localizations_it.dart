@@ -263,7 +263,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String terminalRefusedOff(String name) {
-    return 'Attiva Consenti Terminale per questo telefono su $name.';
+    return 'Su $name, apri la pagina di questo telefono e consenti lì il terminale.';
   }
 
   @override
@@ -793,7 +793,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get homeStepOpen => 'Apri Linksy sul computer';
 
   @override
-  String get homeStepChoose => 'Scegli “Associa con codice QR”';
+  String get homeStepChoose => 'Scegli “Aggiungi dispositivo”';
 
   @override
   String get homeStepScan => 'Scansionalo con questo telefono';
@@ -816,7 +816,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get pairingAddDeviceHint =>
-      'Sull’altro dispositivo, apri Linksy e scegli “Associa con codice QR”.';
+      'Sull’altro dispositivo, apri Linksy e scegli “Aggiungi dispositivo”.';
 
   @override
   String get pairingScanQr => 'Scansiona codice QR';
@@ -892,7 +892,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get scanHint =>
-      'Sul computer, apri Linksy e scegli “Associa con codice QR”.';
+      'Sul computer, apri Linksy e scegli “Aggiungi dispositivo”.';
 
   @override
   String get shareSheetPutOnClipboard => 'Metti negli appunti';
@@ -1951,4 +1951,19 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get settingsThemeDark => 'Scuro';
+
+  @override
+  String usbConnectedTo(String name) {
+    return 'Connesso a $name via cavo USB';
+  }
+
+  @override
+  String get usbPairTitle => 'C’è un computer sul cavo';
+
+  @override
+  String get usbPairBody =>
+      'Non è ancora associato a questo telefono. Associarlo tramite il cavo? Entrambi gli schermi mostrano un codice da confrontare.';
+
+  @override
+  String get usbPairAction => 'Associa';
 }

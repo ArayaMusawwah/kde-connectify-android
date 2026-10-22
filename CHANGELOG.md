@@ -2,6 +2,17 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.2.2] - 2026-10-22
+
+### Added
+- **Pair over the USB cable**: when a computer that isn't paired yet is on the cable, Linksy offers to pair with it there. Both screens show a code to compare.
+- "Connected to … by USB cable" when the cable connects.
+
+### Fixed
+- **USB cable on phones that never show the "open with Linksy" prompt** (realme, ColorOS…): with Linksy open, the cable is found within a second or two, and Linksy asks for permission to use it.
+- A cable plugged in while Linksy was starting is no longer missed.
+- Text that names something on the computer uses the computer's own words, in every language ("Add Device", Preferences › Terminal, "Allow Everything From Away", "Import Photos From Phones").
+
 ## [0.2.1] - 2026-10-22
 
 ### Added

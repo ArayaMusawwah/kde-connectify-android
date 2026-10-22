@@ -247,7 +247,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String terminalRefusedOff(String name) {
-    return '请在 $name 上为这部手机开启“允许终端”。';
+    return '请在 $name 上打开这部手机的页面，并在那里允许终端。';
   }
 
   @override
@@ -770,7 +770,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeStepOpen => '在电脑上打开 Linksy';
 
   @override
-  String get homeStepChoose => '选择“用二维码配对”';
+  String get homeStepChoose => '选择“添加设备”';
 
   @override
   String get homeStepScan => '用这部手机扫描';
@@ -791,7 +791,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pairingAddDevice => '添加设备';
 
   @override
-  String get pairingAddDeviceHint => '在另一台设备上打开 Linksy，然后选择“用二维码配对”。';
+  String get pairingAddDeviceHint => '在另一台设备上打开 Linksy，然后选择“添加设备”。';
 
   @override
   String get pairingScanQr => '扫描二维码';
@@ -861,7 +861,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scanWrongCode => '这不是 Linksy 代码。请在电脑上打开 Linksy → 用二维码配对。';
 
   @override
-  String get scanHint => '在电脑上打开 Linksy，然后选择“用二维码配对”。';
+  String get scanHint => '在电脑上打开 Linksy，然后选择“添加设备”。';
 
   @override
   String get shareSheetPutOnClipboard => '放到剪贴板';
@@ -1881,4 +1881,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsThemeDark => '深色';
+
+  @override
+  String usbConnectedTo(String name) {
+    return '已通过 USB 数据线连接到 $name';
+  }
+
+  @override
+  String get usbPairTitle => '数据线上有一台电脑';
+
+  @override
+  String get usbPairBody => '它尚未与这部手机配对。要通过数据线配对吗？两边屏幕都会显示一个代码供比对。';
+
+  @override
+  String get usbPairAction => '配对';
 }

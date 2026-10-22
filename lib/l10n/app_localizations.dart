@@ -507,7 +507,7 @@ abstract class AppLocalizations {
   /// Terminal refused: the computer has terminal turned off for this phone; 'Allow Terminal' is a setting on the computer
   ///
   /// In en, this message translates to:
-  /// **'Turn on Allow Terminal for this phone on {name}.'**
+  /// **'On {name}, open this phone’s page and allow the terminal there.'**
   String terminalRefusedOff(String name);
 
   /// Terminal refused from away; “Allow Everything From Away” is a setting on the computer
@@ -1395,7 +1395,7 @@ abstract class AppLocalizations {
   /// Step 2 of 'Connect your first device'. “Pair with QR Code” is the desktop app's menu item; translate it as the desktop app does.
   ///
   /// In en, this message translates to:
-  /// **'Choose “Pair with QR Code”'**
+  /// **'Choose “Add Device”'**
   String get homeStepChoose;
 
   /// Step 3 of 'Connect your first device'; 'it' is the QR code.
@@ -1437,7 +1437,7 @@ abstract class AppLocalizations {
   /// Hint in the 'Add a device' sheet. “Pair with QR Code” is the desktop app's menu item.
   ///
   /// In en, this message translates to:
-  /// **'On the other device, open Linksy and choose “Pair with QR Code”.'**
+  /// **'On the other device, open Linksy and choose “Add Device”.'**
   String get pairingAddDeviceHint;
 
   /// Option in the 'Add a device' sheet that opens the QR scanner.
@@ -1557,7 +1557,7 @@ abstract class AppLocalizations {
   /// Hint at the bottom of the QR scanner. “Pair with QR Code” is the desktop app's menu item.
   ///
   /// In en, this message translates to:
-  /// **'On your computer, open Linksy and choose “Pair with QR Code”.'**
+  /// **'On your computer, open Linksy and choose “Add Device”.'**
   String get scanHint;
 
   /// Title of the share sheet when one shared file goes onto a computer's clipboard.
@@ -3233,6 +3233,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get settingsThemeDark;
+
+  /// Brief message when a computer connects through the USB cable
+  ///
+  /// In en, this message translates to:
+  /// **'Connected to {name} by USB cable'**
+  String usbConnectedTo(String name);
+
+  /// Dialog title: an unpaired computer is on the USB cable
+  ///
+  /// In en, this message translates to:
+  /// **'A computer is on the cable'**
+  String get usbPairTitle;
+
+  /// Dialog text offering to pair over the USB cable
+  ///
+  /// In en, this message translates to:
+  /// **'It isn’t paired with this phone yet. Pair with it over the cable? Both screens show a code to compare.'**
+  String get usbPairBody;
+
+  /// Button: pair with the computer on the cable
+  ///
+  /// In en, this message translates to:
+  /// **'Pair'**
+  String get usbPairAction;
 }
 
 class _AppLocalizationsDelegate

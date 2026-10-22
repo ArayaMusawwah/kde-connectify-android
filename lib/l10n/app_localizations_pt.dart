@@ -263,12 +263,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String terminalRefusedOff(String name) {
-    return 'Ative Allow Terminal para este celular em $name.';
+    return 'Em $name, abra a página deste celular e permita o terminal lá.';
   }
 
   @override
   String terminalRefusedAway(String name) {
-    return '$name só permite um terminal na mesma rede, a menos que “Allow Everything From Away” esteja ativado lá.';
+    return '$name só permite um terminal na mesma rede, a menos que “Permitir tudo fora de casa” esteja ativado lá.';
   }
 
   @override
@@ -529,7 +529,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String devicePhotosDeclined(String name) {
-    return '$name não aceita fotos. Ative “Import Photos From Phones” lá.';
+    return '$name não aceita fotos. Ative “Importar fotos dos celulares” lá.';
   }
 
   @override
@@ -791,7 +791,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeStepOpen => 'Abra o Linksy no seu computador';
 
   @override
-  String get homeStepChoose => 'Escolha “Parear com código QR”';
+  String get homeStepChoose => 'Escolha “Adicionar dispositivo”';
 
   @override
   String get homeStepScan => 'Escaneie com este celular';
@@ -814,7 +814,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get pairingAddDeviceHint =>
-      'No outro dispositivo, abra o Linksy e escolha “Parear com código QR”.';
+      'No outro dispositivo, abra o Linksy e escolha “Adicionar dispositivo”.';
 
   @override
   String get pairingScanQr => 'Escanear código QR';
@@ -889,7 +889,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get scanHint =>
-      'No computador, abra o Linksy e escolha “Parear com código QR”.';
+      'No computador, abra o Linksy e escolha “Adicionar dispositivo”.';
 
   @override
   String get shareSheetPutOnClipboard => 'Colocar em uma área de transferência';
@@ -1912,7 +1912,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String terminalCodeDetail(String name) {
-    return 'O código definido em $name em Preferences › Terminal. O Linksy nunca o guarda.';
+    return 'O código definido em $name em Preferências › Terminal. O Linksy nunca o guarda.';
   }
 
   @override
@@ -1944,4 +1944,19 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsThemeDark => 'Escuro';
+
+  @override
+  String usbConnectedTo(String name) {
+    return 'Conectado a $name por cabo USB';
+  }
+
+  @override
+  String get usbPairTitle => 'Há um computador no cabo';
+
+  @override
+  String get usbPairBody =>
+      'Ele ainda não está pareado com este celular. Parear pelo cabo? As duas telas mostram um código para comparar.';
+
+  @override
+  String get usbPairAction => 'Parear';
 }

@@ -253,7 +253,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String terminalRefusedOff(String name) {
-    return '$name で、このスマートフォンの「ターミナルを許可」をオンにしてください。';
+    return '$name でこのスマートフォンのページを開き、ターミナルを許可してください。';
   }
 
   @override
@@ -777,7 +777,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get homeStepOpen => 'コンピュータで Linksy を開きます';
 
   @override
-  String get homeStepChoose => '「QR コードでペアリング」を選びます';
+  String get homeStepChoose => '「デバイスを追加」を選びます';
 
   @override
   String get homeStepScan => 'このスマートフォンで読み取ります';
@@ -798,8 +798,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get pairingAddDevice => 'デバイスを追加';
 
   @override
-  String get pairingAddDeviceHint =>
-      '相手のデバイスで Linksy を開き、「QR コードでペアリング」を選んでください。';
+  String get pairingAddDeviceHint => '相手のデバイスで Linksy を開き、「デバイスを追加」を選んでください。';
 
   @override
   String get pairingScanQr => 'QR コードを読み取る';
@@ -871,7 +870,7 @@ class AppLocalizationsJa extends AppLocalizations {
       'Linksy のコードではありません。コンピュータで Linksy →「QR コードでペアリング」を開いてください。';
 
   @override
-  String get scanHint => 'コンピュータで Linksy を開き、「QR コードでペアリング」を選んでください。';
+  String get scanHint => 'コンピュータで Linksy を開き、「デバイスを追加」を選んでください。';
 
   @override
   String get shareSheetPutOnClipboard => 'クリップボードに入れる';
@@ -1869,7 +1868,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String terminalCodeDetail(String name) {
-    return '$name の 環境設定 › ターミナル で設定したコードです。Linksy はコードを保存しません。';
+    return '$name の「環境設定 › ターミナル」で設定したコードです。Linksy はコードを保存しません。';
   }
 
   @override
@@ -1901,4 +1900,19 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsThemeDark => 'ダーク';
+
+  @override
+  String usbConnectedTo(String name) {
+    return 'USB ケーブルで $name に接続しました';
+  }
+
+  @override
+  String get usbPairTitle => 'ケーブルの先にコンピュータがあります';
+
+  @override
+  String get usbPairBody =>
+      'このスマートフォンとはまだペアリングされていません。ケーブル経由でペアリングしますか？両方の画面にコードが表示されるので照合してください。';
+
+  @override
+  String get usbPairAction => 'ペアリング';
 }

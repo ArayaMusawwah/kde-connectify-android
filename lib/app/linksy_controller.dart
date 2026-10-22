@@ -518,12 +518,41 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   // USB cable (§4.11): the bridge is up; dial the computer through it.
 
+  int? _usbPort;
+  final _usbNews = StreamController<UsbNews>.broadcast();
+
+  /// What the cable did: a computer connected through it, or one that
+  /// isn't paired to offer pairing with.
+  Stream<UsbNews> get usbNews => _usbNews.stream;
+
   void _onUsb(int port) {
+    if (port == _usbPort) return;
+    _usbPort = port;
+    final address = '127.0.0.1:$port';
+    debugPrint('usb cable: dialing $address');
     node
-        .connectAddress('127.0.0.1:$port')
-        .then((_) => refresh())
-        .catchError((Object _) {});
+        .connectAddress(address)
+        .timeout(const Duration(seconds: 6))
+        .then((_) async {
+          debugPrint('usb cable: connected');
+          await refresh();
+          final view = devices.where((v) => v.connected && v.usb).firstOrNull;
+          _usbNews.add(UsbConnected(view?.device.name ?? tr.ctlYourComputer));
+        })
+        .catchError((Object e) {
+          debugPrint('usb cable: dial failed ($e)');
+          // No paired computer answers: maybe one to pair (desktop 0.8.0
+          // switches phones that aren't paired yet).
+          if (_usbPort == port) _usbNews.add(UsbPairOffer(address));
+        });
   }
+
+  /// Pair with the computer on the cable, then connect through it.
+  Future<String?> pairOverCable(String address) => _run(() async {
+    await node.pairAddress(address);
+    await node.connectAddress(address);
+    await refresh();
+  });
 
   /// A computer connected (again): what it should know straight away.
   void _onConnected(String id) {
@@ -1342,6 +1371,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _callSub?.cancel();
     _answerSub?.cancel();
     _usbSub?.cancel();
+    _usbNews.close();
     WidgetsBinding.instance.removeObserver(this);
     _importTimer?.cancel();
     _ringTimer?.cancel();
@@ -1353,4 +1383,20 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _prompts.close();
     super.dispose();
   }
+}
+
+sealed class UsbNews {
+  const UsbNews();
+}
+
+/// Connected to [name] through the cable.
+class UsbConnected extends UsbNews {
+  const UsbConnected(this.name);
+  final String name;
+}
+
+/// Nothing paired answered at [address]: offer to pair through it.
+class UsbPairOffer extends UsbNews {
+  const UsbPairOffer(this.address);
+  final String address;
 }

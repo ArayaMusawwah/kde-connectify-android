@@ -266,7 +266,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String terminalRefusedOff(String name) {
-    return 'Включите «Разрешить терминал» для этого телефона на $name.';
+    return 'На $name откройте страницу этого телефона и разрешите там терминал.';
   }
 
   @override
@@ -535,7 +535,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String devicePhotosDeclined(String name) {
-    return '$name не принимает фото. Включите там «Import Photos From Phones».';
+    return '$name не принимает фото. Включите там «Импортировать фото с телефонов».';
   }
 
   @override
@@ -802,7 +802,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get homeStepOpen => 'Откройте Linksy на компьютере';
 
   @override
-  String get homeStepChoose => 'Выберите «Pair with QR Code»';
+  String get homeStepChoose => 'Выберите «Добавить устройство»';
 
   @override
   String get homeStepScan => 'Отсканируйте его этим телефоном';
@@ -825,7 +825,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pairingAddDeviceHint =>
-      'На другом устройстве откройте Linksy и выберите «Pair with QR Code».';
+      'На другом устройстве откройте Linksy и выберите «Добавить устройство».';
 
   @override
   String get pairingScanQr => 'Сканировать QR-код';
@@ -899,7 +899,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get scanHint =>
-      'На компьютере откройте Linksy и выберите «Pair with QR Code».';
+      'На компьютере откройте Linksy и выберите «Добавить устройство».';
 
   @override
   String get shareSheetPutOnClipboard => 'В буфер обмена';
@@ -1934,7 +1934,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String terminalCodeDetail(String name) {
-    return 'Код, заданный на $name в Preferences › Terminal. Linksy его не хранит.';
+    return 'Код, заданный на $name в разделе Настройки › Терминал. Linksy его не хранит.';
   }
 
   @override
@@ -1966,4 +1966,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsThemeDark => 'Тёмное';
+
+  @override
+  String usbConnectedTo(String name) {
+    return 'Подключено к $name по USB-кабелю';
+  }
+
+  @override
+  String get usbPairTitle => 'К кабелю подключён компьютер';
+
+  @override
+  String get usbPairBody =>
+      'Он ещё не связан с этим телефоном. Связать по кабелю? На обоих экранах появится код для сравнения.';
+
+  @override
+  String get usbPairAction => 'Связать';
 }

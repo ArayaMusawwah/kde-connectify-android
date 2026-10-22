@@ -111,25 +111,65 @@ class UsbBridge private constructor(
         fun isLinksy(accessory: UsbAccessory) =
             accessory.manufacturer == "Linksy" && accessory.model == "Linksy"
 
-        /// Opens [accessory] (Android asked the user when it attached);
-        /// returns the bridge's port, or null.
+        /// Asked for and not answered yet: one dialog at a time.
+        @Volatile private var asking: UsbAccessory? = null
+        /// Refused: not asked again until it's plugged in again.
+        @Volatile private var refused: UsbAccessory? = null
+
+        const val ACTION_PERMISSION = "app.linksy.USB_PERMISSION"
+
+        /// Opens [accessory]; returns the bridge's port, or null. Without
+        /// permission (no "open with" prompt was shown or answered, as on
+        /// realme/ColorOS) it asks, and [ACTION_PERMISSION] comes back.
         fun open(context: Context, accessory: UsbAccessory, onClosed: () -> Unit = {}): Int? {
             if (!isLinksy(accessory)) return null
             current?.let { if (it.accessory == accessory) return it.port; it.close() }
             val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
-            if (!manager.hasPermission(accessory)) return null
-            val fd = runCatching { manager.openAccessory(accessory) }.getOrNull() ?: return null
-            return runCatching { UsbBridge(accessory, fd, onClosed) }.getOrNull()?.also {
-                current = it
-                Log.i("linksy", "usb cable: bridge on 127.0.0.1:${it.port}")
-            }?.port
+            if (!manager.hasPermission(accessory)) {
+                if (asking != accessory && refused != accessory) {
+                    asking = accessory
+                    Log.i("linksy", "usb cable: asking permission")
+                    val intent = android.content.Intent(ACTION_PERMISSION).setPackage(context.packageName)
+                    val flags = if (android.os.Build.VERSION.SDK_INT >= 31) android.app.PendingIntent.FLAG_MUTABLE else 0
+                    manager.requestPermission(accessory, android.app.PendingIntent.getBroadcast(context, 0, intent, flags))
+                }
+                return null
+            }
+            asking = null
+            val fd = runCatching { manager.openAccessory(accessory) }
+                .onFailure { Log.w("linksy", "usb cable: open failed ($it)") }
+                .getOrNull()
+            if (fd == null) {
+                Log.w("linksy", "usb cable: openAccessory gave nothing")
+                return null
+            }
+            return runCatching { UsbBridge(accessory, fd, onClosed) }
+                .onFailure { Log.w("linksy", "usb cable: bridge failed ($it)") }
+                .getOrNull()?.also {
+                    current = it
+                    Log.i("linksy", "usb cable: bridge on 127.0.0.1:${it.port}")
+                }?.port
         }
 
-        /// An accessory already attached (the app opened by other means).
+        /// The permission dialog was answered.
+        fun answered(granted: Boolean) {
+            if (!granted) refused = asking
+            asking = null
+        }
+
+        /// An accessory already attached (the app opened by other means, or
+        /// Android never sent the intent).
         fun openAttached(context: Context, onClosed: () -> Unit = {}): Int? {
             val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
             val accessory = manager.accessoryList?.firstOrNull(::isLinksy) ?: return null
             return open(context, accessory, onClosed)
+        }
+
+        /// The cable came out.
+        fun detached() {
+            asking = null
+            refused = null
+            current?.close()
         }
     }
 }

@@ -13,6 +13,7 @@ import '../features/sharing/display_screen.dart';
 import '../features/sharing/sharing.dart';
 import '../features/sharing/webcam_screen.dart';
 import '../features/transfer/incoming_sheet.dart';
+import '../ui/icons.dart';
 import '../ui/l10n.dart';
 import '../ui/sig.dart';
 import 'linksy_controller.dart';
@@ -32,6 +33,7 @@ class _LinksyAppState extends State<LinksyApp> {
   final _navigator = GlobalKey<NavigatorState>();
   final _messenger = GlobalKey<ScaffoldMessengerState>();
   StreamSubscription<LinksyEvent>? _prompts;
+  StreamSubscription<UsbNews>? _usb;
   StreamSubscription<String>? _links;
   StreamSubscription<SharedIn>? _shares;
   StreamSubscription<String>? _webcams;
@@ -43,6 +45,7 @@ class _LinksyAppState extends State<LinksyApp> {
   void initState() {
     super.initState();
     _prompts = widget.controller.prompts.listen(_onPrompt);
+    _usb = widget.controller.usbNews.listen(_onUsb);
     // A pairing link opened the app (the desktop's QR code scanned with the
     // camera app), or arrives while it runs.
     _links = LinksyPlatform.links.listen(_pairWith);
@@ -75,6 +78,7 @@ class _LinksyAppState extends State<LinksyApp> {
   @override
   void dispose() {
     _prompts?.cancel();
+    _usb?.cancel();
     _links?.cancel();
     _shares?.cancel();
     _webcams?.cancel();
@@ -110,6 +114,37 @@ class _LinksyAppState extends State<LinksyApp> {
   void _openWebcam(SessionStarted share) => _navigator.currentState?.push(
     MaterialPageRoute<void>(builder: (_) => WebcamScreen(share: share)),
   );
+
+  Future<void> _onUsb(UsbNews news) async {
+    switch (news) {
+      case UsbConnected(:final name):
+        _say(tr.usbConnectedTo(name));
+      case UsbPairOffer(:final address):
+        final context = _navigator.currentContext;
+        if (context == null) return;
+        final pair = await showDialog<bool>(
+          context: context,
+          builder: (dialog) => AlertDialog(
+            icon: const Icon(Ph.usb),
+            title: Text(dialog.l10n.usbPairTitle),
+            content: Text(dialog.l10n.usbPairBody),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialog).pop(false),
+                child: Text(dialog.l10n.commonNotNow),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(dialog).pop(true),
+                child: Text(dialog.l10n.usbPairAction),
+              ),
+            ],
+          ),
+        );
+        if (pair != true) return;
+        final error = await widget.controller.pairOverCable(address);
+        if (error != null) _say(error);
+    }
+  }
 
   void _say(String text) => _messenger.currentState
     ?..hideCurrentSnackBar()

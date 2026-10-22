@@ -58,8 +58,20 @@ controls, `camera_state`, 1080p) is done on both sides as of desktop 0.6.0 and p
 0.1.15; the protocol lives in `docs/protocol.md` (§4.5, §4.8–§4.14). Worth checking on the
 desktop side with a real phone:
 
-1. **USB cable**: the phone's bridge follows §4.11 but couldn't be tried without a
-   computer to switch it into accessory mode; please test with a real phone.
+1. **USB cable: the realme blocker is addressed in phone 0.2.2** (please retry on the
+   realme 15 Pro 5G). The phone no longer relies on `USB_ACCESSORY_ATTACHED` or the
+   "open with" prompt: while Linksy is open it looks at `UsbManager.accessoryList`
+   (on resume and every 1.5 s), also listens for attached/detached at run time, and
+   asks `requestPermission` when it has none (once per plug if refused). The bridge is
+   opened after Flutter's channel exists, so its port always reaches the dial. Logcat
+   tag `linksy` / `flutter`: "usb cable: asking permission", "permission granted",
+   "bridge on 127.0.0.1:P", "dialing", "connected" or "dial failed (…)", "unplugged".
+   If no paired computer answers through the cable within 6 s, the phone offers to
+   **pair over the cable** (`pair(127.0.0.1:P)`, then connects); once connected it
+   says "Connected to <name> by USB cable" and the computer's page shows the cable.
+   Android only switches apps on its own while Linksy is in the background if the
+   system's prompt opened it: with Linksy open in front the cable is taken within
+   ~1.5 s, well inside the 17 s.
 2. **Terminal (§4.15): done on the phone in 0.2.0**, on core `e6957b4` (desktop 0.7.0):
    `request_terminal`, the session's output to the terminal view, `term_input` /
    `term_resize` / `term_close` frames, `list_terminals` + `Event::Terminals` (5 s
@@ -110,6 +122,13 @@ default SMS app.
   works on the networks tested; pairing by QR or address covers the rest).
 
 ## Changelog
+
+- **2026-10-22** — Phone 0.2.2 (desktop 0.8.0): the USB cable is found without the
+  system's prompt (accessory list, run-time receiver, permission request), its port
+  always reaches the dial, every step is logged, and an unpaired computer on the cable
+  is offered for pairing over it (§2.1). Strings quoting the desktop use its names
+  ("Add Device", Preferences › Terminal, "Allow Everything From Away", "Import Photos
+  From Phones") in each of the 10 languages.
 
 - **2026-10-22** — Phone 0.2.0 on core `e6957b4` (desktop 0.7.0): the terminal works
   end to end (§2.2), with the closing rules of docs/protocol.md §4.15.

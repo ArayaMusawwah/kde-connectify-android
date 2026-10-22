@@ -260,7 +260,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String terminalRefusedOff(String name) {
-    return 'Turn on Allow Terminal for this phone on $name.';
+    return 'On $name, open this phone’s page and allow the terminal there.';
   }
 
   @override
@@ -788,7 +788,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeStepOpen => 'Open Linksy on your computer';
 
   @override
-  String get homeStepChoose => 'Choose “Pair with QR Code”';
+  String get homeStepChoose => 'Choose “Add Device”';
 
   @override
   String get homeStepScan => 'Scan it with this phone';
@@ -811,7 +811,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pairingAddDeviceHint =>
-      'On the other device, open Linksy and choose “Pair with QR Code”.';
+      'On the other device, open Linksy and choose “Add Device”.';
 
   @override
   String get pairingScanQr => 'Scan QR code';
@@ -885,7 +885,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scanHint =>
-      'On your computer, open Linksy and choose “Pair with QR Code”.';
+      'On your computer, open Linksy and choose “Add Device”.';
 
   @override
   String get shareSheetPutOnClipboard => 'Put on a clipboard';
@@ -1936,4 +1936,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsThemeDark => 'Dark';
+
+  @override
+  String usbConnectedTo(String name) {
+    return 'Connected to $name by USB cable';
+  }
+
+  @override
+  String get usbPairTitle => 'A computer is on the cable';
+
+  @override
+  String get usbPairBody =>
+      'It isn’t paired with this phone yet. Pair with it over the cable? Both screens show a code to compare.';
+
+  @override
+  String get usbPairAction => 'Pair';
 }

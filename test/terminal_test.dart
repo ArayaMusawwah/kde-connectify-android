@@ -72,7 +72,7 @@ void main() {
   test('refusal messages say what to do', () {
     expect(
       TerminalRefused(TerminalRefusal.off, name: 'fedora').message,
-      'Turn on Allow Terminal for this phone on fedora.',
+      'On fedora, open this phone’s page and allow the terminal there.',
     );
     expect(
       TerminalRefused(TerminalRefusal.locked, name: 'fedora').message,
