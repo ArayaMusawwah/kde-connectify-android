@@ -2,6 +2,21 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.2.1] - 2026-10-22
+
+### Added
+- **10 languages**: English, Français, Malagasy, Español, Português, Deutsch, Italiano, Русский, 中文 and 日本語, for the whole app and its notifications. Pick one on a scrolling wheel; it changes as you scroll. Settings › Language changes it later.
+- **First-run setup**: after the language, one page with what Linksy may do (notifications, camera, away from home, keep running in the background, let computers locate the phone, a shared folder, the photo folder), each explained. Everything can be turned on or off later in Settings.
+- **Appearance**: System, Light or Dark, in Settings.
+- **Terminal**: prompt icons from Nerd Fonts show properly (starship, powerline, oh-my-posh…), in JetBrains Mono. Pinch with two fingers to make the text smaller or bigger, for wide output like fastfetch; the size is kept.
+
+### Removed
+- The push token row in Settings (news from Linksy still arrives as notifications).
+
+### Fixed
+- After a wrong terminal code, the field is ready to type again.
+- The share sheet says how each computer is reached ("Same Wi-Fi"), like home.
+
 ## [0.2.0] - 2026-10-22
 
 ### Added
