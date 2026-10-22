@@ -2,11 +2,13 @@
 # Publishes a built release to the public download repo,
 # LinkSy-mg/linksy-releases: the APKs and the release notes, never the
 # code or the symbols. The app repo stays private.
-# Asset names carry no version, so these links always serve the newest release:
+# Asset names carry the version (linksy-0.2.1.apk, -arm64, -armv7), so a downloaded file
+# says which it is; the release is titled "Mobile release" (desktop ones say "Desktop
+# release"). The website always links the newest, whatever its version:
 #
-#   https://github.com/LinkSy-mg/linksy-releases/releases/latest/download/linksy.apk        (every phone)
-#   https://github.com/LinkSy-mg/linksy-releases/releases/latest/download/linksy-arm64.apk  (64-bit, smaller)
-#   https://github.com/LinkSy-mg/linksy-releases/releases/latest/download/linksy-armv7.apk  (32-bit, smaller)
+#   https://linksy.diary.mg/download/android        (every phone)
+#   https://linksy.diary.mg/download/android-arm64  (64-bit, smaller)
+#   https://linksy.diary.mg/download/android-armv7  (32-bit, smaller)
 #
 #   tool/publish_public.sh v0.1.0      # run by tool/release.sh; by hand to republish
 set -euo pipefail
@@ -24,9 +26,7 @@ for f in "$NAME-$V.apk" "$NAME-$V-arm64.apk" "$NAME-$V-armv7.apk" notes.md; do
 done
 
 rm -rf "$OUT"; mkdir -p "$OUT"
-cp "$DIST/$NAME-$V.apk"       "$OUT/$NAME.apk"
-cp "$DIST/$NAME-$V-arm64.apk" "$OUT/$NAME-arm64.apk"
-cp "$DIST/$NAME-$V-armv7.apk" "$OUT/$NAME-armv7.apk"
+cp "$DIST/$NAME-$V.apk" "$DIST/$NAME-$V-arm64.apk" "$DIST/$NAME-$V-armv7.apk" "$OUT/"
 {
   cat "$DIST/notes.md"
   print '\n### SHA-256\n```'
@@ -40,6 +40,6 @@ if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
   gh release edit "$TAG" --repo "$REPO" --notes-file "$OUT/notes.md"
 else
   gh release create "$TAG" --repo "$REPO" --target main --latest \
-    --title "Linksy $V" --notes-file "$OUT/notes.md" "$OUT"/*.apk
+    --title "Mobile release · Linksy $V for Android" --notes-file "$OUT/notes.md" "$OUT"/*.apk
 fi
 gh release view "$TAG" --repo "$REPO" --json url --jq .url

@@ -7,7 +7,7 @@ offer those features to Android phones.
 - App: `app.linksy.mg` (since 0.1.8; 0.1.x up to 0.1.7 was `app.linksy`), Flutter + the
   real `linksy-core` through flutter_rust_bridge. Repo: LinkSy-mg/linksy-mobile.
 - Core pinned at `e6957b4` (desktop 0.7.0), as of phone 0.2.0. Builds for arm64-v8a, armeabi-v7a, x86_64.
-- Releases: LinkSy-mg/linksy-releases (`/releases/latest/download/linksy.apk`).
+- Releases: LinkSy-mg/linksy-releases, titled "Mobile release · Linksy X for Android", APKs named `linksy-X.apk` / `-arm64` / `-armv7`; the newest is always https://linksy.diary.mg/download/android.
 - Distributed as a sideloaded APK, not through the Play Store. That shapes everything in
   §3: Android's fraud protection blocks installing sideloaded apps that declare certain
   permissions, with no way for the user to skip it (v0.1.3 hit this).
