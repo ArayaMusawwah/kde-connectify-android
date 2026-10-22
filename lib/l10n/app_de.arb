@@ -515,5 +515,9 @@
   "terminalCodeUseDigits": "Ziffern verwenden",
   "terminalCodeUseLetters": "Buchstaben verwenden",
   "terminalOpening": "Wird geöffnet…",
-  "terminalOpen": "Terminal öffnen"
+  "terminalOpen": "Terminal öffnen",
+  "settingsAppearance": "Darstellung",
+  "settingsThemeSystem": "System",
+  "settingsThemeLight": "Hell",
+  "settingsThemeDark": "Dunkel"
 }

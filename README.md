@@ -29,6 +29,9 @@ Up to date with desktop 0.6.0 (core `1c8ebe4`). Done on the phone:
   from the computer), **microphone**, second display in the phone's shape, watching and
   controlling the computer's screen, touchpad/keyboard/slides.
 - Device pictures both ways, locate (opt-in), service notices, push news.
+- 10 languages (English, French, Malagasy, Spanish, Portuguese, German, Italian,
+  Russian, Chinese, Japanese) with gen-l10n: `lib/l10n/app_*.arb`, Android's own text in
+  `android/app/src/main/res/values-*`. First-run setup, light/dark/system appearance.
 
 Not possible in a sideloaded app (see [`docs/android-app.md`](docs/android-app.md) §3): texting, mirroring
 the phone's notifications or its media, remote control of the phone, watching its

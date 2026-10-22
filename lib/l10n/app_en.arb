@@ -2651,5 +2651,17 @@
   "terminalOpen": "Open terminal",
   "@terminalOpen": {
     "description": "Button: open the terminal with the code"
-  }
+  },
+  "settingsAppearance": "Appearance",
+  "settingsThemeSystem": "System",
+  "settingsThemeLight": "Light",
+  "settingsThemeDark": "Dark",
+  "@settingsAppearance": {
+    "description": "Settings row: light, dark or system theme."
+  },
+  "@settingsThemeSystem": {
+    "description": "Theme follows the phone's setting."
+  },
+  "@settingsThemeLight": {},
+  "@settingsThemeDark": {}
 }

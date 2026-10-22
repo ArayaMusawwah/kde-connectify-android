@@ -515,5 +515,9 @@
   "terminalCodeUseDigits": "Ampiasao isa",
   "terminalCodeUseLetters": "Ampiasao litera",
   "terminalOpening": "Manokatra…",
-  "terminalOpen": "Sokafy ny terminal"
+  "terminalOpen": "Sokafy ny terminal",
+  "settingsAppearance": "Endrika",
+  "settingsThemeSystem": "Araka ny finday",
+  "settingsThemeLight": "Mazava",
+  "settingsThemeDark": "Maizina"
 }

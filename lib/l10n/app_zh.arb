@@ -515,5 +515,9 @@
   "terminalCodeUseDigits": "使用数字",
   "terminalCodeUseLetters": "使用字母",
   "terminalOpening": "正在打开…",
-  "terminalOpen": "打开终端"
+  "terminalOpen": "打开终端",
+  "settingsAppearance": "外观",
+  "settingsThemeSystem": "跟随系统",
+  "settingsThemeLight": "浅色",
+  "settingsThemeDark": "深色"
 }

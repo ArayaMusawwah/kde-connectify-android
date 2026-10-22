@@ -1,6 +1,6 @@
 # Screenshots
 
-Linksy for Android 0.2.0, for the website. All taken on 2026-10-22 on a clean install
+Linksy for Android 0.2.1, for the website. All taken on 2026-10-22 on a clean install
 (phone named "Pixel 9"), paired with two computers: **Studio Desktop** (a Linux desktop
 on Linksy's 0.7 core, with a picture and its battery) and a **ThinkPad** (not nearby).
 1080 × 2400 PNG (the screen-viewing one is 2400 × 1080, landscape). Light unless the
@@ -9,6 +9,9 @@ name says `-dark`.
 ## Getting started
 | File | What it shows |
 |---|---|
+| `onboarding-language.png` | First launch: "Welcome to Linksy", the language wheel (10 languages) |
+| `onboarding-language-fr.png` | The same with Français picked: the screen changes language as you scroll |
+| `onboarding-setup.png`, `onboarding-setup-fr.png` | Set up Linksy: notifications, camera, away from home, background, locate, shared and photo folders; all changeable later in Settings |
 | `permissions.png` | First launch: notifications and camera, asked plainly |
 | `welcome.png` | "Connect your first device", three steps, Scan QR code |
 | `paired.png` | Just paired: "Paired with Studio Desktop" |
@@ -62,6 +65,15 @@ name says `-dark`.
 |---|---|
 | `settings.png`, `settings-dark.png` | This phone, receiving, connection (stay connected, background, away from home) |
 | `settings-computers.png` | With your computers: calls, files, picture of this phone, locate, photo folder |
-| `settings-more.png` | News from Linksy, permissions, and the version |
+| `settings-more.png` | This app (language, appearance), permissions, and the version |
+| `settings-appearance.png`, `settings-appearance-dark.png` | Appearance: System, Light or Dark |
+
+## Languages
+The app speaks English, Français, Malagasy, Español, Português, Deutsch, Italiano, Русский, 中文 and 日本語.
+
+| File | What it shows |
+|---|---|
+| `language-fr-device.png` | A computer's page in French |
+| `language-fr.png`, `language-mg.png`, `language-ru.png`, `language-ja.png`, `language-zh.png` | "This phone as", photo backup and activity in French, Malagasy, Russian, Japanese and Chinese (these have the real clock in the status bar) |
 
 Not included: the QR scanner (the test phone's camera shows a test pattern).

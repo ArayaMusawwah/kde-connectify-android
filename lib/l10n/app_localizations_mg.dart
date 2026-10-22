@@ -13,81 +13,82 @@ class AppLocalizationsMg extends AppLocalizations {
   String get appTitle => 'Linksy';
 
   @override
-  String get onboardingWelcome => 'Welcome to Linksy';
+  String get onboardingWelcome => 'Tongasoa eto amin\'i Linksy';
 
   @override
-  String get onboardingChooseLanguage => 'Choose your language';
+  String get onboardingChooseLanguage => 'Safidio ny fiteninao';
 
   @override
-  String get onboardingLanguageHint => 'You can change it later in Settings.';
+  String get onboardingLanguageHint =>
+      'Azonao ovaina any amin\'ny Fikirana izany any aoriana.';
 
   @override
-  String get onboardingContinue => 'Continue';
+  String get onboardingContinue => 'Tohizo';
 
   @override
-  String get onboardingSetUpTitle => 'Set up Linksy';
+  String get onboardingSetUpTitle => 'Amboary i Linksy';
 
   @override
   String get onboardingSetUpSubtitle =>
-      'Choose what Linksy may do. Nothing leaves this phone until you say so.';
+      'Safidio izay azon\'i Linksy atao. Tsy misy mivoaka ity finday ity raha tsy ianao no milaza.';
 
   @override
-  String get onboardingNotifications => 'Notifications';
+  String get onboardingNotifications => 'Fampahafantarana';
 
   @override
   String get onboardingNotificationsDetail =>
-      'Files arriving, and when a computer uses your screen, camera or microphone, with a button to stop.';
+      'Rakitra tonga, sy rehefa misy solosaina mampiasa ny efijerinao, ny fakantsarinao na ny mikrônao, miaraka amin\'ny bokotra hampitsaharana.';
 
   @override
-  String get onboardingCamera => 'Camera';
+  String get onboardingCamera => 'Fakantsary';
 
   @override
   String get onboardingCameraDetail =>
-      'Scans pairing QR codes, and lets a computer use it as a webcam when you allow it.';
+      'Mamaky ny QR code fampifandraisana, ary mamela solosaina hampiasa azy ho webcam rehefa avelanao.';
 
   @override
-  String get onboardingAway => 'Away from home';
+  String get onboardingAway => 'Lavitra ny trano';
 
   @override
   String get onboardingAwayDetail =>
-      'Reach your computers over the internet when you\'re not on the same Wi-Fi. Encrypted end to end.';
+      'Mifandraisa amin\'ny solosainao amin\'ny alalan\'ny internet rehefa tsy amin\'ny Wi-Fi iray ianareo. Voaaro tanteraka.';
 
   @override
-  String get onboardingBackground => 'Keep running in the background';
+  String get onboardingBackground => 'Mandeha foana ao ambadika';
 
   @override
   String get onboardingBackgroundDetail =>
-      'Files and calls keep working when Linksy is closed. Shows a quiet notification.';
+      'Mbola mandeha ny rakitra sy ny antso na dia mikatona aza i Linksy. Misy fampahafantarana mangina.';
 
   @override
-  String get onboardingFolder => 'Share a folder with computers';
+  String get onboardingFolder => 'Zarao lahatahiry amin\'ny solosaina';
 
   @override
   String get onboardingFolderDetail =>
-      'Your computers can open one folder you choose in their Files app.';
+      'Afaka manokatra lahatahiry iray safidianao ao amin\'ny Files ny solosainao.';
 
   @override
-  String get onboardingPhotos => 'Photo backup folder';
+  String get onboardingPhotos => 'Lahatahiry fitahirizana sary';
 
   @override
   String get onboardingPhotosDetail =>
-      'Choose your camera folder to back up new photos to a computer. Turned on per computer.';
+      'Safidio ny lahatahirin\'ny fakantsary mba hitahiry sary vaovao any amin\'ny solosaina. Alefa isaky ny solosaina.';
 
   @override
-  String get onboardingLocate => 'Let computers locate this phone';
+  String get onboardingLocate => 'Avelao hitady ity finday ity ny solosaina';
 
   @override
   String get onboardingLocateDetail =>
-      'A computer can ask where this phone is, once. Nothing is kept.';
+      'Afaka manontany indray mandeha ny solosaina hoe aiza ity finday ity. Tsy misy tehirizina.';
 
   @override
-  String get onboardingAllow => 'Allow';
+  String get onboardingAllow => 'Avelao';
 
   @override
-  String get onboardingAllowed => 'Allowed';
+  String get onboardingAllowed => 'Navela';
 
   @override
-  String get onboardingChooseFolder => 'Choose';
+  String get onboardingChooseFolder => 'Safidio';
 
   @override
   String onboardingFolderChosen(String folder) {
@@ -96,215 +97,216 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get onboardingAnytime =>
-      'You can turn any of these on or off anytime in Settings.';
+      'Azonao alefa na vonoina amin\'ny fotoana rehetra ao amin\'ny Fikirana ireo.';
 
   @override
-  String get onboardingStart => 'Start using Linksy';
+  String get onboardingStart => 'Atombohy ny fampiasana an\'i Linksy';
 
   @override
-  String get onboardingBack => 'Back';
+  String get onboardingBack => 'Hiverina';
 
   @override
-  String get settingsLanguage => 'Language';
+  String get settingsLanguage => 'Fiteny';
 
   @override
-  String get languageDone => 'Done';
+  String get languageDone => 'Vita';
 
   @override
   String get ctlClipboardFileTooBig =>
-      'Only a file up to 10 MB fits on the clipboard.';
+      'Rakitra hatramin\'ny 10 MB ihany no omby ao amin\'ny clipboard.';
 
   @override
-  String get ctlClipboardCopyFailed => 'Couldn’t put it on the clipboard';
+  String get ctlClipboardCopyFailed => 'Tsy voapetraka tao amin\'ny clipboard';
 
   @override
-  String get ctlLocateOff => 'Locating is turned off in Linksy on this phone';
+  String get ctlLocateOff =>
+      'Maty ao amin\'i Linksy amin\'ity finday ity ny fitadiavana toerana';
 
   @override
-  String get ctlYourComputer => 'your computer';
+  String get ctlYourComputer => 'ny solosainao';
 
   @override
-  String get ctlAnd => 'and';
+  String get ctlAnd => 'sy';
 
   @override
   String ctlKeepingLocked(String names) {
-    return 'Keeping $names locked when you leave';
+    return 'Hihidy foana $names rehefa miala ianao';
   }
 
   @override
-  String get ctlStayingConnected => 'Staying connected to your computers';
+  String get ctlStayingConnected => 'Mbola mifandray amin\'ny solosainao';
 
   @override
   String ctlTransferRequest(int count, String name) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$name wants to send you $count files',
-      one: '$name wants to send you a file',
+      other: 'Te handefa rakitra $count aminao $name',
+      one: 'Te handefa rakitra aminao $name',
     );
     return '$_temp0';
   }
 
   @override
-  String get ctlClipboardEmpty => 'The clipboard is empty.';
+  String get ctlClipboardEmpty => 'Foana ny clipboard.';
 
   @override
   String get ctlClipboardTooMuch =>
-      'The clipboard holds too much text to send.';
+      'Be loatra ny soratra ao amin\'ny clipboard ka tsy azo alefa.';
 
   @override
   String get ctlPing => 'Ping';
 
   @override
   String ctlPingFrom(String name) {
-    return 'From $name';
+    return 'Avy amin\'i $name';
   }
 
   @override
-  String get ctlTextTooMuch => 'That’s too much text to send.';
+  String get ctlTextTooMuch => 'Be loatra ny soratra alefa.';
 
   @override
-  String get ctlDeclined => 'Declined';
+  String get ctlDeclined => 'Nolavina';
 
   @override
   String get ctlScreenPermission =>
-      'Sharing the screen needs Android’s permission to capture it.';
+      'Mila ny alalan\'i Android hakana ny efijery ny fizarana efijery.';
 
   @override
   String get ctlCameraPermission =>
-      'Linksy needs the camera permission to work as a webcam.';
+      'Mila alalana hampiasa ny fakantsary i Linksy mba ho webcam.';
 
   @override
   String get ctlMicrophonePermission =>
-      'Linksy needs the microphone permission to be a microphone.';
+      'Mila alalana hampiasa ny mikrô i Linksy mba ho mikrô.';
 
   @override
   String get ctlTerminalTitle => 'Terminal';
 
   @override
-  String get errorThatDevice => 'That device';
+  String get errorThatDevice => 'Io fitaovana io';
 
   @override
-  String get errorOtherDevice => 'The other device';
+  String get errorOtherDevice => 'Ilay fitaovana iray';
 
   @override
-  String get errorComputerOnCable => 'The computer on the cable';
+  String get errorComputerOnCable => 'Ilay solosaina amin\'ny tariby';
 
   @override
   String errorDeviceAt(String address) {
-    return 'The device at $address';
+    return 'Ilay fitaovana ao amin\'ny $address';
   }
 
   @override
   String errorUnreachable(String name) {
-    return '$name isn\'t reachable. Check that it\'s on and on this network.';
+    return 'Tsy tratra $name. Jereo raha mandeha izy ary ao amin\'ity tambajotra ity.';
   }
 
   @override
   String errorDeclined(String name) {
-    return '$name declined.';
+    return 'Nandà $name.';
   }
 
   @override
   String errorTimeout(String name) {
-    return '$name didn\'t answer in time.';
+    return 'Tsy namaly ara-potoana $name.';
   }
 
   @override
   String errorNotPaired(String name) {
-    return '$name isn\'t paired anymore. Pair again to share.';
+    return 'Tsy mifandray intsony $name. Ampifandraiso indray vao afaka mizara.';
   }
 
   @override
   String errorUnsupported(String name) {
-    return '$name can\'t do that yet.';
+    return 'Tsy mbola mahavita an\'izany $name.';
   }
 
   @override
   String errorNotFromAway(String name) {
-    return '$name allows that only on the same network. Its owner can allow everything from away for this phone.';
+    return 'Amin\'ny tambajotra iray ihany no avelan\'i $name izany. Afaka mamela ny zava-drehetra avy lavitra ho an\'ity finday ity ny tompony.';
   }
 
   @override
-  String get errorInvalid => 'That didn’t work.';
+  String get errorInvalid => 'Tsy nety izany.';
 
   @override
-  String get errorSomethingWrong => 'Something went wrong.';
+  String get errorSomethingWrong => 'Nisy olana.';
 
   @override
   String errorSomethingWrongDetail(String detail) {
-    return 'Something went wrong: $detail';
+    return 'Nisy olana: $detail';
   }
 
   @override
-  String get terminalRefusedComputer => 'The computer';
+  String get terminalRefusedComputer => 'Ilay solosaina';
 
   @override
-  String get terminalRefusedCode => 'Wrong code.';
+  String get terminalRefusedCode => 'Diso ny kaody.';
 
   @override
   String terminalRefusedCodeTries(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Wrong code, $count tries left.',
-      one: 'Wrong code, 1 try left.',
+      other: 'Diso ny kaody, in-$count sisa.',
+      one: 'Diso ny kaody, indray mandeha sisa.',
     );
     return '$_temp0';
   }
 
   @override
   String terminalRefusedLocked(String name) {
-    return 'Too many wrong codes. Unlock the terminal on $name.';
+    return 'Diso kaody imbetsaka loatra. Sokafy ny terminal ao amin\'i $name.';
   }
 
   @override
   String terminalRefusedOff(String name) {
-    return 'Turn on Allow Terminal for this phone on $name.';
+    return 'Alefaso ny Allow Terminal ho an\'ity finday ity ao amin\'i $name.';
   }
 
   @override
   String terminalRefusedAway(String name) {
-    return '$name allows a terminal only on the same network, unless “Allow Everything From Away” is on there.';
+    return 'Amin\'ny tambajotra iray ihany no avelan\'i $name ny terminal, raha tsy alefa ao ny “Allow Everything From Away”.';
   }
 
   @override
   String terminalRefusedUnsupported(String name) {
-    return '$name can\'t open a terminal.';
+    return 'Tsy afaka manokatra terminal $name.';
   }
 
   @override
   String terminalRefusedLimit(String name) {
-    return '8 terminals already run on $name for this phone. Close one first.';
+    return 'Efa misy terminal 8 mandeha ao amin\'i $name ho an\'ity finday ity. Akatony aloha ny iray.';
   }
 
   @override
   String terminalRefusedDeclined(String name) {
-    return '$name didn’t allow it.';
+    return 'Tsy navelan\'i $name.';
   }
 
   @override
   String modelDescription(String os, String kind) {
-    return '$os $kind';
+    return '$kind $os';
   }
 
   @override
-  String get modelKindDesktop => 'desktop';
+  String get modelKindDesktop => 'solosaina birao';
 
   @override
-  String get modelKindLaptop => 'laptop';
+  String get modelKindLaptop => 'solosaina finday';
 
   @override
-  String get modelKindPhone => 'phone';
+  String get modelKindPhone => 'finday';
 
   @override
-  String get modelKindTablet => 'tablet';
+  String get modelKindTablet => 'takelaka';
 
   @override
-  String get modelOsUnknown => 'Unknown';
+  String get modelOsUnknown => 'Tsy fantatra';
 
   @override
-  String get deviceNothingOfKind => 'Nothing of that kind yet.';
+  String get deviceNothingOfKind => 'Mbola tsy misy toy izany.';
 
   @override
   String deviceBattery(int level) {
@@ -313,22 +315,23 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String deviceBatteryCharging(int level) {
-    return '$level%, charging';
+    return '$level%, eo am-pamenoana';
   }
 
   @override
   String deviceReachableUntil(String day) {
-    return 'Reachable from away until $day';
+    return 'Tratra avy lavitra hatramin\'ny $day';
   }
 
   @override
-  String get deviceLocksWhenLeave => 'Locks when you leave with this phone';
+  String get deviceLocksWhenLeave =>
+      'Mihidy rehefa miala miaraka amin\'ity finday ity ianao';
 
   @override
-  String get deviceBack => 'Back';
+  String get deviceBack => 'Hiverina';
 
   @override
-  String get deviceMore => 'More';
+  String get deviceMore => 'Hafa koa';
 
   @override
   String deviceShortId(String id) {
@@ -336,104 +339,104 @@ class AppLocalizationsMg extends AppLocalizations {
   }
 
   @override
-  String get deviceChangePicture => 'Change picture';
+  String get deviceChangePicture => 'Ovay ny sary';
 
   @override
-  String get deviceAddPicture => 'Add a picture';
+  String get deviceAddPicture => 'Asio sary';
 
   @override
-  String get deviceRemovePicture => 'Remove picture';
+  String get deviceRemovePicture => 'Esory ny sary';
 
   @override
-  String get deviceForgetThis => 'Forget this device';
+  String get deviceForgetThis => 'Hadino ity fitaovana ity';
 
   @override
   String deviceForgetTitle(String name) {
-    return 'Forget $name?';
+    return 'Hadino $name?';
   }
 
   @override
   String get deviceForgetBody =>
-      'You’ll need to pair again to share with it. Its activity on this phone is cleared too.';
+      'Mila ampifandraisina indray ianao vao afaka mizara aminy. Voafafa koa ny asany tamin\'ity finday ity.';
 
   @override
-  String get deviceForget => 'Forget';
+  String get deviceForget => 'Hadino';
 
   @override
-  String get deviceCancel => 'Cancel';
+  String get deviceCancel => 'Foano';
 
   @override
-  String get deviceSendFiles => 'Send files';
+  String get deviceSendFiles => 'Handefa rakitra';
 
   @override
-  String get deviceSendFilesCaption => 'Photos, documents, anything';
+  String get deviceSendFilesCaption => 'Sary, antontan-taratasy, izay rehetra';
 
   @override
   String get deviceClipboard => 'Clipboard';
 
   @override
-  String get deviceClipboardCaption => 'Send what you copied';
+  String get deviceClipboardCaption => 'Alefaso izay nadikanao';
 
   @override
   String get devicePing => 'Ping';
 
   @override
-  String get devicePingCaption => 'Make it chime';
+  String get devicePingCaption => 'Ampanenoy kely';
 
   @override
-  String get deviceRemote => 'Remote';
+  String get deviceRemote => 'Fanaraha-davitra';
 
   @override
-  String get deviceRemoteCaption => 'Touchpad and slides';
+  String get deviceRemoteCaption => 'Touchpad sy slides';
 
   @override
-  String get deviceRinging => 'Ringing…';
+  String get deviceRinging => 'Maneno…';
 
   @override
-  String get deviceFindIt => 'Find it';
+  String get deviceFindIt => 'Tadiavo';
 
   @override
-  String get deviceTapToStop => 'Tap to stop';
+  String get deviceTapToStop => 'Tsindrio hampitsahatra';
 
   @override
-  String get deviceFindItCaption => 'Make it ring loudly';
+  String get deviceFindItCaption => 'Ampanenoy mafy';
 
   @override
-  String get devicePrevious => 'Previous';
+  String get devicePrevious => 'Teo aloha';
 
   @override
-  String get devicePause => 'Pause';
+  String get devicePause => 'Ajanony';
 
   @override
-  String get devicePlay => 'Play';
+  String get devicePlay => 'Alefaso';
 
   @override
-  String get deviceNext => 'Next';
+  String get deviceNext => 'Manaraka';
 
   @override
   String deviceAllowOn(String name) {
-    return 'Allow it on $name…';
+    return 'Avelao ao amin\'i $name…';
   }
 
   @override
-  String get deviceSeeScreen => 'See its screen';
+  String get deviceSeeScreen => 'Jereo ny efijeriny';
 
   @override
   String get deviceSeeScreenCaption =>
-      'Watch it here, or control it with touch';
+      'Jereo eto, na fehezo amin\'ny fikasihana';
 
   @override
-  String get deviceWatch => 'Watch';
+  String get deviceWatch => 'Jereo';
 
   @override
-  String get deviceControl => 'Control';
+  String get deviceControl => 'Fehezo';
 
   @override
   String get deviceTerminal => 'Terminal';
 
   @override
   String deviceTerminalShell(String name) {
-    return 'A shell on $name, locked by its code';
+    return 'Shell ao amin\'i $name, voaaron\'ny kaodiny';
   }
 
   @override
@@ -441,132 +444,134 @@ class AppLocalizationsMg extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count terminals open',
-      one: '1 terminal open',
+      other: 'Terminal $count misokatra',
+      one: 'Terminal 1 misokatra',
     );
     return '$_temp0';
   }
 
   @override
-  String get deviceFilterAll => 'All';
+  String get deviceFilterAll => 'Rehetra';
 
   @override
-  String get deviceFilterFiles => 'Files';
+  String get deviceFilterFiles => 'Rakitra';
 
   @override
   String get deviceFilterClipboard => 'Clipboard';
 
   @override
-  String get deviceFilterLinks => 'Links';
+  String get deviceFilterLinks => 'Rohy';
 
   @override
-  String get deviceFilterShowAll => 'Show All';
+  String get deviceFilterShowAll => 'Asehoy ny rehetra';
 
   @override
-  String get deviceFilterShowFiles => 'Show Files';
+  String get deviceFilterShowFiles => 'Asehoy ny rakitra';
 
   @override
-  String get deviceFilterShowClipboard => 'Show Clipboard';
+  String get deviceFilterShowClipboard => 'Asehoy ny clipboard';
 
   @override
-  String get deviceFilterShowLinks => 'Show Links';
+  String get deviceFilterShowLinks => 'Asehoy ny rohy';
 
   @override
-  String get deviceActivity => 'Activity';
+  String get deviceActivity => 'Asa natao';
 
   @override
   String deviceReadyWhenAsks(String name) {
-    return 'Ready when $name asks';
+    return 'Vonona rehefa mangataka $name';
   }
 
   @override
   String get deviceWebcam => 'Webcam';
 
   @override
-  String get deviceInUseNow => 'In use now';
+  String get deviceInUseNow => 'Ampiasaina izao';
 
   @override
-  String get deviceControls => 'Controls';
+  String get deviceControls => 'Fanaraha-maso';
 
   @override
-  String get deviceMicrophone => 'Microphone';
+  String get deviceMicrophone => 'Mikrô';
 
   @override
-  String get deviceStop => 'Stop';
+  String get deviceStop => 'Atsaharo';
 
   @override
-  String get deviceSecondDisplay => 'Second display';
+  String get deviceSecondDisplay => 'Efijery faharoa';
 
   @override
-  String get deviceShowingNow => 'Showing now';
+  String get deviceShowingNow => 'Mampiseho izao';
 
   @override
   String deviceReadySize(int width, int height) {
-    return 'Ready · $width × $height';
+    return 'Vonona · $width × $height';
   }
 
   @override
-  String get devicePhoneAs => 'This phone as';
+  String get devicePhoneAs => 'Ity finday ity ho';
 
   @override
   String deviceStartedOn(String name) {
-    return 'Started on $name';
+    return 'Atomboka ao amin\'i $name';
   }
 
   @override
-  String get deviceFasterOverUsb => 'Faster and steadier over a USB cable.';
+  String get deviceFasterOverUsb =>
+      'Haingana sy milamina kokoa amin\'ny tariby USB.';
 
   @override
-  String get deviceBackUpPhotos => 'Back up photos';
+  String get deviceBackUpPhotos => 'Tehirizo ny sary';
 
   @override
   String devicePhotosGoTo(String name) {
-    return 'New photos go to $name’s Pictures folder';
+    return 'Mankany amin\'ny lahatahiry Pictures an\'i $name ny sary vaovao';
   }
 
   @override
   String devicePhotosDeclined(String name) {
-    return '$name doesn’t take photos. Turn on “Import Photos From Phones” there.';
+    return 'Tsy mandray sary $name. Alefaso ao ny “Import Photos From Phones”.';
   }
 
   @override
   String devicePhotosFrom(String folder) {
-    return 'From $folder';
+    return 'Avy amin\'ny $folder';
   }
 
   @override
-  String get devicePhotosFromCamera => 'From your camera folder';
+  String get devicePhotosFromCamera =>
+      'Avy amin\'ny lahatahirin\'ny fakantsary';
 
   @override
   String devicePhotosLast(String time) {
-    return 'last $time';
+    return 'farany $time';
   }
 
   @override
-  String get deviceGetClipboard => 'Get its clipboard';
+  String get deviceGetClipboard => 'Raiso ny clipboard-ny';
 
   @override
   String deviceGetClipboardDetail(String name) {
-    return 'Text copied on $name lands here while connected';
+    return 'Tonga eto ny soratra nadika tao amin\'i $name raha mifandray';
   }
 
   @override
-  String get deviceAwayAll => 'Allow everything from away';
+  String get deviceAwayAll => 'Avelao avy lavitra ny zava-drehetra';
 
   @override
   String get deviceAwayAllOn =>
-      'From away too: this screen, webcam, microphone and files';
+      'Avy lavitra koa: ity efijery ity, webcam, mikrô ary rakitra';
 
   @override
   String get deviceAwayAllOff =>
-      'From away: clipboard, links, files and ring only';
+      'Avy lavitra: clipboard, rohy, rakitra ary feo fiantsoana ihany';
 
   @override
-  String get deviceNothingShared => 'Nothing shared yet';
+  String get deviceNothingShared => 'Mbola tsy misy nozaraina';
 
   @override
   String deviceNothingSharedBody(String name) {
-    return 'Files, clipboard text and pings between this phone and $name line up here.';
+    return 'Miseho eto ny rakitra, ny soratra clipboard ary ny ping eo amin\'ity finday ity sy $name.';
   }
 
   @override
@@ -574,8 +579,8 @@ class AppLocalizationsMg extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items',
-      one: '1 item',
+      other: 'Zavatra $count',
+      one: 'Zavatra 1',
     );
     return '$_temp0';
   }
@@ -586,429 +591,432 @@ class AppLocalizationsMg extends AppLocalizations {
   }
 
   @override
-  String get activityClipboardText => 'Clipboard text';
+  String get activityClipboardText => 'Soratra clipboard';
 
   @override
   String get activityPing => 'Ping';
 
   @override
-  String get activityYourScreen => 'Your screen';
+  String get activityYourScreen => 'Ny efijerinao';
 
   @override
-  String get activityYourCamera => 'Your camera';
+  String get activityYourCamera => 'Ny fakantsarinao';
 
   @override
-  String get activitySecondDisplay => 'Second display';
+  String get activitySecondDisplay => 'Efijery faharoa';
 
   @override
-  String get activityLink => 'Link';
+  String get activityLink => 'Rohy';
 
   @override
-  String get activityRangThisPhone => 'Rang this phone';
+  String get activityRangThisPhone => 'Nampaneno ity finday ity';
 
   @override
-  String get activityRangIt => 'Rang it';
+  String get activityRangIt => 'Nampanenoina';
 
   @override
-  String get activityTouchpadKeyboard => 'Touchpad and keyboard';
+  String get activityTouchpadKeyboard => 'Touchpad sy fitendry';
 
   @override
-  String get activityItsScreen => 'Its screen';
+  String get activityItsScreen => 'Ny efijeriny';
 
   @override
-  String get activityYourMicrophone => 'Your microphone';
+  String get activityYourMicrophone => 'Ny mikrônao';
 
   @override
-  String get activityWhereThisPhone => 'Where this phone is';
+  String get activityWhereThisPhone => 'Aiza ity finday ity';
 
   @override
-  String get activityWatchingNow => 'Watching now';
+  String get activityWatchingNow => 'Jerena izao';
 
   @override
-  String get activityWatched => 'Watched';
+  String get activityWatched => 'Nojerena';
 
   @override
-  String get activityInUseWebcam => 'In use as a webcam';
+  String get activityInUseWebcam => 'Ampiasaina ho webcam';
 
   @override
-  String get activityUsedWebcam => 'Used as a webcam';
+  String get activityUsedWebcam => 'Nampiasaina ho webcam';
 
   @override
-  String get activityBeingControlled => 'Being controlled now';
+  String get activityBeingControlled => 'Fehezina izao';
 
   @override
-  String get activityWatchedControlled => 'Watched and controlled';
+  String get activityWatchedControlled => 'Nojerena sy nofehezina';
 
   @override
-  String get activityWatchedFromPhone => 'Watched from this phone';
+  String get activityWatchedFromPhone => 'Nojerena avy amin\'ity finday ity';
 
   @override
-  String get activityInUseNow => 'In use now';
+  String get activityInUseNow => 'Ampiasaina izao';
 
   @override
-  String get activityWasTouchpad => 'This phone was its touchpad';
+  String get activityWasTouchpad => 'Touchpad-ny ity finday ity';
 
   @override
-  String get activityWasSecondDisplay => 'This phone was its second display';
+  String get activityWasSecondDisplay => 'Efijery faharoany ity finday ity';
 
   @override
-  String get activityLinkReceived => 'Link received';
+  String get activityLinkReceived => 'Rohy voaray';
 
   @override
-  String get activityOpenedOnComputer => 'Opened on the computer';
+  String get activityOpenedOnComputer => 'Nosokafana tao amin\'ny solosaina';
 
   @override
-  String get activityInUseMicrophone => 'In use as a microphone';
+  String get activityInUseMicrophone => 'Ampiasaina ho mikrô';
 
   @override
-  String get activityUsedMicrophone => 'Used as a microphone';
+  String get activityUsedMicrophone => 'Nampiasaina ho mikrô';
 
   @override
-  String get activityNotTold => 'Not told';
+  String get activityNotTold => 'Tsy nolazaina';
 
   @override
-  String get activityToldWhere => 'Told it where this phone is';
+  String get activityToldWhere =>
+      'Nolazaina azy ny toerana misy ity finday ity';
 
   @override
-  String get activityAskedToFind => 'Asked to find this phone';
+  String get activityAskedToFind => 'Nangataka hitady ity finday ity';
 
   @override
-  String get activityToFindIt => 'To find it';
+  String get activityToFindIt => 'Mba hahitana azy';
 
   @override
-  String get activityDeclined => 'Declined';
+  String get activityDeclined => 'Nolavina';
 
   @override
-  String get activityFailed => 'Failed';
+  String get activityFailed => 'Tsy nahomby';
 
   @override
-  String get activityInProgress => 'In progress';
+  String get activityInProgress => 'Mandeha';
 
   @override
-  String get activityCopiedHere => 'Copied here';
+  String get activityCopiedHere => 'Voadika eto';
 
   @override
-  String get activityReceived => 'Received';
+  String get activityReceived => 'Voaray';
 
   @override
-  String get activitySent => 'Sent';
+  String get activitySent => 'Lasa';
 
   @override
-  String get activityStop => 'Stop';
+  String get activityStop => 'Atsaharo';
 
   @override
-  String get activityCancel => 'Cancel';
+  String get activityCancel => 'Foano';
 
   @override
-  String get activityCopyAgain => 'Copy again';
+  String get activityCopyAgain => 'Adikao indray';
 
   @override
-  String get activityCopied => 'Copied';
+  String get activityCopied => 'Voadika';
 
   @override
-  String get activityCopyLink => 'Copy link';
+  String get activityCopyLink => 'Adikao ny rohy';
 
   @override
-  String get activityLinkCopied => 'Link copied';
+  String get activityLinkCopied => 'Voadika ny rohy';
 
   @override
-  String get activityNoAppForLink => 'No app here opens that link.';
+  String get activityNoAppForLink => 'Tsy misy app eto mahasokatra io rohy io.';
 
   @override
   String activityFiles(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count files',
-      one: '1 file',
+      other: 'Rakitra $count',
+      one: 'Rakitra 1',
     );
     return '$_temp0';
   }
 
   @override
   String activityFileMissing(String name) {
-    return '$name isn’t there anymore.';
+    return 'Tsy eo intsony $name.';
   }
 
   @override
   String activityNoAppForFile(String name) {
-    return 'No app on this phone opens $name.';
+    return 'Tsy misy app amin\'ity finday ity mahasokatra $name.';
   }
 
   @override
-  String get activityWaitingForYou => 'Waiting for you to accept…';
+  String get activityWaitingForYou => 'Miandry anao hanaiky…';
 
   @override
-  String get activityWaitingForDevice => 'Waiting for the device to accept…';
+  String get activityWaitingForDevice => 'Miandry ny fitaovana hanaiky…';
 
   @override
   String activityWaitingFor(String name) {
-    return 'Waiting for $name to accept…';
+    return 'Miandry an\'i $name hanaiky…';
   }
 
   @override
   String activityProgress(String done, String total) {
-    return '$done of $total';
+    return '$done amin\'ny $total';
   }
 
   @override
-  String get homeSettings => 'Settings';
+  String get homeSettings => 'Fikirana';
 
   @override
-  String get homeYourDevices => 'Your devices';
+  String get homeYourDevices => 'Ny fitaovanao';
 
   @override
-  String get homeNearbyNotPaired => 'Nearby, not paired';
+  String get homeNearbyNotPaired => 'Akaiky, tsy mifandray';
 
   @override
-  String get homeAddDevice => 'Add a device';
+  String get homeAddDevice => 'Hanampy fitaovana';
 
   @override
   String homeVisible(String name) {
-    return '$name is visible on this Wi-Fi';
+    return 'Hita amin\'ity Wi-Fi ity $name';
   }
 
   @override
-  String get homeUpdateTitle => 'Update Linksy to keep connecting';
+  String get homeUpdateTitle => 'Havaozy i Linksy mba hifandray foana';
 
   @override
   String get homeUpdateBody =>
-      'Your computers now speak a newer Linksy than this app.';
+      'Linksy vaovao kokoa noho ity app ity no ampiasain\'ny solosainao izao.';
 
   @override
-  String get homeGetUpdate => 'Get the update';
+  String get homeGetUpdate => 'Alaivo ny fanavaozana';
 
   @override
-  String get homeSendFiles => 'Send files';
+  String get homeSendFiles => 'Handefa rakitra';
 
   @override
-  String get homePair => 'Pair';
+  String get homePair => 'Ampifandraiso';
 
   @override
-  String get homeStepOpen => 'Open Linksy on your computer';
+  String get homeStepOpen => 'Sokafy i Linksy ao amin\'ny solosainao';
 
   @override
-  String get homeStepChoose => 'Choose “Pair with QR Code”';
+  String get homeStepChoose => 'Safidio ny “Pair with QR Code”';
 
   @override
-  String get homeStepScan => 'Scan it with this phone';
+  String get homeStepScan => 'Vakio amin\'ity finday ity';
 
   @override
-  String get homeConnectTitle => 'Connect your\nfirst device';
+  String get homeConnectTitle => 'Ampifandraiso ny\nfitaovanao voalohany';
 
   @override
   String get homeConnectSubtitle =>
-      'Straight over your Wi-Fi. No account, no cloud.';
+      'Mivantana amin\'ny Wi-Fi-nao. Tsy mila kaonty, tsy misy cloud.';
 
   @override
-  String get homeScanQr => 'Scan QR code';
+  String get homeScanQr => 'Vakio ny QR code';
 
   @override
-  String get homePairByAddress => 'Pair by address instead';
+  String get homePairByAddress => 'Ampifandraiso amin\'ny adiresy';
 
   @override
-  String get pairingAddDevice => 'Add a device';
+  String get pairingAddDevice => 'Hanampy fitaovana';
 
   @override
   String get pairingAddDeviceHint =>
-      'On the other device, open Linksy and choose “Pair with QR Code”.';
+      'Ao amin\'ilay fitaovana iray, sokafy i Linksy ary safidio ny “Pair with QR Code”.';
 
   @override
-  String get pairingScanQr => 'Scan QR code';
+  String get pairingScanQr => 'Vakio ny QR code';
 
   @override
-  String get pairingScanQrCaption => 'Fastest. Nothing to type.';
+  String get pairingScanQrCaption => 'Haingana indrindra. Tsy misy soratana.';
 
   @override
-  String get pairingByAddress => 'Pair by address';
+  String get pairingByAddress => 'Ampifandraiso amin\'ny adiresy';
 
   @override
-  String get pairingByAddressCaption => 'When the other device can’t be found.';
+  String get pairingByAddressCaption => 'Rehefa tsy hita ilay fitaovana iray.';
 
   @override
   String pairingWith(String name) {
-    return 'Pairing with $name…';
+    return 'Mampifandray amin\'i $name…';
   }
 
   @override
-  String get pairingWithOtherDevice => 'Pairing with the other device…';
+  String get pairingWithOtherDevice =>
+      'Mampifandray amin\'ilay fitaovana iray…';
 
   @override
   String get pairingAddressHint =>
-      'It’s in Linksy’s Preferences on the other device.';
+      'Ao amin\'ny Preferences an\'i Linksy ao amin\'ilay fitaovana iray izany.';
 
   @override
   String pairingPortHint(String port) {
-    return 'Port $port unless you add another.';
+    return 'Port $port raha tsy manampy hafa ianao.';
   }
 
   @override
-  String get pairingPair => 'Pair';
+  String get pairingPair => 'Ampifandraiso';
 
   @override
   String pairingWantsToPair(String name) {
-    return '$name wants to pair';
+    return 'Te hifandray $name';
   }
 
   @override
   String pairingPairWith(String name) {
-    return 'Pair with $name';
+    return 'Hifandray amin\'i $name';
   }
 
   @override
-  String get pairingCodeHint => 'Both screens should show this code.';
+  String get pairingCodeHint =>
+      'Tokony hiseho amin\'ny efijery roa ity kaody ity.';
 
   @override
   String pairingCodeLabel(String code) {
-    return 'Code $code';
+    return 'Kaody $code';
   }
 
   @override
-  String get pairingCodesMatch => 'Codes match';
+  String get pairingCodesMatch => 'Mitovy ny kaody';
 
   @override
   String get scanNeedsCamera =>
-      'Linksy needs the camera to scan the pairing code. Allow it, or pair by address.';
+      'Mila ny fakantsary i Linksy hamakiana ny kaody fampifandraisana. Avelao, na ampifandraiso amin\'ny adiresy.';
 
   @override
-  String get scanCameraUnavailable => 'The camera isn’t available.';
+  String get scanCameraUnavailable => 'Tsy azo ampiasaina ny fakantsary.';
 
   @override
-  String get scanFlashlight => 'Flashlight';
+  String get scanFlashlight => 'Jiro';
 
   @override
-  String get scanTitle => 'Scan the code';
+  String get scanTitle => 'Vakio ny kaody';
 
   @override
   String get scanWrongCode =>
-      'That’s not a Linksy code. On your computer, open Linksy → Pair with QR Code.';
+      'Tsy kaody Linksy io. Ao amin\'ny solosainao, sokafy Linksy → Pair with QR Code.';
 
   @override
   String get scanHint =>
-      'On your computer, open Linksy and choose “Pair with QR Code”.';
+      'Ao amin\'ny solosainao, sokafy i Linksy ary safidio ny “Pair with QR Code”.';
 
   @override
-  String get shareSheetPutOnClipboard => 'Put on a clipboard';
+  String get shareSheetPutOnClipboard => 'Apetraho amin\'ny clipboard';
 
   @override
   String shareSheetSendFiles(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Send $count files',
-      one: 'Send a file',
+      other: 'Handefa rakitra $count',
+      one: 'Handefa rakitra',
     );
     return '$_temp0';
   }
 
   @override
-  String get shareSheetOpenOnComputer => 'Open on a computer';
+  String get shareSheetOpenOnComputer => 'Sokafy amin\'ny solosaina';
 
   @override
-  String get shareSheetSendToClipboard => 'Send to a clipboard';
+  String get shareSheetSendToClipboard => 'Alefaso any amin\'ny clipboard';
 
   @override
   String get shareSheetNoClipboardFiles =>
-      'None of your computers takes files on its clipboard yet. Update Linksy there.';
+      'Tsy misy amin\'ny solosainao mandray rakitra amin\'ny clipboard-ny aloha. Havaozy ao i Linksy.';
 
   @override
   String get shareSheetNoComputers =>
-      'Pair a computer first, then share to it from any app.';
+      'Ampifandraiso solosaina aloha, dia zarao aminy avy amin\'ny app rehetra.';
 
   @override
-  String get shareSheetSendFileInstead => 'Send the file instead';
+  String get shareSheetSendFileInstead => 'Alefaso ho rakitra ihany';
 
   @override
   String get shareSheetClipboardInstead =>
-      'Put it on the computer’s clipboard instead';
+      'Apetraho amin\'ny clipboard-n\'ny solosaina kosa';
 
   @override
-  String get shareSheetOpenLinkInstead => 'Open the link instead';
+  String get shareSheetOpenLinkInstead => 'Sokafy ny rohy kosa';
 
   @override
   String get shareSheetSendAsTextInstead =>
-      'Send as text to the clipboard instead';
+      'Alefaso ho soratra any amin\'ny clipboard kosa';
 
   @override
   String shareSheetPuttingOnClipboard(String name) {
-    return 'Putting it on $name’s clipboard';
+    return 'Apetraka amin\'ny clipboard-n\'i $name';
   }
 
   @override
   String get shareSheetPuttingOnClipboardUnnamed =>
-      'Putting it on the computer’s clipboard';
+      'Apetraka amin\'ny clipboard-n\'ny solosaina';
 
   @override
   String shareSheetOpened(String name) {
-    return 'Opened on $name';
+    return 'Nosokafana tao amin\'i $name';
   }
 
   @override
-  String get shareSheetOpenedUnnamed => 'Opened on the computer';
+  String get shareSheetOpenedUnnamed => 'Nosokafana tao amin\'ny solosaina';
 
   @override
   String shareSheetSentToClipboard(String name) {
-    return 'Sent to $name’s clipboard';
+    return 'Lasa any amin\'ny clipboard-n\'i $name';
   }
 
   @override
   String get shareSheetSentToClipboardUnnamed =>
-      'Sent to the computer’s clipboard';
+      'Lasa any amin\'ny clipboard-n\'ny solosaina';
 
   @override
   String shareSheetSentALink(String name) {
-    return '$name sent a link';
+    return 'Nandefa rohy $name';
   }
 
   @override
-  String get shareSheetOpen => 'Open';
+  String get shareSheetOpen => 'Sokafy';
 
   @override
-  String get shareSheetCopyLink => 'Copy link';
+  String get shareSheetCopyLink => 'Adikao ny rohy';
 
   @override
-  String get shareSheetLinkCopied => 'Link copied';
+  String get shareSheetLinkCopied => 'Voadika ny rohy';
 
   @override
   String incomingSendingYou(String name, int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count files',
-      one: 'a file',
+      other: 'rakitra $count',
+      one: 'rakitra iray',
     );
-    return '$name is sending you $_temp0';
+    return 'Mandefa $_temp0 aminao $name';
   }
 
   @override
   String incomingTotal(String size) {
-    return '$size in total';
+    return '$size raha atambatra';
   }
 
   @override
   String incomingMore(int count) {
-    return '+ $count more';
+    return '+ $count hafa';
   }
 
   @override
-  String get incomingAccept => 'Accept';
+  String get incomingAccept => 'Ekeo';
 
   @override
-  String get appInvalidPairingLink => 'That pairing link isn’t valid.';
+  String get appInvalidPairingLink => 'Tsy mety io rohy fampifandraisana io.';
 
   @override
   String appPairingFailed(String reason) {
-    return 'Pairing failed: $reason';
+    return 'Tsy nahomby ny fampifandraisana: $reason';
   }
 
   @override
   String appCouldntPair(String name, String reason) {
-    return 'Couldn’t pair with $name: $reason';
+    return 'Tsy afaka nifandray tamin\'i $name: $reason';
   }
 
   @override
   String appPairedWith(String name) {
-    return 'Paired with $name';
+    return 'Mifandray amin\'i $name';
   }
 
   @override
@@ -1018,64 +1026,64 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String appCopiedText(String name) {
-    return 'Copied text from $name';
+    return 'Soratra nadika avy amin\'i $name';
   }
 
   @override
   String appCopiedFile(String file, String name) {
-    return 'Copied $file from $name';
+    return 'Nadika avy amin\'i $name ny $file';
   }
 
   @override
-  String get appCouldntStart => 'Linksy couldn’t start';
+  String get appCouldntStart => 'Tsy afaka nanomboka i Linksy';
 
   @override
-  String get commonDismiss => 'Dismiss';
+  String get commonDismiss => 'Esory';
 
   @override
-  String get commonCancel => 'Cancel';
+  String get commonCancel => 'Foano';
 
   @override
-  String get commonDecline => 'Decline';
+  String get commonDecline => 'Lavio';
 
   @override
-  String get commonClose => 'Close';
+  String get commonClose => 'Akatony';
 
   @override
-  String get commonNotNow => 'Not now';
+  String get commonNotNow => 'Tsy izao';
 
   @override
-  String get commonConnected => 'Connected';
+  String get commonConnected => 'Mifandray';
 
   @override
-  String get commonNearby => 'Nearby';
+  String get commonNearby => 'Akaiky';
 
   @override
-  String get commonNotNearby => 'Not nearby';
+  String get commonNotNearby => 'Tsy akaiky';
 
   @override
-  String get commonUsbCable => 'USB cable';
+  String get commonUsbCable => 'Tariby USB';
 
   @override
-  String get commonAwayFromHome => 'Away from home';
+  String get commonAwayFromHome => 'Lavitra ny trano';
 
   @override
-  String get commonSameWifi => 'Same Wi-Fi';
+  String get commonSameWifi => 'Wi-Fi iray ihany';
 
   @override
-  String get commonConnectedByUsb => 'Connected by USB';
+  String get commonConnectedByUsb => 'Mifandray amin\'ny USB';
 
   @override
-  String get commonConnectedAway => 'Connected away from home';
+  String get commonConnectedAway => 'Mifandray lavitra ny trano';
 
   @override
   String commonBattery(int level) {
-    return 'Battery $level percent';
+    return 'Bateria $level isan-jato';
   }
 
   @override
   String commonBatteryCharging(int level) {
-    return 'Battery $level percent, charging';
+    return 'Bateria $level isan-jato, eo am-pamenoana';
   }
 
   @override
@@ -1083,7 +1091,7 @@ class AppLocalizationsMg extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count bytes',
+      other: '$count octets',
     );
     return '$_temp0';
   }
@@ -1093,8 +1101,8 @@ class AppLocalizationsMg extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count seconds left',
-      one: '1 second left',
+      other: 'Segondra $count sisa',
+      one: 'Segondra 1 sisa',
     );
     return '$_temp0';
   }
@@ -1104,8 +1112,8 @@ class AppLocalizationsMg extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count minutes left',
-      one: '1 minute left',
+      other: 'Minitra $count sisa',
+      one: 'Minitra 1 sisa',
     );
     return '$_temp0';
   }
@@ -1115,253 +1123,255 @@ class AppLocalizationsMg extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'about $count hours left',
-      one: 'about 1 hour left',
+      other: 'Adiny $count eo ho eo sisa',
+      one: 'Adiny 1 eo ho eo sisa',
     );
     return '$_temp0';
   }
 
   @override
-  String get formatToday => 'Today';
+  String get formatToday => 'Androany';
 
   @override
-  String get formatYesterday => 'Yesterday';
+  String get formatYesterday => 'Omaly';
 
   @override
-  String get formatPhone => 'Phone';
+  String get formatPhone => 'Finday';
 
   @override
-  String get settingsBack => 'Back';
+  String get settingsBack => 'Hiverina';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get settingsTitle => 'Fikirana';
 
   @override
-  String get settingsReceiving => 'Receiving';
+  String get settingsReceiving => 'Fandraisana';
 
   @override
-  String get settingsSaveLocation => 'Save location';
+  String get settingsSaveLocation => 'Toerana itahirizana';
 
   @override
   String get settingsSaveLocationPath => 'Downloads › Linksy';
 
   @override
-  String get settingsAcceptFromMyDevices => 'Accept from my devices';
+  String get settingsAcceptFromMyDevices => 'Ekeo avy amin\'ny fitaovako';
 
   @override
   String get settingsAcceptFromMyDevicesCaption =>
-      'Files from paired devices arrive without asking.';
+      'Tonga tsy anontaniana ny rakitra avy amin\'ny fitaovana mifandray.';
 
   @override
-  String get settingsConnection => 'Connection';
+  String get settingsConnection => 'Fifandraisana';
 
   @override
-  String get settingsStayConnected => 'Stay connected';
+  String get settingsStayConnected => 'Mifandray foana';
 
   @override
   String get settingsStayConnectedCaption =>
-      'Faster sharing with nearby devices. Uses more battery.';
+      'Fizarana haingana kokoa amin\'ny fitaovana akaiky. Mandany bateria bebe kokoa.';
 
   @override
-  String get settingsKeepRunning => 'Keep running in the background';
+  String get settingsKeepRunning => 'Mandeha foana ao ambadika';
 
   @override
   String get settingsKeepRunningCaption =>
-      'Files, photo backup and calls keep working when Linksy is closed. Shows a quiet notification.';
+      'Mbola mandeha ny rakitra, ny fitahirizana sary ary ny antso na dia mikatona aza i Linksy. Misy fampahafantarana mangina.';
 
   @override
-  String get settingsAwayFromHome => 'Away from home';
+  String get settingsAwayFromHome => 'Lavitra ny trano';
 
   @override
   String get settingsAwayFromHomeCaption =>
-      'Reach your computers over the internet when you’re not on the same network, for a week after you last were. Encrypted end to end.';
+      'Mifandraisa amin\'ny solosainao amin\'ny alalan\'ny internet rehefa tsy amin\'ny tambajotra iray ianareo, mandritra ny herinandro taorian\'ny fotoana farany nisy anareo niaraka. Voaaro tanteraka.';
 
   @override
-  String get settingsWithYourComputers => 'With your computers';
+  String get settingsWithYourComputers => 'Miaraka amin\'ny solosainao';
 
   @override
-  String get settingsPauseMusic => 'Pause music during calls';
+  String get settingsPauseMusic => 'Ajanony ny mozika mandritra ny antso';
 
   @override
   String get settingsPauseMusicCaption =>
-      'Your computers pause what plays while a call rings or goes on, and resume after.';
+      'Ajanon\'ny solosainao izay mandeha rehefa misy antso maneno na resaka, ary averiny avy eo.';
 
   @override
-  String get settingsBrowseFiles => 'Let computers browse files';
+  String get settingsBrowseFiles => 'Avelao hijery rakitra ny solosaina';
 
   @override
   String get settingsBrowseFilesChoose =>
-      'Choose a folder your computers can open in their Files app, like Documents (Android doesn’t allow Download).';
+      'Safidio lahatahiry azon\'ny solosainao sokafana ao amin\'ny Files, toy ny Documents (tsy avelan\'i Android ny Download).';
 
   @override
   String settingsSharesFolder(String folder) {
-    return 'Shares “$folder”. Tap to choose another folder.';
+    return 'Mizara ny “$folder”. Tsindrio hisafidianana lahatahiry hafa.';
   }
 
   @override
-  String get settingsPicture => 'Picture of this phone';
+  String get settingsPicture => 'Sarin\'ity finday ity';
 
   @override
   String get settingsPictureChoose =>
-      'Your computers show it for this phone. Tap to choose one.';
+      'Asehon\'ny solosainao ho an\'ity finday ity izany. Tsindrio hisafidianana.';
 
   @override
   String get settingsPictureChange =>
-      'Your computers show it for this phone. Tap to change it.';
+      'Asehon\'ny solosainao ho an\'ity finday ity izany. Tsindrio hanovana azy.';
 
   @override
-  String get settingsPictureRemove => 'Remove';
+  String get settingsPictureRemove => 'Esory';
 
   @override
-  String get settingsLocate => 'Let computers locate this phone';
+  String get settingsLocate => 'Avelao hitady ity finday ity ny solosaina';
 
   @override
   String get settingsLocateCaption =>
-      'A computer can ask where this phone is, once, to find it. Nothing is kept or tracked. Works while Linksy is open.';
+      'Afaka manontany indray mandeha ny solosaina hoe aiza ity finday ity, mba hahitana azy. Tsy misy tehirizina na arahina. Mandeha raha misokatra i Linksy.';
 
   @override
   String get settingsLocatePermission =>
-      'Linksy needs the location permission for this.';
+      'Mila alalana hahafantatra ny toerana i Linksy amin\'ity.';
 
   @override
-  String get settingsPhotoFolder => 'Photo folder';
+  String get settingsPhotoFolder => 'Lahatahiry sary';
 
   @override
   String get settingsPhotoFolderChoose =>
-      'Choose your camera folder (DCIM › Camera) to back up photos to a computer.';
+      'Safidio ny lahatahirin\'ny fakantsary (DCIM › Camera) hitahiry sary any amin\'ny solosaina.';
 
   @override
   String settingsPhotoFolderBacksUp(String folder) {
-    return 'Backs up “$folder”. Turn it on per computer, on its page.';
+    return 'Mitahiry ny “$folder”. Alefaso isaky ny solosaina, ao amin\'ny pejiny.';
   }
 
   @override
-  String get settingsThisApp => 'This app';
+  String get settingsThisApp => 'Ity app ity';
 
   @override
-  String get settingsPermissions => 'Permissions';
+  String get settingsPermissions => 'Alalana';
 
   @override
   String get settingsDemo => 'Demo';
 
   @override
   String get settingsDemoCaption =>
-      'Simulated devices until the Linksy core is connected. These start what another device would.';
+      'Fitaovana sandoka mandra-pifandray ny Linksy core. Manomboka izay ho ataon\'ny fitaovana hafa ireto.';
 
   @override
-  String get settingsDemoReceiveFiles => 'Receive files';
+  String get settingsDemoReceiveFiles => 'Handray rakitra';
 
   @override
-  String get settingsDemoReceivePairing => 'Receive a pairing request';
+  String get settingsDemoReceivePairing =>
+      'Handray fangatahana fampifandraisana';
 
   @override
-  String get settingsDemoReceiveClipboard => 'Receive clipboard text';
+  String get settingsDemoReceiveClipboard => 'Handray soratra clipboard';
 
   @override
   String get settingsTagline =>
-      'Your devices, connected.\nNo account, no cloud.';
+      'Ny fitaovanao, mifandray.\nTsy mila kaonty, tsy misy cloud.';
 
   @override
-  String get settingsNameTitle => 'Name this phone';
+  String get settingsNameTitle => 'Omeo anarana ity finday ity';
 
   @override
-  String get settingsNameCaption => 'Your other devices see this name.';
+  String get settingsNameCaption =>
+      'Hitan\'ny fitaovanao hafa ity anarana ity.';
 
   @override
-  String get settingsSave => 'Save';
+  String get settingsSave => 'Tehirizo';
 
   @override
-  String get settingsCancel => 'Cancel';
+  String get settingsCancel => 'Foano';
 
   @override
   String settingsRename(String name) {
-    return 'Rename $name';
+    return 'Ovay anarana $name';
   }
 
   @override
   String settingsThisPhone(String shortId) {
-    return 'This phone · $shortId';
+    return 'Ity finday ity · $shortId';
   }
 
   @override
-  String get settingsPermissionsRow => 'Notifications and camera';
+  String get settingsPermissionsRow => 'Fampahafantarana sy fakantsary';
 
   @override
   String get settingsPermissionsWhat =>
-      'What Linksy asks Android for, and why.';
+      'Izay angatahan\'i Linksy amin\'i Android, sy ny antony.';
 
   @override
-  String get settingsPermissionsBoth => 'Both allowed.';
+  String get settingsPermissionsBoth => 'Samy navela.';
 
   @override
   String settingsPermissionsSome(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count of 2 allowed. Tap to allow the rest.',
+      other: '$count amin\'ny 2 no navela. Tsindrio hamela ny sisa.',
     );
     return '$_temp0';
   }
 
   @override
-  String get permissionsTitle => 'Permissions';
+  String get permissionsTitle => 'Alalana';
 
   @override
   String get permissionsIntro =>
-      'Linksy asks only for what it needs, and you can change any of these later in Settings.';
+      'Izay ilainy ihany no angatahan\'i Linksy, ary azonao ovaina any aoriana ao amin\'ny Fikirana ireo.';
 
   @override
-  String get permissionsNotifications => 'Notifications';
+  String get permissionsNotifications => 'Fampahafantarana';
 
   @override
   String get permissionsNotificationsWhy =>
-      'Shows when a computer sees your screen or uses your camera, with a button to stop it.';
+      'Mampiseho rehefa misy solosaina mijery ny efijerinao na mampiasa ny fakantsarinao, miaraka amin\'ny bokotra hampitsaharana azy.';
 
   @override
-  String get permissionsCamera => 'Camera';
+  String get permissionsCamera => 'Fakantsary';
 
   @override
   String get permissionsCameraWhy =>
-      'Scans the pairing QR code, and lets a computer use this phone as a webcam when you allow it.';
+      'Mamaky ny QR code fampifandraisana, ary mamela solosaina hampiasa ity finday ity ho webcam rehefa avelanao.';
 
   @override
-  String get permissionsAllow => 'Allow';
+  String get permissionsAllow => 'Avelao';
 
   @override
-  String get permissionsAllowed => 'Allowed';
+  String get permissionsAllowed => 'Navela';
 
   @override
-  String get permissionsDone => 'Done';
+  String get permissionsDone => 'Vita';
 
   @override
-  String get remoteBack => 'Back';
+  String get remoteBack => 'Hiverina';
 
   @override
-  String get remoteTitle => 'Remote';
+  String get remoteTitle => 'Fanaraha-davitra';
 
   @override
   String remoteAllowOn(String name) {
-    return 'Allow it on $name';
+    return 'Avelao ao amin\'i $name';
   }
 
   @override
   String remoteAsks(String name) {
-    return 'Linksy on $name asks whether this phone may move its pointer and type.';
+    return 'Manontany i Linksy ao amin\'i $name raha azon\'ity finday ity hetsehina ny tondro sy hanoratana.';
   }
 
   @override
-  String get remoteFailed => 'That didn’t work';
+  String get remoteFailed => 'Tsy nety izany';
 
   @override
-  String get remoteStopped => 'The remote stopped';
+  String get remoteStopped => 'Nijanona ny fanaraha-davitra';
 
   @override
   String remoteEndedBy(String name) {
-    return '$name ended it.';
+    return 'Notapitrin\'i $name izany.';
   }
 
   @override
-  String get remoteTryAgain => 'Try again';
+  String get remoteTryAgain => 'Andramo indray';
 
   @override
   String get remoteTouchpad => 'Touchpad';
@@ -1371,114 +1381,114 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get remoteTouchpadHint =>
-      'Move with one finger, tap to click\nTwo fingers scroll, two-finger tap right-clicks';
+      'Rantsantanana iray hanetsehana, tsindrio hipihana\nRantsantanana roa hanakodiavana, tsindrio amin\'ny roa ho an\'ny pitika havanana';
 
   @override
-  String get remoteLeftClick => 'Left click';
+  String get remoteLeftClick => 'Pitika havia';
 
   @override
-  String get remoteRightClick => 'Right click';
+  String get remoteRightClick => 'Pitika havanana';
 
   @override
-  String get remoteKeyboard => 'Keyboard';
+  String get remoteKeyboard => 'Fitendry';
 
   @override
-  String get remoteNextSlide => 'Next slide';
+  String get remoteNextSlide => 'Slide manaraka';
 
   @override
-  String get remoteNext => 'Next';
+  String get remoteNext => 'Manaraka';
 
   @override
-  String get remotePreviousSlide => 'Previous slide';
+  String get remotePreviousSlide => 'Slide teo aloha';
 
   @override
-  String get remoteSlideBack => 'Back';
+  String get remoteSlideBack => 'Hiverina';
 
   @override
-  String get remoteStartShow => 'Start (F5)';
+  String get remoteStartShow => 'Atombohy (F5)';
 
   @override
-  String get remoteEndShow => 'End (Esc)';
+  String get remoteEndShow => 'Tapitra (Esc)';
 
   @override
   String get remoteVolumeHint =>
-      'Volume down: next · Volume up: back. The screen stays on.';
+      'Feo midina: manaraka · Feo miakatra: hiverina. Mijanona mirehitra ny efijery.';
 
   @override
-  String get ringTitle => 'Here I am!';
+  String get ringTitle => 'Ato aho!';
 
   @override
   String ringLookingFor(String name) {
-    return '$name is looking for this phone.';
+    return 'Mitady ity finday ity $name.';
   }
 
   @override
-  String get ringFoundIt => 'Found it';
+  String get ringFoundIt => 'Hita';
 
   @override
-  String get webcamBack => 'Back';
+  String get webcamBack => 'Hiverina';
 
   @override
   String get webcamTitle => 'Webcam';
 
   @override
   String webcamLiveOn(String name) {
-    return 'Live on $name';
+    return 'Mivantana ao amin\'i $name';
   }
 
   @override
-  String get webcamStopSemantic => 'Stop the webcam';
+  String get webcamStopSemantic => 'Atsaharo ny webcam';
 
   @override
-  String get webcamStop => 'Stop';
+  String get webcamStop => 'Atsaharo';
 
   @override
-  String get webcamBadgeLive => 'LIVE';
+  String get webcamBadgeLive => 'MIVANTANA';
 
   @override
-  String get webcamBadgeLock => 'AE/AF LOCK';
+  String get webcamBadgeLock => 'AE/AF MIHIDY';
 
   @override
   String get webcamBadgeManualFocus => 'MF';
 
   @override
-  String get webcamBadgeTorch => 'TORCH';
+  String get webcamBadgeTorch => 'JIRO';
 
   @override
-  String get webcamFacingFront => 'Front';
+  String get webcamFacingFront => 'Anoloana';
 
   @override
-  String get webcamFacingBack => 'Back';
+  String get webcamFacingBack => 'Aoriana';
 
   @override
-  String get webcamTorch => 'Torch';
+  String get webcamTorch => 'Jiro';
 
   @override
-  String get webcamPortrait => 'Portrait';
+  String get webcamPortrait => 'Mitsangana';
 
   @override
-  String get webcamLandscape => 'Landscape';
+  String get webcamLandscape => 'Mandry';
 
   @override
-  String get webcamLocked => 'Locked';
+  String get webcamLocked => 'Mihidy';
 
   @override
-  String get webcamLock => 'Lock';
+  String get webcamLock => 'Hidio';
 
   @override
-  String get webcamTabLight => 'Light';
+  String get webcamTabLight => 'Hazavana';
 
   @override
-  String get webcamTabFocus => 'Focus';
+  String get webcamTabFocus => 'Fahazavan-tsary';
 
   @override
-  String get webcamTabColor => 'Color';
+  String get webcamTabColor => 'Loko';
 
   @override
-  String get webcamTabStream => 'Stream';
+  String get webcamTabStream => 'Fandefasana';
 
   @override
-  String get webcamBrightness => 'Brightness';
+  String get webcamBrightness => 'Hamirapiratana';
 
   @override
   String webcamExposureValue(String value) {
@@ -1486,101 +1496,103 @@ class AppLocalizationsMg extends AppLocalizations {
   }
 
   @override
-  String get webcamExposureAuto => 'This camera sets exposure by itself.';
+  String get webcamExposureAuto =>
+      'Mandrindra ny hazavana ho azy ity fakantsary ity.';
 
   @override
-  String get webcamLockExposure => 'Lock exposure';
+  String get webcamLockExposure => 'Hidio ny hazavana';
 
   @override
   String get webcamLockExposureDetail =>
-      'Keeps the brightness as it is now. Hold the picture to lock on a spot.';
+      'Tazomina toy izao ny hamirapiratana. Tsindrio ela ny sary hanidiana amin\'ny toerana iray.';
 
   @override
-  String get webcamFocus => 'Focus';
+  String get webcamFocus => 'Fahazavan-tsary';
 
   @override
-  String get webcamFocusFixed => 'This camera has fixed focus.';
+  String get webcamFocusFixed =>
+      'Tsy miova ny fahazavan-tsarin\'ity fakantsary ity.';
 
   @override
   String get webcamFocusSpotDetail =>
-      'Held where you tapped. Double-tap the picture for auto.';
+      'Tazomina amin\'ny toerana notsindrianao. Tsindrio indroa ny sary ho an\'ny automatique.';
 
   @override
-  String get webcamFocusManualDetail => 'Set by hand below.';
+  String get webcamFocusManualDetail => 'Ianao no mandrindra eto ambany.';
 
   @override
   String get webcamFocusAutoDetail =>
-      'Follows the picture. Tap it to focus on a spot.';
+      'Manaraka ny sary. Tsindrio mba hifantoka amin\'ny toerana iray.';
 
   @override
   String get webcamFocusAuto => 'Auto';
 
   @override
-  String get webcamFocusSpot => 'Spot';
+  String get webcamFocusSpot => 'Toerana';
 
   @override
-  String get webcamFocusManual => 'Manual';
+  String get webcamFocusManual => 'Tanana';
 
   @override
-  String get webcamDistance => 'Distance';
+  String get webcamDistance => 'Halavirana';
 
   @override
-  String get webcamFar => 'Far';
+  String get webcamFar => 'Lavitra';
 
   @override
-  String get webcamNear => 'Near';
+  String get webcamNear => 'Akaiky';
 
   @override
   String get webcamWbAuto => 'Auto';
 
   @override
-  String get webcamWbDaylight => 'Daylight';
+  String get webcamWbDaylight => 'Hazavan\'andro';
 
   @override
-  String get webcamWbCloudy => 'Cloudy';
+  String get webcamWbCloudy => 'Rahona';
 
   @override
-  String get webcamWbShade => 'Shade';
+  String get webcamWbShade => 'Aloka';
 
   @override
-  String get webcamWbIncandescent => 'Warm light';
+  String get webcamWbIncandescent => 'Jiro mafana';
 
   @override
-  String get webcamWbFluorescent => 'Office light';
+  String get webcamWbFluorescent => 'Jiro birao';
 
   @override
-  String get webcamWhiteBalance => 'White balance';
+  String get webcamWhiteBalance => 'Fandanjana fotsy';
 
   @override
-  String get webcamLockColors => 'Lock colors';
+  String get webcamLockColors => 'Hidio ny loko';
 
   @override
   String get webcamLockColorsDetail =>
-      'Stops the colors shifting as the light changes.';
+      'Tsy miova ny loko rehefa miova ny hazavana.';
 
   @override
-  String get webcamOrientation => 'Orientation';
+  String get webcamOrientation => 'Fitodiana';
 
   @override
   String get webcamOrientationPortraitDetail =>
-      'Hold the phone upright; bars at the sides.';
+      'Atsangano ny finday; misy tsipika eo amin\'ny sisiny.';
 
   @override
   String get webcamOrientationLandscapeDetail =>
-      'Hold the phone sideways; it fills the frame.';
+      'Ampandrio ny finday; feno ny sary.';
 
   @override
-  String get webcamFrameRate => 'Frame rate';
+  String get webcamFrameRate => 'Isan-tsary';
 
   @override
   String get webcamFps60Detail =>
-      'Smoother motion; uses more data and battery.';
+      'Malama kokoa ny fihetsika; mandany data sy bateria bebe kokoa.';
 
   @override
-  String get webcamFps30Detail => 'Steady for video calls.';
+  String get webcamFps30Detail => 'Milamina ho an\'ny antso video.';
 
   @override
-  String get webcamFpsOnly30 => 'This camera does up to 30 fps.';
+  String get webcamFpsOnly30 => 'Hatramin\'ny 30 fps ihany ity fakantsary ity.';
 
   @override
   String webcamFps(String fps) {
@@ -1588,60 +1600,61 @@ class AppLocalizationsMg extends AppLocalizations {
   }
 
   @override
-  String get webcamResolution => 'Resolution';
+  String get webcamResolution => 'Fahamendrehana';
 
   @override
   String get webcamResolution1080Detail =>
-      'Full HD, for a big screen; more data.';
+      'Full HD, ho an\'ny efijery lehibe; data bebe kokoa.';
 
   @override
-  String get webcamResolution720Detail => 'HD, right for video calls.';
+  String get webcamResolution720Detail =>
+      'HD, mety tsara ho an\'ny antso video.';
 
   @override
-  String get webcamResolutionOnly720 => 'This camera streams 720p.';
+  String get webcamResolutionOnly720 => '720p no alefan\'ity fakantsary ity.';
 
   @override
-  String get webcamQuality => 'Quality';
+  String get webcamQuality => 'Kalitao';
 
   @override
   String webcamQualitySaverDetail(String mbps) {
-    return '$mbps Mbps, for a busy Wi-Fi.';
+    return '$mbps Mbps, ho an\'ny Wi-Fi be mpampiasa.';
   }
 
   @override
   String webcamQualityHighDetail(String mbps) {
-    return '$mbps Mbps, the most detail.';
+    return '$mbps Mbps, antsipiriany betsaka indrindra.';
   }
 
   @override
   String webcamQualityStandardDetail(String mbps) {
-    return '$mbps Mbps, sharp for video calls.';
+    return '$mbps Mbps, mazava ho an\'ny antso video.';
   }
 
   @override
-  String get webcamQualitySaver => 'Saver';
+  String get webcamQualitySaver => 'Mitsitsy';
 
   @override
-  String get webcamQualityStandard => 'Standard';
+  String get webcamQualityStandard => 'Mahazatra';
 
   @override
-  String get webcamQualityHigh => 'High';
+  String get webcamQualityHigh => 'Ambony';
 
   @override
-  String get webcamStabilization => 'Stabilization';
+  String get webcamStabilization => 'Fampitoniana';
 
   @override
-  String get webcamStabilizationDetail => 'Smooths out hand shake.';
+  String get webcamStabilizationDetail => 'Manala ny hovitrovitry ny tanana.';
 
   @override
-  String get webcamMirror => 'Mirror the preview';
+  String get webcamMirror => 'Ataovy fitaratra ny topi-maso';
 
   @override
   String get webcamMirrorDetail =>
-      'On this phone only; the computer gets it unmirrored.';
+      'Amin\'ity finday ity ihany; tsy fitaratra no azon\'ny solosaina.';
 
   @override
-  String get webcamFormat => 'Format';
+  String get webcamFormat => 'Endrika';
 
   @override
   String webcamFormatValue(String width, String height, String fps) {
@@ -1649,11 +1662,11 @@ class AppLocalizationsMg extends AppLocalizations {
   }
 
   @override
-  String get webcamReset => 'Reset';
+  String get webcamReset => 'Avereno';
 
   @override
   String webcamResetSetting(String setting) {
-    return 'Reset $setting';
+    return 'Avereno ny $setting';
   }
 
   @override
@@ -1663,265 +1676,278 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String sharingScreenRequestTitle(String name) {
-    return '$name wants to see your screen';
+    return 'Te hijery ny efijerinao $name';
   }
 
   @override
   String sharingScreenRequestDetail(String name) {
-    return 'Everything on this phone’s screen shows on $name until you stop. Android asks you to confirm next.';
+    return 'Miseho ao amin\'i $name ny zava-drehetra eo amin\'ny efijerin\'ity finday ity mandra-pampitsaharinao. Hangataka fanamafisana i Android avy eo.';
   }
 
   @override
   String sharingControlRequestTitle(String name) {
-    return '$name wants to control your screen';
+    return 'Te hifehy ny efijerinao $name';
   }
 
   @override
   String sharingControlRequestDetail(String name) {
-    return '$name sees this phone’s screen and can tap, swipe and type on it until you stop. Android asks you to confirm next.';
+    return 'Mahita ny efijerin\'ity finday ity $name ary afaka mikasika, mikosoka sy manoratra eo mandra-pampitsaharinao. Hangataka fanamafisana i Android avy eo.';
   }
 
   @override
   String sharingCameraRequestTitle(String name) {
-    return '$name wants to use your camera';
+    return 'Te hampiasa ny fakantsarinao $name';
   }
 
   @override
   String sharingCameraRequestDetail(String name) {
-    return '$name gets this phone’s camera as a webcam until you stop. Zoom, focus, light, lenses and rotation are in Linksy while it runs.';
+    return 'Azon\'i $name ho webcam ny fakantsarin\'ity finday ity mandra-pampitsaharinao. Ao amin\'i Linksy ny zoom, fahazavan-tsary, hazavana, lantihy ary fihodinana mandritra izany.';
   }
 
   @override
   String sharingInputRequestTitle(String name) {
-    return '$name wants to use this phone as a touchpad';
+    return 'Te hampiasa ity finday ity ho touchpad $name';
   }
 
   @override
   String get sharingInputRequestDetail =>
-      'Unexpected: computers don’t ask this. Don’t allow it.';
+      'Tsy nampoizina: tsy mangataka izany ny solosaina. Aza avela.';
 
   @override
   String sharingMicrophoneRequestTitle(String name) {
-    return '$name wants to use your microphone';
+    return 'Te hampiasa ny mikrônao $name';
   }
 
   @override
   String sharingMicrophoneRequestDetail(String name) {
-    return '$name hears this phone’s microphone until you stop, as a microphone any of its apps can use. Android asks you to confirm next.';
+    return 'Mandre ny mikrôn\'ity finday ity $name mandra-pampitsaharinao, ho mikrô azon\'ny app rehetra ao aminy ampiasaina. Hangataka fanamafisana i Android avy eo.';
   }
 
   @override
   String sharingDisplayRequestTitle(String name) {
-    return '$name wants to use this screen as a second display';
+    return 'Te hampiasa ity efijery ity ho efijery faharoa $name';
   }
 
   @override
   String sharingDisplayRequestDetail(String name) {
-    return 'This phone shows a screen of $name full screen. Touch it to click and drag; scroll with two fingers. Go back to stop.';
+    return 'Mampiseho efijerin\'i $name feno ity finday ity. Kasiho hipihana sy hisintonana; rantsantanana roa hanakodiavana. Miverena hampitsahatra.';
   }
 
   @override
-  String get sharingAllow => 'Allow';
+  String get sharingAllow => 'Avelao';
 
   @override
-  String get sharingDontAllow => 'Don’t allow';
+  String get sharingDontAllow => 'Aza avela';
 
   @override
   String get sharingProtectionHint =>
-      'Top bar or notifications black on the computer? Android’s screen share protection hides them. Turn on “Disable screen share protections” in Developer options, then share again.';
+      'Mainty ao amin\'ny solosaina ny tsipika ambony na ny fampahafantarana? Ny fiarovana fizarana efijery an\'i Android no manafina azy. Alefaso ny “Disable screen share protections” ao amin\'ny Developer options, dia zarao indray.';
 
   @override
-  String get sharingGotIt => 'Got it';
+  String get sharingGotIt => 'Azoko';
 
   @override
   String get sharingDeveloperOptions => 'Developer options';
 
   @override
   String sharingControlling(String name) {
-    return '$name is controlling your screen';
+    return 'Mifehy ny efijerinao $name';
   }
 
   @override
   String sharingUsingCamera(String name) {
-    return '$name is using your camera';
+    return 'Mampiasa ny fakantsarinao $name';
   }
 
   @override
   String sharingUsingMicrophone(String name) {
-    return '$name is using your microphone';
+    return 'Mampiasa ny mikrônao $name';
   }
 
   @override
   String sharingScreenWith(String name) {
-    return 'Sharing your screen with $name';
+    return 'Mizara ny efijerinao amin\'i $name';
   }
 
   @override
-  String get sharingTapForCameraControls => 'Tap for camera controls';
+  String get sharingTapForCameraControls =>
+      'Tsindrio ho an\'ny fandrindrana fakantsary';
 
   @override
-  String get sharingSwitchCamera => 'Switch camera';
+  String get sharingSwitchCamera => 'Ovay fakantsary';
 
   @override
-  String get sharingStopSharing => 'Stop sharing';
+  String get sharingStopSharing => 'Atsaharo ny fizarana';
 
   @override
-  String get sharingStop => 'Stop';
+  String get sharingStop => 'Atsaharo';
 
   @override
-  String get sharingCameraControls => 'Camera controls';
+  String get sharingCameraControls => 'Fandrindrana fakantsary';
 
   @override
   String displaySecondHint(String name) {
-    return '$name’s second display · go back to stop';
+    return 'Efijery faharoan\'i $name · miverena hampitsahatra';
   }
 
   @override
   String displayControlHint(String name) {
-    return '$name’s screen · touch to click · go back to stop';
+    return 'Efijerin\'i $name · kasiho hipihana · miverena hampitsahatra';
   }
 
   @override
   String displayWatchHint(String name) {
-    return '$name’s screen · go back to stop';
+    return 'Efijerin\'i $name · miverena hampitsahatra';
   }
 
   @override
   String terminalTabClosed(String title) {
-    return '“$title” closed';
+    return 'Nikatona “$title”';
   }
 
   @override
   String terminalTabEnded(String title, String name) {
-    return '“$title” ended on $name';
+    return 'Tapitra tao amin\'i $name “$title”';
   }
 
   @override
-  String get terminalCloseTitle => 'Close this terminal?';
+  String get terminalCloseTitle => 'Hakatona ity terminal ity?';
 
   @override
   String terminalCloseDetail(String name) {
-    return 'The shell ends on $name, with anything still running in it. To come back to it later, keep it running instead.';
+    return 'Tapitra ao amin\'i $name ny shell, miaraka amin\'izay mbola mandeha ao. Raha te hiverina aminy any aoriana, avelao handeha foana kosa.';
   }
 
   @override
-  String get terminalKeepRunning => 'Keep running';
+  String get terminalKeepRunning => 'Avelao handeha';
 
   @override
-  String get terminalClose => 'Close';
+  String get terminalClose => 'Akatony';
 
   @override
-  String get terminalTheComputer => 'the computer';
+  String get terminalTheComputer => 'ny solosaina';
 
   @override
-  String get terminalDetached => 'Detached';
+  String get terminalDetached => 'Navela';
 
   @override
   String terminalDetachedDetail(String name) {
-    return 'Still running on $name. Reattach to see it again; the code is asked again.';
+    return 'Mbola mandeha ao amin\'i $name. Ampifandraiso indray raha te hijery azy; hangatahina indray ny kaody.';
   }
 
   @override
-  String get terminalReattach => 'Reattach';
+  String get terminalReattach => 'Ampifandraiso indray';
 
   @override
   String terminalOn(String name) {
-    return 'Terminal on $name';
+    return 'Terminal ao amin\'i $name';
   }
 
   @override
   String terminalDetachedOn(String name) {
-    return 'Detached · still running on $name';
+    return 'Navela · mbola mandeha ao amin\'i $name';
   }
 
   @override
   String terminalOpeningOn(String name) {
-    return 'Opening on $name…';
+    return 'Manokatra ao amin\'i $name…';
   }
 
   @override
-  String get terminalWaitingForCode => 'Waiting for the code';
+  String get terminalWaitingForCode => 'Miandry ny kaody';
 
   @override
-  String get terminalEnded => 'Ended';
+  String get terminalEnded => 'Tapitra';
 
   @override
-  String get terminalBack => 'Back';
+  String get terminalBack => 'Hiverina';
 
   @override
   String get terminalTitle => 'Terminal';
 
   @override
-  String get terminalMenu => 'Terminal menu';
+  String get terminalMenu => 'Menu terminal';
 
   @override
-  String get terminalDetachMenu => 'Leave it running (detach)';
+  String get terminalDetachMenu => 'Avelao handeha (detach)';
 
   @override
   String terminalCloseTab(String title) {
-    return 'Close $title';
+    return 'Akatony $title';
   }
 
   @override
-  String get terminalNew => 'New terminal';
+  String get terminalNew => 'Terminal vaovao';
 
   @override
   String terminalShellOn(String name) {
-    return 'A shell on $name';
+    return 'Shell ao amin\'i $name';
   }
 
   @override
   String get terminalShellDetail =>
-      'Runs as you on the computer, in your home folder. Each time it opens, it asks for the terminal code set there.';
+      'Mandeha amin\'ny anaranao ao amin\'ny solosaina, ao amin\'ny lahatahiry fandraisanao. Isaky ny manokatra dia mangataka ny kaody terminal napetraka tao.';
 
   @override
-  String get terminalStillRunning => 'STILL RUNNING';
+  String get terminalStillRunning => 'MBOLA MANDEHA';
 
   @override
   String terminalReattachTab(String title) {
-    return 'Reattach $title';
+    return 'Ampifandraiso indray $title';
   }
 
   @override
   String terminalStarted(String time) {
-    return 'Started $time';
+    return 'Natomboka tamin\'ny $time';
   }
 
   @override
-  String get terminalKeyLeft => 'Left';
+  String get terminalKeyLeft => 'Havia';
 
   @override
-  String get terminalKeyUp => 'Up';
+  String get terminalKeyUp => 'Ambony';
 
   @override
-  String get terminalKeyDown => 'Down';
+  String get terminalKeyDown => 'Ambany';
 
   @override
-  String get terminalKeyRight => 'Right';
+  String get terminalKeyRight => 'Havanana';
 
   @override
-  String get terminalCodeTitle => 'Terminal code';
+  String get terminalCodeTitle => 'Kaody terminal';
 
   @override
   String terminalCodeDetail(String name) {
-    return 'The code set on $name in Preferences › Terminal. Linksy never keeps it.';
+    return 'Ilay kaody napetraka tao amin\'i $name ao amin\'ny Preferences › Terminal. Tsy tehirizin\'i Linksy mihitsy.';
   }
 
   @override
-  String get terminalCodePassphrase => 'Passphrase';
+  String get terminalCodePassphrase => 'Teny miafina';
 
   @override
-  String get terminalCodeDigitsHint => '6 or more digits';
+  String get terminalCodeDigitsHint => 'Isa 6 na mihoatra';
 
   @override
-  String get terminalCodeUseDigits => 'Use digits';
+  String get terminalCodeUseDigits => 'Ampiasao isa';
 
   @override
-  String get terminalCodeUseLetters => 'Use letters';
+  String get terminalCodeUseLetters => 'Ampiasao litera';
 
   @override
-  String get terminalOpening => 'Opening…';
+  String get terminalOpening => 'Manokatra…';
 
   @override
-  String get terminalOpen => 'Open terminal';
+  String get terminalOpen => 'Sokafy ny terminal';
+
+  @override
+  String get settingsAppearance => 'Endrika';
+
+  @override
+  String get settingsThemeSystem => 'Araka ny finday';
+
+  @override
+  String get settingsThemeLight => 'Mazava';
+
+  @override
+  String get settingsThemeDark => 'Maizina';
 }

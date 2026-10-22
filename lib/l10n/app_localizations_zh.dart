@@ -13,81 +13,74 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appTitle => 'Linksy';
 
   @override
-  String get onboardingWelcome => 'Welcome to Linksy';
+  String get onboardingWelcome => '欢迎使用 Linksy';
 
   @override
-  String get onboardingChooseLanguage => 'Choose your language';
+  String get onboardingChooseLanguage => '选择语言';
 
   @override
-  String get onboardingLanguageHint => 'You can change it later in Settings.';
+  String get onboardingLanguageHint => '之后可以在“设置”中更改。';
 
   @override
-  String get onboardingContinue => 'Continue';
+  String get onboardingContinue => '继续';
 
   @override
-  String get onboardingSetUpTitle => 'Set up Linksy';
+  String get onboardingSetUpTitle => '设置 Linksy';
 
   @override
-  String get onboardingSetUpSubtitle =>
-      'Choose what Linksy may do. Nothing leaves this phone until you say so.';
+  String get onboardingSetUpSubtitle => '选择 Linksy 可以做什么。除非你同意，任何内容都不会离开这部手机。';
 
   @override
-  String get onboardingNotifications => 'Notifications';
+  String get onboardingNotifications => '通知';
 
   @override
   String get onboardingNotificationsDetail =>
-      'Files arriving, and when a computer uses your screen, camera or microphone, with a button to stop.';
+      '文件送达时，以及电脑使用你的屏幕、相机或麦克风时通知你，并提供停止按钮。';
 
   @override
-  String get onboardingCamera => 'Camera';
+  String get onboardingCamera => '相机';
 
   @override
-  String get onboardingCameraDetail =>
-      'Scans pairing QR codes, and lets a computer use it as a webcam when you allow it.';
+  String get onboardingCameraDetail => '扫描配对二维码；经你允许后，电脑还能把它用作摄像头。';
 
   @override
-  String get onboardingAway => 'Away from home';
+  String get onboardingAway => '离家时';
 
   @override
-  String get onboardingAwayDetail =>
-      'Reach your computers over the internet when you\'re not on the same Wi-Fi. Encrypted end to end.';
+  String get onboardingAwayDetail => '不在同一 Wi-Fi 时，也能通过互联网连接你的电脑。端到端加密。';
 
   @override
-  String get onboardingBackground => 'Keep running in the background';
+  String get onboardingBackground => '在后台保持运行';
 
   @override
-  String get onboardingBackgroundDetail =>
-      'Files and calls keep working when Linksy is closed. Shows a quiet notification.';
+  String get onboardingBackgroundDetail => 'Linksy 关闭后，文件和来电功能仍可使用。会显示一条安静的通知。';
 
   @override
-  String get onboardingFolder => 'Share a folder with computers';
+  String get onboardingFolder => '与电脑共享文件夹';
 
   @override
-  String get onboardingFolderDetail =>
-      'Your computers can open one folder you choose in their Files app.';
+  String get onboardingFolderDetail => '你的电脑可以在其“文件”应用中打开你选择的一个文件夹。';
 
   @override
-  String get onboardingPhotos => 'Photo backup folder';
+  String get onboardingPhotos => '照片备份文件夹';
 
   @override
-  String get onboardingPhotosDetail =>
-      'Choose your camera folder to back up new photos to a computer. Turned on per computer.';
+  String get onboardingPhotosDetail => '选择相机文件夹，把新照片备份到电脑。可按电脑分别开启。';
 
   @override
-  String get onboardingLocate => 'Let computers locate this phone';
+  String get onboardingLocate => '允许电脑定位这部手机';
 
   @override
-  String get onboardingLocateDetail =>
-      'A computer can ask where this phone is, once. Nothing is kept.';
+  String get onboardingLocateDetail => '电脑可以询问一次这部手机的位置。不会保留任何记录。';
 
   @override
-  String get onboardingAllow => 'Allow';
+  String get onboardingAllow => '允许';
 
   @override
-  String get onboardingAllowed => 'Allowed';
+  String get onboardingAllowed => '已允许';
 
   @override
-  String get onboardingChooseFolder => 'Choose';
+  String get onboardingChooseFolder => '选择';
 
   @override
   String onboardingFolderChosen(String folder) {
@@ -95,192 +88,186 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get onboardingAnytime =>
-      'You can turn any of these on or off anytime in Settings.';
+  String get onboardingAnytime => '这些选项都可以随时在“设置”中开启或关闭。';
 
   @override
-  String get onboardingStart => 'Start using Linksy';
+  String get onboardingStart => '开始使用 Linksy';
 
   @override
-  String get onboardingBack => 'Back';
+  String get onboardingBack => '返回';
 
   @override
-  String get settingsLanguage => 'Language';
+  String get settingsLanguage => '语言';
 
   @override
-  String get languageDone => 'Done';
+  String get languageDone => '完成';
 
   @override
-  String get ctlClipboardFileTooBig =>
-      'Only a file up to 10 MB fits on the clipboard.';
+  String get ctlClipboardFileTooBig => '剪贴板只能放下不超过 10 MB 的文件。';
 
   @override
-  String get ctlClipboardCopyFailed => 'Couldn’t put it on the clipboard';
+  String get ctlClipboardCopyFailed => '无法放到剪贴板';
 
   @override
-  String get ctlLocateOff => 'Locating is turned off in Linksy on this phone';
+  String get ctlLocateOff => '这部手机上的 Linksy 已关闭定位';
 
   @override
-  String get ctlYourComputer => 'your computer';
+  String get ctlYourComputer => '你的电脑';
 
   @override
-  String get ctlAnd => 'and';
+  String get ctlAnd => '和';
 
   @override
   String ctlKeepingLocked(String names) {
-    return 'Keeping $names locked when you leave';
+    return '你离开时，$names 将保持锁定';
   }
 
   @override
-  String get ctlStayingConnected => 'Staying connected to your computers';
+  String get ctlStayingConnected => '正与你的电脑保持连接';
 
   @override
   String ctlTransferRequest(int count, String name) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$name wants to send you $count files',
-      one: '$name wants to send you a file',
+      other: '$name 想给你发送 $count 个文件',
+      one: '$name 想给你发送一个文件',
     );
     return '$_temp0';
   }
 
   @override
-  String get ctlClipboardEmpty => 'The clipboard is empty.';
+  String get ctlClipboardEmpty => '剪贴板是空的。';
 
   @override
-  String get ctlClipboardTooMuch =>
-      'The clipboard holds too much text to send.';
+  String get ctlClipboardTooMuch => '剪贴板中的文字太多，无法发送。';
 
   @override
-  String get ctlPing => 'Ping';
+  String get ctlPing => '提醒';
 
   @override
   String ctlPingFrom(String name) {
-    return 'From $name';
+    return '来自 $name';
   }
 
   @override
-  String get ctlTextTooMuch => 'That’s too much text to send.';
+  String get ctlTextTooMuch => '文字太多，无法发送。';
 
   @override
-  String get ctlDeclined => 'Declined';
+  String get ctlDeclined => '已拒绝';
 
   @override
-  String get ctlScreenPermission =>
-      'Sharing the screen needs Android’s permission to capture it.';
+  String get ctlScreenPermission => '共享屏幕需要 Android 授予录屏权限。';
 
   @override
-  String get ctlCameraPermission =>
-      'Linksy needs the camera permission to work as a webcam.';
+  String get ctlCameraPermission => 'Linksy 需要相机权限才能用作摄像头。';
 
   @override
-  String get ctlMicrophonePermission =>
-      'Linksy needs the microphone permission to be a microphone.';
+  String get ctlMicrophonePermission => 'Linksy 需要麦克风权限才能用作麦克风。';
 
   @override
-  String get ctlTerminalTitle => 'Terminal';
+  String get ctlTerminalTitle => '终端';
 
   @override
-  String get errorThatDevice => 'That device';
+  String get errorThatDevice => '该设备';
 
   @override
-  String get errorOtherDevice => 'The other device';
+  String get errorOtherDevice => '对方设备';
 
   @override
-  String get errorComputerOnCable => 'The computer on the cable';
+  String get errorComputerOnCable => '数据线连接的电脑';
 
   @override
   String errorDeviceAt(String address) {
-    return 'The device at $address';
+    return '位于 $address 的设备';
   }
 
   @override
   String errorUnreachable(String name) {
-    return '$name isn\'t reachable. Check that it\'s on and on this network.';
+    return '无法连接 $name。请确认它已开机并在此网络中。';
   }
 
   @override
   String errorDeclined(String name) {
-    return '$name declined.';
+    return '$name 已拒绝。';
   }
 
   @override
   String errorTimeout(String name) {
-    return '$name didn\'t answer in time.';
+    return '$name 未及时响应。';
   }
 
   @override
   String errorNotPaired(String name) {
-    return '$name isn\'t paired anymore. Pair again to share.';
+    return '$name 已不再配对。请重新配对后再共享。';
   }
 
   @override
   String errorUnsupported(String name) {
-    return '$name can\'t do that yet.';
+    return '$name 暂时还不支持此操作。';
   }
 
   @override
   String errorNotFromAway(String name) {
-    return '$name allows that only on the same network. Its owner can allow everything from away for this phone.';
+    return '$name 仅允许在同一网络中这样做。它的主人可以为这部手机开启“离家时允许全部功能”。';
   }
 
   @override
-  String get errorInvalid => 'That didn’t work.';
+  String get errorInvalid => '操作未成功。';
 
   @override
-  String get errorSomethingWrong => 'Something went wrong.';
+  String get errorSomethingWrong => '出了点问题。';
 
   @override
   String errorSomethingWrongDetail(String detail) {
-    return 'Something went wrong: $detail';
+    return '出了点问题：$detail';
   }
 
   @override
-  String get terminalRefusedComputer => 'The computer';
+  String get terminalRefusedComputer => '电脑';
 
   @override
-  String get terminalRefusedCode => 'Wrong code.';
+  String get terminalRefusedCode => '代码错误。';
 
   @override
   String terminalRefusedCodeTries(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Wrong code, $count tries left.',
-      one: 'Wrong code, 1 try left.',
+      other: '代码错误，还剩 $count 次机会。',
+      one: '代码错误，还剩 1 次机会。',
     );
     return '$_temp0';
   }
 
   @override
   String terminalRefusedLocked(String name) {
-    return 'Too many wrong codes. Unlock the terminal on $name.';
+    return '错误次数过多。请在 $name 上解锁终端。';
   }
 
   @override
   String terminalRefusedOff(String name) {
-    return 'Turn on Allow Terminal for this phone on $name.';
+    return '请在 $name 上为这部手机开启“允许终端”。';
   }
 
   @override
   String terminalRefusedAway(String name) {
-    return '$name allows a terminal only on the same network, unless “Allow Everything From Away” is on there.';
+    return '$name 仅允许在同一网络中打开终端，除非在那里开启了“离家时允许全部功能”。';
   }
 
   @override
   String terminalRefusedUnsupported(String name) {
-    return '$name can\'t open a terminal.';
+    return '$name 无法打开终端。';
   }
 
   @override
   String terminalRefusedLimit(String name) {
-    return '8 terminals already run on $name for this phone. Close one first.';
+    return '$name 上已为这部手机运行了 8 个终端。请先关闭一个。';
   }
 
   @override
   String terminalRefusedDeclined(String name) {
-    return '$name didn’t allow it.';
+    return '$name 未允许。';
   }
 
   @override
@@ -289,22 +276,22 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get modelKindDesktop => 'desktop';
+  String get modelKindDesktop => '台式机';
 
   @override
-  String get modelKindLaptop => 'laptop';
+  String get modelKindLaptop => '笔记本电脑';
 
   @override
-  String get modelKindPhone => 'phone';
+  String get modelKindPhone => '手机';
 
   @override
-  String get modelKindTablet => 'tablet';
+  String get modelKindTablet => '平板';
 
   @override
-  String get modelOsUnknown => 'Unknown';
+  String get modelOsUnknown => '未知';
 
   @override
-  String get deviceNothingOfKind => 'Nothing of that kind yet.';
+  String get deviceNothingOfKind => '暂无此类内容。';
 
   @override
   String deviceBattery(int level) {
@@ -313,22 +300,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String deviceBatteryCharging(int level) {
-    return '$level%, charging';
+    return '$level%，充电中';
   }
 
   @override
   String deviceReachableUntil(String day) {
-    return 'Reachable from away until $day';
+    return '离家时可连接，直到 $day';
   }
 
   @override
-  String get deviceLocksWhenLeave => 'Locks when you leave with this phone';
+  String get deviceLocksWhenLeave => '你带着这部手机离开时会锁定';
 
   @override
-  String get deviceBack => 'Back';
+  String get deviceBack => '返回';
 
   @override
-  String get deviceMore => 'More';
+  String get deviceMore => '更多';
 
   @override
   String deviceShortId(String id) {
@@ -336,104 +323,102 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get deviceChangePicture => 'Change picture';
+  String get deviceChangePicture => '更换图片';
 
   @override
-  String get deviceAddPicture => 'Add a picture';
+  String get deviceAddPicture => '添加图片';
 
   @override
-  String get deviceRemovePicture => 'Remove picture';
+  String get deviceRemovePicture => '移除图片';
 
   @override
-  String get deviceForgetThis => 'Forget this device';
+  String get deviceForgetThis => '忘记此设备';
 
   @override
   String deviceForgetTitle(String name) {
-    return 'Forget $name?';
+    return '忘记 $name？';
   }
 
   @override
-  String get deviceForgetBody =>
-      'You’ll need to pair again to share with it. Its activity on this phone is cleared too.';
+  String get deviceForgetBody => '要再与它共享，需要重新配对。它在这部手机上的活动记录也会被清除。';
 
   @override
-  String get deviceForget => 'Forget';
+  String get deviceForget => '忘记';
 
   @override
-  String get deviceCancel => 'Cancel';
+  String get deviceCancel => '取消';
 
   @override
-  String get deviceSendFiles => 'Send files';
+  String get deviceSendFiles => '发送文件';
 
   @override
-  String get deviceSendFilesCaption => 'Photos, documents, anything';
+  String get deviceSendFilesCaption => '照片、文档，什么都行';
 
   @override
-  String get deviceClipboard => 'Clipboard';
+  String get deviceClipboard => '剪贴板';
 
   @override
-  String get deviceClipboardCaption => 'Send what you copied';
+  String get deviceClipboardCaption => '发送你复制的内容';
 
   @override
-  String get devicePing => 'Ping';
+  String get devicePing => '提醒';
 
   @override
-  String get devicePingCaption => 'Make it chime';
+  String get devicePingCaption => '让它响一声';
 
   @override
-  String get deviceRemote => 'Remote';
+  String get deviceRemote => '遥控';
 
   @override
-  String get deviceRemoteCaption => 'Touchpad and slides';
+  String get deviceRemoteCaption => '触控板和幻灯片';
 
   @override
-  String get deviceRinging => 'Ringing…';
+  String get deviceRinging => '正在响铃…';
 
   @override
-  String get deviceFindIt => 'Find it';
+  String get deviceFindIt => '查找';
 
   @override
-  String get deviceTapToStop => 'Tap to stop';
+  String get deviceTapToStop => '轻点停止';
 
   @override
-  String get deviceFindItCaption => 'Make it ring loudly';
+  String get deviceFindItCaption => '让它大声响铃';
 
   @override
-  String get devicePrevious => 'Previous';
+  String get devicePrevious => '上一首';
 
   @override
-  String get devicePause => 'Pause';
+  String get devicePause => '暂停';
 
   @override
-  String get devicePlay => 'Play';
+  String get devicePlay => '播放';
 
   @override
-  String get deviceNext => 'Next';
+  String get deviceNext => '下一首';
 
   @override
   String deviceAllowOn(String name) {
-    return 'Allow it on $name…';
+    return '请在 $name 上允许…';
   }
 
   @override
-  String get deviceSeeScreen => 'See its screen';
+  String get deviceSeeScreen => '查看它的屏幕';
 
   @override
-  String get deviceSeeScreenCaption =>
-      'Watch it here, or control it with touch';
+  String get deviceSeeScreenCaption => '在这里观看，或用触控操作它';
 
   @override
-  String get deviceWatch => 'Watch';
+  String get deviceWatch => '观看';
 
   @override
-  String get deviceControl => 'Control';
+  String get deviceControl => '控制';
 
   @override
-  String get deviceTerminal => 'Terminal';
+  String get deviceTerminal => '终端';
 
   @override
   String deviceTerminalShell(String name) {
-    return 'A shell on $name, locked by its code';
+    return '$name 上的 Shell，由其代码保护';
   }
 
   @override
@@ -441,132 +426,130 @@ class AppLocalizationsZh extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count terminals open',
-      one: '1 terminal open',
+      other: '已打开 $count 个终端',
+      one: '已打开 1 个终端',
     );
     return '$_temp0';
   }
 
   @override
-  String get deviceFilterAll => 'All';
+  String get deviceFilterAll => '全部';
 
   @override
-  String get deviceFilterFiles => 'Files';
+  String get deviceFilterFiles => '文件';
 
   @override
-  String get deviceFilterClipboard => 'Clipboard';
+  String get deviceFilterClipboard => '剪贴板';
 
   @override
-  String get deviceFilterLinks => 'Links';
+  String get deviceFilterLinks => '链接';
 
   @override
-  String get deviceFilterShowAll => 'Show All';
+  String get deviceFilterShowAll => '显示全部';
 
   @override
-  String get deviceFilterShowFiles => 'Show Files';
+  String get deviceFilterShowFiles => '显示文件';
 
   @override
-  String get deviceFilterShowClipboard => 'Show Clipboard';
+  String get deviceFilterShowClipboard => '显示剪贴板';
 
   @override
-  String get deviceFilterShowLinks => 'Show Links';
+  String get deviceFilterShowLinks => '显示链接';
 
   @override
-  String get deviceActivity => 'Activity';
+  String get deviceActivity => '活动';
 
   @override
   String deviceReadyWhenAsks(String name) {
-    return 'Ready when $name asks';
+    return '$name 请求时即可使用';
   }
 
   @override
-  String get deviceWebcam => 'Webcam';
+  String get deviceWebcam => '摄像头';
 
   @override
-  String get deviceInUseNow => 'In use now';
+  String get deviceInUseNow => '正在使用';
 
   @override
-  String get deviceControls => 'Controls';
+  String get deviceControls => '控制项';
 
   @override
-  String get deviceMicrophone => 'Microphone';
+  String get deviceMicrophone => '麦克风';
 
   @override
-  String get deviceStop => 'Stop';
+  String get deviceStop => '停止';
 
   @override
-  String get deviceSecondDisplay => 'Second display';
+  String get deviceSecondDisplay => '第二屏幕';
 
   @override
-  String get deviceShowingNow => 'Showing now';
+  String get deviceShowingNow => '正在显示';
 
   @override
   String deviceReadySize(int width, int height) {
-    return 'Ready · $width × $height';
+    return '就绪 · $width × $height';
   }
 
   @override
-  String get devicePhoneAs => 'This phone as';
+  String get devicePhoneAs => '把这部手机用作';
 
   @override
   String deviceStartedOn(String name) {
-    return 'Started on $name';
+    return '在 $name 上启动';
   }
 
   @override
-  String get deviceFasterOverUsb => 'Faster and steadier over a USB cable.';
+  String get deviceFasterOverUsb => '用 USB 数据线连接更快、更稳定。';
 
   @override
-  String get deviceBackUpPhotos => 'Back up photos';
+  String get deviceBackUpPhotos => '备份照片';
 
   @override
   String devicePhotosGoTo(String name) {
-    return 'New photos go to $name’s Pictures folder';
+    return '新照片会存入 $name 的“图片”文件夹';
   }
 
   @override
   String devicePhotosDeclined(String name) {
-    return '$name doesn’t take photos. Turn on “Import Photos From Phones” there.';
+    return '$name 不接收照片。请在那里开启“从手机导入照片”。';
   }
 
   @override
   String devicePhotosFrom(String folder) {
-    return 'From $folder';
+    return '来自 $folder';
   }
 
   @override
-  String get devicePhotosFromCamera => 'From your camera folder';
+  String get devicePhotosFromCamera => '来自你的相机文件夹';
 
   @override
   String devicePhotosLast(String time) {
-    return 'last $time';
+    return '上次 $time';
   }
 
   @override
-  String get deviceGetClipboard => 'Get its clipboard';
+  String get deviceGetClipboard => '获取它的剪贴板';
 
   @override
   String deviceGetClipboardDetail(String name) {
-    return 'Text copied on $name lands here while connected';
+    return '连接期间，在 $name 上复制的文字会出现在这里';
   }
 
   @override
-  String get deviceAwayAll => 'Allow everything from away';
+  String get deviceAwayAll => '离家时允许全部功能';
 
   @override
-  String get deviceAwayAllOn =>
-      'From away too: this screen, webcam, microphone and files';
+  String get deviceAwayAllOn => '离家时也可使用：本机屏幕、摄像头、麦克风和文件';
 
   @override
-  String get deviceAwayAllOff =>
-      'From away: clipboard, links, files and ring only';
+  String get deviceAwayAllOff => '离家时仅限：剪贴板、链接、文件和响铃';
 
   @override
-  String get deviceNothingShared => 'Nothing shared yet';
+  String get deviceNothingShared => '还没有共享任何内容';
 
   @override
   String deviceNothingSharedBody(String name) {
-    return 'Files, clipboard text and pings between this phone and $name line up here.';
+    return '这部手机与 $name 之间的文件、剪贴板文字和提醒会显示在这里。';
   }
 
   @override
@@ -574,8 +557,8 @@ class AppLocalizationsZh extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items',
-      one: '1 item',
+      other: '$count 项',
+      one: '1 项',
     );
     return '$_temp0';
   }
@@ -586,496 +569,483 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get activityClipboardText => 'Clipboard text';
+  String get activityClipboardText => '剪贴板文字';
 
   @override
-  String get activityPing => 'Ping';
+  String get activityPing => '提醒';
 
   @override
-  String get activityYourScreen => 'Your screen';
+  String get activityYourScreen => '你的屏幕';
 
   @override
-  String get activityYourCamera => 'Your camera';
+  String get activityYourCamera => '你的相机';
 
   @override
-  String get activitySecondDisplay => 'Second display';
+  String get activitySecondDisplay => '第二屏幕';
 
   @override
-  String get activityLink => 'Link';
+  String get activityLink => '链接';
 
   @override
-  String get activityRangThisPhone => 'Rang this phone';
+  String get activityRangThisPhone => '让这部手机响铃';
 
   @override
-  String get activityRangIt => 'Rang it';
+  String get activityRangIt => '让它响铃';
 
   @override
-  String get activityTouchpadKeyboard => 'Touchpad and keyboard';
+  String get activityTouchpadKeyboard => '触控板和键盘';
 
   @override
-  String get activityItsScreen => 'Its screen';
+  String get activityItsScreen => '它的屏幕';
 
   @override
-  String get activityYourMicrophone => 'Your microphone';
+  String get activityYourMicrophone => '你的麦克风';
 
   @override
-  String get activityWhereThisPhone => 'Where this phone is';
+  String get activityWhereThisPhone => '这部手机的位置';
 
   @override
-  String get activityWatchingNow => 'Watching now';
+  String get activityWatchingNow => '正在观看';
 
   @override
-  String get activityWatched => 'Watched';
+  String get activityWatched => '已观看';
 
   @override
-  String get activityInUseWebcam => 'In use as a webcam';
+  String get activityInUseWebcam => '正用作摄像头';
 
   @override
-  String get activityUsedWebcam => 'Used as a webcam';
+  String get activityUsedWebcam => '曾用作摄像头';
 
   @override
-  String get activityBeingControlled => 'Being controlled now';
+  String get activityBeingControlled => '正在被控制';
 
   @override
-  String get activityWatchedControlled => 'Watched and controlled';
+  String get activityWatchedControlled => '已观看并控制';
 
   @override
-  String get activityWatchedFromPhone => 'Watched from this phone';
+  String get activityWatchedFromPhone => '从这部手机观看';
 
   @override
-  String get activityInUseNow => 'In use now';
+  String get activityInUseNow => '正在使用';
 
   @override
-  String get activityWasTouchpad => 'This phone was its touchpad';
+  String get activityWasTouchpad => '这部手机曾是它的触控板';
 
   @override
-  String get activityWasSecondDisplay => 'This phone was its second display';
+  String get activityWasSecondDisplay => '这部手机曾是它的第二屏幕';
 
   @override
-  String get activityLinkReceived => 'Link received';
+  String get activityLinkReceived => '收到链接';
 
   @override
-  String get activityOpenedOnComputer => 'Opened on the computer';
+  String get activityOpenedOnComputer => '已在电脑上打开';
 
   @override
-  String get activityInUseMicrophone => 'In use as a microphone';
+  String get activityInUseMicrophone => '正用作麦克风';
 
   @override
-  String get activityUsedMicrophone => 'Used as a microphone';
+  String get activityUsedMicrophone => '曾用作麦克风';
 
   @override
-  String get activityNotTold => 'Not told';
+  String get activityNotTold => '未告知';
 
   @override
-  String get activityToldWhere => 'Told it where this phone is';
+  String get activityToldWhere => '已告知这部手机的位置';
 
   @override
-  String get activityAskedToFind => 'Asked to find this phone';
+  String get activityAskedToFind => '请求查找这部手机';
 
   @override
-  String get activityToFindIt => 'To find it';
+  String get activityToFindIt => '用于查找它';
 
   @override
-  String get activityDeclined => 'Declined';
+  String get activityDeclined => '已拒绝';
 
   @override
-  String get activityFailed => 'Failed';
+  String get activityFailed => '失败';
 
   @override
-  String get activityInProgress => 'In progress';
+  String get activityInProgress => '进行中';
 
   @override
-  String get activityCopiedHere => 'Copied here';
+  String get activityCopiedHere => '已复制到本机';
 
   @override
-  String get activityReceived => 'Received';
+  String get activityReceived => '已接收';
 
   @override
-  String get activitySent => 'Sent';
+  String get activitySent => '已发送';
 
   @override
-  String get activityStop => 'Stop';
+  String get activityStop => '停止';
 
   @override
-  String get activityCancel => 'Cancel';
+  String get activityCancel => '取消';
 
   @override
-  String get activityCopyAgain => 'Copy again';
+  String get activityCopyAgain => '再次复制';
 
   @override
-  String get activityCopied => 'Copied';
+  String get activityCopied => '已复制';
 
   @override
-  String get activityCopyLink => 'Copy link';
+  String get activityCopyLink => '复制链接';
 
   @override
-  String get activityLinkCopied => 'Link copied';
+  String get activityLinkCopied => '链接已复制';
 
   @override
-  String get activityNoAppForLink => 'No app here opens that link.';
+  String get activityNoAppForLink => '此设备上没有能打开该链接的应用。';
 
   @override
   String activityFiles(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count files',
-      one: '1 file',
+      other: '$count 个文件',
+      one: '1 个文件',
     );
     return '$_temp0';
   }
 
   @override
   String activityFileMissing(String name) {
-    return '$name isn’t there anymore.';
+    return '$name 已不在原处。';
   }
 
   @override
   String activityNoAppForFile(String name) {
-    return 'No app on this phone opens $name.';
+    return '这部手机上没有能打开 $name 的应用。';
   }
 
   @override
-  String get activityWaitingForYou => 'Waiting for you to accept…';
+  String get activityWaitingForYou => '等待你接受…';
 
   @override
-  String get activityWaitingForDevice => 'Waiting for the device to accept…';
+  String get activityWaitingForDevice => '等待设备接受…';
 
   @override
   String activityWaitingFor(String name) {
-    return 'Waiting for $name to accept…';
+    return '等待 $name 接受…';
   }
 
   @override
   String activityProgress(String done, String total) {
-    return '$done of $total';
+    return '$done / $total';
   }
 
   @override
-  String get homeSettings => 'Settings';
+  String get homeSettings => '设置';
 
   @override
-  String get homeYourDevices => 'Your devices';
+  String get homeYourDevices => '你的设备';
 
   @override
-  String get homeNearbyNotPaired => 'Nearby, not paired';
+  String get homeNearbyNotPaired => '附近，未配对';
 
   @override
-  String get homeAddDevice => 'Add a device';
+  String get homeAddDevice => '添加设备';
 
   @override
   String homeVisible(String name) {
-    return '$name is visible on this Wi-Fi';
+    return '$name 在此 Wi-Fi 中可被发现';
   }
 
   @override
-  String get homeUpdateTitle => 'Update Linksy to keep connecting';
+  String get homeUpdateTitle => '更新 Linksy 以保持连接';
 
   @override
-  String get homeUpdateBody =>
-      'Your computers now speak a newer Linksy than this app.';
+  String get homeUpdateBody => '你的电脑使用的 Linksy 比此应用更新。';
 
   @override
-  String get homeGetUpdate => 'Get the update';
+  String get homeGetUpdate => '获取更新';
 
   @override
-  String get homeSendFiles => 'Send files';
+  String get homeSendFiles => '发送文件';
 
   @override
-  String get homePair => 'Pair';
+  String get homePair => '配对';
 
   @override
-  String get homeStepOpen => 'Open Linksy on your computer';
+  String get homeStepOpen => '在电脑上打开 Linksy';
 
   @override
-  String get homeStepChoose => 'Choose “Pair with QR Code”';
+  String get homeStepChoose => '选择“用二维码配对”';
 
   @override
-  String get homeStepScan => 'Scan it with this phone';
+  String get homeStepScan => '用这部手机扫描';
 
   @override
-  String get homeConnectTitle => 'Connect your\nfirst device';
+  String get homeConnectTitle => '连接你的\n第一台设备';
 
   @override
-  String get homeConnectSubtitle =>
-      'Straight over your Wi-Fi. No account, no cloud.';
+  String get homeConnectSubtitle => '直接通过你的 Wi-Fi。无需账号，无需云端。';
 
   @override
-  String get homeScanQr => 'Scan QR code';
+  String get homeScanQr => '扫描二维码';
 
   @override
-  String get homePairByAddress => 'Pair by address instead';
+  String get homePairByAddress => '改用地址配对';
 
   @override
-  String get pairingAddDevice => 'Add a device';
+  String get pairingAddDevice => '添加设备';
 
   @override
-  String get pairingAddDeviceHint =>
-      'On the other device, open Linksy and choose “Pair with QR Code”.';
+  String get pairingAddDeviceHint => '在另一台设备上打开 Linksy，然后选择“用二维码配对”。';
 
   @override
-  String get pairingScanQr => 'Scan QR code';
+  String get pairingScanQr => '扫描二维码';
 
   @override
-  String get pairingScanQrCaption => 'Fastest. Nothing to type.';
+  String get pairingScanQrCaption => '最快，无需输入。';
 
   @override
-  String get pairingByAddress => 'Pair by address';
+  String get pairingByAddress => '通过地址配对';
 
   @override
-  String get pairingByAddressCaption => 'When the other device can’t be found.';
+  String get pairingByAddressCaption => '找不到另一台设备时使用。';
 
   @override
   String pairingWith(String name) {
-    return 'Pairing with $name…';
+    return '正在与 $name 配对…';
   }
 
   @override
-  String get pairingWithOtherDevice => 'Pairing with the other device…';
+  String get pairingWithOtherDevice => '正在与另一台设备配对…';
 
   @override
-  String get pairingAddressHint =>
-      'It’s in Linksy’s Preferences on the other device.';
+  String get pairingAddressHint => '可在另一台设备上 Linksy 的“偏好设置”中找到。';
 
   @override
   String pairingPortHint(String port) {
-    return 'Port $port unless you add another.';
+    return '默认端口为 $port，除非你另行填写。';
   }
 
   @override
-  String get pairingPair => 'Pair';
+  String get pairingPair => '配对';
 
   @override
   String pairingWantsToPair(String name) {
-    return '$name wants to pair';
+    return '$name 请求配对';
   }
 
   @override
   String pairingPairWith(String name) {
-    return 'Pair with $name';
+    return '与 $name 配对';
   }
 
   @override
-  String get pairingCodeHint => 'Both screens should show this code.';
+  String get pairingCodeHint => '两个屏幕上应显示相同的代码。';
 
   @override
   String pairingCodeLabel(String code) {
-    return 'Code $code';
+    return '代码 $code';
   }
 
   @override
-  String get pairingCodesMatch => 'Codes match';
+  String get pairingCodesMatch => '代码一致';
 
   @override
-  String get scanNeedsCamera =>
-      'Linksy needs the camera to scan the pairing code. Allow it, or pair by address.';
+  String get scanNeedsCamera => 'Linksy 需要相机来扫描配对码。请允许使用，或通过地址配对。';
 
   @override
-  String get scanCameraUnavailable => 'The camera isn’t available.';
+  String get scanCameraUnavailable => '相机不可用。';
 
   @override
-  String get scanFlashlight => 'Flashlight';
+  String get scanFlashlight => '手电筒';
 
   @override
-  String get scanTitle => 'Scan the code';
+  String get scanTitle => '扫描代码';
 
   @override
-  String get scanWrongCode =>
-      'That’s not a Linksy code. On your computer, open Linksy → Pair with QR Code.';
+  String get scanWrongCode => '这不是 Linksy 代码。请在电脑上打开 Linksy → 用二维码配对。';
 
   @override
-  String get scanHint =>
-      'On your computer, open Linksy and choose “Pair with QR Code”.';
+  String get scanHint => '在电脑上打开 Linksy，然后选择“用二维码配对”。';
 
   @override
-  String get shareSheetPutOnClipboard => 'Put on a clipboard';
+  String get shareSheetPutOnClipboard => '放到剪贴板';
 
   @override
   String shareSheetSendFiles(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Send $count files',
-      one: 'Send a file',
+      other: '发送 $count 个文件',
+      one: '发送 1 个文件',
     );
     return '$_temp0';
   }
 
   @override
-  String get shareSheetOpenOnComputer => 'Open on a computer';
+  String get shareSheetOpenOnComputer => '在电脑上打开';
 
   @override
-  String get shareSheetSendToClipboard => 'Send to a clipboard';
+  String get shareSheetSendToClipboard => '发送到剪贴板';
 
   @override
-  String get shareSheetNoClipboardFiles =>
-      'None of your computers takes files on its clipboard yet. Update Linksy there.';
+  String get shareSheetNoClipboardFiles => '你的电脑都还不支持把文件放到剪贴板。请在电脑上更新 Linksy。';
 
   @override
-  String get shareSheetNoComputers =>
-      'Pair a computer first, then share to it from any app.';
+  String get shareSheetNoComputers => '先配对一台电脑，然后就能从任意应用分享给它。';
 
   @override
-  String get shareSheetSendFileInstead => 'Send the file instead';
+  String get shareSheetSendFileInstead => '改为发送文件';
 
   @override
-  String get shareSheetClipboardInstead =>
-      'Put it on the computer’s clipboard instead';
+  String get shareSheetClipboardInstead => '改为放到电脑的剪贴板';
 
   @override
-  String get shareSheetOpenLinkInstead => 'Open the link instead';
+  String get shareSheetOpenLinkInstead => '改为打开链接';
 
   @override
-  String get shareSheetSendAsTextInstead =>
-      'Send as text to the clipboard instead';
+  String get shareSheetSendAsTextInstead => '改为以文字发送到剪贴板';
 
   @override
   String shareSheetPuttingOnClipboard(String name) {
-    return 'Putting it on $name’s clipboard';
+    return '正在放到 $name 的剪贴板';
   }
 
   @override
-  String get shareSheetPuttingOnClipboardUnnamed =>
-      'Putting it on the computer’s clipboard';
+  String get shareSheetPuttingOnClipboardUnnamed => '正在放到电脑的剪贴板';
 
   @override
   String shareSheetOpened(String name) {
-    return 'Opened on $name';
+    return '已在 $name 上打开';
   }
 
   @override
-  String get shareSheetOpenedUnnamed => 'Opened on the computer';
+  String get shareSheetOpenedUnnamed => '已在电脑上打开';
 
   @override
   String shareSheetSentToClipboard(String name) {
-    return 'Sent to $name’s clipboard';
+    return '已发送到 $name 的剪贴板';
   }
 
   @override
-  String get shareSheetSentToClipboardUnnamed =>
-      'Sent to the computer’s clipboard';
+  String get shareSheetSentToClipboardUnnamed => '已发送到电脑的剪贴板';
 
   @override
   String shareSheetSentALink(String name) {
-    return '$name sent a link';
+    return '$name 发来一个链接';
   }
 
   @override
-  String get shareSheetOpen => 'Open';
+  String get shareSheetOpen => '打开';
 
   @override
-  String get shareSheetCopyLink => 'Copy link';
+  String get shareSheetCopyLink => '复制链接';
 
   @override
-  String get shareSheetLinkCopied => 'Link copied';
+  String get shareSheetLinkCopied => '链接已复制';
 
   @override
   String incomingSendingYou(String name, int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count files',
-      one: 'a file',
+      other: ' $count 个文件',
+      one: ' 1 个文件',
     );
-    return '$name is sending you $_temp0';
+    return '$name 正在向你发送$_temp0';
   }
 
   @override
   String incomingTotal(String size) {
-    return '$size in total';
+    return '共 $size';
   }
 
   @override
   String incomingMore(int count) {
-    return '+ $count more';
+    return '+ 另外 $count 个';
   }
 
   @override
-  String get incomingAccept => 'Accept';
+  String get incomingAccept => '接受';
 
   @override
-  String get appInvalidPairingLink => 'That pairing link isn’t valid.';
+  String get appInvalidPairingLink => '该配对链接无效。';
 
   @override
   String appPairingFailed(String reason) {
-    return 'Pairing failed: $reason';
+    return '配对失败：$reason';
   }
 
   @override
   String appCouldntPair(String name, String reason) {
-    return 'Couldn’t pair with $name: $reason';
+    return '无法与 $name 配对：$reason';
   }
 
   @override
   String appPairedWith(String name) {
-    return 'Paired with $name';
+    return '已与 $name 配对';
   }
 
   @override
   String appNotification(String name, String text) {
-    return '$name: $text';
+    return '$name：$text';
   }
 
   @override
   String appCopiedText(String name) {
-    return 'Copied text from $name';
+    return '已复制来自 $name 的文字';
   }
 
   @override
   String appCopiedFile(String file, String name) {
-    return 'Copied $file from $name';
+    return '已复制来自 $name 的 $file';
   }
 
   @override
-  String get appCouldntStart => 'Linksy couldn’t start';
+  String get appCouldntStart => 'Linksy 无法启动';
 
   @override
-  String get commonDismiss => 'Dismiss';
+  String get commonDismiss => '关闭';
 
   @override
-  String get commonCancel => 'Cancel';
+  String get commonCancel => '取消';
 
   @override
-  String get commonDecline => 'Decline';
+  String get commonDecline => '拒绝';
 
   @override
-  String get commonClose => 'Close';
+  String get commonClose => '关闭';
 
   @override
-  String get commonNotNow => 'Not now';
+  String get commonNotNow => '以后再说';
 
   @override
-  String get commonConnected => 'Connected';
+  String get commonConnected => '已连接';
 
   @override
-  String get commonNearby => 'Nearby';
+  String get commonNearby => '在附近';
 
   @override
-  String get commonNotNearby => 'Not nearby';
+  String get commonNotNearby => '不在附近';
 
   @override
-  String get commonUsbCable => 'USB cable';
+  String get commonUsbCable => 'USB 数据线';
 
   @override
-  String get commonAwayFromHome => 'Away from home';
+  String get commonAwayFromHome => '离家时';
 
   @override
-  String get commonSameWifi => 'Same Wi-Fi';
+  String get commonSameWifi => '同一 Wi-Fi';
 
   @override
-  String get commonConnectedByUsb => 'Connected by USB';
+  String get commonConnectedByUsb => '已通过 USB 连接';
 
   @override
-  String get commonConnectedAway => 'Connected away from home';
+  String get commonConnectedAway => '已远程连接';
 
   @override
   String commonBattery(int level) {
-    return 'Battery $level percent';
+    return '电量百分之 $level';
   }
 
   @override
   String commonBatteryCharging(int level) {
-    return 'Battery $level percent, charging';
+    return '电量百分之 $level，充电中';
   }
 
   @override
@@ -1083,7 +1053,7 @@ class AppLocalizationsZh extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count bytes',
+      other: '$count 字节',
     );
     return '$_temp0';
   }
@@ -1093,8 +1063,8 @@ class AppLocalizationsZh extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count seconds left',
-      one: '1 second left',
+      other: '还剩 $count 秒',
+      one: '还剩 1 秒',
     );
     return '$_temp0';
   }
@@ -1104,8 +1074,8 @@ class AppLocalizationsZh extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count minutes left',
-      one: '1 minute left',
+      other: '还剩 $count 分钟',
+      one: '还剩 1 分钟',
     );
     return '$_temp0';
   }
@@ -1115,370 +1085,355 @@ class AppLocalizationsZh extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'about $count hours left',
-      one: 'about 1 hour left',
+      other: '还剩约 $count 小时',
+      one: '还剩约 1 小时',
     );
     return '$_temp0';
   }
 
   @override
-  String get formatToday => 'Today';
+  String get formatToday => '今天';
 
   @override
-  String get formatYesterday => 'Yesterday';
+  String get formatYesterday => '昨天';
 
   @override
-  String get formatPhone => 'Phone';
+  String get formatPhone => '手机';
 
   @override
-  String get settingsBack => 'Back';
+  String get settingsBack => '返回';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get settingsTitle => '设置';
 
   @override
-  String get settingsReceiving => 'Receiving';
+  String get settingsReceiving => '接收';
 
   @override
-  String get settingsSaveLocation => 'Save location';
+  String get settingsSaveLocation => '保存位置';
 
   @override
-  String get settingsSaveLocationPath => 'Downloads › Linksy';
+  String get settingsSaveLocationPath => '下载 › Linksy';
 
   @override
-  String get settingsAcceptFromMyDevices => 'Accept from my devices';
+  String get settingsAcceptFromMyDevices => '自动接受我的设备';
 
   @override
-  String get settingsAcceptFromMyDevicesCaption =>
-      'Files from paired devices arrive without asking.';
+  String get settingsAcceptFromMyDevicesCaption => '来自已配对设备的文件无需确认即可接收。';
 
   @override
-  String get settingsConnection => 'Connection';
+  String get settingsConnection => '连接';
 
   @override
-  String get settingsStayConnected => 'Stay connected';
+  String get settingsStayConnected => '保持连接';
 
   @override
-  String get settingsStayConnectedCaption =>
-      'Faster sharing with nearby devices. Uses more battery.';
+  String get settingsStayConnectedCaption => '与附近设备共享更快，但更耗电。';
 
   @override
-  String get settingsKeepRunning => 'Keep running in the background';
+  String get settingsKeepRunning => '在后台保持运行';
 
   @override
   String get settingsKeepRunningCaption =>
-      'Files, photo backup and calls keep working when Linksy is closed. Shows a quiet notification.';
+      'Linksy 关闭后，文件、照片备份和来电功能仍可使用。会显示一条安静的通知。';
 
   @override
-  String get settingsAwayFromHome => 'Away from home';
+  String get settingsAwayFromHome => '离家时';
 
   @override
   String get settingsAwayFromHomeCaption =>
-      'Reach your computers over the internet when you’re not on the same network, for a week after you last were. Encrypted end to end.';
+      '不在同一网络时，也能通过互联网连接你的电脑，有效期为最后一次同网后的一周。端到端加密。';
 
   @override
-  String get settingsWithYourComputers => 'With your computers';
+  String get settingsWithYourComputers => '与你的电脑';
 
   @override
-  String get settingsPauseMusic => 'Pause music during calls';
+  String get settingsPauseMusic => '通话时暂停音乐';
 
   @override
-  String get settingsPauseMusicCaption =>
-      'Your computers pause what plays while a call rings or goes on, and resume after.';
+  String get settingsPauseMusicCaption => '来电响铃或通话期间，你的电脑会暂停正在播放的内容，结束后继续播放。';
 
   @override
-  String get settingsBrowseFiles => 'Let computers browse files';
+  String get settingsBrowseFiles => '允许电脑浏览文件';
 
   @override
   String get settingsBrowseFilesChoose =>
-      'Choose a folder your computers can open in their Files app, like Documents (Android doesn’t allow Download).';
+      '选择一个电脑可以在“文件”应用中打开的文件夹，例如“文档”（Android 不允许选择“下载”）。';
 
   @override
   String settingsSharesFolder(String folder) {
-    return 'Shares “$folder”. Tap to choose another folder.';
+    return '正在共享“$folder”。轻点可选择其他文件夹。';
   }
 
   @override
-  String get settingsPicture => 'Picture of this phone';
+  String get settingsPicture => '这部手机的图片';
 
   @override
-  String get settingsPictureChoose =>
-      'Your computers show it for this phone. Tap to choose one.';
+  String get settingsPictureChoose => '你的电脑会用它代表这部手机。轻点选择一张。';
 
   @override
-  String get settingsPictureChange =>
-      'Your computers show it for this phone. Tap to change it.';
+  String get settingsPictureChange => '你的电脑会用它代表这部手机。轻点更换。';
 
   @override
-  String get settingsPictureRemove => 'Remove';
+  String get settingsPictureRemove => '移除';
 
   @override
-  String get settingsLocate => 'Let computers locate this phone';
+  String get settingsLocate => '允许电脑定位这部手机';
 
   @override
   String get settingsLocateCaption =>
-      'A computer can ask where this phone is, once, to find it. Nothing is kept or tracked. Works while Linksy is open.';
+      '电脑可以询问一次这部手机的位置来找到它。不会保留或追踪任何信息。Linksy 打开时可用。';
 
   @override
-  String get settingsLocatePermission =>
-      'Linksy needs the location permission for this.';
+  String get settingsLocatePermission => 'Linksy 需要位置权限才能使用此功能。';
 
   @override
-  String get settingsPhotoFolder => 'Photo folder';
+  String get settingsPhotoFolder => '照片文件夹';
 
   @override
-  String get settingsPhotoFolderChoose =>
-      'Choose your camera folder (DCIM › Camera) to back up photos to a computer.';
+  String get settingsPhotoFolderChoose => '选择你的相机文件夹（DCIM › Camera），把照片备份到电脑。';
 
   @override
   String settingsPhotoFolderBacksUp(String folder) {
-    return 'Backs up “$folder”. Turn it on per computer, on its page.';
+    return '正在备份“$folder”。请在每台电脑的页面上分别开启。';
   }
 
   @override
-  String get settingsThisApp => 'This app';
+  String get settingsThisApp => '本应用';
 
   @override
-  String get settingsPermissions => 'Permissions';
+  String get settingsPermissions => '权限';
 
   @override
-  String get settingsDemo => 'Demo';
+  String get settingsDemo => '演示';
 
   @override
-  String get settingsDemoCaption =>
-      'Simulated devices until the Linksy core is connected. These start what another device would.';
+  String get settingsDemoCaption => '连接 Linksy 核心前的模拟设备。这些操作会模拟另一台设备发起的动作。';
 
   @override
-  String get settingsDemoReceiveFiles => 'Receive files';
+  String get settingsDemoReceiveFiles => '接收文件';
 
   @override
-  String get settingsDemoReceivePairing => 'Receive a pairing request';
+  String get settingsDemoReceivePairing => '接收配对请求';
 
   @override
-  String get settingsDemoReceiveClipboard => 'Receive clipboard text';
+  String get settingsDemoReceiveClipboard => '接收剪贴板文字';
 
   @override
-  String get settingsTagline =>
-      'Your devices, connected.\nNo account, no cloud.';
+  String get settingsTagline => '你的设备，互相连接。\n无需账号，无需云端。';
 
   @override
-  String get settingsNameTitle => 'Name this phone';
+  String get settingsNameTitle => '为这部手机命名';
 
   @override
-  String get settingsNameCaption => 'Your other devices see this name.';
+  String get settingsNameCaption => '你的其他设备会看到这个名称。';
 
   @override
-  String get settingsSave => 'Save';
+  String get settingsSave => '保存';
 
   @override
-  String get settingsCancel => 'Cancel';
+  String get settingsCancel => '取消';
 
   @override
   String settingsRename(String name) {
-    return 'Rename $name';
+    return '重命名 $name';
   }
 
   @override
   String settingsThisPhone(String shortId) {
-    return 'This phone · $shortId';
+    return '这部手机 · $shortId';
   }
 
   @override
-  String get settingsPermissionsRow => 'Notifications and camera';
+  String get settingsPermissionsRow => '通知和相机';
 
   @override
-  String get settingsPermissionsWhat =>
-      'What Linksy asks Android for, and why.';
+  String get settingsPermissionsWhat => 'Linksy 向 Android 申请哪些权限，以及原因。';
 
   @override
-  String get settingsPermissionsBoth => 'Both allowed.';
+  String get settingsPermissionsBoth => '均已允许。';
 
   @override
   String settingsPermissionsSome(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count of 2 allowed. Tap to allow the rest.',
+      other: '已允许 $count/2 项。轻点允许其余权限。',
     );
     return '$_temp0';
   }
 
   @override
-  String get permissionsTitle => 'Permissions';
+  String get permissionsTitle => '权限';
 
   @override
-  String get permissionsIntro =>
-      'Linksy asks only for what it needs, and you can change any of these later in Settings.';
+  String get permissionsIntro => 'Linksy 只申请必要的权限，你之后可以在“设置”中更改任何一项。';
 
   @override
-  String get permissionsNotifications => 'Notifications';
+  String get permissionsNotifications => '通知';
 
   @override
-  String get permissionsNotificationsWhy =>
-      'Shows when a computer sees your screen or uses your camera, with a button to stop it.';
+  String get permissionsNotificationsWhy => '电脑查看你的屏幕或使用你的相机时会显示通知，并提供停止按钮。';
 
   @override
-  String get permissionsCamera => 'Camera';
+  String get permissionsCamera => '相机';
 
   @override
-  String get permissionsCameraWhy =>
-      'Scans the pairing QR code, and lets a computer use this phone as a webcam when you allow it.';
+  String get permissionsCameraWhy => '扫描配对二维码；经你允许后，电脑还能把这部手机用作摄像头。';
 
   @override
-  String get permissionsAllow => 'Allow';
+  String get permissionsAllow => '允许';
 
   @override
-  String get permissionsAllowed => 'Allowed';
+  String get permissionsAllowed => '已允许';
 
   @override
-  String get permissionsDone => 'Done';
+  String get permissionsDone => '完成';
 
   @override
-  String get remoteBack => 'Back';
+  String get remoteBack => '返回';
 
   @override
-  String get remoteTitle => 'Remote';
+  String get remoteTitle => '遥控';
 
   @override
   String remoteAllowOn(String name) {
-    return 'Allow it on $name';
+    return '请在 $name 上允许';
   }
 
   @override
   String remoteAsks(String name) {
-    return 'Linksy on $name asks whether this phone may move its pointer and type.';
+    return '$name 上的 Linksy 正在询问是否允许这部手机移动其指针并输入文字。';
   }
 
   @override
-  String get remoteFailed => 'That didn’t work';
+  String get remoteFailed => '操作未成功';
 
   @override
-  String get remoteStopped => 'The remote stopped';
+  String get remoteStopped => '遥控已停止';
 
   @override
   String remoteEndedBy(String name) {
-    return '$name ended it.';
+    return '$name 已结束遥控。';
   }
 
   @override
-  String get remoteTryAgain => 'Try again';
+  String get remoteTryAgain => '重试';
 
   @override
-  String get remoteTouchpad => 'Touchpad';
+  String get remoteTouchpad => '触控板';
 
   @override
-  String get remoteSlides => 'Slides';
+  String get remoteSlides => '幻灯片';
 
   @override
-  String get remoteTouchpadHint =>
-      'Move with one finger, tap to click\nTwo fingers scroll, two-finger tap right-clicks';
+  String get remoteTouchpadHint => '单指移动，轻点即单击\n双指滚动，双指轻点即右键单击';
 
   @override
-  String get remoteLeftClick => 'Left click';
+  String get remoteLeftClick => '左键';
 
   @override
-  String get remoteRightClick => 'Right click';
+  String get remoteRightClick => '右键';
 
   @override
-  String get remoteKeyboard => 'Keyboard';
+  String get remoteKeyboard => '键盘';
 
   @override
-  String get remoteNextSlide => 'Next slide';
+  String get remoteNextSlide => '下一张幻灯片';
 
   @override
-  String get remoteNext => 'Next';
+  String get remoteNext => '下一张';
 
   @override
-  String get remotePreviousSlide => 'Previous slide';
+  String get remotePreviousSlide => '上一张幻灯片';
 
   @override
-  String get remoteSlideBack => 'Back';
+  String get remoteSlideBack => '上一张';
 
   @override
-  String get remoteStartShow => 'Start (F5)';
+  String get remoteStartShow => '开始 (F5)';
 
   @override
-  String get remoteEndShow => 'End (Esc)';
+  String get remoteEndShow => '结束 (Esc)';
 
   @override
-  String get remoteVolumeHint =>
-      'Volume down: next · Volume up: back. The screen stays on.';
+  String get remoteVolumeHint => '音量减：下一张 · 音量加：上一张。屏幕保持常亮。';
 
   @override
-  String get ringTitle => 'Here I am!';
+  String get ringTitle => '我在这儿！';
 
   @override
   String ringLookingFor(String name) {
-    return '$name is looking for this phone.';
+    return '$name 正在寻找这部手机。';
   }
 
   @override
-  String get ringFoundIt => 'Found it';
+  String get ringFoundIt => '找到了';
 
   @override
-  String get webcamBack => 'Back';
+  String get webcamBack => '返回';
 
   @override
-  String get webcamTitle => 'Webcam';
+  String get webcamTitle => '摄像头';
 
   @override
   String webcamLiveOn(String name) {
-    return 'Live on $name';
+    return '正在 $name 上直播';
   }
 
   @override
-  String get webcamStopSemantic => 'Stop the webcam';
+  String get webcamStopSemantic => '停止摄像头';
 
   @override
-  String get webcamStop => 'Stop';
+  String get webcamStop => '停止';
 
   @override
-  String get webcamBadgeLive => 'LIVE';
+  String get webcamBadgeLive => '直播中';
 
   @override
-  String get webcamBadgeLock => 'AE/AF LOCK';
+  String get webcamBadgeLock => 'AE/AF 锁定';
 
   @override
   String get webcamBadgeManualFocus => 'MF';
 
   @override
-  String get webcamBadgeTorch => 'TORCH';
+  String get webcamBadgeTorch => '手电筒';
 
   @override
-  String get webcamFacingFront => 'Front';
+  String get webcamFacingFront => '前置';
 
   @override
-  String get webcamFacingBack => 'Back';
+  String get webcamFacingBack => '后置';
 
   @override
-  String get webcamTorch => 'Torch';
+  String get webcamTorch => '手电筒';
 
   @override
-  String get webcamPortrait => 'Portrait';
+  String get webcamPortrait => '竖屏';
 
   @override
-  String get webcamLandscape => 'Landscape';
+  String get webcamLandscape => '横屏';
 
   @override
-  String get webcamLocked => 'Locked';
+  String get webcamLocked => '已锁定';
 
   @override
-  String get webcamLock => 'Lock';
+  String get webcamLock => '锁定';
 
   @override
-  String get webcamTabLight => 'Light';
+  String get webcamTabLight => '光线';
 
   @override
-  String get webcamTabFocus => 'Focus';
+  String get webcamTabFocus => '对焦';
 
   @override
-  String get webcamTabColor => 'Color';
+  String get webcamTabColor => '色彩';
 
   @override
-  String get webcamTabStream => 'Stream';
+  String get webcamTabStream => '视频流';
 
   @override
-  String get webcamBrightness => 'Brightness';
+  String get webcamBrightness => '亮度';
 
   @override
   String webcamExposureValue(String value) {
@@ -1486,101 +1441,94 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get webcamExposureAuto => 'This camera sets exposure by itself.';
+  String get webcamExposureAuto => '此相机会自动设置曝光。';
 
   @override
-  String get webcamLockExposure => 'Lock exposure';
+  String get webcamLockExposure => '锁定曝光';
 
   @override
-  String get webcamLockExposureDetail =>
-      'Keeps the brightness as it is now. Hold the picture to lock on a spot.';
+  String get webcamLockExposureDetail => '保持当前亮度。按住画面可锁定到某一点。';
 
   @override
-  String get webcamFocus => 'Focus';
+  String get webcamFocus => '对焦';
 
   @override
-  String get webcamFocusFixed => 'This camera has fixed focus.';
+  String get webcamFocusFixed => '此相机为固定对焦。';
 
   @override
-  String get webcamFocusSpotDetail =>
-      'Held where you tapped. Double-tap the picture for auto.';
+  String get webcamFocusSpotDetail => '保持在你轻点的位置。双击画面恢复自动。';
 
   @override
-  String get webcamFocusManualDetail => 'Set by hand below.';
+  String get webcamFocusManualDetail => '在下方手动设置。';
 
   @override
-  String get webcamFocusAutoDetail =>
-      'Follows the picture. Tap it to focus on a spot.';
+  String get webcamFocusAutoDetail => '跟随画面变化。轻点画面可对焦到某一点。';
 
   @override
-  String get webcamFocusAuto => 'Auto';
+  String get webcamFocusAuto => '自动';
 
   @override
-  String get webcamFocusSpot => 'Spot';
+  String get webcamFocusSpot => '定点';
 
   @override
-  String get webcamFocusManual => 'Manual';
+  String get webcamFocusManual => '手动';
 
   @override
-  String get webcamDistance => 'Distance';
+  String get webcamDistance => '距离';
 
   @override
-  String get webcamFar => 'Far';
+  String get webcamFar => '远';
 
   @override
-  String get webcamNear => 'Near';
+  String get webcamNear => '近';
 
   @override
-  String get webcamWbAuto => 'Auto';
+  String get webcamWbAuto => '自动';
 
   @override
-  String get webcamWbDaylight => 'Daylight';
+  String get webcamWbDaylight => '日光';
 
   @override
-  String get webcamWbCloudy => 'Cloudy';
+  String get webcamWbCloudy => '阴天';
 
   @override
-  String get webcamWbShade => 'Shade';
+  String get webcamWbShade => '阴影';
 
   @override
-  String get webcamWbIncandescent => 'Warm light';
+  String get webcamWbIncandescent => '暖光';
 
   @override
-  String get webcamWbFluorescent => 'Office light';
+  String get webcamWbFluorescent => '办公室灯光';
 
   @override
-  String get webcamWhiteBalance => 'White balance';
+  String get webcamWhiteBalance => '白平衡';
 
   @override
-  String get webcamLockColors => 'Lock colors';
+  String get webcamLockColors => '锁定色彩';
 
   @override
-  String get webcamLockColorsDetail =>
-      'Stops the colors shifting as the light changes.';
+  String get webcamLockColorsDetail => '防止色彩随光线变化而偏移。';
 
   @override
-  String get webcamOrientation => 'Orientation';
+  String get webcamOrientation => '方向';
 
   @override
-  String get webcamOrientationPortraitDetail =>
-      'Hold the phone upright; bars at the sides.';
+  String get webcamOrientationPortraitDetail => '竖握手机；画面两侧会有黑边。';
 
   @override
-  String get webcamOrientationLandscapeDetail =>
-      'Hold the phone sideways; it fills the frame.';
+  String get webcamOrientationLandscapeDetail => '横握手机；画面铺满。';
 
   @override
-  String get webcamFrameRate => 'Frame rate';
+  String get webcamFrameRate => '帧率';
 
   @override
-  String get webcamFps60Detail =>
-      'Smoother motion; uses more data and battery.';
+  String get webcamFps60Detail => '动作更流畅；更耗流量和电量。';
 
   @override
-  String get webcamFps30Detail => 'Steady for video calls.';
+  String get webcamFps30Detail => '视频通话稳定流畅。';
 
   @override
-  String get webcamFpsOnly30 => 'This camera does up to 30 fps.';
+  String get webcamFpsOnly30 => '此相机最高支持 30 fps。';
 
   @override
   String webcamFps(String fps) {
@@ -1588,60 +1536,58 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get webcamResolution => 'Resolution';
+  String get webcamResolution => '分辨率';
 
   @override
-  String get webcamResolution1080Detail =>
-      'Full HD, for a big screen; more data.';
+  String get webcamResolution1080Detail => '全高清，适合大屏幕；流量更多。';
 
   @override
-  String get webcamResolution720Detail => 'HD, right for video calls.';
+  String get webcamResolution720Detail => '高清，适合视频通话。';
 
   @override
-  String get webcamResolutionOnly720 => 'This camera streams 720p.';
+  String get webcamResolutionOnly720 => '此相机以 720p 传输。';
 
   @override
-  String get webcamQuality => 'Quality';
+  String get webcamQuality => '画质';
 
   @override
   String webcamQualitySaverDetail(String mbps) {
-    return '$mbps Mbps, for a busy Wi-Fi.';
+    return '$mbps Mbps，适合繁忙的 Wi-Fi。';
   }
 
   @override
   String webcamQualityHighDetail(String mbps) {
-    return '$mbps Mbps, the most detail.';
+    return '$mbps Mbps，细节最丰富。';
   }
 
   @override
   String webcamQualityStandardDetail(String mbps) {
-    return '$mbps Mbps, sharp for video calls.';
+    return '$mbps Mbps，视频通话足够清晰。';
   }
 
   @override
-  String get webcamQualitySaver => 'Saver';
+  String get webcamQualitySaver => '省流';
 
   @override
-  String get webcamQualityStandard => 'Standard';
+  String get webcamQualityStandard => '标准';
 
   @override
-  String get webcamQualityHigh => 'High';
+  String get webcamQualityHigh => '高';
 
   @override
-  String get webcamStabilization => 'Stabilization';
+  String get webcamStabilization => '防抖';
 
   @override
-  String get webcamStabilizationDetail => 'Smooths out hand shake.';
+  String get webcamStabilizationDetail => '减轻手抖。';
 
   @override
-  String get webcamMirror => 'Mirror the preview';
+  String get webcamMirror => '镜像预览';
 
   @override
-  String get webcamMirrorDetail =>
-      'On this phone only; the computer gets it unmirrored.';
+  String get webcamMirrorDetail => '仅在这部手机上镜像；电脑收到的是未镜像的画面。';
 
   @override
-  String get webcamFormat => 'Format';
+  String get webcamFormat => '格式';
 
   @override
   String webcamFormatValue(String width, String height, String fps) {
@@ -1649,279 +1595,290 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get webcamReset => 'Reset';
+  String get webcamReset => '重置';
 
   @override
   String webcamResetSetting(String setting) {
-    return 'Reset $setting';
+    return '重置$setting';
   }
 
   @override
   String webcamZoomTo(String zoom) {
-    return 'Zoom $zoom';
+    return '缩放 $zoom';
   }
 
   @override
   String sharingScreenRequestTitle(String name) {
-    return '$name wants to see your screen';
+    return '$name 想查看你的屏幕';
   }
 
   @override
   String sharingScreenRequestDetail(String name) {
-    return 'Everything on this phone’s screen shows on $name until you stop. Android asks you to confirm next.';
+    return '在你停止之前，这部手机屏幕上的所有内容都会显示在 $name 上。接下来 Android 会请你确认。';
   }
 
   @override
   String sharingControlRequestTitle(String name) {
-    return '$name wants to control your screen';
+    return '$name 想控制你的屏幕';
   }
 
   @override
   String sharingControlRequestDetail(String name) {
-    return '$name sees this phone’s screen and can tap, swipe and type on it until you stop. Android asks you to confirm next.';
+    return '在你停止之前，$name 可以看到这部手机的屏幕，并在上面轻点、滑动和输入。接下来 Android 会请你确认。';
   }
 
   @override
   String sharingCameraRequestTitle(String name) {
-    return '$name wants to use your camera';
+    return '$name 想使用你的相机';
   }
 
   @override
   String sharingCameraRequestDetail(String name) {
-    return '$name gets this phone’s camera as a webcam until you stop. Zoom, focus, light, lenses and rotation are in Linksy while it runs.';
+    return '在你停止之前，$name 会把这部手机的相机用作摄像头。运行期间，可在 Linksy 中调整缩放、对焦、光线、镜头和旋转。';
   }
 
   @override
   String sharingInputRequestTitle(String name) {
-    return '$name wants to use this phone as a touchpad';
+    return '$name 想把这部手机用作触控板';
   }
 
   @override
-  String get sharingInputRequestDetail =>
-      'Unexpected: computers don’t ask this. Don’t allow it.';
+  String get sharingInputRequestDetail => '异常请求：电脑不会这样请求。请不要允许。';
 
   @override
   String sharingMicrophoneRequestTitle(String name) {
-    return '$name wants to use your microphone';
+    return '$name 想使用你的麦克风';
   }
 
   @override
   String sharingMicrophoneRequestDetail(String name) {
-    return '$name hears this phone’s microphone until you stop, as a microphone any of its apps can use. Android asks you to confirm next.';
+    return '在你停止之前，$name 能听到这部手机的麦克风，它的任何应用都可将其用作麦克风。接下来 Android 会请你确认。';
   }
 
   @override
   String sharingDisplayRequestTitle(String name) {
-    return '$name wants to use this screen as a second display';
+    return '$name 想把这块屏幕用作第二屏幕';
   }
 
   @override
   String sharingDisplayRequestDetail(String name) {
-    return 'This phone shows a screen of $name full screen. Touch it to click and drag; scroll with two fingers. Go back to stop.';
+    return '这部手机会全屏显示 $name 的一块屏幕。触摸即可点击和拖动；双指滚动。返回即可停止。';
   }
 
   @override
-  String get sharingAllow => 'Allow';
+  String get sharingAllow => '允许';
 
   @override
-  String get sharingDontAllow => 'Don’t allow';
+  String get sharingDontAllow => '不允许';
 
   @override
   String get sharingProtectionHint =>
-      'Top bar or notifications black on the computer? Android’s screen share protection hides them. Turn on “Disable screen share protections” in Developer options, then share again.';
+      '电脑上的顶栏或通知是黑的？这是 Android 的屏幕共享保护把它们隐藏了。请在“开发者选项”中开启“停用屏幕共享保护”，然后重新共享。';
 
   @override
-  String get sharingGotIt => 'Got it';
+  String get sharingGotIt => '知道了';
 
   @override
-  String get sharingDeveloperOptions => 'Developer options';
+  String get sharingDeveloperOptions => '开发者选项';
 
   @override
   String sharingControlling(String name) {
-    return '$name is controlling your screen';
+    return '$name 正在控制你的屏幕';
   }
 
   @override
   String sharingUsingCamera(String name) {
-    return '$name is using your camera';
+    return '$name 正在使用你的相机';
   }
 
   @override
   String sharingUsingMicrophone(String name) {
-    return '$name is using your microphone';
+    return '$name 正在使用你的麦克风';
   }
 
   @override
   String sharingScreenWith(String name) {
-    return 'Sharing your screen with $name';
+    return '正在与 $name 共享你的屏幕';
   }
 
   @override
-  String get sharingTapForCameraControls => 'Tap for camera controls';
+  String get sharingTapForCameraControls => '轻点打开相机控制';
 
   @override
-  String get sharingSwitchCamera => 'Switch camera';
+  String get sharingSwitchCamera => '切换相机';
 
   @override
-  String get sharingStopSharing => 'Stop sharing';
+  String get sharingStopSharing => '停止共享';
 
   @override
-  String get sharingStop => 'Stop';
+  String get sharingStop => '停止';
 
   @override
-  String get sharingCameraControls => 'Camera controls';
+  String get sharingCameraControls => '相机控制';
 
   @override
   String displaySecondHint(String name) {
-    return '$name’s second display · go back to stop';
+    return '$name 的第二屏幕 · 返回即可停止';
   }
 
   @override
   String displayControlHint(String name) {
-    return '$name’s screen · touch to click · go back to stop';
+    return '$name 的屏幕 · 触摸即可点击 · 返回即可停止';
   }
 
   @override
   String displayWatchHint(String name) {
-    return '$name’s screen · go back to stop';
+    return '$name 的屏幕 · 返回即可停止';
   }
 
   @override
   String terminalTabClosed(String title) {
-    return '“$title” closed';
+    return '“$title”已关闭';
   }
 
   @override
   String terminalTabEnded(String title, String name) {
-    return '“$title” ended on $name';
+    return '“$title”已在 $name 上结束';
   }
 
   @override
-  String get terminalCloseTitle => 'Close this terminal?';
+  String get terminalCloseTitle => '关闭此终端？';
 
   @override
   String terminalCloseDetail(String name) {
-    return 'The shell ends on $name, with anything still running in it. To come back to it later, keep it running instead.';
+    return 'Shell 会在 $name 上结束，其中仍在运行的内容也会一并结束。如果之后还想回来，请改为保持运行。';
   }
 
   @override
-  String get terminalKeepRunning => 'Keep running';
+  String get terminalKeepRunning => '保持运行';
 
   @override
-  String get terminalClose => 'Close';
+  String get terminalClose => '关闭';
 
   @override
-  String get terminalTheComputer => 'the computer';
+  String get terminalTheComputer => '电脑';
 
   @override
-  String get terminalDetached => 'Detached';
+  String get terminalDetached => '已分离';
 
   @override
   String terminalDetachedDetail(String name) {
-    return 'Still running on $name. Reattach to see it again; the code is asked again.';
+    return '仍在 $name 上运行。重新连接即可再次查看；届时会再次要求输入代码。';
   }
 
   @override
-  String get terminalReattach => 'Reattach';
+  String get terminalReattach => '重新连接';
 
   @override
   String terminalOn(String name) {
-    return 'Terminal on $name';
+    return '$name 上的终端';
   }
 
   @override
   String terminalDetachedOn(String name) {
-    return 'Detached · still running on $name';
+    return '已分离 · 仍在 $name 上运行';
   }
 
   @override
   String terminalOpeningOn(String name) {
-    return 'Opening on $name…';
+    return '正在 $name 上打开…';
   }
 
   @override
-  String get terminalWaitingForCode => 'Waiting for the code';
+  String get terminalWaitingForCode => '等待输入代码';
 
   @override
-  String get terminalEnded => 'Ended';
+  String get terminalEnded => '已结束';
 
   @override
-  String get terminalBack => 'Back';
+  String get terminalBack => '返回';
 
   @override
-  String get terminalTitle => 'Terminal';
+  String get terminalTitle => '终端';
 
   @override
-  String get terminalMenu => 'Terminal menu';
+  String get terminalMenu => '终端菜单';
 
   @override
-  String get terminalDetachMenu => 'Leave it running (detach)';
+  String get terminalDetachMenu => '保持运行（分离）';
 
   @override
   String terminalCloseTab(String title) {
-    return 'Close $title';
+    return '关闭 $title';
   }
 
   @override
-  String get terminalNew => 'New terminal';
+  String get terminalNew => '新建终端';
 
   @override
   String terminalShellOn(String name) {
-    return 'A shell on $name';
+    return '$name 上的 Shell';
   }
 
   @override
   String get terminalShellDetail =>
-      'Runs as you on the computer, in your home folder. Each time it opens, it asks for the terminal code set there.';
+      '以你的身份在电脑上运行，位于你的主文件夹。每次打开时，都会要求输入在那里设置的终端代码。';
 
   @override
-  String get terminalStillRunning => 'STILL RUNNING';
+  String get terminalStillRunning => '仍在运行';
 
   @override
   String terminalReattachTab(String title) {
-    return 'Reattach $title';
+    return '重新连接 $title';
   }
 
   @override
   String terminalStarted(String time) {
-    return 'Started $time';
+    return '启动于 $time';
   }
 
   @override
-  String get terminalKeyLeft => 'Left';
+  String get terminalKeyLeft => '左';
 
   @override
-  String get terminalKeyUp => 'Up';
+  String get terminalKeyUp => '上';
 
   @override
-  String get terminalKeyDown => 'Down';
+  String get terminalKeyDown => '下';
 
   @override
-  String get terminalKeyRight => 'Right';
+  String get terminalKeyRight => '右';
 
   @override
-  String get terminalCodeTitle => 'Terminal code';
+  String get terminalCodeTitle => '终端代码';
 
   @override
   String terminalCodeDetail(String name) {
-    return 'The code set on $name in Preferences › Terminal. Linksy never keeps it.';
+    return '即在 $name 的“偏好设置 › 终端”中设置的代码。Linksy 从不保存它。';
   }
 
   @override
-  String get terminalCodePassphrase => 'Passphrase';
+  String get terminalCodePassphrase => '密码短语';
 
   @override
-  String get terminalCodeDigitsHint => '6 or more digits';
+  String get terminalCodeDigitsHint => '6 位或更多数字';
 
   @override
-  String get terminalCodeUseDigits => 'Use digits';
+  String get terminalCodeUseDigits => '使用数字';
 
   @override
-  String get terminalCodeUseLetters => 'Use letters';
+  String get terminalCodeUseLetters => '使用字母';
 
   @override
-  String get terminalOpening => 'Opening…';
+  String get terminalOpening => '正在打开…';
 
   @override
-  String get terminalOpen => 'Open terminal';
+  String get terminalOpen => '打开终端';
+
+  @override
+  String get settingsAppearance => '外观';
+
+  @override
+  String get settingsThemeSystem => '跟随系统';
+
+  @override
+  String get settingsThemeLight => '浅色';
+
+  @override
+  String get settingsThemeDark => '深色';
 }

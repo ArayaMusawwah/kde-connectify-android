@@ -1924,4 +1924,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get terminalOpen => 'Open terminal';
+
+  @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsThemeSystem => 'System';
+
+  @override
+  String get settingsThemeLight => 'Light';
+
+  @override
+  String get settingsThemeDark => 'Dark';
 }

@@ -187,16 +187,20 @@ class _LinksyAppState extends State<LinksyApp> {
   @override
   Widget build(BuildContext context) => LinksyScope(
     controller: widget.controller,
-    child: ValueListenableBuilder(
-      valueListenable: widget.controller.locale,
-      builder: (context, locale, _) => MaterialApp(
+    child: ListenableBuilder(
+      listenable: Listenable.merge([
+        widget.controller.locale,
+        widget.controller.themeMode,
+      ]),
+      builder: (context, _) => MaterialApp(
         title: 'Linksy',
         debugShowCheckedModeBanner: false,
         navigatorKey: _navigator,
         scaffoldMessengerKey: _messenger,
         theme: buildTheme(Brightness.light),
         darkTheme: buildTheme(Brightness.dark),
-        locale: locale,
+        themeMode: widget.controller.themeMode.value,
+        locale: widget.controller.locale.value,
         supportedLocales: [for (final l in languages) Locale(l.code)],
         localizationsDelegates: localizationsDelegates,
         home: const HomeScreen(),

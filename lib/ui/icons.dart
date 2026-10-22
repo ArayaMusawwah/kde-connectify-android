@@ -96,6 +96,9 @@ abstract final class Ph {
   static const terminalWindow = IconData(0xeae8, fontFamily: 'PhosphorRegular');
   static const arrowUp = IconData(0xe08e, fontFamily: 'PhosphorRegular');
   static const arrowDown = IconData(0xe03e, fontFamily: 'PhosphorRegular');
+  static const circleHalf = IconData(0xe18c, fontFamily: 'PhosphorRegular');
+  static const sun = IconData(0xe472, fontFamily: 'PhosphorRegular');
+  static const moon = IconData(0xe330, fontFamily: 'PhosphorRegular');
 }
 
 abstract final class PhBold {

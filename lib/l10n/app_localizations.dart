@@ -3209,6 +3209,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open terminal'**
   String get terminalOpen;
+
+  /// Settings row: light, dark or system theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// Theme follows the phone's setting.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsThemeSystem;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeDark;
 }
 
 class _AppLocalizationsDelegate

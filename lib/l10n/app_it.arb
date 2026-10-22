@@ -515,5 +515,9 @@
   "terminalCodeUseDigits": "Usa cifre",
   "terminalCodeUseLetters": "Usa lettere",
   "terminalOpening": "Apertura…",
-  "terminalOpen": "Apri terminale"
+  "terminalOpen": "Apri terminale",
+  "settingsAppearance": "Aspetto",
+  "settingsThemeSystem": "Sistema",
+  "settingsThemeLight": "Chiaro",
+  "settingsThemeDark": "Scuro"
 }

@@ -13,81 +13,83 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appTitle => 'Linksy';
 
   @override
-  String get onboardingWelcome => 'Welcome to Linksy';
+  String get onboardingWelcome => 'Benvenuto in Linksy';
 
   @override
-  String get onboardingChooseLanguage => 'Choose your language';
+  String get onboardingChooseLanguage => 'Scegli la lingua';
 
   @override
-  String get onboardingLanguageHint => 'You can change it later in Settings.';
+  String get onboardingLanguageHint =>
+      'Puoi cambiarla più tardi nelle Impostazioni.';
 
   @override
-  String get onboardingContinue => 'Continue';
+  String get onboardingContinue => 'Continua';
 
   @override
-  String get onboardingSetUpTitle => 'Set up Linksy';
+  String get onboardingSetUpTitle => 'Configura Linksy';
 
   @override
   String get onboardingSetUpSubtitle =>
-      'Choose what Linksy may do. Nothing leaves this phone until you say so.';
+      'Scegli cosa può fare Linksy. Nulla lascia questo telefono finché non lo decidi tu.';
 
   @override
-  String get onboardingNotifications => 'Notifications';
+  String get onboardingNotifications => 'Notifiche';
 
   @override
   String get onboardingNotificationsDetail =>
-      'Files arriving, and when a computer uses your screen, camera or microphone, with a button to stop.';
+      'File in arrivo, e quando un computer usa lo schermo, la fotocamera o il microfono, con un pulsante per interrompere.';
 
   @override
-  String get onboardingCamera => 'Camera';
+  String get onboardingCamera => 'Fotocamera';
 
   @override
   String get onboardingCameraDetail =>
-      'Scans pairing QR codes, and lets a computer use it as a webcam when you allow it.';
+      'Scansiona i codici QR di associazione e permette a un computer di usarla come webcam, se lo consenti.';
 
   @override
-  String get onboardingAway => 'Away from home';
+  String get onboardingAway => 'Fuori casa';
 
   @override
   String get onboardingAwayDetail =>
-      'Reach your computers over the internet when you\'re not on the same Wi-Fi. Encrypted end to end.';
+      'Raggiungi i tuoi computer via internet quando non sei sulla stessa Wi-Fi. Crittografia end-to-end.';
 
   @override
-  String get onboardingBackground => 'Keep running in the background';
+  String get onboardingBackground => 'Resta attivo in background';
 
   @override
   String get onboardingBackgroundDetail =>
-      'Files and calls keep working when Linksy is closed. Shows a quiet notification.';
+      'File e chiamate continuano a funzionare quando Linksy è chiuso. Mostra una notifica discreta.';
 
   @override
-  String get onboardingFolder => 'Share a folder with computers';
+  String get onboardingFolder => 'Condividi una cartella con i computer';
 
   @override
   String get onboardingFolderDetail =>
-      'Your computers can open one folder you choose in their Files app.';
+      'I tuoi computer possono aprire una cartella a tua scelta nella loro app File.';
 
   @override
-  String get onboardingPhotos => 'Photo backup folder';
+  String get onboardingPhotos => 'Cartella per il backup delle foto';
 
   @override
   String get onboardingPhotosDetail =>
-      'Choose your camera folder to back up new photos to a computer. Turned on per computer.';
+      'Scegli la cartella della fotocamera per fare il backup delle nuove foto su un computer. Si attiva per ogni computer.';
 
   @override
-  String get onboardingLocate => 'Let computers locate this phone';
+  String get onboardingLocate =>
+      'Permetti ai computer di localizzare questo telefono';
 
   @override
   String get onboardingLocateDetail =>
-      'A computer can ask where this phone is, once. Nothing is kept.';
+      'Un computer può chiedere dove si trova questo telefono, una volta. Non viene salvato nulla.';
 
   @override
-  String get onboardingAllow => 'Allow';
+  String get onboardingAllow => 'Consenti';
 
   @override
-  String get onboardingAllowed => 'Allowed';
+  String get onboardingAllowed => 'Consentito';
 
   @override
-  String get onboardingChooseFolder => 'Choose';
+  String get onboardingChooseFolder => 'Scegli';
 
   @override
   String onboardingFolderChosen(String folder) {
@@ -96,215 +98,216 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get onboardingAnytime =>
-      'You can turn any of these on or off anytime in Settings.';
+      'Puoi attivare o disattivare ognuna di queste opzioni quando vuoi nelle Impostazioni.';
 
   @override
-  String get onboardingStart => 'Start using Linksy';
+  String get onboardingStart => 'Inizia a usare Linksy';
 
   @override
-  String get onboardingBack => 'Back';
+  String get onboardingBack => 'Indietro';
 
   @override
-  String get settingsLanguage => 'Language';
+  String get settingsLanguage => 'Lingua';
 
   @override
-  String get languageDone => 'Done';
+  String get languageDone => 'Fatto';
 
   @override
   String get ctlClipboardFileTooBig =>
-      'Only a file up to 10 MB fits on the clipboard.';
+      'Negli appunti entra solo un file fino a 10 MB.';
 
   @override
-  String get ctlClipboardCopyFailed => 'Couldn’t put it on the clipboard';
+  String get ctlClipboardCopyFailed => 'Impossibile copiarlo negli appunti';
 
   @override
-  String get ctlLocateOff => 'Locating is turned off in Linksy on this phone';
+  String get ctlLocateOff =>
+      'La localizzazione è disattivata in Linksy su questo telefono';
 
   @override
-  String get ctlYourComputer => 'your computer';
+  String get ctlYourComputer => 'il tuo computer';
 
   @override
-  String get ctlAnd => 'and';
+  String get ctlAnd => 'e';
 
   @override
   String ctlKeepingLocked(String names) {
-    return 'Keeping $names locked when you leave';
+    return '$names restano bloccati quando ti allontani';
   }
 
   @override
-  String get ctlStayingConnected => 'Staying connected to your computers';
+  String get ctlStayingConnected => 'Connesso ai tuoi computer';
 
   @override
   String ctlTransferRequest(int count, String name) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$name wants to send you $count files',
-      one: '$name wants to send you a file',
+      other: '$name vuole inviarti $count file',
+      one: '$name vuole inviarti un file',
     );
     return '$_temp0';
   }
 
   @override
-  String get ctlClipboardEmpty => 'The clipboard is empty.';
+  String get ctlClipboardEmpty => 'Gli appunti sono vuoti.';
 
   @override
   String get ctlClipboardTooMuch =>
-      'The clipboard holds too much text to send.';
+      'Gli appunti contengono troppo testo da inviare.';
 
   @override
   String get ctlPing => 'Ping';
 
   @override
   String ctlPingFrom(String name) {
-    return 'From $name';
+    return 'Da $name';
   }
 
   @override
-  String get ctlTextTooMuch => 'That’s too much text to send.';
+  String get ctlTextTooMuch => 'È troppo testo da inviare.';
 
   @override
-  String get ctlDeclined => 'Declined';
+  String get ctlDeclined => 'Rifiutato';
 
   @override
   String get ctlScreenPermission =>
-      'Sharing the screen needs Android’s permission to capture it.';
+      'Per condividere lo schermo serve il permesso di Android per acquisirlo.';
 
   @override
   String get ctlCameraPermission =>
-      'Linksy needs the camera permission to work as a webcam.';
+      'Linksy ha bisogno del permesso della fotocamera per funzionare come webcam.';
 
   @override
   String get ctlMicrophonePermission =>
-      'Linksy needs the microphone permission to be a microphone.';
+      'Linksy ha bisogno del permesso del microfono per fare da microfono.';
 
   @override
-  String get ctlTerminalTitle => 'Terminal';
+  String get ctlTerminalTitle => 'Terminale';
 
   @override
-  String get errorThatDevice => 'That device';
+  String get errorThatDevice => 'Quel dispositivo';
 
   @override
-  String get errorOtherDevice => 'The other device';
+  String get errorOtherDevice => 'L’altro dispositivo';
 
   @override
-  String get errorComputerOnCable => 'The computer on the cable';
+  String get errorComputerOnCable => 'Il computer collegato via cavo';
 
   @override
   String errorDeviceAt(String address) {
-    return 'The device at $address';
+    return 'Il dispositivo all’indirizzo $address';
   }
 
   @override
   String errorUnreachable(String name) {
-    return '$name isn\'t reachable. Check that it\'s on and on this network.';
+    return '$name non è raggiungibile. Controlla che sia acceso e su questa rete.';
   }
 
   @override
   String errorDeclined(String name) {
-    return '$name declined.';
+    return '$name ha rifiutato.';
   }
 
   @override
   String errorTimeout(String name) {
-    return '$name didn\'t answer in time.';
+    return '$name non ha risposto in tempo.';
   }
 
   @override
   String errorNotPaired(String name) {
-    return '$name isn\'t paired anymore. Pair again to share.';
+    return '$name non è più associato. Associalo di nuovo per condividere.';
   }
 
   @override
   String errorUnsupported(String name) {
-    return '$name can\'t do that yet.';
+    return '$name non può ancora farlo.';
   }
 
   @override
   String errorNotFromAway(String name) {
-    return '$name allows that only on the same network. Its owner can allow everything from away for this phone.';
+    return '$name lo consente solo sulla stessa rete. Il proprietario può consentire tutto da fuori casa per questo telefono.';
   }
 
   @override
-  String get errorInvalid => 'That didn’t work.';
+  String get errorInvalid => 'Non ha funzionato.';
 
   @override
-  String get errorSomethingWrong => 'Something went wrong.';
+  String get errorSomethingWrong => 'Qualcosa è andato storto.';
 
   @override
   String errorSomethingWrongDetail(String detail) {
-    return 'Something went wrong: $detail';
+    return 'Qualcosa è andato storto: $detail';
   }
 
   @override
-  String get terminalRefusedComputer => 'The computer';
+  String get terminalRefusedComputer => 'Il computer';
 
   @override
-  String get terminalRefusedCode => 'Wrong code.';
+  String get terminalRefusedCode => 'Codice errato.';
 
   @override
   String terminalRefusedCodeTries(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Wrong code, $count tries left.',
-      one: 'Wrong code, 1 try left.',
+      other: 'Codice errato, ti restano $count tentativi.',
+      one: 'Codice errato, ti resta 1 tentativo.',
     );
     return '$_temp0';
   }
 
   @override
   String terminalRefusedLocked(String name) {
-    return 'Too many wrong codes. Unlock the terminal on $name.';
+    return 'Troppi codici errati. Sblocca il terminale su $name.';
   }
 
   @override
   String terminalRefusedOff(String name) {
-    return 'Turn on Allow Terminal for this phone on $name.';
+    return 'Attiva Consenti Terminale per questo telefono su $name.';
   }
 
   @override
   String terminalRefusedAway(String name) {
-    return '$name allows a terminal only on the same network, unless “Allow Everything From Away” is on there.';
+    return '$name consente un terminale solo sulla stessa rete, a meno che lì non sia attivo “Consenti tutto da fuori casa”.';
   }
 
   @override
   String terminalRefusedUnsupported(String name) {
-    return '$name can\'t open a terminal.';
+    return '$name non può aprire un terminale.';
   }
 
   @override
   String terminalRefusedLimit(String name) {
-    return '8 terminals already run on $name for this phone. Close one first.';
+    return 'Su $name sono già aperti 8 terminali per questo telefono. Chiudine uno prima.';
   }
 
   @override
   String terminalRefusedDeclined(String name) {
-    return '$name didn’t allow it.';
+    return '$name non l’ha consentito.';
   }
 
   @override
   String modelDescription(String os, String kind) {
-    return '$os $kind';
+    return '$kind $os';
   }
 
   @override
-  String get modelKindDesktop => 'desktop';
+  String get modelKindDesktop => 'Desktop';
 
   @override
-  String get modelKindLaptop => 'laptop';
+  String get modelKindLaptop => 'Portatile';
 
   @override
-  String get modelKindPhone => 'phone';
+  String get modelKindPhone => 'Telefono';
 
   @override
-  String get modelKindTablet => 'tablet';
+  String get modelKindTablet => 'Tablet';
 
   @override
-  String get modelOsUnknown => 'Unknown';
+  String get modelOsUnknown => 'sconosciuto';
 
   @override
-  String get deviceNothingOfKind => 'Nothing of that kind yet.';
+  String get deviceNothingOfKind => 'Ancora niente di questo tipo.';
 
   @override
   String deviceBattery(int level) {
@@ -313,22 +316,23 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String deviceBatteryCharging(int level) {
-    return '$level%, charging';
+    return '$level%, in carica';
   }
 
   @override
   String deviceReachableUntil(String day) {
-    return 'Reachable from away until $day';
+    return 'Raggiungibile da fuori casa fino a $day';
   }
 
   @override
-  String get deviceLocksWhenLeave => 'Locks when you leave with this phone';
+  String get deviceLocksWhenLeave =>
+      'Si blocca quando ti allontani con questo telefono';
 
   @override
-  String get deviceBack => 'Back';
+  String get deviceBack => 'Indietro';
 
   @override
-  String get deviceMore => 'More';
+  String get deviceMore => 'Altro';
 
   @override
   String deviceShortId(String id) {
@@ -336,104 +340,103 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get deviceChangePicture => 'Change picture';
+  String get deviceChangePicture => 'Cambia immagine';
 
   @override
-  String get deviceAddPicture => 'Add a picture';
+  String get deviceAddPicture => 'Aggiungi un’immagine';
 
   @override
-  String get deviceRemovePicture => 'Remove picture';
+  String get deviceRemovePicture => 'Rimuovi immagine';
 
   @override
-  String get deviceForgetThis => 'Forget this device';
+  String get deviceForgetThis => 'Dimentica questo dispositivo';
 
   @override
   String deviceForgetTitle(String name) {
-    return 'Forget $name?';
+    return 'Dimenticare $name?';
   }
 
   @override
   String get deviceForgetBody =>
-      'You’ll need to pair again to share with it. Its activity on this phone is cleared too.';
+      'Dovrai associarlo di nuovo per condividere. Anche la sua attività su questo telefono viene cancellata.';
 
   @override
-  String get deviceForget => 'Forget';
+  String get deviceForget => 'Dimentica';
 
   @override
-  String get deviceCancel => 'Cancel';
+  String get deviceCancel => 'Annulla';
 
   @override
-  String get deviceSendFiles => 'Send files';
+  String get deviceSendFiles => 'Invia file';
 
   @override
-  String get deviceSendFilesCaption => 'Photos, documents, anything';
+  String get deviceSendFilesCaption => 'Foto, documenti, qualsiasi cosa';
 
   @override
-  String get deviceClipboard => 'Clipboard';
+  String get deviceClipboard => 'Appunti';
 
   @override
-  String get deviceClipboardCaption => 'Send what you copied';
+  String get deviceClipboardCaption => 'Invia ciò che hai copiato';
 
   @override
   String get devicePing => 'Ping';
 
   @override
-  String get devicePingCaption => 'Make it chime';
+  String get devicePingCaption => 'Fallo suonare';
 
   @override
-  String get deviceRemote => 'Remote';
+  String get deviceRemote => 'Telecomando';
 
   @override
-  String get deviceRemoteCaption => 'Touchpad and slides';
+  String get deviceRemoteCaption => 'Touchpad e slide';
 
   @override
-  String get deviceRinging => 'Ringing…';
+  String get deviceRinging => 'Sta squillando…';
 
   @override
-  String get deviceFindIt => 'Find it';
+  String get deviceFindIt => 'Trovalo';
 
   @override
-  String get deviceTapToStop => 'Tap to stop';
+  String get deviceTapToStop => 'Tocca per fermare';
 
   @override
-  String get deviceFindItCaption => 'Make it ring loudly';
+  String get deviceFindItCaption => 'Fallo squillare forte';
 
   @override
-  String get devicePrevious => 'Previous';
+  String get devicePrevious => 'Precedente';
 
   @override
-  String get devicePause => 'Pause';
+  String get devicePause => 'Pausa';
 
   @override
-  String get devicePlay => 'Play';
+  String get devicePlay => 'Riproduci';
 
   @override
-  String get deviceNext => 'Next';
+  String get deviceNext => 'Successivo';
 
   @override
   String deviceAllowOn(String name) {
-    return 'Allow it on $name…';
+    return 'Consentilo su $name…';
   }
 
   @override
-  String get deviceSeeScreen => 'See its screen';
+  String get deviceSeeScreen => 'Vedi il suo schermo';
 
   @override
-  String get deviceSeeScreenCaption =>
-      'Watch it here, or control it with touch';
+  String get deviceSeeScreenCaption => 'Guardalo qui o controllalo al tocco';
 
   @override
-  String get deviceWatch => 'Watch';
+  String get deviceWatch => 'Guarda';
 
   @override
-  String get deviceControl => 'Control';
+  String get deviceControl => 'Controlla';
 
   @override
-  String get deviceTerminal => 'Terminal';
+  String get deviceTerminal => 'Terminale';
 
   @override
   String deviceTerminalShell(String name) {
-    return 'A shell on $name, locked by its code';
+    return 'Una shell su $name, protetta dal suo codice';
   }
 
   @override
@@ -441,132 +444,132 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count terminals open',
-      one: '1 terminal open',
+      other: '$count terminali aperti',
+      one: '1 terminale aperto',
     );
     return '$_temp0';
   }
 
   @override
-  String get deviceFilterAll => 'All';
+  String get deviceFilterAll => 'Tutto';
 
   @override
-  String get deviceFilterFiles => 'Files';
+  String get deviceFilterFiles => 'File';
 
   @override
-  String get deviceFilterClipboard => 'Clipboard';
+  String get deviceFilterClipboard => 'Appunti';
 
   @override
-  String get deviceFilterLinks => 'Links';
+  String get deviceFilterLinks => 'Link';
 
   @override
-  String get deviceFilterShowAll => 'Show All';
+  String get deviceFilterShowAll => 'Mostra tutto';
 
   @override
-  String get deviceFilterShowFiles => 'Show Files';
+  String get deviceFilterShowFiles => 'Mostra file';
 
   @override
-  String get deviceFilterShowClipboard => 'Show Clipboard';
+  String get deviceFilterShowClipboard => 'Mostra appunti';
 
   @override
-  String get deviceFilterShowLinks => 'Show Links';
+  String get deviceFilterShowLinks => 'Mostra link';
 
   @override
-  String get deviceActivity => 'Activity';
+  String get deviceActivity => 'Attività';
 
   @override
   String deviceReadyWhenAsks(String name) {
-    return 'Ready when $name asks';
+    return 'Pronto quando $name lo chiede';
   }
 
   @override
   String get deviceWebcam => 'Webcam';
 
   @override
-  String get deviceInUseNow => 'In use now';
+  String get deviceInUseNow => 'In uso ora';
 
   @override
-  String get deviceControls => 'Controls';
+  String get deviceControls => 'Controlli';
 
   @override
-  String get deviceMicrophone => 'Microphone';
+  String get deviceMicrophone => 'Microfono';
 
   @override
-  String get deviceStop => 'Stop';
+  String get deviceStop => 'Ferma';
 
   @override
-  String get deviceSecondDisplay => 'Second display';
+  String get deviceSecondDisplay => 'Secondo schermo';
 
   @override
-  String get deviceShowingNow => 'Showing now';
+  String get deviceShowingNow => 'In uso ora';
 
   @override
   String deviceReadySize(int width, int height) {
-    return 'Ready · $width × $height';
+    return 'Pronto · $width × $height';
   }
 
   @override
-  String get devicePhoneAs => 'This phone as';
+  String get devicePhoneAs => 'Questo telefono come';
 
   @override
   String deviceStartedOn(String name) {
-    return 'Started on $name';
+    return 'Si avvia da $name';
   }
 
   @override
-  String get deviceFasterOverUsb => 'Faster and steadier over a USB cable.';
+  String get deviceFasterOverUsb => 'Più veloce e stabile con un cavo USB.';
 
   @override
-  String get deviceBackUpPhotos => 'Back up photos';
+  String get deviceBackUpPhotos => 'Backup delle foto';
 
   @override
   String devicePhotosGoTo(String name) {
-    return 'New photos go to $name’s Pictures folder';
+    return 'Le nuove foto vanno nella cartella Immagini di $name';
   }
 
   @override
   String devicePhotosDeclined(String name) {
-    return '$name doesn’t take photos. Turn on “Import Photos From Phones” there.';
+    return '$name non accetta foto. Attiva lì “Importa foto dai telefoni”.';
   }
 
   @override
   String devicePhotosFrom(String folder) {
-    return 'From $folder';
+    return 'Da $folder';
   }
 
   @override
-  String get devicePhotosFromCamera => 'From your camera folder';
+  String get devicePhotosFromCamera => 'Dalla cartella della fotocamera';
 
   @override
   String devicePhotosLast(String time) {
-    return 'last $time';
+    return 'ultimo $time';
   }
 
   @override
-  String get deviceGetClipboard => 'Get its clipboard';
+  String get deviceGetClipboard => 'Ricevi i suoi appunti';
 
   @override
   String deviceGetClipboardDetail(String name) {
-    return 'Text copied on $name lands here while connected';
+    return 'Il testo copiato su $name arriva qui finché sei connesso';
   }
 
   @override
-  String get deviceAwayAll => 'Allow everything from away';
+  String get deviceAwayAll => 'Consenti tutto da fuori casa';
 
   @override
   String get deviceAwayAllOn =>
-      'From away too: this screen, webcam, microphone and files';
+      'Anche da fuori casa: questo schermo, webcam, microfono e file';
 
   @override
   String get deviceAwayAllOff =>
-      'From away: clipboard, links, files and ring only';
+      'Da fuori casa: solo appunti, link, file e squillo';
 
   @override
-  String get deviceNothingShared => 'Nothing shared yet';
+  String get deviceNothingShared => 'Ancora niente di condiviso';
 
   @override
   String deviceNothingSharedBody(String name) {
-    return 'Files, clipboard text and pings between this phone and $name line up here.';
+    return 'File, testo degli appunti e ping tra questo telefono e $name compaiono qui.';
   }
 
   @override
@@ -574,8 +577,8 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items',
-      one: '1 item',
+      other: '$count elementi',
+      one: '1 elemento',
     );
     return '$_temp0';
   }
@@ -586,140 +589,141 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get activityClipboardText => 'Clipboard text';
+  String get activityClipboardText => 'Testo degli appunti';
 
   @override
   String get activityPing => 'Ping';
 
   @override
-  String get activityYourScreen => 'Your screen';
+  String get activityYourScreen => 'Il tuo schermo';
 
   @override
-  String get activityYourCamera => 'Your camera';
+  String get activityYourCamera => 'La tua fotocamera';
 
   @override
-  String get activitySecondDisplay => 'Second display';
+  String get activitySecondDisplay => 'Secondo schermo';
 
   @override
   String get activityLink => 'Link';
 
   @override
-  String get activityRangThisPhone => 'Rang this phone';
+  String get activityRangThisPhone => 'Ha fatto squillare questo telefono';
 
   @override
-  String get activityRangIt => 'Rang it';
+  String get activityRangIt => 'Fatto squillare';
 
   @override
-  String get activityTouchpadKeyboard => 'Touchpad and keyboard';
+  String get activityTouchpadKeyboard => 'Touchpad e tastiera';
 
   @override
-  String get activityItsScreen => 'Its screen';
+  String get activityItsScreen => 'Il suo schermo';
 
   @override
-  String get activityYourMicrophone => 'Your microphone';
+  String get activityYourMicrophone => 'Il tuo microfono';
 
   @override
-  String get activityWhereThisPhone => 'Where this phone is';
+  String get activityWhereThisPhone => 'Dov’è questo telefono';
 
   @override
-  String get activityWatchingNow => 'Watching now';
+  String get activityWatchingNow => 'In visione ora';
 
   @override
-  String get activityWatched => 'Watched';
+  String get activityWatched => 'Visto';
 
   @override
-  String get activityInUseWebcam => 'In use as a webcam';
+  String get activityInUseWebcam => 'In uso come webcam';
 
   @override
-  String get activityUsedWebcam => 'Used as a webcam';
+  String get activityUsedWebcam => 'Usata come webcam';
 
   @override
-  String get activityBeingControlled => 'Being controlled now';
+  String get activityBeingControlled => 'Controllato ora';
 
   @override
-  String get activityWatchedControlled => 'Watched and controlled';
+  String get activityWatchedControlled => 'Visto e controllato';
 
   @override
-  String get activityWatchedFromPhone => 'Watched from this phone';
+  String get activityWatchedFromPhone => 'Visto da questo telefono';
 
   @override
-  String get activityInUseNow => 'In use now';
+  String get activityInUseNow => 'In uso ora';
 
   @override
-  String get activityWasTouchpad => 'This phone was its touchpad';
+  String get activityWasTouchpad => 'Questo telefono è stato il suo touchpad';
 
   @override
-  String get activityWasSecondDisplay => 'This phone was its second display';
+  String get activityWasSecondDisplay =>
+      'Questo telefono è stato il suo secondo schermo';
 
   @override
-  String get activityLinkReceived => 'Link received';
+  String get activityLinkReceived => 'Link ricevuto';
 
   @override
-  String get activityOpenedOnComputer => 'Opened on the computer';
+  String get activityOpenedOnComputer => 'Aperto sul computer';
 
   @override
-  String get activityInUseMicrophone => 'In use as a microphone';
+  String get activityInUseMicrophone => 'In uso come microfono';
 
   @override
-  String get activityUsedMicrophone => 'Used as a microphone';
+  String get activityUsedMicrophone => 'Usato come microfono';
 
   @override
-  String get activityNotTold => 'Not told';
+  String get activityNotTold => 'Non comunicato';
 
   @override
-  String get activityToldWhere => 'Told it where this phone is';
+  String get activityToldWhere => 'Gli è stato detto dov’è questo telefono';
 
   @override
-  String get activityAskedToFind => 'Asked to find this phone';
+  String get activityAskedToFind => 'Ha chiesto di trovare questo telefono';
 
   @override
-  String get activityToFindIt => 'To find it';
+  String get activityToFindIt => 'Per trovarlo';
 
   @override
-  String get activityDeclined => 'Declined';
+  String get activityDeclined => 'Rifiutato';
 
   @override
-  String get activityFailed => 'Failed';
+  String get activityFailed => 'Non riuscito';
 
   @override
-  String get activityInProgress => 'In progress';
+  String get activityInProgress => 'In corso';
 
   @override
-  String get activityCopiedHere => 'Copied here';
+  String get activityCopiedHere => 'Copiato qui';
 
   @override
-  String get activityReceived => 'Received';
+  String get activityReceived => 'Ricevuto';
 
   @override
-  String get activitySent => 'Sent';
+  String get activitySent => 'Inviato';
 
   @override
-  String get activityStop => 'Stop';
+  String get activityStop => 'Ferma';
 
   @override
-  String get activityCancel => 'Cancel';
+  String get activityCancel => 'Annulla';
 
   @override
-  String get activityCopyAgain => 'Copy again';
+  String get activityCopyAgain => 'Copia di nuovo';
 
   @override
-  String get activityCopied => 'Copied';
+  String get activityCopied => 'Copiato';
 
   @override
-  String get activityCopyLink => 'Copy link';
+  String get activityCopyLink => 'Copia link';
 
   @override
-  String get activityLinkCopied => 'Link copied';
+  String get activityLinkCopied => 'Link copiato';
 
   @override
-  String get activityNoAppForLink => 'No app here opens that link.';
+  String get activityNoAppForLink => 'Nessuna app qui apre quel link.';
 
   @override
   String activityFiles(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count files',
+      other: '$count file',
       one: '1 file',
     );
     return '$_temp0';
@@ -727,288 +731,291 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String activityFileMissing(String name) {
-    return '$name isn’t there anymore.';
+    return '$name non c’è più.';
   }
 
   @override
   String activityNoAppForFile(String name) {
-    return 'No app on this phone opens $name.';
+    return 'Nessuna app su questo telefono apre $name.';
   }
 
   @override
-  String get activityWaitingForYou => 'Waiting for you to accept…';
+  String get activityWaitingForYou => 'In attesa che tu accetti…';
 
   @override
-  String get activityWaitingForDevice => 'Waiting for the device to accept…';
+  String get activityWaitingForDevice =>
+      'In attesa che il dispositivo accetti…';
 
   @override
   String activityWaitingFor(String name) {
-    return 'Waiting for $name to accept…';
+    return 'In attesa che $name accetti…';
   }
 
   @override
   String activityProgress(String done, String total) {
-    return '$done of $total';
+    return '$done di $total';
   }
 
   @override
-  String get homeSettings => 'Settings';
+  String get homeSettings => 'Impostazioni';
 
   @override
-  String get homeYourDevices => 'Your devices';
+  String get homeYourDevices => 'I tuoi dispositivi';
 
   @override
-  String get homeNearbyNotPaired => 'Nearby, not paired';
+  String get homeNearbyNotPaired => 'Nelle vicinanze, non associati';
 
   @override
-  String get homeAddDevice => 'Add a device';
+  String get homeAddDevice => 'Aggiungi un dispositivo';
 
   @override
   String homeVisible(String name) {
-    return '$name is visible on this Wi-Fi';
+    return '$name è visibile su questa Wi-Fi';
   }
 
   @override
-  String get homeUpdateTitle => 'Update Linksy to keep connecting';
+  String get homeUpdateTitle => 'Aggiorna Linksy per continuare a connetterti';
 
   @override
   String get homeUpdateBody =>
-      'Your computers now speak a newer Linksy than this app.';
+      'I tuoi computer ora usano una versione di Linksy più recente di questa app.';
 
   @override
-  String get homeGetUpdate => 'Get the update';
+  String get homeGetUpdate => 'Scarica l’aggiornamento';
 
   @override
-  String get homeSendFiles => 'Send files';
+  String get homeSendFiles => 'Invia file';
 
   @override
-  String get homePair => 'Pair';
+  String get homePair => 'Associa';
 
   @override
-  String get homeStepOpen => 'Open Linksy on your computer';
+  String get homeStepOpen => 'Apri Linksy sul computer';
 
   @override
-  String get homeStepChoose => 'Choose “Pair with QR Code”';
+  String get homeStepChoose => 'Scegli “Associa con codice QR”';
 
   @override
-  String get homeStepScan => 'Scan it with this phone';
+  String get homeStepScan => 'Scansionalo con questo telefono';
 
   @override
-  String get homeConnectTitle => 'Connect your\nfirst device';
+  String get homeConnectTitle => 'Connetti il tuo\nprimo dispositivo';
 
   @override
   String get homeConnectSubtitle =>
-      'Straight over your Wi-Fi. No account, no cloud.';
+      'Direttamente sulla tua Wi-Fi. Nessun account, nessun cloud.';
 
   @override
-  String get homeScanQr => 'Scan QR code';
+  String get homeScanQr => 'Scansiona codice QR';
 
   @override
-  String get homePairByAddress => 'Pair by address instead';
+  String get homePairByAddress => 'Associa tramite indirizzo';
 
   @override
-  String get pairingAddDevice => 'Add a device';
+  String get pairingAddDevice => 'Aggiungi un dispositivo';
 
   @override
   String get pairingAddDeviceHint =>
-      'On the other device, open Linksy and choose “Pair with QR Code”.';
+      'Sull’altro dispositivo, apri Linksy e scegli “Associa con codice QR”.';
 
   @override
-  String get pairingScanQr => 'Scan QR code';
+  String get pairingScanQr => 'Scansiona codice QR';
 
   @override
-  String get pairingScanQrCaption => 'Fastest. Nothing to type.';
+  String get pairingScanQrCaption => 'Il modo più veloce. Niente da digitare.';
 
   @override
-  String get pairingByAddress => 'Pair by address';
+  String get pairingByAddress => 'Associa tramite indirizzo';
 
   @override
-  String get pairingByAddressCaption => 'When the other device can’t be found.';
+  String get pairingByAddressCaption =>
+      'Quando l’altro dispositivo non viene trovato.';
 
   @override
   String pairingWith(String name) {
-    return 'Pairing with $name…';
+    return 'Associazione con $name…';
   }
 
   @override
-  String get pairingWithOtherDevice => 'Pairing with the other device…';
+  String get pairingWithOtherDevice => 'Associazione con l’altro dispositivo…';
 
   @override
   String get pairingAddressHint =>
-      'It’s in Linksy’s Preferences on the other device.';
+      'Si trova nelle Preferenze di Linksy sull’altro dispositivo.';
 
   @override
   String pairingPortHint(String port) {
-    return 'Port $port unless you add another.';
+    return 'Porta $port, a meno che non ne aggiungi un’altra.';
   }
 
   @override
-  String get pairingPair => 'Pair';
+  String get pairingPair => 'Associa';
 
   @override
   String pairingWantsToPair(String name) {
-    return '$name wants to pair';
+    return '$name vuole associarsi';
   }
 
   @override
   String pairingPairWith(String name) {
-    return 'Pair with $name';
+    return 'Associa con $name';
   }
 
   @override
-  String get pairingCodeHint => 'Both screens should show this code.';
+  String get pairingCodeHint =>
+      'Entrambi gli schermi dovrebbero mostrare questo codice.';
 
   @override
   String pairingCodeLabel(String code) {
-    return 'Code $code';
+    return 'Codice $code';
   }
 
   @override
-  String get pairingCodesMatch => 'Codes match';
+  String get pairingCodesMatch => 'I codici coincidono';
 
   @override
   String get scanNeedsCamera =>
-      'Linksy needs the camera to scan the pairing code. Allow it, or pair by address.';
+      'Linksy ha bisogno della fotocamera per scansionare il codice di associazione. Consentila, oppure associa tramite indirizzo.';
 
   @override
-  String get scanCameraUnavailable => 'The camera isn’t available.';
+  String get scanCameraUnavailable => 'La fotocamera non è disponibile.';
 
   @override
-  String get scanFlashlight => 'Flashlight';
+  String get scanFlashlight => 'Torcia';
 
   @override
-  String get scanTitle => 'Scan the code';
+  String get scanTitle => 'Scansiona il codice';
 
   @override
   String get scanWrongCode =>
-      'That’s not a Linksy code. On your computer, open Linksy → Pair with QR Code.';
+      'Non è un codice Linksy. Sul computer, apri Linksy → Associa con codice QR.';
 
   @override
   String get scanHint =>
-      'On your computer, open Linksy and choose “Pair with QR Code”.';
+      'Sul computer, apri Linksy e scegli “Associa con codice QR”.';
 
   @override
-  String get shareSheetPutOnClipboard => 'Put on a clipboard';
+  String get shareSheetPutOnClipboard => 'Metti negli appunti';
 
   @override
   String shareSheetSendFiles(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Send $count files',
-      one: 'Send a file',
+      other: 'Invia $count file',
+      one: 'Invia un file',
     );
     return '$_temp0';
   }
 
   @override
-  String get shareSheetOpenOnComputer => 'Open on a computer';
+  String get shareSheetOpenOnComputer => 'Apri su un computer';
 
   @override
-  String get shareSheetSendToClipboard => 'Send to a clipboard';
+  String get shareSheetSendToClipboard => 'Invia agli appunti';
 
   @override
   String get shareSheetNoClipboardFiles =>
-      'None of your computers takes files on its clipboard yet. Update Linksy there.';
+      'Nessuno dei tuoi computer accetta ancora file negli appunti. Aggiorna Linksy lì.';
 
   @override
   String get shareSheetNoComputers =>
-      'Pair a computer first, then share to it from any app.';
+      'Prima associa un computer, poi condividi con esso da qualsiasi app.';
 
   @override
-  String get shareSheetSendFileInstead => 'Send the file instead';
+  String get shareSheetSendFileInstead => 'Invia invece il file';
 
   @override
   String get shareSheetClipboardInstead =>
-      'Put it on the computer’s clipboard instead';
+      'Mettilo invece negli appunti del computer';
 
   @override
-  String get shareSheetOpenLinkInstead => 'Open the link instead';
+  String get shareSheetOpenLinkInstead => 'Apri invece il link';
 
   @override
   String get shareSheetSendAsTextInstead =>
-      'Send as text to the clipboard instead';
+      'Invia invece come testo agli appunti';
 
   @override
   String shareSheetPuttingOnClipboard(String name) {
-    return 'Putting it on $name’s clipboard';
+    return 'Lo metto negli appunti di $name';
   }
 
   @override
   String get shareSheetPuttingOnClipboardUnnamed =>
-      'Putting it on the computer’s clipboard';
+      'Lo metto negli appunti del computer';
 
   @override
   String shareSheetOpened(String name) {
-    return 'Opened on $name';
+    return 'Aperto su $name';
   }
 
   @override
-  String get shareSheetOpenedUnnamed => 'Opened on the computer';
+  String get shareSheetOpenedUnnamed => 'Aperto sul computer';
 
   @override
   String shareSheetSentToClipboard(String name) {
-    return 'Sent to $name’s clipboard';
+    return 'Inviato agli appunti di $name';
   }
 
   @override
   String get shareSheetSentToClipboardUnnamed =>
-      'Sent to the computer’s clipboard';
+      'Inviato agli appunti del computer';
 
   @override
   String shareSheetSentALink(String name) {
-    return '$name sent a link';
+    return '$name ha inviato un link';
   }
 
   @override
-  String get shareSheetOpen => 'Open';
+  String get shareSheetOpen => 'Apri';
 
   @override
-  String get shareSheetCopyLink => 'Copy link';
+  String get shareSheetCopyLink => 'Copia link';
 
   @override
-  String get shareSheetLinkCopied => 'Link copied';
+  String get shareSheetLinkCopied => 'Link copiato';
 
   @override
   String incomingSendingYou(String name, int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count files',
-      one: 'a file',
+      other: '$count file',
+      one: 'un file',
     );
-    return '$name is sending you $_temp0';
+    return '$name ti sta inviando $_temp0';
   }
 
   @override
   String incomingTotal(String size) {
-    return '$size in total';
+    return '$size in totale';
   }
 
   @override
   String incomingMore(int count) {
-    return '+ $count more';
+    return '+ altri $count';
   }
 
   @override
-  String get incomingAccept => 'Accept';
+  String get incomingAccept => 'Accetta';
 
   @override
-  String get appInvalidPairingLink => 'That pairing link isn’t valid.';
+  String get appInvalidPairingLink => 'Quel link di associazione non è valido.';
 
   @override
   String appPairingFailed(String reason) {
-    return 'Pairing failed: $reason';
+    return 'Associazione non riuscita: $reason';
   }
 
   @override
   String appCouldntPair(String name, String reason) {
-    return 'Couldn’t pair with $name: $reason';
+    return 'Impossibile associarsi con $name: $reason';
   }
 
   @override
   String appPairedWith(String name) {
-    return 'Paired with $name';
+    return 'Associato con $name';
   }
 
   @override
@@ -1018,64 +1025,64 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String appCopiedText(String name) {
-    return 'Copied text from $name';
+    return 'Testo copiato da $name';
   }
 
   @override
   String appCopiedFile(String file, String name) {
-    return 'Copied $file from $name';
+    return '$file copiato da $name';
   }
 
   @override
-  String get appCouldntStart => 'Linksy couldn’t start';
+  String get appCouldntStart => 'Impossibile avviare Linksy';
 
   @override
-  String get commonDismiss => 'Dismiss';
+  String get commonDismiss => 'Ignora';
 
   @override
-  String get commonCancel => 'Cancel';
+  String get commonCancel => 'Annulla';
 
   @override
-  String get commonDecline => 'Decline';
+  String get commonDecline => 'Rifiuta';
 
   @override
-  String get commonClose => 'Close';
+  String get commonClose => 'Chiudi';
 
   @override
-  String get commonNotNow => 'Not now';
+  String get commonNotNow => 'Non ora';
 
   @override
-  String get commonConnected => 'Connected';
+  String get commonConnected => 'Connesso';
 
   @override
-  String get commonNearby => 'Nearby';
+  String get commonNearby => 'Nelle vicinanze';
 
   @override
-  String get commonNotNearby => 'Not nearby';
+  String get commonNotNearby => 'Non nelle vicinanze';
 
   @override
-  String get commonUsbCable => 'USB cable';
+  String get commonUsbCable => 'Cavo USB';
 
   @override
-  String get commonAwayFromHome => 'Away from home';
+  String get commonAwayFromHome => 'Fuori casa';
 
   @override
-  String get commonSameWifi => 'Same Wi-Fi';
+  String get commonSameWifi => 'Stessa Wi-Fi';
 
   @override
-  String get commonConnectedByUsb => 'Connected by USB';
+  String get commonConnectedByUsb => 'Connesso via USB';
 
   @override
-  String get commonConnectedAway => 'Connected away from home';
+  String get commonConnectedAway => 'Connesso fuori casa';
 
   @override
   String commonBattery(int level) {
-    return 'Battery $level percent';
+    return 'Batteria al $level percento';
   }
 
   @override
   String commonBatteryCharging(int level) {
-    return 'Battery $level percent, charging';
+    return 'Batteria al $level percento, in carica';
   }
 
   @override
@@ -1083,7 +1090,8 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count bytes',
+      other: '$count byte',
+      one: '1 byte',
     );
     return '$_temp0';
   }
@@ -1093,8 +1101,8 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count seconds left',
-      one: '1 second left',
+      other: '$count secondi rimanenti',
+      one: '1 secondo rimanente',
     );
     return '$_temp0';
   }
@@ -1104,8 +1112,8 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count minutes left',
-      one: '1 minute left',
+      other: '$count minuti rimanenti',
+      one: '1 minuto rimanente',
     );
     return '$_temp0';
   }
@@ -1115,370 +1123,375 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'about $count hours left',
-      one: 'about 1 hour left',
+      other: 'circa $count ore rimanenti',
+      one: 'circa 1 ora rimanente',
     );
     return '$_temp0';
   }
 
   @override
-  String get formatToday => 'Today';
+  String get formatToday => 'Oggi';
 
   @override
-  String get formatYesterday => 'Yesterday';
+  String get formatYesterday => 'Ieri';
 
   @override
-  String get formatPhone => 'Phone';
+  String get formatPhone => 'Telefono';
 
   @override
-  String get settingsBack => 'Back';
+  String get settingsBack => 'Indietro';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get settingsTitle => 'Impostazioni';
 
   @override
-  String get settingsReceiving => 'Receiving';
+  String get settingsReceiving => 'Ricezione';
 
   @override
-  String get settingsSaveLocation => 'Save location';
+  String get settingsSaveLocation => 'Posizione di salvataggio';
 
   @override
-  String get settingsSaveLocationPath => 'Downloads › Linksy';
+  String get settingsSaveLocationPath => 'Download › Linksy';
 
   @override
-  String get settingsAcceptFromMyDevices => 'Accept from my devices';
+  String get settingsAcceptFromMyDevices => 'Accetta dai miei dispositivi';
 
   @override
   String get settingsAcceptFromMyDevicesCaption =>
-      'Files from paired devices arrive without asking.';
+      'I file dai dispositivi associati arrivano senza chiedere.';
 
   @override
-  String get settingsConnection => 'Connection';
+  String get settingsConnection => 'Connessione';
 
   @override
-  String get settingsStayConnected => 'Stay connected';
+  String get settingsStayConnected => 'Resta connesso';
 
   @override
   String get settingsStayConnectedCaption =>
-      'Faster sharing with nearby devices. Uses more battery.';
+      'Condivisione più rapida con i dispositivi vicini. Consuma più batteria.';
 
   @override
-  String get settingsKeepRunning => 'Keep running in the background';
+  String get settingsKeepRunning => 'Resta attivo in background';
 
   @override
   String get settingsKeepRunningCaption =>
-      'Files, photo backup and calls keep working when Linksy is closed. Shows a quiet notification.';
+      'File, backup delle foto e chiamate continuano a funzionare quando Linksy è chiuso. Mostra una notifica discreta.';
 
   @override
-  String get settingsAwayFromHome => 'Away from home';
+  String get settingsAwayFromHome => 'Fuori casa';
 
   @override
   String get settingsAwayFromHomeCaption =>
-      'Reach your computers over the internet when you’re not on the same network, for a week after you last were. Encrypted end to end.';
+      'Raggiungi i tuoi computer via internet quando non sei sulla stessa rete, per una settimana dall’ultima volta che lo eri. Crittografia end-to-end.';
 
   @override
-  String get settingsWithYourComputers => 'With your computers';
+  String get settingsWithYourComputers => 'Con i tuoi computer';
 
   @override
-  String get settingsPauseMusic => 'Pause music during calls';
+  String get settingsPauseMusic =>
+      'Metti in pausa la musica durante le chiamate';
 
   @override
   String get settingsPauseMusicCaption =>
-      'Your computers pause what plays while a call rings or goes on, and resume after.';
+      'I tuoi computer mettono in pausa ciò che è in riproduzione mentre una chiamata squilla o è in corso, e riprendono dopo.';
 
   @override
-  String get settingsBrowseFiles => 'Let computers browse files';
+  String get settingsBrowseFiles => 'Permetti ai computer di sfogliare i file';
 
   @override
   String get settingsBrowseFilesChoose =>
-      'Choose a folder your computers can open in their Files app, like Documents (Android doesn’t allow Download).';
+      'Scegli una cartella che i tuoi computer possono aprire nella loro app File, come Documenti (Android non consente Download).';
 
   @override
   String settingsSharesFolder(String folder) {
-    return 'Shares “$folder”. Tap to choose another folder.';
+    return 'Condivide “$folder”. Tocca per scegliere un’altra cartella.';
   }
 
   @override
-  String get settingsPicture => 'Picture of this phone';
+  String get settingsPicture => 'Immagine di questo telefono';
 
   @override
   String get settingsPictureChoose =>
-      'Your computers show it for this phone. Tap to choose one.';
+      'I tuoi computer la mostrano per questo telefono. Tocca per sceglierne una.';
 
   @override
   String get settingsPictureChange =>
-      'Your computers show it for this phone. Tap to change it.';
+      'I tuoi computer la mostrano per questo telefono. Tocca per cambiarla.';
 
   @override
-  String get settingsPictureRemove => 'Remove';
+  String get settingsPictureRemove => 'Rimuovi';
 
   @override
-  String get settingsLocate => 'Let computers locate this phone';
+  String get settingsLocate =>
+      'Permetti ai computer di localizzare questo telefono';
 
   @override
   String get settingsLocateCaption =>
-      'A computer can ask where this phone is, once, to find it. Nothing is kept or tracked. Works while Linksy is open.';
+      'Un computer può chiedere dove si trova questo telefono, una volta, per trovarlo. Nulla viene salvato o tracciato. Funziona mentre Linksy è aperto.';
 
   @override
   String get settingsLocatePermission =>
-      'Linksy needs the location permission for this.';
+      'Per questo Linksy ha bisogno del permesso di localizzazione.';
 
   @override
-  String get settingsPhotoFolder => 'Photo folder';
+  String get settingsPhotoFolder => 'Cartella delle foto';
 
   @override
   String get settingsPhotoFolderChoose =>
-      'Choose your camera folder (DCIM › Camera) to back up photos to a computer.';
+      'Scegli la cartella della fotocamera (DCIM › Camera) per fare il backup delle foto su un computer.';
 
   @override
   String settingsPhotoFolderBacksUp(String folder) {
-    return 'Backs up “$folder”. Turn it on per computer, on its page.';
+    return 'Backup di “$folder”. Attivalo per ogni computer, nella sua pagina.';
   }
 
   @override
-  String get settingsThisApp => 'This app';
+  String get settingsThisApp => 'Questa app';
 
   @override
-  String get settingsPermissions => 'Permissions';
+  String get settingsPermissions => 'Permessi';
 
   @override
   String get settingsDemo => 'Demo';
 
   @override
   String get settingsDemoCaption =>
-      'Simulated devices until the Linksy core is connected. These start what another device would.';
+      'Dispositivi simulati finché il core di Linksy non è collegato. Avviano ciò che farebbe un altro dispositivo.';
 
   @override
-  String get settingsDemoReceiveFiles => 'Receive files';
+  String get settingsDemoReceiveFiles => 'Ricevi file';
 
   @override
-  String get settingsDemoReceivePairing => 'Receive a pairing request';
+  String get settingsDemoReceivePairing =>
+      'Ricevi una richiesta di associazione';
 
   @override
-  String get settingsDemoReceiveClipboard => 'Receive clipboard text';
+  String get settingsDemoReceiveClipboard => 'Ricevi testo negli appunti';
 
   @override
   String get settingsTagline =>
-      'Your devices, connected.\nNo account, no cloud.';
+      'I tuoi dispositivi, connessi.\nNessun account, nessun cloud.';
 
   @override
-  String get settingsNameTitle => 'Name this phone';
+  String get settingsNameTitle => 'Dai un nome a questo telefono';
 
   @override
-  String get settingsNameCaption => 'Your other devices see this name.';
+  String get settingsNameCaption =>
+      'Gli altri tuoi dispositivi vedono questo nome.';
 
   @override
-  String get settingsSave => 'Save';
+  String get settingsSave => 'Salva';
 
   @override
-  String get settingsCancel => 'Cancel';
+  String get settingsCancel => 'Annulla';
 
   @override
   String settingsRename(String name) {
-    return 'Rename $name';
+    return 'Rinomina $name';
   }
 
   @override
   String settingsThisPhone(String shortId) {
-    return 'This phone · $shortId';
+    return 'Questo telefono · $shortId';
   }
 
   @override
-  String get settingsPermissionsRow => 'Notifications and camera';
+  String get settingsPermissionsRow => 'Notifiche e fotocamera';
 
   @override
   String get settingsPermissionsWhat =>
-      'What Linksy asks Android for, and why.';
+      'Cosa chiede Linksy ad Android, e perché.';
 
   @override
-  String get settingsPermissionsBoth => 'Both allowed.';
+  String get settingsPermissionsBoth => 'Entrambi consentiti.';
 
   @override
   String settingsPermissionsSome(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count of 2 allowed. Tap to allow the rest.',
+      other: '$count di 2 consentiti. Tocca per consentire il resto.',
+      one: '1 di 2 consentito. Tocca per consentire il resto.',
     );
     return '$_temp0';
   }
 
   @override
-  String get permissionsTitle => 'Permissions';
+  String get permissionsTitle => 'Permessi';
 
   @override
   String get permissionsIntro =>
-      'Linksy asks only for what it needs, and you can change any of these later in Settings.';
+      'Linksy chiede solo ciò che gli serve, e puoi cambiare tutto più tardi nelle Impostazioni.';
 
   @override
-  String get permissionsNotifications => 'Notifications';
+  String get permissionsNotifications => 'Notifiche';
 
   @override
   String get permissionsNotificationsWhy =>
-      'Shows when a computer sees your screen or uses your camera, with a button to stop it.';
+      'Mostra quando un computer vede il tuo schermo o usa la fotocamera, con un pulsante per interrompere.';
 
   @override
-  String get permissionsCamera => 'Camera';
+  String get permissionsCamera => 'Fotocamera';
 
   @override
   String get permissionsCameraWhy =>
-      'Scans the pairing QR code, and lets a computer use this phone as a webcam when you allow it.';
+      'Scansiona il codice QR di associazione e permette a un computer di usare questo telefono come webcam, se lo consenti.';
 
   @override
-  String get permissionsAllow => 'Allow';
+  String get permissionsAllow => 'Consenti';
 
   @override
-  String get permissionsAllowed => 'Allowed';
+  String get permissionsAllowed => 'Consentito';
 
   @override
-  String get permissionsDone => 'Done';
+  String get permissionsDone => 'Fatto';
 
   @override
-  String get remoteBack => 'Back';
+  String get remoteBack => 'Indietro';
 
   @override
-  String get remoteTitle => 'Remote';
+  String get remoteTitle => 'Telecomando';
 
   @override
   String remoteAllowOn(String name) {
-    return 'Allow it on $name';
+    return 'Consentilo su $name';
   }
 
   @override
   String remoteAsks(String name) {
-    return 'Linksy on $name asks whether this phone may move its pointer and type.';
+    return 'Linksy su $name chiede se questo telefono può muovere il puntatore e digitare.';
   }
 
   @override
-  String get remoteFailed => 'That didn’t work';
+  String get remoteFailed => 'Non ha funzionato';
 
   @override
-  String get remoteStopped => 'The remote stopped';
+  String get remoteStopped => 'Il telecomando si è fermato';
 
   @override
   String remoteEndedBy(String name) {
-    return '$name ended it.';
+    return '$name l’ha terminato.';
   }
 
   @override
-  String get remoteTryAgain => 'Try again';
+  String get remoteTryAgain => 'Riprova';
 
   @override
   String get remoteTouchpad => 'Touchpad';
 
   @override
-  String get remoteSlides => 'Slides';
+  String get remoteSlides => 'Slide';
 
   @override
   String get remoteTouchpadHint =>
-      'Move with one finger, tap to click\nTwo fingers scroll, two-finger tap right-clicks';
+      'Muovi con un dito, tocca per cliccare\nDue dita per scorrere, tocco con due dita per il clic destro';
 
   @override
-  String get remoteLeftClick => 'Left click';
+  String get remoteLeftClick => 'Clic sinistro';
 
   @override
-  String get remoteRightClick => 'Right click';
+  String get remoteRightClick => 'Clic destro';
 
   @override
-  String get remoteKeyboard => 'Keyboard';
+  String get remoteKeyboard => 'Tastiera';
 
   @override
-  String get remoteNextSlide => 'Next slide';
+  String get remoteNextSlide => 'Slide successiva';
 
   @override
-  String get remoteNext => 'Next';
+  String get remoteNext => 'Avanti';
 
   @override
-  String get remotePreviousSlide => 'Previous slide';
+  String get remotePreviousSlide => 'Slide precedente';
 
   @override
-  String get remoteSlideBack => 'Back';
+  String get remoteSlideBack => 'Indietro';
 
   @override
-  String get remoteStartShow => 'Start (F5)';
+  String get remoteStartShow => 'Avvia (F5)';
 
   @override
-  String get remoteEndShow => 'End (Esc)';
+  String get remoteEndShow => 'Termina (Esc)';
 
   @override
   String get remoteVolumeHint =>
-      'Volume down: next · Volume up: back. The screen stays on.';
+      'Volume giù: avanti · Volume su: indietro. Lo schermo resta acceso.';
 
   @override
-  String get ringTitle => 'Here I am!';
+  String get ringTitle => 'Sono qui!';
 
   @override
   String ringLookingFor(String name) {
-    return '$name is looking for this phone.';
+    return '$name sta cercando questo telefono.';
   }
 
   @override
-  String get ringFoundIt => 'Found it';
+  String get ringFoundIt => 'Trovato';
 
   @override
-  String get webcamBack => 'Back';
+  String get webcamBack => 'Indietro';
 
   @override
   String get webcamTitle => 'Webcam';
 
   @override
   String webcamLiveOn(String name) {
-    return 'Live on $name';
+    return 'In diretta su $name';
   }
 
   @override
-  String get webcamStopSemantic => 'Stop the webcam';
+  String get webcamStopSemantic => 'Ferma la webcam';
 
   @override
-  String get webcamStop => 'Stop';
+  String get webcamStop => 'Ferma';
 
   @override
   String get webcamBadgeLive => 'LIVE';
 
   @override
-  String get webcamBadgeLock => 'AE/AF LOCK';
+  String get webcamBadgeLock => 'BLOCCO AE/AF';
 
   @override
   String get webcamBadgeManualFocus => 'MF';
 
   @override
-  String get webcamBadgeTorch => 'TORCH';
+  String get webcamBadgeTorch => 'TORCIA';
 
   @override
-  String get webcamFacingFront => 'Front';
+  String get webcamFacingFront => 'Anteriore';
 
   @override
-  String get webcamFacingBack => 'Back';
+  String get webcamFacingBack => 'Posteriore';
 
   @override
-  String get webcamTorch => 'Torch';
+  String get webcamTorch => 'Torcia';
 
   @override
-  String get webcamPortrait => 'Portrait';
+  String get webcamPortrait => 'Verticale';
 
   @override
-  String get webcamLandscape => 'Landscape';
+  String get webcamLandscape => 'Orizzontale';
 
   @override
-  String get webcamLocked => 'Locked';
+  String get webcamLocked => 'Bloccato';
 
   @override
-  String get webcamLock => 'Lock';
+  String get webcamLock => 'Blocca';
 
   @override
-  String get webcamTabLight => 'Light';
+  String get webcamTabLight => 'Luce';
 
   @override
-  String get webcamTabFocus => 'Focus';
+  String get webcamTabFocus => 'Messa a fuoco';
 
   @override
-  String get webcamTabColor => 'Color';
+  String get webcamTabColor => 'Colore';
 
   @override
   String get webcamTabStream => 'Stream';
 
   @override
-  String get webcamBrightness => 'Brightness';
+  String get webcamBrightness => 'Luminosità';
 
   @override
   String webcamExposureValue(String value) {
@@ -1486,101 +1499,102 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get webcamExposureAuto => 'This camera sets exposure by itself.';
+  String get webcamExposureAuto =>
+      'Questa fotocamera regola l’esposizione da sola.';
 
   @override
-  String get webcamLockExposure => 'Lock exposure';
+  String get webcamLockExposure => 'Blocca esposizione';
 
   @override
   String get webcamLockExposureDetail =>
-      'Keeps the brightness as it is now. Hold the picture to lock on a spot.';
+      'Mantiene la luminosità com’è ora. Tieni premuta l’immagine per bloccarla su un punto.';
 
   @override
-  String get webcamFocus => 'Focus';
+  String get webcamFocus => 'Messa a fuoco';
 
   @override
-  String get webcamFocusFixed => 'This camera has fixed focus.';
+  String get webcamFocusFixed => 'Questa fotocamera ha la messa a fuoco fissa.';
 
   @override
   String get webcamFocusSpotDetail =>
-      'Held where you tapped. Double-tap the picture for auto.';
+      'Fissata dove hai toccato. Tocca due volte l’immagine per tornare ad auto.';
 
   @override
-  String get webcamFocusManualDetail => 'Set by hand below.';
+  String get webcamFocusManualDetail => 'Regolata a mano qui sotto.';
 
   @override
   String get webcamFocusAutoDetail =>
-      'Follows the picture. Tap it to focus on a spot.';
+      'Segue l’immagine. Toccala per mettere a fuoco un punto.';
 
   @override
   String get webcamFocusAuto => 'Auto';
 
   @override
-  String get webcamFocusSpot => 'Spot';
+  String get webcamFocusSpot => 'Punto';
 
   @override
-  String get webcamFocusManual => 'Manual';
+  String get webcamFocusManual => 'Manuale';
 
   @override
-  String get webcamDistance => 'Distance';
+  String get webcamDistance => 'Distanza';
 
   @override
-  String get webcamFar => 'Far';
+  String get webcamFar => 'Lontano';
 
   @override
-  String get webcamNear => 'Near';
+  String get webcamNear => 'Vicino';
 
   @override
   String get webcamWbAuto => 'Auto';
 
   @override
-  String get webcamWbDaylight => 'Daylight';
+  String get webcamWbDaylight => 'Luce diurna';
 
   @override
-  String get webcamWbCloudy => 'Cloudy';
+  String get webcamWbCloudy => 'Nuvoloso';
 
   @override
-  String get webcamWbShade => 'Shade';
+  String get webcamWbShade => 'Ombra';
 
   @override
-  String get webcamWbIncandescent => 'Warm light';
+  String get webcamWbIncandescent => 'Luce calda';
 
   @override
-  String get webcamWbFluorescent => 'Office light';
+  String get webcamWbFluorescent => 'Luce da ufficio';
 
   @override
-  String get webcamWhiteBalance => 'White balance';
+  String get webcamWhiteBalance => 'Bilanciamento del bianco';
 
   @override
-  String get webcamLockColors => 'Lock colors';
+  String get webcamLockColors => 'Blocca colori';
 
   @override
   String get webcamLockColorsDetail =>
-      'Stops the colors shifting as the light changes.';
+      'Evita che i colori cambino quando cambia la luce.';
 
   @override
-  String get webcamOrientation => 'Orientation';
+  String get webcamOrientation => 'Orientamento';
 
   @override
   String get webcamOrientationPortraitDetail =>
-      'Hold the phone upright; bars at the sides.';
+      'Tieni il telefono in verticale; bande ai lati.';
 
   @override
   String get webcamOrientationLandscapeDetail =>
-      'Hold the phone sideways; it fills the frame.';
+      'Tieni il telefono in orizzontale; riempie l’inquadratura.';
 
   @override
-  String get webcamFrameRate => 'Frame rate';
+  String get webcamFrameRate => 'Frequenza fotogrammi';
 
   @override
   String get webcamFps60Detail =>
-      'Smoother motion; uses more data and battery.';
+      'Movimenti più fluidi; usa più dati e batteria.';
 
   @override
-  String get webcamFps30Detail => 'Steady for video calls.';
+  String get webcamFps30Detail => 'Stabile per le videochiamate.';
 
   @override
-  String get webcamFpsOnly30 => 'This camera does up to 30 fps.';
+  String get webcamFpsOnly30 => 'Questa fotocamera arriva fino a 30 fps.';
 
   @override
   String webcamFps(String fps) {
@@ -1588,60 +1602,60 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get webcamResolution => 'Resolution';
+  String get webcamResolution => 'Risoluzione';
 
   @override
   String get webcamResolution1080Detail =>
-      'Full HD, for a big screen; more data.';
+      'Full HD, per uno schermo grande; più dati.';
 
   @override
-  String get webcamResolution720Detail => 'HD, right for video calls.';
+  String get webcamResolution720Detail => 'HD, ideale per le videochiamate.';
 
   @override
-  String get webcamResolutionOnly720 => 'This camera streams 720p.';
+  String get webcamResolutionOnly720 => 'Questa fotocamera trasmette in 720p.';
 
   @override
-  String get webcamQuality => 'Quality';
+  String get webcamQuality => 'Qualità';
 
   @override
   String webcamQualitySaverDetail(String mbps) {
-    return '$mbps Mbps, for a busy Wi-Fi.';
+    return '$mbps Mbps, per una Wi-Fi affollata.';
   }
 
   @override
   String webcamQualityHighDetail(String mbps) {
-    return '$mbps Mbps, the most detail.';
+    return '$mbps Mbps, il massimo dettaglio.';
   }
 
   @override
   String webcamQualityStandardDetail(String mbps) {
-    return '$mbps Mbps, sharp for video calls.';
+    return '$mbps Mbps, nitida per le videochiamate.';
   }
 
   @override
-  String get webcamQualitySaver => 'Saver';
+  String get webcamQualitySaver => 'Risparmio';
 
   @override
   String get webcamQualityStandard => 'Standard';
 
   @override
-  String get webcamQualityHigh => 'High';
+  String get webcamQualityHigh => 'Alta';
 
   @override
-  String get webcamStabilization => 'Stabilization';
+  String get webcamStabilization => 'Stabilizzazione';
 
   @override
-  String get webcamStabilizationDetail => 'Smooths out hand shake.';
+  String get webcamStabilizationDetail => 'Attenua il tremolio della mano.';
 
   @override
-  String get webcamMirror => 'Mirror the preview';
+  String get webcamMirror => 'Specchia l’anteprima';
 
   @override
   String get webcamMirrorDetail =>
-      'On this phone only; the computer gets it unmirrored.';
+      'Solo su questo telefono; il computer la riceve non specchiata.';
 
   @override
-  String get webcamFormat => 'Format';
+  String get webcamFormat => 'Formato';
 
   @override
   String webcamFormatValue(String width, String height, String fps) {
@@ -1649,11 +1663,11 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get webcamReset => 'Reset';
+  String get webcamReset => 'Ripristina';
 
   @override
   String webcamResetSetting(String setting) {
-    return 'Reset $setting';
+    return 'Ripristina $setting';
   }
 
   @override
@@ -1663,265 +1677,278 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String sharingScreenRequestTitle(String name) {
-    return '$name wants to see your screen';
+    return '$name vuole vedere il tuo schermo';
   }
 
   @override
   String sharingScreenRequestDetail(String name) {
-    return 'Everything on this phone’s screen shows on $name until you stop. Android asks you to confirm next.';
+    return 'Tutto ciò che appare sullo schermo di questo telefono viene mostrato su $name finché non interrompi. Poi Android ti chiede di confermare.';
   }
 
   @override
   String sharingControlRequestTitle(String name) {
-    return '$name wants to control your screen';
+    return '$name vuole controllare il tuo schermo';
   }
 
   @override
   String sharingControlRequestDetail(String name) {
-    return '$name sees this phone’s screen and can tap, swipe and type on it until you stop. Android asks you to confirm next.';
+    return '$name vede lo schermo di questo telefono e può toccare, scorrere e digitare finché non interrompi. Poi Android ti chiede di confermare.';
   }
 
   @override
   String sharingCameraRequestTitle(String name) {
-    return '$name wants to use your camera';
+    return '$name vuole usare la tua fotocamera';
   }
 
   @override
   String sharingCameraRequestDetail(String name) {
-    return '$name gets this phone’s camera as a webcam until you stop. Zoom, focus, light, lenses and rotation are in Linksy while it runs.';
+    return '$name usa la fotocamera di questo telefono come webcam finché non interrompi. Zoom, messa a fuoco, luce, obiettivi e rotazione sono in Linksy mentre è attiva.';
   }
 
   @override
   String sharingInputRequestTitle(String name) {
-    return '$name wants to use this phone as a touchpad';
+    return '$name vuole usare questo telefono come touchpad';
   }
 
   @override
   String get sharingInputRequestDetail =>
-      'Unexpected: computers don’t ask this. Don’t allow it.';
+      'Inatteso: i computer non lo chiedono. Non consentirlo.';
 
   @override
   String sharingMicrophoneRequestTitle(String name) {
-    return '$name wants to use your microphone';
+    return '$name vuole usare il tuo microfono';
   }
 
   @override
   String sharingMicrophoneRequestDetail(String name) {
-    return '$name hears this phone’s microphone until you stop, as a microphone any of its apps can use. Android asks you to confirm next.';
+    return '$name sente il microfono di questo telefono finché non interrompi, come un microfono che tutte le sue app possono usare. Poi Android ti chiede di confermare.';
   }
 
   @override
   String sharingDisplayRequestTitle(String name) {
-    return '$name wants to use this screen as a second display';
+    return '$name vuole usare questo schermo come secondo schermo';
   }
 
   @override
   String sharingDisplayRequestDetail(String name) {
-    return 'This phone shows a screen of $name full screen. Touch it to click and drag; scroll with two fingers. Go back to stop.';
+    return 'Questo telefono mostra uno schermo di $name a schermo intero. Tocca per cliccare e trascinare; scorri con due dita. Torna indietro per interrompere.';
   }
 
   @override
-  String get sharingAllow => 'Allow';
+  String get sharingAllow => 'Consenti';
 
   @override
-  String get sharingDontAllow => 'Don’t allow';
+  String get sharingDontAllow => 'Non consentire';
 
   @override
   String get sharingProtectionHint =>
-      'Top bar or notifications black on the computer? Android’s screen share protection hides them. Turn on “Disable screen share protections” in Developer options, then share again.';
+      'Barra superiore o notifiche nere sul computer? La protezione della condivisione schermo di Android le nasconde. Attiva “Disattiva protezioni condivisione schermo” nelle Opzioni sviluppatore, poi condividi di nuovo.';
 
   @override
-  String get sharingGotIt => 'Got it';
+  String get sharingGotIt => 'Ho capito';
 
   @override
-  String get sharingDeveloperOptions => 'Developer options';
+  String get sharingDeveloperOptions => 'Opzioni sviluppatore';
 
   @override
   String sharingControlling(String name) {
-    return '$name is controlling your screen';
+    return '$name sta controllando il tuo schermo';
   }
 
   @override
   String sharingUsingCamera(String name) {
-    return '$name is using your camera';
+    return '$name sta usando la tua fotocamera';
   }
 
   @override
   String sharingUsingMicrophone(String name) {
-    return '$name is using your microphone';
+    return '$name sta usando il tuo microfono';
   }
 
   @override
   String sharingScreenWith(String name) {
-    return 'Sharing your screen with $name';
+    return 'Stai condividendo lo schermo con $name';
   }
 
   @override
-  String get sharingTapForCameraControls => 'Tap for camera controls';
+  String get sharingTapForCameraControls =>
+      'Tocca per i controlli della fotocamera';
 
   @override
-  String get sharingSwitchCamera => 'Switch camera';
+  String get sharingSwitchCamera => 'Cambia fotocamera';
 
   @override
-  String get sharingStopSharing => 'Stop sharing';
+  String get sharingStopSharing => 'Interrompi condivisione';
 
   @override
-  String get sharingStop => 'Stop';
+  String get sharingStop => 'Ferma';
 
   @override
-  String get sharingCameraControls => 'Camera controls';
+  String get sharingCameraControls => 'Controlli fotocamera';
 
   @override
   String displaySecondHint(String name) {
-    return '$name’s second display · go back to stop';
+    return 'Secondo schermo di $name · torna indietro per interrompere';
   }
 
   @override
   String displayControlHint(String name) {
-    return '$name’s screen · touch to click · go back to stop';
+    return 'Schermo di $name · tocca per cliccare · torna indietro per interrompere';
   }
 
   @override
   String displayWatchHint(String name) {
-    return '$name’s screen · go back to stop';
+    return 'Schermo di $name · torna indietro per interrompere';
   }
 
   @override
   String terminalTabClosed(String title) {
-    return '“$title” closed';
+    return '“$title” chiuso';
   }
 
   @override
   String terminalTabEnded(String title, String name) {
-    return '“$title” ended on $name';
+    return '“$title” terminato su $name';
   }
 
   @override
-  String get terminalCloseTitle => 'Close this terminal?';
+  String get terminalCloseTitle => 'Chiudere questo terminale?';
 
   @override
   String terminalCloseDetail(String name) {
-    return 'The shell ends on $name, with anything still running in it. To come back to it later, keep it running instead.';
+    return 'La shell termina su $name, insieme a tutto ciò che vi è ancora in esecuzione. Per tornarci più tardi, lasciala invece in esecuzione.';
   }
 
   @override
-  String get terminalKeepRunning => 'Keep running';
+  String get terminalKeepRunning => 'Lascia in esecuzione';
 
   @override
-  String get terminalClose => 'Close';
+  String get terminalClose => 'Chiudi';
 
   @override
-  String get terminalTheComputer => 'the computer';
+  String get terminalTheComputer => 'il computer';
 
   @override
-  String get terminalDetached => 'Detached';
+  String get terminalDetached => 'Scollegato';
 
   @override
   String terminalDetachedDetail(String name) {
-    return 'Still running on $name. Reattach to see it again; the code is asked again.';
+    return 'Ancora in esecuzione su $name. Ricollegati per vederlo di nuovo; il codice verrà richiesto ancora.';
   }
 
   @override
-  String get terminalReattach => 'Reattach';
+  String get terminalReattach => 'Ricollega';
 
   @override
   String terminalOn(String name) {
-    return 'Terminal on $name';
+    return 'Terminale su $name';
   }
 
   @override
   String terminalDetachedOn(String name) {
-    return 'Detached · still running on $name';
+    return 'Scollegato · ancora in esecuzione su $name';
   }
 
   @override
   String terminalOpeningOn(String name) {
-    return 'Opening on $name…';
+    return 'Apertura su $name…';
   }
 
   @override
-  String get terminalWaitingForCode => 'Waiting for the code';
+  String get terminalWaitingForCode => 'In attesa del codice';
 
   @override
-  String get terminalEnded => 'Ended';
+  String get terminalEnded => 'Terminato';
 
   @override
-  String get terminalBack => 'Back';
+  String get terminalBack => 'Indietro';
 
   @override
-  String get terminalTitle => 'Terminal';
+  String get terminalTitle => 'Terminale';
 
   @override
-  String get terminalMenu => 'Terminal menu';
+  String get terminalMenu => 'Menu del terminale';
 
   @override
-  String get terminalDetachMenu => 'Leave it running (detach)';
+  String get terminalDetachMenu => 'Lascialo in esecuzione (scollega)';
 
   @override
   String terminalCloseTab(String title) {
-    return 'Close $title';
+    return 'Chiudi $title';
   }
 
   @override
-  String get terminalNew => 'New terminal';
+  String get terminalNew => 'Nuovo terminale';
 
   @override
   String terminalShellOn(String name) {
-    return 'A shell on $name';
+    return 'Una shell su $name';
   }
 
   @override
   String get terminalShellDetail =>
-      'Runs as you on the computer, in your home folder. Each time it opens, it asks for the terminal code set there.';
+      'Viene eseguita come te sul computer, nella tua cartella home. Ogni volta che si apre, chiede il codice del terminale impostato lì.';
 
   @override
-  String get terminalStillRunning => 'STILL RUNNING';
+  String get terminalStillRunning => 'ANCORA IN ESECUZIONE';
 
   @override
   String terminalReattachTab(String title) {
-    return 'Reattach $title';
+    return 'Ricollega $title';
   }
 
   @override
   String terminalStarted(String time) {
-    return 'Started $time';
+    return 'Avviato alle $time';
   }
 
   @override
-  String get terminalKeyLeft => 'Left';
+  String get terminalKeyLeft => 'Sinistra';
 
   @override
-  String get terminalKeyUp => 'Up';
+  String get terminalKeyUp => 'Su';
 
   @override
-  String get terminalKeyDown => 'Down';
+  String get terminalKeyDown => 'Giù';
 
   @override
-  String get terminalKeyRight => 'Right';
+  String get terminalKeyRight => 'Destra';
 
   @override
-  String get terminalCodeTitle => 'Terminal code';
+  String get terminalCodeTitle => 'Codice del terminale';
 
   @override
   String terminalCodeDetail(String name) {
-    return 'The code set on $name in Preferences › Terminal. Linksy never keeps it.';
+    return 'Il codice impostato su $name in Preferenze › Terminale. Linksy non lo conserva mai.';
   }
 
   @override
   String get terminalCodePassphrase => 'Passphrase';
 
   @override
-  String get terminalCodeDigitsHint => '6 or more digits';
+  String get terminalCodeDigitsHint => '6 o più cifre';
 
   @override
-  String get terminalCodeUseDigits => 'Use digits';
+  String get terminalCodeUseDigits => 'Usa cifre';
 
   @override
-  String get terminalCodeUseLetters => 'Use letters';
+  String get terminalCodeUseLetters => 'Usa lettere';
 
   @override
-  String get terminalOpening => 'Opening…';
+  String get terminalOpening => 'Apertura…';
 
   @override
-  String get terminalOpen => 'Open terminal';
+  String get terminalOpen => 'Apri terminale';
+
+  @override
+  String get settingsAppearance => 'Aspetto';
+
+  @override
+  String get settingsThemeSystem => 'Sistema';
+
+  @override
+  String get settingsThemeLight => 'Chiaro';
+
+  @override
+  String get settingsThemeDark => 'Scuro';
 }

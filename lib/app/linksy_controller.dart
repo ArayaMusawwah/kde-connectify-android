@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 
@@ -123,6 +124,20 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     locale.value = resolveLocale(code);
     useLocale(locale.value);
     await _setPref('language', code);
+  }
+
+  /// Light, dark, or as the phone is (the default).
+  final themeMode = ValueNotifier<ThemeMode>(ThemeMode.system);
+
+  static ThemeMode themeFrom(String? value) => switch (value) {
+    'light' => ThemeMode.light,
+    'dark' => ThemeMode.dark,
+    _ => ThemeMode.system,
+  };
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    themeMode.value = mode;
+    await _setPref('theme', mode == ThemeMode.system ? null : mode.name);
   }
 
   /// The first-run setup (language, then what Linksy may do) is done.
@@ -251,6 +266,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     prefs = await LinksyPlatform.prefs();
     locale.value = resolveLocale(languageCode);
     useLocale(locale.value);
+    themeMode.value = themeFrom(prefs['theme']);
     // Shares that went on while the app's screen was recreated.
     for (final (session, kind, peerId) in await LinksyPlatform.activeShares()) {
       final peer = device(peerId)?.device;

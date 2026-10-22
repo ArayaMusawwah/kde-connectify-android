@@ -89,6 +89,9 @@ Future<void> main() async {
   controller.prefs = await LinksyPlatform.prefs();
   controller.locale.value = resolveLocale(controller.languageCode);
   useLocale(controller.locale.value);
+  controller.themeMode.value = LinksyController.themeFrom(
+    controller.prefs['theme'],
+  );
   await controller.start();
   runApp(LinksyApp(controller: controller));
 }

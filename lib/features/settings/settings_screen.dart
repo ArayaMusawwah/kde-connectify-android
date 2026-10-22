@@ -200,6 +200,7 @@ class SettingsScreen extends StatelessWidget {
                             .name,
                         onTap: () => showLanguagePicker(context),
                       ),
+                      const _ThemeChoice(),
                     ],
                   ),
                   SectionLabel(context.l10n.settingsPermissions),
@@ -307,6 +308,97 @@ class SettingsScreen extends StatelessWidget {
         );
       },
     ).whenComplete(text.dispose);
+  }
+}
+
+/// Appearance: as the phone is, light or dark.
+class _ThemeChoice extends StatelessWidget {
+  const _ThemeChoice();
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final c = LinksyScope.of(context);
+    final t = context.l10n;
+    return ValueListenableBuilder(
+      valueListenable: c.themeMode,
+      builder: (context, mode, _) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Ph.circleHalf, color: Sig.blue, size: 22),
+                const SizedBox(width: 14),
+                Text(
+                  t.settingsAppearance,
+                  style: TextStyle(
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w600,
+                    color: s.ink,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: s.raised,
+                borderRadius: BorderRadius.circular(Radii.md),
+              ),
+              child: Row(
+                children: [
+                  for (final (m, icon, label) in [
+                    (ThemeMode.system, Ph.deviceMobile, t.settingsThemeSystem),
+                    (ThemeMode.light, Ph.sun, t.settingsThemeLight),
+                    (ThemeMode.dark, Ph.moon, t.settingsThemeDark),
+                  ])
+                    Expanded(
+                      child: Pressable(
+                        onTap: () => c.setThemeMode(m),
+                        semanticLabel: label,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: m == mode ? s.card : Colors.transparent,
+                            borderRadius: BorderRadius.circular(Radii.sm + 2),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                icon,
+                                size: 17,
+                                color: m == mode ? Sig.blue : s.muted,
+                              ),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  label,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: m == mode ? s.ink : s.muted,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
