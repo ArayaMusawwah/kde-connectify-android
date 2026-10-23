@@ -2,11 +2,11 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
-## [Unreleased]
+## [0.2.3] - 2026-10-23
 
 ### Added
 - **Your own relay**: Settings › Connection › Relay server takes the address of a relay you host (`linksy-server`), like `https://relay.example.com`; empty means Linksy's own. Set the same one on your computers.
-
+- **Your devices in Android's share sheet**: each paired device shows up right in the share sheet of any app, with its picture or initials, the last one used first, like contacts in a messaging app. Picking one sends straight to it, even when Linksy wasn't open. Plain "Linksy" is still there to choose inside the app.
 - **Send photos and videos from the gallery**: Send files now offers Photos and videos (Android's photo picker, many at once, no storage permission) or Files. Everything picked goes as one transfer, shown as "12 photos", so the computer asks once.
 - **Transfers bubble**: while files are sent or received, a small circle at the bottom left shows how many, ringed by their progress, on home and on each device's page. Tap it for the speed and each file (done, how far, waiting), with Cancel. It shows a check when everything is done.
 

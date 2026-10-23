@@ -6,7 +6,7 @@ offer those features to Android phones.
 
 - App: `app.linksy.mg` (since 0.1.8; 0.1.x up to 0.1.7 was `app.linksy`), Flutter + the
   real `linksy-core` through flutter_rust_bridge. Repo: LinkSy-mg/linksy-mobile.
-- Core pinned at `e6957b4` (desktop 0.7.0), as of phone 0.2.0. Builds for arm64-v8a, armeabi-v7a, x86_64.
+- Core pinned at `293c7bc` (desktop main after PR #31), as of phone 0.2.3. Builds for arm64-v8a, armeabi-v7a, x86_64.
 - Releases: LinkSy-mg/linksy-releases, titled "Mobile release · Linksy X for Android", APKs named `linksy-X.apk` / `-arm64` / `-armv7`; the newest is always https://linksy.diary.mg/download/android.
 - Distributed as a sideloaded APK, not through the Play Store. That shapes everything in
   §3: Android's fraud protection blocks installing sideloaded apps that declare certain
@@ -122,6 +122,12 @@ default SMS app.
   works on the networks tested; pairing by QR or address covers the rest).
 
 ## Changelog
+
+- **2026-10-23** — Phone 0.2.3 on core `293c7bc`: the relay setting (PR #7, with
+  desktop PR #31), each paired device as a direct target in Android's share sheet,
+  the photo picker for many photos at once, a transfers bubble with a page per file,
+  an upright webcam picture when the phone stands, and less memory in the background
+  (`docs/memory.md`). No protocol change.
 
 - **2026-10-22** — Phone 0.2.2 (desktop 0.8.0): the USB cable is found without the
   system's prompt (accessory list, run-time receiver, permission request), its port
