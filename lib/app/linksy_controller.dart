@@ -897,6 +897,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
             time: DateTime.now(),
             status: ActivityStatus.waiting,
             names: [for (final f in files) f.name],
+            sizes: [for (final f in files) f.size],
             total: total,
           ),
         );
@@ -910,9 +911,13 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         // Outgoing transfers start when offered: they wait for the other side
         // until bytes flow. Incoming ones start once accepted.
         if (_activity.any((a) => a.id == transfer)) {
-          if (incoming) {
-            _update(transfer, (a) => a.status = ActivityStatus.active);
-          }
+          _update(transfer, (a) {
+            if (incoming) a.status = ActivityStatus.active;
+            // Sizes the sender couldn't read here: the core knows them.
+            if (a.sizes.every((n) => n == 0)) {
+              a.sizes = [for (final f in files) f.size];
+            }
+          });
         } else if (peer != null) {
           // Not started here (auto-accepted files): file it under the peer.
           _add(
@@ -924,6 +929,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
               time: DateTime.now(),
               status: incoming ? ActivityStatus.active : ActivityStatus.waiting,
               names: [for (final f in files) f.name],
+              sizes: [for (final f in files) f.size],
               total: total,
             ),
           );
@@ -1152,6 +1158,20 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   // Actions. Each returns an error message to show, or null.
 
+  static int _sizeOf(String path) {
+    try {
+      return File(path).lengthSync();
+    } on FileSystemException {
+      return 0;
+    }
+  }
+
+  /// File transfers going now, on every device, newest first.
+  List<Activity> get liveTransfers => [
+    for (final a in _activity)
+      if (a.kind == ActivityKind.files && a.isLive) a,
+  ];
+
   Future<String?> sendFiles(String deviceId, List<String> paths) async {
     if (paths.isEmpty) return null;
     try {
@@ -1167,6 +1187,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
             time: DateTime.now(),
             status: ActivityStatus.waiting,
             names: [for (final p in paths) p.split('/').last],
+            sizes: [for (final p in paths) _sizeOf(p)],
           ),
         );
       }

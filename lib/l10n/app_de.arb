@@ -533,5 +533,12 @@
   "sendFilesCaption": "Dokumente und alles andere",
   "activityPhotos": "{count, plural, one{{count} Foto} other{{count} Fotos}}",
   "activityVideos": "{count, plural, one{{count} Video} other{{count} Videos}}",
-  "activityPhotosVideos": "{count} Fotos und Videos"
+  "activityPhotosVideos": "{count} Fotos und Videos",
+  "transfersTitle": "Übertragungen",
+  "transfersWaiting": "Wartet",
+  "transfersFilesDone": "{done} von {total} Dateien",
+  "transfersTo": "An {name}",
+  "transfersFrom": "Von {name}",
+  "transfersAllDone": "Alles fertig",
+  "transfersBubble": "{count, plural, one{{count} Datei unterwegs} other{{count} Dateien unterwegs}}"
 }

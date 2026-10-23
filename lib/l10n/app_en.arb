@@ -2739,5 +2739,56 @@
         "type": "int"
       }
     }
+  },
+  "transfersTitle": "Transfers",
+  "@transfersTitle": {
+    "description": "Title of the page listing files on their way"
+  },
+  "transfersWaiting": "Waiting to start",
+  "@transfersWaiting": {
+    "description": "Transfers page: no bytes moving yet (the other side has not accepted)"
+  },
+  "transfersFilesDone": "{done} of {total} files",
+  "@transfersFilesDone": {
+    "description": "Transfers page: files finished out of all",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "transfersTo": "To {name}",
+  "@transfersTo": {
+    "description": "Transfers page: files going to a device",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersFrom": "From {name}",
+  "@transfersFrom": {
+    "description": "Transfers page: files coming from a device",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersAllDone": "All done",
+  "@transfersAllDone": {
+    "description": "Transfers page when nothing is left"
+  },
+  "transfersBubble": "{count, plural, =1{1 file on its way} other{{count} files on their way}}",
+  "@transfersBubble": {
+    "description": "Accessibility label of the round transfer button",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

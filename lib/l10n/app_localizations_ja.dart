@@ -1963,4 +1963,38 @@ class AppLocalizationsJa extends AppLocalizations {
   String activityPhotosVideos(int count) {
     return '写真と動画 $count 件';
   }
+
+  @override
+  String get transfersTitle => '転送';
+
+  @override
+  String get transfersWaiting => '開始を待っています';
+
+  @override
+  String transfersFilesDone(int done, int total) {
+    return '$total 件中 $done 件';
+  }
+
+  @override
+  String transfersTo(String name) {
+    return '$name へ';
+  }
+
+  @override
+  String transfersFrom(String name) {
+    return '$name から';
+  }
+
+  @override
+  String get transfersAllDone => 'すべて完了';
+
+  @override
+  String transfersBubble(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '転送中のファイル $count 件',
+    );
+    return '$_temp0';
+  }
 }

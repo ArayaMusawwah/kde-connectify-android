@@ -3317,6 +3317,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} photos and videos'**
   String activityPhotosVideos(int count);
+
+  /// Title of the page listing files on their way
+  ///
+  /// In en, this message translates to:
+  /// **'Transfers'**
+  String get transfersTitle;
+
+  /// Transfers page: no bytes moving yet (the other side has not accepted)
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to start'**
+  String get transfersWaiting;
+
+  /// Transfers page: files finished out of all
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} files'**
+  String transfersFilesDone(int done, int total);
+
+  /// Transfers page: files going to a device
+  ///
+  /// In en, this message translates to:
+  /// **'To {name}'**
+  String transfersTo(String name);
+
+  /// Transfers page: files coming from a device
+  ///
+  /// In en, this message translates to:
+  /// **'From {name}'**
+  String transfersFrom(String name);
+
+  /// Transfers page when nothing is left
+  ///
+  /// In en, this message translates to:
+  /// **'All done'**
+  String get transfersAllDone;
+
+  /// Accessibility label of the round transfer button
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 file on its way} other{{count} files on their way}}'**
+  String transfersBubble(int count);
 }
 
 class _AppLocalizationsDelegate

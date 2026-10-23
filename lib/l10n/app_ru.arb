@@ -533,5 +533,12 @@
   "sendFilesCaption": "Документы и всё остальное",
   "activityPhotos": "{count, plural, one{{count} фото} few{{count} фото} many{{count} фото} other{{count} фото}}",
   "activityVideos": "{count, plural, one{{count} видео} few{{count} видео} many{{count} видео} other{{count} видео}}",
-  "activityPhotosVideos": "Фото и видео: {count}"
+  "activityPhotosVideos": "Фото и видео: {count}",
+  "transfersTitle": "Передачи",
+  "transfersWaiting": "Ожидание",
+  "transfersFilesDone": "{done} из {total} файлов",
+  "transfersTo": "На {name}",
+  "transfersFrom": "С {name}",
+  "transfersAllDone": "Всё готово",
+  "transfersBubble": "{count, plural, one{{count} файл в пути} few{{count} файла в пути} many{{count} файлов в пути} other{{count} файла в пути}}"
 }

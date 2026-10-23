@@ -16,6 +16,7 @@ abstract final class Ph {
   static const cameraSlash = IconData(0xe110, fontFamily: 'PhosphorRegular');
   static const caretRight = IconData(0xe13a, fontFamily: 'PhosphorRegular');
   static const clipboardText = IconData(0xe198, fontFamily: 'PhosphorRegular');
+  static const clock = IconData(0xe19a, fontFamily: 'PhosphorRegular');
   static const copy = IconData(0xe1ca, fontFamily: 'PhosphorRegular');
   static const desktop = IconData(0xe560, fontFamily: 'PhosphorRegular');
   static const deviceMobile = IconData(0xe1e0, fontFamily: 'PhosphorRegular');

@@ -533,5 +533,12 @@
   "sendFilesCaption": "文档及其他所有文件",
   "activityPhotos": "{count, plural, other{{count} 张照片}}",
   "activityVideos": "{count, plural, other{{count} 个视频}}",
-  "activityPhotosVideos": "{count} 张照片和视频"
+  "activityPhotosVideos": "{count} 张照片和视频",
+  "transfersTitle": "传输",
+  "transfersWaiting": "等待开始",
+  "transfersFilesDone": "{done}/{total} 个文件",
+  "transfersTo": "发送到 {name}",
+  "transfersFrom": "来自 {name}",
+  "transfersAllDone": "全部完成",
+  "transfersBubble": "{count, plural, other{{count} 个文件传输中}}"
 }

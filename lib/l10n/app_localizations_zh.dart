@@ -1942,4 +1942,38 @@ class AppLocalizationsZh extends AppLocalizations {
   String activityPhotosVideos(int count) {
     return '$count 张照片和视频';
   }
+
+  @override
+  String get transfersTitle => '传输';
+
+  @override
+  String get transfersWaiting => '等待开始';
+
+  @override
+  String transfersFilesDone(int done, int total) {
+    return '$done/$total 个文件';
+  }
+
+  @override
+  String transfersTo(String name) {
+    return '发送到 $name';
+  }
+
+  @override
+  String transfersFrom(String name) {
+    return '来自 $name';
+  }
+
+  @override
+  String get transfersAllDone => '全部完成';
+
+  @override
+  String transfersBubble(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个文件传输中',
+    );
+    return '$_temp0';
+  }
 }

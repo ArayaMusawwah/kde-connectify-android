@@ -12,6 +12,7 @@ class Activity {
     required this.time,
     required this.status,
     this.names = const [],
+    this.sizes = const [],
     this.total = 0,
     this.bytes = 0,
     this.saved = const [],
@@ -29,6 +30,10 @@ class Activity {
 
   /// File names offered or sent.
   final List<String> names;
+
+  /// Each file's size, in [names]' order, when known (they go one after
+  /// another, so this tells which file is on its way).
+  List<int> sizes;
   int total;
   int bytes;
   List<String> saved;
@@ -53,6 +58,7 @@ class Activity {
     // A transfer still going when the app stops did not finish.
     'status': (isLive ? ActivityStatus.failed : status).name,
     'names': names,
+    'sizes': sizes,
     'total': total,
     'bytes': bytes,
     'saved': saved,
@@ -72,6 +78,7 @@ class Activity {
     time: DateTime.fromMillisecondsSinceEpoch(j['time'] as int),
     status: ActivityStatus.values.byName(j['status'] as String),
     names: (j['names'] as List).cast<String>(),
+    sizes: (j['sizes'] as List?)?.cast<int>() ?? const [],
     total: j['total'] as int,
     bytes: j['bytes'] as int,
     saved: (j['saved'] as List).cast<String>(),

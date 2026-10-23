@@ -2013,4 +2013,38 @@ class AppLocalizationsMg extends AppLocalizations {
   String activityPhotosVideos(int count) {
     return '$count sary sy horonan-tsary';
   }
+
+  @override
+  String get transfersTitle => 'Fifindrana';
+
+  @override
+  String get transfersWaiting => 'Miandry';
+
+  @override
+  String transfersFilesDone(int done, int total) {
+    return '$done amin’ny rakitra $total';
+  }
+
+  @override
+  String transfersTo(String name) {
+    return 'Ho any amin’i $name';
+  }
+
+  @override
+  String transfersFrom(String name) {
+    return 'Avy amin’i $name';
+  }
+
+  @override
+  String get transfersAllDone => 'Vita daholo';
+
+  @override
+  String transfersBubble(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Rakitra $count an-dalana',
+    );
+    return '$_temp0';
+  }
 }

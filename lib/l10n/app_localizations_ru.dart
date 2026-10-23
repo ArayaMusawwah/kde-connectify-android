@@ -2034,4 +2034,41 @@ class AppLocalizationsRu extends AppLocalizations {
   String activityPhotosVideos(int count) {
     return 'Фото и видео: $count';
   }
+
+  @override
+  String get transfersTitle => 'Передачи';
+
+  @override
+  String get transfersWaiting => 'Ожидание';
+
+  @override
+  String transfersFilesDone(int done, int total) {
+    return '$done из $total файлов';
+  }
+
+  @override
+  String transfersTo(String name) {
+    return 'На $name';
+  }
+
+  @override
+  String transfersFrom(String name) {
+    return 'С $name';
+  }
+
+  @override
+  String get transfersAllDone => 'Всё готово';
+
+  @override
+  String transfersBubble(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count файла в пути',
+      many: '$count файлов в пути',
+      few: '$count файла в пути',
+      one: '$count файл в пути',
+    );
+    return '$_temp0';
+  }
 }

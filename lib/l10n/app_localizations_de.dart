@@ -2007,4 +2007,39 @@ class AppLocalizationsDe extends AppLocalizations {
   String activityPhotosVideos(int count) {
     return '$count Fotos und Videos';
   }
+
+  @override
+  String get transfersTitle => 'Übertragungen';
+
+  @override
+  String get transfersWaiting => 'Wartet';
+
+  @override
+  String transfersFilesDone(int done, int total) {
+    return '$done von $total Dateien';
+  }
+
+  @override
+  String transfersTo(String name) {
+    return 'An $name';
+  }
+
+  @override
+  String transfersFrom(String name) {
+    return 'Von $name';
+  }
+
+  @override
+  String get transfersAllDone => 'Alles fertig';
+
+  @override
+  String transfersBubble(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Dateien unterwegs',
+      one: '$count Datei unterwegs',
+    );
+    return '$_temp0';
+  }
 }

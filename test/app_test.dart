@@ -111,4 +111,34 @@ void main() {
     expect(size(), lessThan(before));
     expect(c.prefs['term_font'], '${size()}');
   });
+
+  testWidgets('files on their way show in the bubble and its page', (
+    tester,
+  ) async {
+    final (c, _) = await pumpApp(tester);
+    final id = c.devices
+        .firstWhere((v) => v.device.name == 'Studio Desktop')
+        .device
+        .id;
+    await c.sendFiles(id, ['/x/a.jpg', '/x/b.jpg', '/x/c.jpg']);
+    await tester.pump();
+    // Waiting for the computer: the count, ring turning.
+    expect(find.text('3'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 2400));
+    await tester.tap(find.text('3'));
+    await frames(tester);
+    expect(find.text('Transfers'), findsOneWidget);
+    expect(find.text('To Studio Desktop'), findsOneWidget);
+    expect(find.textContaining('of 3 files'), findsOneWidget);
+    expect(find.text('a.jpg'), findsOneWidget);
+    expect(find.text('c.jpg'), findsOneWidget);
+    // Done: the page says so, and the bubble checks then goes.
+    await tester.pump(const Duration(seconds: 4));
+    await frames(tester);
+    expect(find.text('All done'), findsOneWidget);
+    await tester.pageBack();
+    await tester.pump(const Duration(seconds: 3));
+    await frames(tester);
+    expect(find.text('3'), findsNothing);
+  });
 }

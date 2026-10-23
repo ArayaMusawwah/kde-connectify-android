@@ -13,6 +13,7 @@ import '../device/device_screen.dart';
 import '../pairing/pairing_flows.dart';
 import '../sharing/sharing.dart';
 import '../settings/settings_screen.dart';
+import '../transfer/transfer_bubble.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -29,67 +30,73 @@ class HomeScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            toolbarHeight: 68,
-            titleSpacing: 20,
-            backgroundColor: s.bg,
-            title: const Wordmark(),
-            actions: [
-              RoundButton(
-                icon: Ph.gearSix,
-                tooltip: context.l10n.homeSettings,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                ),
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                toolbarHeight: 68,
+                titleSpacing: 20,
+                backgroundColor: s.bg,
+                title: const Wordmark(),
+                actions: [
+                  RoundButton(
+                    icon: Ph.gearSix,
+                    tooltip: context.l10n.homeSettings,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                ],
               ),
-              const SizedBox(width: 16),
+              SliverToBoxAdapter(child: _Visible(controller: c)),
+              SliverToBoxAdapter(child: _Notices(controller: c)),
+              SliverToBoxAdapter(child: SharingBanners(controller: c)),
+              if (paired.isEmpty)
+                const SliverToBoxAdapter(child: _GetStarted())
+              else ...[
+                SliverToBoxAdapter(
+                  child: SectionLabel(
+                    context.l10n.homeYourDevices,
+                    trailing: Text(
+                      '${paired.length}',
+                      style: sora(13, color: s.muted),
+                    ),
+                  ),
+                ),
+                SliverList.separated(
+                  itemCount: paired.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
+                  itemBuilder: (context, i) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: _DeviceRow(
+                      view: paired[i],
+                      controller: c,
+                      onTap: () => open(paired[i]),
+                    ),
+                  ),
+                ),
+              ],
+              if (unpaired.isNotEmpty) ...[
+                SliverToBoxAdapter(
+                  child: SectionLabel(context.l10n.homeNearbyNotPaired),
+                ),
+                SliverList.separated(
+                  itemCount: unpaired.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
+                  itemBuilder: (context, i) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: _NearbyRow(view: unpaired[i]),
+                  ),
+                ),
+              ],
+              const SliverToBoxAdapter(child: SizedBox(height: 120)),
             ],
           ),
-          SliverToBoxAdapter(child: _Visible(controller: c)),
-          SliverToBoxAdapter(child: _Notices(controller: c)),
-          SliverToBoxAdapter(child: SharingBanners(controller: c)),
-          if (paired.isEmpty)
-            const SliverToBoxAdapter(child: _GetStarted())
-          else ...[
-            SliverToBoxAdapter(
-              child: SectionLabel(
-                context.l10n.homeYourDevices,
-                trailing: Text(
-                  '${paired.length}',
-                  style: sora(13, color: s.muted),
-                ),
-              ),
-            ),
-            SliverList.separated(
-              itemCount: paired.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 10),
-              itemBuilder: (context, i) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _DeviceRow(
-                  view: paired[i],
-                  controller: c,
-                  onTap: () => open(paired[i]),
-                ),
-              ),
-            ),
-          ],
-          if (unpaired.isNotEmpty) ...[
-            SliverToBoxAdapter(
-              child: SectionLabel(context.l10n.homeNearbyNotPaired),
-            ),
-            SliverList.separated(
-              itemCount: unpaired.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 10),
-              itemBuilder: (context, i) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _NearbyRow(view: unpaired[i]),
-              ),
-            ),
-          ],
-          const SliverToBoxAdapter(child: SizedBox(height: 120)),
+          // Files on their way, from any page.
+          const TransferBubble(),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

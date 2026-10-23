@@ -19,6 +19,7 @@ import '../sharing/webcam_screen.dart';
 import '../terminal/terminal_screen.dart';
 import '../../app/terminals.dart';
 import 'activity_tile.dart';
+import '../transfer/transfer_bubble.dart';
 
 /// Send files: photos and videos from the gallery, or any file. Whatever
 /// is picked goes as one offer, so the computer asks once.
@@ -118,106 +119,115 @@ class _DeviceScreenState extends State<DeviceScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayFor(Brightness.dark),
       child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              toolbarHeight: 0,
-              collapsedHeight: 0,
-              systemOverlayStyle: overlayFor(Brightness.dark),
-              // The banner's top under its shadow, so the two meet without
-              // a seam.
-              backgroundColor: Color.alphaBlend(
-                const Color(0x590A1024),
-                Sig.deep,
-              ),
-            ),
-            // One box, so the actions paint over the hero they overlap.
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  _Hero(view: view),
-                  Transform.translate(
-                    offset: const Offset(0, -34),
-                    child: _Actions(view: view),
+        body: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  pinned: true,
+                  toolbarHeight: 0,
+                  collapsedHeight: 0,
+                  systemOverlayStyle: overlayFor(Brightness.dark),
+                  // The banner's top under its shadow, so the two meet without
+                  // a seam.
+                  backgroundColor: Color.alphaBlend(
+                    const Color(0x590A1024),
+                    Sig.deep,
                   ),
-                  // Its screen being shared from here, with Stop.
-                  Transform.translate(
-                    offset: const Offset(0, -34),
-                    child: SharingBanners(
-                      controller: c,
-                      deviceId: deviceId,
-                      kinds: const {SessionKind.screen, SessionKind.control},
-                    ),
-                  ),
-                  if (_isComputer(view.device)) ...[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                      child: _WatchScreen(view: view),
-                    ),
-                    // Only computers that announce it (desktop 0.7, §4.15).
-                    if (view.device.features.contains('terminal'))
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                        child: _TerminalCard(view: view),
+                ),
+                // One box, so the actions paint over the hero they overlap.
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      _Hero(view: view),
+                      Transform.translate(
+                        offset: const Offset(0, -34),
+                        child: _Actions(view: view),
                       ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                      child: _PhoneAs(view: view),
+                      // Its screen being shared from here, with Stop.
+                      Transform.translate(
+                        offset: const Offset(0, -34),
+                        child: SharingBanners(
+                          controller: c,
+                          deviceId: deviceId,
+                          kinds: const {
+                            SessionKind.screen,
+                            SessionKind.control,
+                          },
+                        ),
+                      ),
+                      if (_isComputer(view.device)) ...[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                          child: _WatchScreen(view: view),
+                        ),
+                        // Only computers that announce it (desktop 0.7, §4.15).
+                        if (view.device.features.contains('terminal'))
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                            child: _TerminalCard(view: view),
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                          child: _PhoneAs(view: view),
+                        ),
+                      ],
+                      if (c.media[deviceId]?.players case final players?
+                          when players.isNotEmpty)
+                        for (final p in players)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                            child: _NowPlaying(deviceId: deviceId, player: p),
+                          ),
+                      if (_isComputer(view.device))
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                          child: _Switches(view: view),
+                        ),
+                    ],
+                  ),
+                ),
+                if (all.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: _Filters(
+                      selected: _filter,
+                      onSelected: (k) => setState(() => _filter = k),
+                    ),
+                  ),
+                if (all.isEmpty)
+                  SliverToBoxAdapter(child: _NoActivity(name: view.device.name))
+                else if (days.isEmpty)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                      child: Text(
+                        context.l10n.deviceNothingOfKind,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Sig.of(context).muted),
+                      ),
+                    ),
+                  )
+                else
+                  for (final (day, entries) in days) ...[
+                    SliverToBoxAdapter(child: SectionLabel(day)),
+                    SliverList.builder(
+                      itemCount: entries.length,
+                      itemBuilder: (context, i) => TimelineEntry(
+                        activity: entries[i],
+                        first: i == 0,
+                        last: i == entries.length - 1,
+                      ),
                     ),
                   ],
-                  if (c.media[deviceId]?.players case final players?
-                      when players.isNotEmpty)
-                    for (final p in players)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                        child: _NowPlaying(deviceId: deviceId, player: p),
-                      ),
-                  if (_isComputer(view.device))
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                      child: _Switches(view: view),
-                    ),
-                ],
-              ),
-            ),
-            if (all.isNotEmpty)
-              SliverToBoxAdapter(
-                child: _Filters(
-                  selected: _filter,
-                  onSelected: (k) => setState(() => _filter = k),
-                ),
-              ),
-            if (all.isEmpty)
-              SliverToBoxAdapter(child: _NoActivity(name: view.device.name))
-            else if (days.isEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                  child: Text(
-                    context.l10n.deviceNothingOfKind,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Sig.of(context).muted),
-                  ),
-                ),
-              )
-            else
-              for (final (day, entries) in days) ...[
-                SliverToBoxAdapter(child: SectionLabel(day)),
-                SliverList.builder(
-                  itemCount: entries.length,
-                  itemBuilder: (context, i) => TimelineEntry(
-                    activity: entries[i],
-                    first: i == 0,
-                    last: i == entries.length - 1,
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 32 + MediaQuery.paddingOf(context).bottom,
                   ),
                 ),
               ],
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 32 + MediaQuery.paddingOf(context).bottom,
-              ),
             ),
+            // Files on their way, from any page.
+            const TransferBubble(),
           ],
         ),
       ),

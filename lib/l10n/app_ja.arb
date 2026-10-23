@@ -533,5 +533,12 @@
   "sendFilesCaption": "書類やそのほかのすべて",
   "activityPhotos": "{count, plural, other{写真 {count} 枚}}",
   "activityVideos": "{count, plural, other{動画 {count} 本}}",
-  "activityPhotosVideos": "写真と動画 {count} 件"
+  "activityPhotosVideos": "写真と動画 {count} 件",
+  "transfersTitle": "転送",
+  "transfersWaiting": "開始を待っています",
+  "transfersFilesDone": "{total} 件中 {done} 件",
+  "transfersTo": "{name} へ",
+  "transfersFrom": "{name} から",
+  "transfersAllDone": "すべて完了",
+  "transfersBubble": "{count, plural, other{転送中のファイル {count} 件}}"
 }
