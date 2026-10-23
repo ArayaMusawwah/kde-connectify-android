@@ -533,6 +533,5 @@
   "sendFilesCaption": "書類やそのほかのすべて",
   "activityPhotos": "{count, plural, other{写真 {count} 枚}}",
   "activityVideos": "{count, plural, other{動画 {count} 本}}",
-  "activityPhotosVideos": "写真と動画 {count} 件",
-  "deviceNewFiles": "{count, plural, other{新着：ファイル {count} 件}}"
+  "activityPhotosVideos": "写真と動画 {count} 件"
 }

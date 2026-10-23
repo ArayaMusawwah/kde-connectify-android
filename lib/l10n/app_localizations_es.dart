@@ -2013,15 +2013,4 @@ class AppLocalizationsEs extends AppLocalizations {
   String activityPhotosVideos(int count) {
     return '$count fotos y videos';
   }
-
-  @override
-  String deviceNewFiles(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Nuevo: $count archivos',
-      one: 'Nuevo: $count archivo',
-    );
-    return '$_temp0';
-  }
 }

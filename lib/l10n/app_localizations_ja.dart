@@ -1963,14 +1963,4 @@ class AppLocalizationsJa extends AppLocalizations {
   String activityPhotosVideos(int count) {
     return '写真と動画 $count 件';
   }
-
-  @override
-  String deviceNewFiles(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '新着：ファイル $count 件',
-    );
-    return '$_temp0';
-  }
 }
