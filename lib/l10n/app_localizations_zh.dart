@@ -1523,10 +1523,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get webcamOrientation => '方向';
 
   @override
-  String get webcamOrientationPortraitDetail => '竖握手机；画面两侧会有黑边。';
+  String get webcamOrientationPortraitDetail => '竖长的画面，两侧有黑边，适合需要竖屏画面的应用。';
 
   @override
-  String get webcamOrientationLandscapeDetail => '横握手机；画面铺满。';
+  String get webcamOrientationLandscapeDetail => '填满画面并始终保持正向，无论手机如何摆放。';
 
   @override
   String get webcamFrameRate => '帧率';

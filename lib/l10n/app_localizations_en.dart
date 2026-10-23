@@ -1573,11 +1573,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get webcamOrientationPortraitDetail =>
-      'Hold the phone upright; bars at the sides.';
+      'A tall picture with bars at the sides, for apps that want one.';
 
   @override
   String get webcamOrientationLandscapeDetail =>
-      'Hold the phone sideways; it fills the frame.';
+      'Fills the frame and stays upright, however the phone stands.';
 
   @override
   String get webcamFrameRate => 'Frame rate';

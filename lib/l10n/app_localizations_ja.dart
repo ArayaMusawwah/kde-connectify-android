@@ -1541,10 +1541,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get webcamOrientation => '向き';
 
   @override
-  String get webcamOrientationPortraitDetail => 'スマートフォンを縦に持ちます。左右に帯が入ります。';
+  String get webcamOrientationPortraitDetail => '左右に帯の入った縦長の映像。縦長を使うアプリ向けです。';
 
   @override
-  String get webcamOrientationLandscapeDetail => 'スマートフォンを横に持ちます。フレーム全体に映ります。';
+  String get webcamOrientationLandscapeDetail =>
+      'スマートフォンの向きにかかわらず、映像は枠いっぱいに正しい向きで映ります。';
 
   @override
   String get webcamFrameRate => 'フレームレート';

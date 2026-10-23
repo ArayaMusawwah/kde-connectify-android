@@ -1580,11 +1580,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get webcamOrientationPortraitDetail =>
-      'Halte das Handy aufrecht; Balken an den Seiten.';
+      'Ein hohes Bild mit Balken an den Seiten, für Apps, die eines wollen.';
 
   @override
   String get webcamOrientationLandscapeDetail =>
-      'Halte das Handy quer; es füllt das Bild.';
+      'Füllt das Bild und bleibt aufrecht, egal wie das Handy steht.';
 
   @override
   String get webcamFrameRate => 'Bildrate';

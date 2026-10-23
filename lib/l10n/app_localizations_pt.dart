@@ -1581,11 +1581,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get webcamOrientationPortraitDetail =>
-      'Segure o celular em pé; barras nas laterais.';
+      'Uma imagem alta com faixas nas laterais, para apps que querem uma.';
 
   @override
   String get webcamOrientationLandscapeDetail =>
-      'Segure o celular deitado; preenche o quadro.';
+      'Preenche o quadro e fica em pé, seja qual for a posição do celular.';
 
   @override
   String get webcamFrameRate => 'Taxa de quadros';

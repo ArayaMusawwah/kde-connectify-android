@@ -1603,11 +1603,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get webcamOrientationPortraitDetail =>
-      'Держите телефон вертикально; полосы по бокам.';
+      'Высокая картинка с полосами по бокам, для приложений, которым она нужна.';
 
   @override
   String get webcamOrientationLandscapeDetail =>
-      'Держите телефон горизонтально; изображение заполняет кадр.';
+      'Заполняет кадр и остаётся ровной, как бы ни стоял телефон.';
 
   @override
   String get webcamFrameRate => 'Частота кадров';

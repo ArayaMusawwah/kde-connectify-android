@@ -2667,13 +2667,13 @@ abstract class AppLocalizations {
   /// Portrait orientation explanation
   ///
   /// In en, this message translates to:
-  /// **'Hold the phone upright; bars at the sides.'**
+  /// **'A tall picture with bars at the sides, for apps that want one.'**
   String get webcamOrientationPortraitDetail;
 
   /// Landscape orientation explanation
   ///
   /// In en, this message translates to:
-  /// **'Hold the phone sideways; it fills the frame.'**
+  /// **'Fills the frame and stays upright, however the phone stands.'**
   String get webcamOrientationLandscapeDetail;
 
   /// Setting title

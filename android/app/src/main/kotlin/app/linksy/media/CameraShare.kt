@@ -80,9 +80,8 @@ class CameraShare(
     /// The picture's shape: landscape (fills the frame) or portrait (bars at
     /// the sides). Either way it's kept upright for how the phone is held.
     private var orientationMode = "landscape"
-    /// The last upright rotation for each shape, kept while the phone is held
-    /// the other way (landscape asked for with the phone upright, say).
-    private var lastLandscape = 0
+    /// The last upright portrait rotation, kept while the phone is held
+    /// sideways with portrait asked for.
     private var lastPortrait = -1
 
     /// Every change, as [state] JSON, on the camera thread.
@@ -278,20 +277,22 @@ class CameraShare(
 
     /// The picture's rotation now: upright for how the phone is held (the
     /// camera's own formula for photo orientation), within the chosen shape.
+    /// Landscape follows the phone: held sideways the picture fits the frame;
+    /// standing upright, an upright center crop fills it, as webcam apps do.
     private fun turn() {
         val sensor = chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 90
         val device = if (lens.facing == "front") -held else held
         val upright = (sensor + device + 360) % 360
         val landscapeHeld = upright % 180 == 0
-        renderer.rotation = if (orientationMode == "portrait") {
+        if (orientationMode == "portrait") {
             if (!landscapeHeld) lastPortrait = upright
             // Never held upright yet: the usual upright hold.
-            if (lastPortrait >= 0) lastPortrait else if (sensor % 180 == 90) sensor else (sensor + 90) % 360
+            renderer.rotation = if (lastPortrait >= 0) lastPortrait else if (sensor % 180 == 90) sensor else (sensor + 90) % 360
+            renderer.fill = false
         } else {
-            if (landscapeHeld) lastLandscape = upright
-            lastLandscape
+            renderer.rotation = upright
+            renderer.fill = !landscapeHeld
         }
-        renderer.fill = false
     }
 
     /// A point of the camera's picture (0..1 across and down) as a

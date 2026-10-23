@@ -2094,11 +2094,11 @@
   "@webcamOrientation": {
     "description": "Setting title"
   },
-  "webcamOrientationPortraitDetail": "Hold the phone upright; bars at the sides.",
+  "webcamOrientationPortraitDetail": "A tall picture with bars at the sides, for apps that want one.",
   "@webcamOrientationPortraitDetail": {
     "description": "Portrait orientation explanation"
   },
-  "webcamOrientationLandscapeDetail": "Hold the phone sideways; it fills the frame.",
+  "webcamOrientationLandscapeDetail": "Fills the frame and stays upright, however the phone stands.",
   "@webcamOrientationLandscapeDetail": {
     "description": "Landscape orientation explanation"
   },

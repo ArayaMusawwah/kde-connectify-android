@@ -1585,11 +1585,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get webcamOrientationPortraitDetail =>
-      'Sostén el teléfono en vertical; barras a los lados.';
+      'Una imagen alta con barras a los lados, para las apps que la quieren.';
 
   @override
   String get webcamOrientationLandscapeDetail =>
-      'Sostén el teléfono en horizontal; llena el encuadre.';
+      'Llena el cuadro y se mantiene derecha, como sea que esté el teléfono.';
 
   @override
   String get webcamFrameRate => 'Velocidad de fotogramas';

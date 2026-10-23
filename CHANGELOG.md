@@ -7,6 +7,9 @@ All notable changes to Linksy for Android. Format: [Keep a Changelog](https://ke
 ### Added
 - **Your own relay**: Settings › Connection › Relay server takes the address of a relay you host (`linksy-server`), like `https://relay.example.com`; empty means Linksy's own. Set the same one on your computers.
 
+### Fixed
+- **Webcam upright when the phone stands**: in Landscape the picture follows how the phone is held. Standing upright, an upright crop fills the frame instead of a sideways picture; turning the phone mid-call keeps it upright.
+
 ## [0.2.2] - 2026-10-22
 
 ### Added

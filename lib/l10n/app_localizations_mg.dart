@@ -1585,11 +1585,11 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get webcamOrientationPortraitDetail =>
-      'Atsangano ny finday; misy tsipika eo amin\'ny sisiny.';
+      'Sary avo misy tsipika eo amin’ny sisiny, ho an’ny rindranasa mila izany.';
 
   @override
   String get webcamOrientationLandscapeDetail =>
-      'Ampandrio ny finday; feno ny sary.';
+      'Mameno ny efijery ary mijoro foana, na ahoana na ahoana fijoron’ny finday.';
 
   @override
   String get webcamFrameRate => 'Isan-tsary';

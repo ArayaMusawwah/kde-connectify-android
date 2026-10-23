@@ -1587,11 +1587,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get webcamOrientationPortraitDetail =>
-      'Tieni il telefono in verticale; bande ai lati.';
+      'Un’immagine alta con bande ai lati, per le app che la vogliono.';
 
   @override
   String get webcamOrientationLandscapeDetail =>
-      'Tieni il telefono in orizzontale; riempie l’inquadratura.';
+      'Riempie l’inquadratura e resta dritta, comunque stia il telefono.';
 
   @override
   String get webcamFrameRate => 'Frequenza fotogrammi';
