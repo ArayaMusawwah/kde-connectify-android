@@ -2034,4 +2034,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String activityPhotosVideos(int count) {
     return 'Фото и видео: $count';
   }
+
+  @override
+  String deviceNewFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Новое: $count файла',
+      many: 'Новое: $count файлов',
+      few: 'Новое: $count файла',
+      one: 'Новое: $count файл',
+    );
+    return '$_temp0';
+  }
 }

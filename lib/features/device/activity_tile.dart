@@ -133,11 +133,19 @@ class TimelineEntry extends StatelessWidget {
     required this.activity,
     this.first = false,
     this.last = false,
+    this.pinned = false,
+    this.highlight = false,
   });
 
   final Activity activity;
   final bool first;
   final bool last;
+
+  /// Above the timeline, under the actions: the card alone, no time or rail.
+  final bool pinned;
+
+  /// Just finished: outlined for a moment.
+  final bool highlight;
 
   @override
   Widget build(BuildContext context) {
@@ -159,6 +167,85 @@ class TimelineEntry extends StatelessWidget {
         (a.incoming && a.saved.isNotEmpty) ||
         (a.kind == ActivityKind.link && a.text != null) ||
         webcam != null;
+
+    final box = _Box(
+      // Files and what's running get a card; the small things
+      // (a ping, a link, copied text) a plain line.
+      card: a.kind == ActivityKind.files || a.isLive || a.names.isNotEmpty,
+      onTap: !openable
+          ? null
+          : webcam != null
+          // The webcam running: back to its controls.
+          ? () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => WebcamScreen(share: webcam),
+              ),
+            )
+          : () => _open(context, a),
+      child: Row(
+        children: [
+          Icon(activityIcon(a), color: color, size: 22),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  activityTitle(a),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: s.ink,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                if (a.isLive && !_isSession(a))
+                  _Live(activity: a, color: color)
+                else
+                  Row(
+                    children: [
+                      Icon(
+                        a.incoming ? PhBold.arrowDownLeft : PhBold.arrowUpRight,
+                        size: 12,
+                        color: color,
+                      ),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          activityDetail(a),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: bad ? s.red : s.muted,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+          ?_trailing(context, a, s),
+        ],
+      ),
+    );
+    if (pinned) {
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Radii.md + 3.5),
+          border: Border.all(
+            color: highlight ? color : Colors.transparent,
+            width: 1.5,
+          ),
+        ),
+        child: box,
+      );
+    }
 
     return IntrinsicHeight(
       child: Row(
@@ -193,75 +280,7 @@ class TimelineEntry extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(4, 5, 16, 5),
-              child: _Box(
-                // Files and what's running get a card; the small things
-                // (a ping, a link, copied text) a plain line.
-                card:
-                    a.kind == ActivityKind.files ||
-                    a.isLive ||
-                    a.names.isNotEmpty,
-                onTap: !openable
-                    ? null
-                    : webcam != null
-                    // The webcam running: back to its controls.
-                    ? () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => WebcamScreen(share: webcam),
-                        ),
-                      )
-                    : () => _open(context, a),
-                child: Row(
-                  children: [
-                    Icon(activityIcon(a), color: color, size: 22),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            activityTitle(a),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: s.ink,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 2),
-                          if (a.isLive && !_isSession(a))
-                            _Live(activity: a, color: color)
-                          else
-                            Row(
-                              children: [
-                                Icon(
-                                  a.incoming
-                                      ? PhBold.arrowDownLeft
-                                      : PhBold.arrowUpRight,
-                                  size: 12,
-                                  color: color,
-                                ),
-                                const SizedBox(width: 4),
-                                Flexible(
-                                  child: Text(
-                                    activityDetail(a),
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: bad ? s.red : s.muted,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ),
-                    ?_trailing(context, a, s),
-                  ],
-                ),
-              ),
+              child: box,
             ),
           ),
         ],

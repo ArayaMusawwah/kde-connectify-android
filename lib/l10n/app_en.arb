@@ -2739,5 +2739,14 @@
         "type": "int"
       }
     }
+  },
+  "deviceNewFiles": "{count, plural, =1{New: 1 file} other{New: {count} files}}",
+  "@deviceNewFiles": {
+    "description": "Pill when files arrive or are sent while scrolled down; tap to go back up",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

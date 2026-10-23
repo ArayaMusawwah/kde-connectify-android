@@ -1942,4 +1942,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String activityPhotosVideos(int count) {
     return '$count 张照片和视频';
   }
+
+  @override
+  String deviceNewFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '新：$count 个文件',
+    );
+    return '$_temp0';
+  }
 }

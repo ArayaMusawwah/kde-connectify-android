@@ -533,5 +533,6 @@
   "sendFilesCaption": "Документы и всё остальное",
   "activityPhotos": "{count, plural, one{{count} фото} few{{count} фото} many{{count} фото} other{{count} фото}}",
   "activityVideos": "{count, plural, one{{count} видео} few{{count} видео} many{{count} видео} other{{count} видео}}",
-  "activityPhotosVideos": "Фото и видео: {count}"
+  "activityPhotosVideos": "Фото и видео: {count}",
+  "deviceNewFiles": "{count, plural, one{Новое: {count} файл} few{Новое: {count} файла} many{Новое: {count} файлов} other{Новое: {count} файла}}"
 }

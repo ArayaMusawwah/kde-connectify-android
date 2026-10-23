@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -85,6 +87,23 @@ class _DeviceScreenState extends State<DeviceScreen> {
   /// The timeline's filter: null for everything.
   ActivityKind? _filter;
 
+  final _scroll = ScrollController();
+
+  /// File transfers already shown, so a new one can be told apart.
+  final _seen = <String>{};
+  bool _primed = false;
+
+  /// Running transfers, and ones that just finished (kept pinned under the
+  /// actions for a moment, outlined).
+  final _running = <String>{};
+  final _finished = <String, Timer>{};
+
+  /// New transfers that arrived while scrolled down to older ones.
+  int _unseen = 0;
+
+  /// Below this the pinned transfers are on screen.
+  static const _nearTop = 360.0;
+
   String get deviceId => widget.deviceId;
 
   // A computer's players show here while the page is open.
@@ -93,12 +112,55 @@ class _DeviceScreenState extends State<DeviceScreen> {
     super.initState();
     _c = LinksyScope.read(context);
     _c.watchMedia(deviceId);
+    _scroll.addListener(() {
+      if (_unseen > 0 && _scroll.offset < _nearTop) setState(() => _unseen = 0);
+    });
   }
 
   @override
   void dispose() {
     _c.unwatchMedia(deviceId);
+    _scroll.dispose();
+    for (final t in _finished.values) {
+      t.cancel();
+    }
     super.dispose();
+  }
+
+  /// Sending or receiving files shows where you are: running transfers pin
+  /// under the actions until they finish (then stay outlined a moment), and
+  /// one starting while you read older items gets a pill back up.
+  List<Activity> _pinned(List<Activity> all) {
+    final files = all.where((a) => a.kind == ActivityKind.files);
+    for (final a in files) {
+      if (_seen.add(a.id) &&
+          _primed &&
+          _scroll.hasClients &&
+          _scroll.offset >= _nearTop) {
+        _unseen++;
+      }
+      if (a.isLive) {
+        _running.add(a.id);
+      } else if (_running.remove(a.id) && mounted) {
+        _finished[a.id] = Timer(const Duration(seconds: 6), () {
+          if (mounted) setState(() => _finished.remove(a.id));
+        });
+      }
+    }
+    _primed = true;
+    return [
+      for (final a in files)
+        if (a.isLive || _finished.containsKey(a.id)) a,
+    ];
+  }
+
+  void _toTop() {
+    setState(() => _unseen = 0);
+    _scroll.animateTo(
+      0,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   @override
@@ -110,15 +172,21 @@ class _DeviceScreenState extends State<DeviceScreen> {
       return const Scaffold(body: SizedBox.shrink());
     }
     final all = c.activityFor(deviceId);
+    final pinned = _pinned(all);
     final days = _byDay([
       for (final a in all)
-        if (_filter == null || a.kind == _filter) a,
+        if ((_filter == null || a.kind == _filter) && !pinned.contains(a)) a,
     ]);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayFor(Brightness.dark),
       child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: _unseen == 0
+            ? null
+            : _NewPill(count: _unseen, onTap: _toTop),
         body: CustomScrollView(
+          controller: _scroll,
           slivers: [
             SliverAppBar(
               pinned: true,
@@ -141,6 +209,25 @@ class _DeviceScreenState extends State<DeviceScreen> {
                     offset: const Offset(0, -34),
                     child: _Actions(view: view),
                   ),
+                  // What's being sent or received, without scrolling.
+                  if (pinned.isNotEmpty)
+                    Transform.translate(
+                      offset: const Offset(0, -24),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          children: [
+                            for (final a in pinned)
+                              TimelineEntry(
+                                key: ValueKey(a.id),
+                                activity: a,
+                                pinned: true,
+                                highlight: _finished.containsKey(a.id),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
                   // Its screen being shared from here, with Stop.
                   Transform.translate(
                     offset: const Offset(0, -34),
@@ -1389,4 +1476,47 @@ class _NoActivity extends StatelessWidget {
       ),
     );
   }
+}
+
+/// "New: 1 file", while scrolled down to older items; back up to it.
+class _NewPill extends StatelessWidget {
+  const _NewPill({required this.count, required this.onTap});
+
+  final int count;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Pressable(
+    onTap: onTap,
+    semanticLabel: context.l10n.deviceNewFiles(count),
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Sig.blue,
+        borderRadius: BorderRadius.circular(99),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x33000000),
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Ph.arrowUp, size: 16, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            context.l10n.deviceNewFiles(count),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

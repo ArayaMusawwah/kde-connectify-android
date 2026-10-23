@@ -3317,6 +3317,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} photos and videos'**
   String activityPhotosVideos(int count);
+
+  /// Pill when files arrive or are sent while scrolled down; tap to go back up
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{New: 1 file} other{New: {count} files}}'**
+  String deviceNewFiles(int count);
 }
 
 class _AppLocalizationsDelegate

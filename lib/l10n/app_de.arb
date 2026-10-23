@@ -533,5 +533,6 @@
   "sendFilesCaption": "Dokumente und alles andere",
   "activityPhotos": "{count, plural, one{{count} Foto} other{{count} Fotos}}",
   "activityVideos": "{count, plural, one{{count} Video} other{{count} Videos}}",
-  "activityPhotosVideos": "{count} Fotos und Videos"
+  "activityPhotosVideos": "{count} Fotos und Videos",
+  "deviceNewFiles": "{count, plural, one{Neu: {count} Datei} other{Neu: {count} Dateien}}"
 }
