@@ -3275,6 +3275,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pair'**
   String get usbPairAction;
+
+  /// Send sheet: pick from the photo picker
+  ///
+  /// In en, this message translates to:
+  /// **'Photos and videos'**
+  String get sendPhotos;
+
+  /// Caption under Photos and videos
+  ///
+  /// In en, this message translates to:
+  /// **'From your gallery, many at once'**
+  String get sendPhotosCaption;
+
+  /// Send sheet: pick any file
+  ///
+  /// In en, this message translates to:
+  /// **'Files'**
+  String get sendFiles;
+
+  /// Caption under Files
+  ///
+  /// In en, this message translates to:
+  /// **'Documents and everything else'**
+  String get sendFilesCaption;
+
+  /// Timeline title: several photos sent at once
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 photo} other{{count} photos}}'**
+  String activityPhotos(int count);
+
+  /// Timeline title: several videos sent at once
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 video} other{{count} videos}}'**
+  String activityVideos(int count);
+
+  /// Timeline title: photos and videos sent at once
+  ///
+  /// In en, this message translates to:
+  /// **'{count} photos and videos'**
+  String activityPhotosVideos(int count);
 }
 
 class _AppLocalizationsDelegate

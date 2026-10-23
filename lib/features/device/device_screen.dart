@@ -20,11 +20,52 @@ import '../terminal/terminal_screen.dart';
 import '../../app/terminals.dart';
 import 'activity_tile.dart';
 
-/// Picks files and sends them to a device, reporting any error.
+/// Send files: photos and videos from the gallery, or any file. Whatever
+/// is picked goes as one offer, so the computer asks once.
 Future<void> pickAndSend(BuildContext context, String deviceId) async {
   final c = LinksyScope.read(context);
-  final paths = await LinksyPlatform.pickFiles();
-  if (context.mounted) await report(context, c.sendFiles(deviceId, paths));
+  final media = await showModalBottomSheet<bool>(
+    context: context,
+    builder: (sheet) {
+      final l10n = sheet.l10n;
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.deviceSendFiles,
+                style: sora(24, color: Sig.of(sheet).ink),
+              ),
+              const SizedBox(height: 18),
+              SheetOption(
+                icon: Ph.images,
+                title: l10n.sendPhotos,
+                caption: l10n.sendPhotosCaption,
+                primary: true,
+                onTap: () => Navigator.of(sheet).pop(true),
+              ),
+              const SizedBox(height: 10),
+              SheetOption(
+                icon: Ph.folderOpen,
+                title: l10n.sendFiles,
+                caption: l10n.sendFilesCaption,
+                onTap: () => Navigator.of(sheet).pop(false),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+  if (media == null) return;
+  final paths = media
+      ? await LinksyPlatform.pickMedia()
+      : await LinksyPlatform.pickFiles();
+  if (paths.isEmpty || !context.mounted) return;
+  await report(context, c.sendFiles(deviceId, paths));
 }
 
 /// A device's page: big actions, then everything shared with it, as a

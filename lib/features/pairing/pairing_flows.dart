@@ -32,7 +32,7 @@ Future<void> showAddDevice(BuildContext context) => showModalBottomSheet<void>(
               style: TextStyle(color: s.muted, fontSize: 14.5, height: 1.4),
             ),
             const SizedBox(height: 22),
-            _Option(
+            SheetOption(
               icon: PhBold.scan,
               title: l10n.pairingScanQr,
               caption: l10n.pairingScanQrCaption,
@@ -43,7 +43,7 @@ Future<void> showAddDevice(BuildContext context) => showModalBottomSheet<void>(
               },
             ),
             const SizedBox(height: 10),
-            _Option(
+            SheetOption(
               icon: Ph.network,
               title: l10n.pairingByAddress,
               caption: l10n.pairingByAddressCaption,
@@ -58,76 +58,6 @@ Future<void> showAddDevice(BuildContext context) => showModalBottomSheet<void>(
     );
   },
 );
-
-class _Option extends StatelessWidget {
-  const _Option({
-    required this.icon,
-    required this.title,
-    required this.caption,
-    required this.onTap,
-    this.primary = false,
-  });
-
-  final IconData icon;
-  final String title;
-  final String caption;
-  final VoidCallback onTap;
-  final bool primary;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    final fg = primary ? Colors.white : s.ink;
-    final content = Row(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: primary
-                ? Colors.white.withValues(alpha: 0.16)
-                : Sig.blue.withValues(alpha: 0.1),
-          ),
-          child: Icon(icon, color: primary ? Colors.white : Sig.blue),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: sora(17, color: fg)),
-              Text(
-                caption,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: primary
-                      ? Colors.white.withValues(alpha: 0.75)
-                      : s.muted,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Icon(Ph.caretRight, color: primary ? Colors.white70 : s.faint),
-      ],
-    );
-    if (!primary) {
-      return SigCard(onTap: onTap, color: s.bg, child: content);
-    }
-    return Pressable(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Sig.blue,
-          borderRadius: BorderRadius.circular(Radii.lg),
-        ),
-        child: content,
-      ),
-    );
-  }
-}
 
 /// Scanning is the user's consent: no code is shown unless the desktop falls
 /// back to the code flow (expired or reused token), which arrives as a normal

@@ -1991,4 +1991,47 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get usbPairAction => 'Связать';
+
+  @override
+  String get sendPhotos => 'Фото и видео';
+
+  @override
+  String get sendPhotosCaption => 'Из галереи, сразу несколько';
+
+  @override
+  String get sendFiles => 'Файлы';
+
+  @override
+  String get sendFilesCaption => 'Документы и всё остальное';
+
+  @override
+  String activityPhotos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count фото',
+      many: '$count фото',
+      few: '$count фото',
+      one: '$count фото',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityVideos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count видео',
+      many: '$count видео',
+      few: '$count видео',
+      one: '$count видео',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityPhotosVideos(int count) {
+    return 'Фото и видео: $count';
+  }
 }

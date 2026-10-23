@@ -526,5 +526,12 @@
   "usbConnectedTo": "Conectado a {name} por cable USB",
   "usbPairTitle": "Hay una computadora en el cable",
   "usbPairBody": "Aún no está vinculada con este teléfono. ¿Vincularla por el cable? Ambas pantallas muestran un código para comparar.",
-  "usbPairAction": "Vincular"
+  "usbPairAction": "Vincular",
+  "sendPhotos": "Fotos y videos",
+  "sendPhotosCaption": "De tu galería, varios a la vez",
+  "sendFiles": "Archivos",
+  "sendFilesCaption": "Documentos y todo lo demás",
+  "activityPhotos": "{count, plural, one{{count} foto} other{{count} fotos}}",
+  "activityVideos": "{count, plural, one{{count} video} other{{count} videos}}",
+  "activityPhotosVideos": "{count} fotos y videos"
 }

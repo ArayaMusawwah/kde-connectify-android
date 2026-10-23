@@ -1975,4 +1975,42 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get usbPairAction => 'Ampifamatory';
+
+  @override
+  String get sendPhotos => 'Sary sy horonan-tsary';
+
+  @override
+  String get sendPhotosCaption =>
+      'Avy amin’ny galerianao, maromaro indray mandeha';
+
+  @override
+  String get sendFiles => 'Rakitra';
+
+  @override
+  String get sendFilesCaption => 'Antontan-taratasy sy ny sisa rehetra';
+
+  @override
+  String activityPhotos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sary',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityVideos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count horonan-tsary',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityPhotosVideos(int count) {
+    return '$count sary sy horonan-tsary';
+  }
 }

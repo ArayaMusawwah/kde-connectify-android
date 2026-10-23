@@ -526,5 +526,12 @@
   "usbConnectedTo": "Mit {name} per USB-Kabel verbunden",
   "usbPairTitle": "Ein Computer hängt am Kabel",
   "usbPairBody": "Er ist noch nicht mit diesem Handy gekoppelt. Über das Kabel koppeln? Beide Bildschirme zeigen einen Code zum Vergleichen.",
-  "usbPairAction": "Koppeln"
+  "usbPairAction": "Koppeln",
+  "sendPhotos": "Fotos und Videos",
+  "sendPhotosCaption": "Aus deiner Galerie, viele auf einmal",
+  "sendFiles": "Dateien",
+  "sendFilesCaption": "Dokumente und alles andere",
+  "activityPhotos": "{count, plural, one{{count} Foto} other{{count} Fotos}}",
+  "activityVideos": "{count, plural, one{{count} Video} other{{count} Videos}}",
+  "activityPhotosVideos": "{count} Fotos und Videos"
 }

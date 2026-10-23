@@ -445,6 +445,11 @@ abstract final class LinksyPlatform {
   static Future<List<String>> pickFiles() async =>
       (await _call<List<Object?>>('pickFiles'))?.cast<String>() ?? const [];
 
+  /// Android's photo picker, many photos and videos at once; returns
+  /// copies' paths (empty if cancelled).
+  static Future<List<String>> pickMedia() async =>
+      (await _call<List<Object?>>('pickMedia'))?.cast<String>() ?? const [];
+
   /// Opens a received file in another app: `done`, `missing` or `noApp`.
   static Future<String> openFile(String path) async =>
       await _call<String>('openFile', {'path': path}) ?? 'noApp';

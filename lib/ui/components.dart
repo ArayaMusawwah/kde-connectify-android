@@ -675,3 +675,75 @@ Future<void> report(BuildContext context, Future<String?> action) async {
     ..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(error)));
 }
+
+/// One choice in a sheet: icon, title and caption; [primary] is the blue one.
+class SheetOption extends StatelessWidget {
+  const SheetOption({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.caption,
+    required this.onTap,
+    this.primary = false,
+  });
+
+  final IconData icon;
+  final String title;
+  final String caption;
+  final VoidCallback onTap;
+  final bool primary;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final fg = primary ? Colors.white : s.ink;
+    final content = Row(
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: primary
+                ? Colors.white.withValues(alpha: 0.16)
+                : Sig.blue.withValues(alpha: 0.1),
+          ),
+          child: Icon(icon, color: primary ? Colors.white : Sig.blue),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: sora(17, color: fg)),
+              Text(
+                caption,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: primary
+                      ? Colors.white.withValues(alpha: 0.75)
+                      : s.muted,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Icon(Ph.caretRight, color: primary ? Colors.white70 : s.faint),
+      ],
+    );
+    if (!primary) {
+      return SigCard(onTap: onTap, color: s.bg, child: content);
+    }
+    return Pressable(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Sig.blue,
+          borderRadius: BorderRadius.circular(Radii.lg),
+        ),
+        child: content,
+      ),
+    );
+  }
+}

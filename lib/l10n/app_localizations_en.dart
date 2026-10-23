@@ -1961,4 +1961,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get usbPairAction => 'Pair';
+
+  @override
+  String get sendPhotos => 'Photos and videos';
+
+  @override
+  String get sendPhotosCaption => 'From your gallery, many at once';
+
+  @override
+  String get sendFiles => 'Files';
+
+  @override
+  String get sendFilesCaption => 'Documents and everything else';
+
+  @override
+  String activityPhotos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count photos',
+      one: '1 photo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityVideos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count videos',
+      one: '1 video',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityPhotosVideos(int count) {
+    return '$count photos and videos';
+  }
 }

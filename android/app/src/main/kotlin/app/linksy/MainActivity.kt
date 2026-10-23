@@ -223,6 +223,7 @@ class MainActivity : FlutterActivity() {
                         mapOf("support" to filesDir.path, "external" to getExternalFilesDir(null)?.path),
                     )
                     "pickFiles" -> pickFiles(result)
+                    "pickMedia" -> pickMedia(result)
                     "openFile" -> result.success(openFile(call.argument<String>("path")!!))
                     "startScanner" -> result.success(startScanner())
                     "stopScanner" -> {
@@ -675,6 +676,28 @@ class MainActivity : FlutterActivity() {
             .addCategory(Intent.CATEGORY_OPENABLE)
             .setType("*/*")
             .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        @Suppress("DEPRECATION")
+        startActivityForResult(intent, REQUEST_PICK)
+    }
+
+    /// Android's photo picker: the gallery, many photos and videos at once,
+    /// no storage permission. Phones without it get the document picker
+    /// limited to photos and videos. Copied like [pickFiles].
+    private fun pickMedia(result: MethodChannel.Result) {
+        pendingPick?.success(emptyList<String>())
+        pendingPick = result
+        val picker = Build.VERSION.SDK_INT >= 33 ||
+            (Build.VERSION.SDK_INT >= 30 && android.os.ext.SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2)
+        val intent = if (picker) {
+            Intent(android.provider.MediaStore.ACTION_PICK_IMAGES)
+                .putExtra(android.provider.MediaStore.EXTRA_PICK_IMAGES_MAX, android.provider.MediaStore.getPickImagesMaxLimit())
+        } else {
+            Intent(Intent.ACTION_OPEN_DOCUMENT)
+                .addCategory(Intent.CATEGORY_OPENABLE)
+                .setType("*/*")
+                .putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
+                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        }
         @Suppress("DEPRECATION")
         startActivityForResult(intent, REQUEST_PICK)
     }

@@ -1905,4 +1905,41 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get usbPairAction => '配对';
+
+  @override
+  String get sendPhotos => '照片和视频';
+
+  @override
+  String get sendPhotosCaption => '从相册中一次选多张';
+
+  @override
+  String get sendFiles => '文件';
+
+  @override
+  String get sendFilesCaption => '文档及其他所有文件';
+
+  @override
+  String activityPhotos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 张照片',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityVideos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个视频',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityPhotosVideos(int count) {
+    return '$count 张照片和视频';
+  }
 }

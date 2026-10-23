@@ -526,5 +526,12 @@
   "usbConnectedTo": "USB ケーブルで {name} に接続しました",
   "usbPairTitle": "ケーブルの先にコンピュータがあります",
   "usbPairBody": "このスマートフォンとはまだペアリングされていません。ケーブル経由でペアリングしますか？両方の画面にコードが表示されるので照合してください。",
-  "usbPairAction": "ペアリング"
+  "usbPairAction": "ペアリング",
+  "sendPhotos": "写真と動画",
+  "sendPhotosCaption": "ギャラリーからまとめて選べます",
+  "sendFiles": "ファイル",
+  "sendFilesCaption": "書類やそのほかのすべて",
+  "activityPhotos": "{count, plural, other{写真 {count} 枚}}",
+  "activityVideos": "{count, plural, other{動画 {count} 本}}",
+  "activityPhotosVideos": "写真と動画 {count} 件"
 }

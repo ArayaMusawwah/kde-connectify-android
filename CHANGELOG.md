@@ -7,6 +7,8 @@ All notable changes to Linksy for Android. Format: [Keep a Changelog](https://ke
 ### Added
 - **Your own relay**: Settings › Connection › Relay server takes the address of a relay you host (`linksy-server`), like `https://relay.example.com`; empty means Linksy's own. Set the same one on your computers.
 
+- **Send photos and videos from the gallery**: Send files now offers Photos and videos (Android's photo picker, many at once, no storage permission) or Files. Everything picked goes as one transfer, shown as "12 photos", so the computer asks once.
+
 ### Fixed
 - **Webcam upright when the phone stands**: in Landscape the picture follows how the phone is held. Standing upright, an upright crop fills the frame instead of a sideways picture; turning the phone mid-call keeps it upright.
 

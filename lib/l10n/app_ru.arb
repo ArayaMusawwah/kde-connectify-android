@@ -526,5 +526,12 @@
   "usbConnectedTo": "Подключено к {name} по USB-кабелю",
   "usbPairTitle": "К кабелю подключён компьютер",
   "usbPairBody": "Он ещё не связан с этим телефоном. Связать по кабелю? На обоих экранах появится код для сравнения.",
-  "usbPairAction": "Связать"
+  "usbPairAction": "Связать",
+  "sendPhotos": "Фото и видео",
+  "sendPhotosCaption": "Из галереи, сразу несколько",
+  "sendFiles": "Файлы",
+  "sendFilesCaption": "Документы и всё остальное",
+  "activityPhotos": "{count, plural, one{{count} фото} few{{count} фото} many{{count} фото} other{{count} фото}}",
+  "activityVideos": "{count, plural, one{{count} видео} few{{count} видео} many{{count} видео} other{{count} видео}}",
+  "activityPhotosVideos": "Фото и видео: {count}"
 }

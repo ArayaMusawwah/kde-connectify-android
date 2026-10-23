@@ -526,5 +526,12 @@
   "usbConnectedTo": "Mifandray amin’i {name} amin’ny tariby USB",
   "usbPairTitle": "Misy solosaina amin’ny tariby",
   "usbPairBody": "Mbola tsy mifamatotra amin’ity finday ity izy. Ampifamatorina amin’ny tariby ve? Samy mampiseho kaody hampitahaina ny efijery roa.",
-  "usbPairAction": "Ampifamatory"
+  "usbPairAction": "Ampifamatory",
+  "sendPhotos": "Sary sy horonan-tsary",
+  "sendPhotosCaption": "Avy amin’ny galerianao, maromaro indray mandeha",
+  "sendFiles": "Rakitra",
+  "sendFilesCaption": "Antontan-taratasy sy ny sisa rehetra",
+  "activityPhotos": "{count, plural, other{{count} sary}}",
+  "activityVideos": "{count, plural, other{{count} horonan-tsary}}",
+  "activityPhotosVideos": "{count} sary sy horonan-tsary"
 }

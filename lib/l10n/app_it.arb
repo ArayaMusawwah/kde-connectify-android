@@ -526,5 +526,12 @@
   "usbConnectedTo": "Connesso a {name} via cavo USB",
   "usbPairTitle": "C’è un computer sul cavo",
   "usbPairBody": "Non è ancora associato a questo telefono. Associarlo tramite il cavo? Entrambi gli schermi mostrano un codice da confrontare.",
-  "usbPairAction": "Associa"
+  "usbPairAction": "Associa",
+  "sendPhotos": "Foto e video",
+  "sendPhotosCaption": "Dalla galleria, tanti in una volta",
+  "sendFiles": "File",
+  "sendFilesCaption": "Documenti e tutto il resto",
+  "activityPhotos": "{count, plural, one{{count} foto} other{{count} foto}}",
+  "activityVideos": "{count, plural, one{{count} video} other{{count} video}}",
+  "activityPhotosVideos": "{count} foto e video"
 }

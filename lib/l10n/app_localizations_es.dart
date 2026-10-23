@@ -1974,4 +1974,43 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get usbPairAction => 'Vincular';
+
+  @override
+  String get sendPhotos => 'Fotos y videos';
+
+  @override
+  String get sendPhotosCaption => 'De tu galería, varios a la vez';
+
+  @override
+  String get sendFiles => 'Archivos';
+
+  @override
+  String get sendFilesCaption => 'Documentos y todo lo demás';
+
+  @override
+  String activityPhotos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fotos',
+      one: '$count foto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityVideos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count videos',
+      one: '$count video',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityPhotosVideos(int count) {
+    return '$count fotos y videos';
+  }
 }

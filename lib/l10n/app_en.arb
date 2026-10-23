@@ -2696,5 +2696,48 @@
   },
   "@usbPairAction": {
     "description": "Button: pair with the computer on the cable"
+  },
+  "sendPhotos": "Photos and videos",
+  "@sendPhotos": {
+    "description": "Send sheet: pick from the photo picker"
+  },
+  "sendPhotosCaption": "From your gallery, many at once",
+  "@sendPhotosCaption": {
+    "description": "Caption under Photos and videos"
+  },
+  "sendFiles": "Files",
+  "@sendFiles": {
+    "description": "Send sheet: pick any file"
+  },
+  "sendFilesCaption": "Documents and everything else",
+  "@sendFilesCaption": {
+    "description": "Caption under Files"
+  },
+  "activityPhotos": "{count, plural, =1{1 photo} other{{count} photos}}",
+  "@activityPhotos": {
+    "description": "Timeline title: several photos sent at once",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityVideos": "{count, plural, =1{1 video} other{{count} videos}}",
+  "@activityVideos": {
+    "description": "Timeline title: several videos sent at once",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityPhotosVideos": "{count} photos and videos",
+  "@activityPhotosVideos": {
+    "description": "Timeline title: photos and videos sent at once",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

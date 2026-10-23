@@ -1926,4 +1926,41 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get usbPairAction => 'ペアリング';
+
+  @override
+  String get sendPhotos => '写真と動画';
+
+  @override
+  String get sendPhotosCaption => 'ギャラリーからまとめて選べます';
+
+  @override
+  String get sendFiles => 'ファイル';
+
+  @override
+  String get sendFilesCaption => '書類やそのほかのすべて';
+
+  @override
+  String activityPhotos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '写真 $count 枚',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityVideos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '動画 $count 本',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String activityPhotosVideos(int count) {
+    return '写真と動画 $count 件';
+  }
 }

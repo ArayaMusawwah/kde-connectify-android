@@ -11,7 +11,8 @@ import '../../ui/sig.dart';
 import '../sharing/webcam_screen.dart';
 
 IconData activityIcon(Activity a) => switch (a.kind) {
-  ActivityKind.files when a.names.length > 1 => Ph.files,
+  ActivityKind.files when a.names.length > 1 =>
+    _mediaOf(a.names) == null ? Ph.files : Ph.images,
   ActivityKind.files when a.names.isNotEmpty => fileIcon(a.names.first),
   ActivityKind.files => Ph.file,
   ActivityKind.clipboard => Ph.clipboardText,
@@ -28,10 +29,30 @@ IconData activityIcon(Activity a) => switch (a.kind) {
   ActivityKind.locate => Ph.mapPin,
 };
 
+/// What several files are: all 'photo', all 'video', 'media' (both), or
+/// null for anything else.
+String? _mediaOf(List<String> names) {
+  final kinds = {
+    for (final n in names)
+      switch (fileIcon(n)) {
+        Ph.fileImage => 'photo',
+        Ph.fileVideo => 'video',
+        _ => 'other',
+      },
+  };
+  if (kinds.contains('other') || kinds.isEmpty) return null;
+  return kinds.length == 1 ? kinds.single : 'media';
+}
+
 /// File name, "N items", quoted clipboard text or the ping title.
 String activityTitle(Activity a) => switch (a.kind) {
   ActivityKind.files when a.names.length == 1 => a.names.first,
-  ActivityKind.files => tr.activityItems(a.names.length),
+  ActivityKind.files => switch (_mediaOf(a.names)) {
+    'photo' => tr.activityPhotos(a.names.length),
+    'video' => tr.activityVideos(a.names.length),
+    'media' => tr.activityPhotosVideos(a.names.length),
+    _ => tr.activityItems(a.names.length),
+  },
   ActivityKind.clipboard when a.names.isNotEmpty => a.names.first,
   ActivityKind.clipboard when a.text != null => tr.activityQuoted(
     a.text!.trim(),

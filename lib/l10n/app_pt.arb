@@ -526,5 +526,12 @@
   "usbConnectedTo": "Conectado a {name} por cabo USB",
   "usbPairTitle": "Há um computador no cabo",
   "usbPairBody": "Ele ainda não está pareado com este celular. Parear pelo cabo? As duas telas mostram um código para comparar.",
-  "usbPairAction": "Parear"
+  "usbPairAction": "Parear",
+  "sendPhotos": "Fotos e vídeos",
+  "sendPhotosCaption": "Da sua galeria, vários de uma vez",
+  "sendFiles": "Arquivos",
+  "sendFilesCaption": "Documentos e todo o resto",
+  "activityPhotos": "{count, plural, one{{count} foto} other{{count} fotos}}",
+  "activityVideos": "{count, plural, one{{count} vídeo} other{{count} vídeos}}",
+  "activityPhotosVideos": "{count} fotos e vídeos"
 }
