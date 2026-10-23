@@ -769,6 +769,9 @@ class _NowPlaying extends StatelessWidget {
               child: cover != null
                   ? Image.memory(
                       cover,
+                      // Decoded at the size shown, not the cover's own.
+                      cacheWidth: (52 * MediaQuery.devicePixelRatioOf(context))
+                          .round(),
                       fit: BoxFit.cover,
                       gaplessPlayback: true,
                     )

@@ -257,6 +257,11 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       _importAll();
       // Back from Developer options, maybe.
       _readShareProtections();
+    } else if (state == AppLifecycleState.hidden) {
+      // Out of sight: decoded pictures go, they're read again on return.
+      PaintingBinding.instance.imageCache
+        ..clear()
+        ..clearLiveImages();
     }
   }
 

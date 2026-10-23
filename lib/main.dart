@@ -45,6 +45,9 @@ const _features = [
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // A few device pictures and covers: Flutter's 100 MB default is far more
+  // than the app shows at once (#3).
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 24 << 20;
   // Day and month names in every language the app speaks.
   await initializeDateFormatting();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);

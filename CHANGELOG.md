@@ -11,6 +11,8 @@ All notable changes to Linksy for Android. Format: [Keep a Changelog](https://ke
 - **Transfers bubble**: while files are sent or received, a small circle at the bottom left shows how many, ringed by their progress, on home and on each device's page. Tap it for the speed and each file (done, how far, waiting), with Cancel. It shows a check when everything is done.
 
 ### Fixed
+- **Less memory in the background**: pictures are let go when Linksy is out of sight, and the image cache is capped. Measurements are in `docs/memory.md`.
+- The APK no longer carries two unused libraries left by older builds (1.4 MB smaller).
 - **Webcam upright when the phone stands**: in Landscape the picture follows how the phone is held. Standing upright, an upright crop fills the frame instead of a sideways picture; turning the phone mid-call keeps it upright.
 
 ## [0.2.2] - 2026-10-22
