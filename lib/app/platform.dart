@@ -7,16 +7,20 @@ import '../core/models.dart';
 
 /// Something another app shared to Linksy: text (maybe a link) or files.
 sealed class SharedIn {
-  const SharedIn();
+  const SharedIn({this.device});
+
+  /// The device picked in Android's share sheet, if one was: send straight
+  /// to it, without asking.
+  final String? device;
 }
 
 class SharedText extends SharedIn {
-  const SharedText(this.text);
+  const SharedText(this.text, {super.device});
   final String text;
 }
 
 class SharedFiles extends SharedIn {
-  const SharedFiles(this.paths);
+  const SharedFiles(this.paths, {super.device});
 
   /// Copies in the app's cache.
   final List<String> paths;
@@ -93,10 +97,15 @@ abstract final class LinksyPlatform {
 
   static SharedIn? _shared(Object? args) {
     if (args is! Map) return null;
+    final device = args['device'] as String?;
     final files = (args['files'] as List?)?.cast<String>();
-    if (files != null && files.isNotEmpty) return SharedFiles(files);
+    if (files != null && files.isNotEmpty) {
+      return SharedFiles(files, device: device);
+    }
     final text = args['text'];
-    return text is String && text.trim().isNotEmpty ? SharedText(text) : null;
+    return text is String && text.trim().isNotEmpty
+        ? SharedText(text, device: device)
+        : null;
   }
 
   static Battery? _battery(Object? args) => args is Map
@@ -133,6 +142,15 @@ abstract final class LinksyPlatform {
       return null;
     }
   }
+
+  /// Each paired device in Android's share sheet, in this order (`id`,
+  /// `name`, `initials`, `picture`).
+  static Future<void> shareTargets(List<Map<String, String?>> devices) =>
+      _call<void>('shareTargets', devices);
+
+  /// A share went to [device]: it moves up in the share sheet.
+  static Future<void> sharedTo(String device) =>
+      _call<void>('sharedTo', device);
 
   /// What was shared to Linksy before the app was ready, once.
   static Future<SharedIn?> takeShare() async =>

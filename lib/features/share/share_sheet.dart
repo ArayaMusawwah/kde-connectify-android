@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../app/linksy_controller.dart';
 import '../../app/platform.dart';
 import '../../app/scope.dart';
 import '../../core/models.dart';
@@ -241,6 +242,29 @@ class _ShareSheetState extends State<ShareSheet> {
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text(message)));
     }
+  }
+}
+
+/// A share aimed at [deviceId] from Android's share sheet: sent at once, as
+/// the sheet would by default (files to Downloads, a link opened, text to the
+/// clipboard). Returns what to say: an error, or what happened.
+Future<String?> sendShared(
+  LinksyController c,
+  String deviceId,
+  SharedIn shared,
+) async {
+  final name = c.device(deviceId)?.device.name ?? tr.ctlYourComputer;
+  LinksyPlatform.sharedTo(deviceId);
+  switch (shared) {
+    case SharedFiles(:final paths):
+      return c.sendFiles(deviceId, paths);
+    case SharedText(:final text):
+      final link = findWebLink(text);
+      if (link != null) {
+        return await c.openUrl(deviceId, link) ?? tr.shareSheetOpened(name);
+      }
+      return await c.sendText(deviceId, text) ??
+          tr.shareSheetSentToClipboard(name);
   }
 }
 

@@ -146,6 +146,16 @@ class MainActivity : FlutterActivity() {
                         prefs().edit().apply { if (value == null) remove(key) else putString(key, value) }.apply()
                         result.success(null)
                     }
+                    "shareTargets" -> {
+                        @Suppress("UNCHECKED_CAST")
+                        val devices = call.arguments as List<Map<String, String?>>
+                        Thread { ShareShortcuts.update(applicationContext, devices) }.start()
+                        result.success(null)
+                    }
+                    "sharedTo" -> {
+                        ShareShortcuts.used(applicationContext, call.arguments as String)
+                        result.success(null)
+                    }
                     "takeShare" -> {
                         result.success(pendingShare)
                         pendingShare = null
@@ -478,9 +488,11 @@ class MainActivity : FlutterActivity() {
         setIntent(Intent(Intent.ACTION_MAIN))
         val files = intent.getStringArrayExtra(ShareTarget.EXTRA_FILES)?.toList().orEmpty()
         val text = intent.getStringExtra(ShareTarget.EXTRA_TEXT)
+        val device = intent.getStringExtra(ShareTarget.EXTRA_DEVICE)
+        val to = if (device != null) mapOf("device" to device) else emptyMap()
         when {
-            files.isNotEmpty() -> deliverShare(mapOf("files" to files))
-            !text.isNullOrBlank() -> deliverShare(mapOf("text" to text))
+            files.isNotEmpty() -> deliverShare(mapOf("files" to files) + to)
+            !text.isNullOrBlank() -> deliverShare(mapOf("text" to text) + to)
         }
     }
 

@@ -25,19 +25,22 @@ class ShareTarget : Activity() {
             }
         }
         val text = shared.getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString()
+        // Picked as a device in the share sheet: straight to it.
+        val device = ShareShortcuts.deviceOf(shared)
         if (uris.isEmpty()) {
-            forward { if (!text.isNullOrBlank()) putExtra(EXTRA_TEXT, text) }
+            forward(device) { if (!text.isNullOrBlank()) putExtra(EXTRA_TEXT, text) }
             return
         }
         Thread {
             val paths = copyUris(this, uris, "shared")
-            runOnUiThread { forward { putExtra(EXTRA_FILES, paths.toTypedArray()) } }
+            runOnUiThread { forward(device) { putExtra(EXTRA_FILES, paths.toTypedArray()) } }
         }.start()
     }
 
-    private fun forward(fill: Intent.() -> Unit) {
+    private fun forward(device: String?, fill: Intent.() -> Unit) {
         startActivity(
-            Intent(this, MainActivity::class.java).setAction(ACTION_SHARED).apply(fill).addFlags(
+            Intent(this, MainActivity::class.java).setAction(ACTION_SHARED).apply(fill)
+                .apply { if (device != null) putExtra(EXTRA_DEVICE, device) }.addFlags(
                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP,
             ),
         )
@@ -48,6 +51,7 @@ class ShareTarget : Activity() {
         const val ACTION_SHARED = "app.linksy.SHARED"
         const val EXTRA_TEXT = "app.linksy.text"
         const val EXTRA_FILES = "app.linksy.files"
+        const val EXTRA_DEVICE = "app.linksy.device"
 
         /// Copies content into the app's cache under [folder] (emptied first):
         /// the node sends from paths. Each in its own folder, so two with one

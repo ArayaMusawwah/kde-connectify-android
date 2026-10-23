@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:linksy/app/activity.dart';
@@ -5,6 +6,7 @@ import 'package:linksy/app/app.dart';
 import 'package:linksy/app/linksy_controller.dart';
 import 'package:linksy/core/demo_node.dart';
 import 'package:linksy/features/terminal/terminal_screen.dart';
+import 'package:linksy/features/transfer/transfer_bubble.dart';
 import 'package:xterm/xterm.dart';
 
 /// Pumps frames for half a second, for screens with something that never
@@ -140,5 +142,41 @@ void main() {
     await tester.pump(const Duration(seconds: 3));
     await frames(tester);
     expect(find.text('3'), findsNothing);
+  });
+
+  testWidgets('a device picked in the share sheet gets the files at once', (
+    tester,
+  ) async {
+    final (c, _) = await pumpApp(tester);
+    final id = c.devices
+        .firstWhere((v) => v.device.name == 'Studio Desktop')
+        .device
+        .id;
+    const codec = StandardMethodCodec();
+    await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'app.linksy/platform',
+      codec.encodeMethodCall(
+        MethodCall('share', {
+          'files': ['/x/a.jpg', '/x/b.jpg'],
+          'device': id,
+        }),
+      ),
+      (_) {},
+    );
+    await tester.pump();
+    await tester.pump();
+    // No sheet asking where: it's on its way to that computer.
+    expect(find.text('Send 2 files'), findsNothing);
+    final sent = c.activityFor(id).first;
+    expect(sent.names, ['a.jpg', 'b.jpg']);
+    expect(
+      find.descendant(
+        of: find.byType(TransferBubble),
+        matching: find.text('2'),
+      ),
+      findsOneWidget,
+    );
+    await tester.pump(const Duration(seconds: 8));
+    await frames(tester);
   });
 }

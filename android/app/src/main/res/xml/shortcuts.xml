@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Each paired device in the share sheet (ShareShortcuts.kt): Android matches
+     the dynamic shortcuts in this category to ShareTarget. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <share-target android:targetClass="app.linksy.ShareTarget">
+        <data android:mimeType="*/*"/>
+        <category android:name="app.linksy.category.SHARE_TARGET"/>
+    </share-target>
+</shortcuts>

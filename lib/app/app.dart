@@ -100,9 +100,16 @@ class _LinksyAppState extends State<LinksyApp> {
     if (error != null) _say(error);
   }
 
-  void _shareOut(SharedIn shared) {
+  Future<void> _shareOut(SharedIn shared) async {
     final context = _navigator.currentContext;
     if (context == null) return;
+    // A device picked in Android's share sheet: no need to ask which.
+    final to = shared.device;
+    if (to != null && widget.controller.device(to)?.trusted == true) {
+      final message = await sendShared(widget.controller, to, shared);
+      if (message != null) _say(message);
+      return;
+    }
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,

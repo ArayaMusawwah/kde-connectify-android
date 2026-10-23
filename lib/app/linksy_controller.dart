@@ -294,6 +294,8 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     await LinksyPlatform.watchCalls(pauseOnCalls);
     _updateKeepAlive();
     notifyListeners();
+    addListener(_shareTargets);
+    _shareTargets();
     _usbSub = LinksyPlatform.usbPorts.listen(_onUsb);
     final usb = await LinksyPlatform.usbPort();
     if (usb != null) _onUsb(usb);
@@ -520,6 +522,35 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     await node.connectAway(id);
     await refresh();
   });
+
+  // Android's share sheet (#10): each paired device, the last one used first.
+
+  String? _shareTargetsSent;
+
+  void _shareTargets() {
+    final last = <String, int>{};
+    for (final (i, a) in _activity.indexed) {
+      last.putIfAbsent(a.deviceId, () => i);
+    }
+    final paired = [
+      for (final v in devices)
+        if (v.trusted) v.device,
+    ]..sort((a, b) => (last[a.id] ?? 1 << 30).compareTo(last[b.id] ?? 1 << 30));
+    final targets = [
+      for (final d in paired)
+        {
+          'id': d.id,
+          'name': d.name,
+          'initials': initials(d.name),
+          'picture': pictureOf(d.id),
+        },
+    ];
+    // Android limits how often these change: only when they do.
+    final key = '${jsonEncode(targets)}#$pictureVersion';
+    if (key == _shareTargetsSent) return;
+    _shareTargetsSent = key;
+    LinksyPlatform.shareTargets(targets);
+  }
 
   // USB cable (§4.11): the bridge is up; dial the computer through it.
 
@@ -1179,6 +1210,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<String?> sendFiles(String deviceId, List<String> paths) async {
     if (paths.isEmpty) return null;
+    LinksyPlatform.sharedTo(deviceId);
     try {
       final transfer = await node.sendFiles(deviceId, paths);
       // Progress events can race the return; only add if not seen yet.

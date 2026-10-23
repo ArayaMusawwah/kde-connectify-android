@@ -56,6 +56,10 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Each paired device as a direct share target. -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"/>
             <!-- Pairing links from the desktop's QR code, scanned with any camera app. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
