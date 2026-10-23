@@ -255,6 +255,15 @@ Future<String?> sendShared(
 ) async {
   final name = c.device(deviceId)?.device.name ?? tr.ctlYourComputer;
   LinksyPlatform.sharedTo(deviceId);
+  // Opened by the share itself, Linksy may not have found the device yet:
+  // give it a few seconds before trying.
+  for (var i = 0; i < 20; i++) {
+    final view = c.device(deviceId);
+    if (view == null || view.presence != Presence.notNearby) break;
+    // Reachable away from home without being found nearby.
+    if (view.awayUntil?.isAfter(DateTime.now()) ?? false) break;
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+  }
   switch (shared) {
     case SharedFiles(:final paths):
       return c.sendFiles(deviceId, paths);
