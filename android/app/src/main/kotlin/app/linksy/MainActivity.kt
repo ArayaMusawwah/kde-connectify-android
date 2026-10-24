@@ -63,6 +63,9 @@ class MainActivity : FlutterActivity() {
         TransferNotice.answer = { transfer, accept ->
             runOnUiThread { channel?.invokeMethod("transferAnswer", mapOf("transfer" to transfer, "accept" to accept)) }
         }
+        DirectHost.step = { device, step ->
+            channel?.invokeMethod("directStep", step + ("device" to device))
+        }
         Push.subscribe()
         Updater.onStatus = { status -> channel?.invokeMethod("updateStatus", status) }
         ComputerMedia.onAction = { action, position ->
@@ -94,6 +97,19 @@ class MainActivity : FlutterActivity() {
                         val on = call.argument<Boolean>("on") == true
                         fileServer(this@MainActivity).root = folder("files")
                         NativeFiles.sharing(on && folder("files") != null)
+                        result.success(null)
+                    }
+                    "directHost" -> result.success(DirectHost.supported(this@MainActivity))
+                    "directWanted" -> {
+                        DirectHost.want(this@MainActivity, call.argument<String>("device")!!)
+                        result.success(null)
+                    }
+                    "directListening" -> {
+                        DirectHost.listening(call.argument<String>("device")!!, call.argument<String>("address")!!)
+                        result.success(null)
+                    }
+                    "directEnded" -> {
+                        DirectHost.ended(call.argument<String>("device")!!)
                         result.success(null)
                     }
                     "keepAlive" -> {
@@ -431,10 +447,20 @@ class MainActivity : FlutterActivity() {
         resumed = true
         usbPoll.removeCallbacks(usbTick)
         usbPoll.post(usbTick)
+        // A direct link's permission is asked only while Linksy is in front
+        DirectHost.ask = { permission, answer ->
+            pendingDirect?.invoke(false)
+            pendingDirect = answer
+            requestPermissions(arrayOf(permission), REQUEST_DIRECT)
+        }
     }
+
+    /// The answer to the direct link's permission dialog.
+    private var pendingDirect: ((Boolean) -> Unit)? = null
 
     override fun onPause() {
         resumed = false
+        DirectHost.ask = null
         usbPoll.removeCallbacks(usbTick)
         super.onPause()
     }
@@ -625,6 +651,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onDestroy() {
         TransferNotice.answer = null
+        DirectHost.step = null
         ShareService.webcamListener = null
         previews.keys.toList().forEach { webcamPreview(it, false) }
         batteryReceiver?.let { runCatching { unregisterReceiver(it) } }
@@ -852,6 +879,10 @@ class MainActivity : FlutterActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_DIRECT) {
+            pendingDirect?.invoke(grantResults.any { it == PackageManager.PERMISSION_GRANTED })
+            pendingDirect = null
+        }
         pendingPermissions.remove(requestCode)
             ?.success(grantResults.any { it == PackageManager.PERMISSION_GRANTED })
     }
@@ -871,6 +902,7 @@ class MainActivity : FlutterActivity() {
         const val REQUEST_NOTIFICATIONS = 43
         const val REQUEST_MICROPHONE = 48
         const val REQUEST_LOCATION = 49
+        const val REQUEST_DIRECT = 50
         const val REQUEST_PICK = 44
         const val REQUEST_FOLDER = 45
         const val REQUEST_PICTURE = 46

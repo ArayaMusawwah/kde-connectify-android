@@ -488,6 +488,34 @@ class HeartbeatWatchChanged extends LinksyEvent {
   final int everyS;
 }
 
+/// A big transfer wants a direct link (docs/protocol.md §4.17) with [id],
+/// which this phone hosts: its Wi-Fi Direct part starts.
+class DirectWanted extends LinksyEvent {
+  const DirectWanted(this.id);
+  final String id;
+}
+
+/// A step of a direct link from the computer joining it (`listening`, ...),
+/// as its JSON.
+class DirectStepReceived extends LinksyEvent {
+  const DirectStepReceived({required this.from, required this.step});
+  final DeviceInfo from;
+  final Map<String, Object?> step;
+}
+
+/// The direct link with [id] is up: transfers go over it.
+class DirectLinked extends LinksyEvent {
+  const DirectLinked(this.id);
+  final String id;
+}
+
+/// The direct link with [id] ended or didn't come up ([reason]).
+class DirectEnded extends LinksyEvent {
+  const DirectEnded({required this.id, this.reason});
+  final String id;
+  final String? reason;
+}
+
 /// A computer sent its picture (base64 JPEG or PNG) to show for it.
 class PictureReceived extends LinksyEvent {
   const PictureReceived({required this.from, required this.image});

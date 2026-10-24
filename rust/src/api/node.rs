@@ -321,6 +321,24 @@ impl LinksyNode {
         run(async move { node.set_volume(&id, level, muted).await }).await
     }
 
+    /// A step of a direct link this phone hosts (docs/protocol.md §4.17), as JSON:
+    /// `{"type":"invite","address":…}`, `{"type":"connecting"}`, `{"type":"up","ip":…,"port":…}`
+    /// or `{"type":"end","reason":…}`.
+    pub async fn direct_send(&self, id: String, step: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let step: linksy_core::DirectStep = serde_json::from_str(&step).map_err(|e| format!("other:{e}"))?;
+        let node = self.node.clone();
+        run(async move { node.direct_send(&id, step).await }).await
+    }
+
+    /// Set up a direct link with a device now and wait for it (testing; big transfers do
+    /// it by themselves).
+    pub async fn direct_link(&self, id: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.direct_link(&id).await }).await
+    }
+
     /// `ringing`, `active` or `idle`.
     pub async fn send_call_state(&self, id: String, state: String) -> Result<(), String> {
         let id = fingerprint(&id)?;

@@ -65,6 +65,7 @@ class RustNode implements LinksyNode {
   }
 
   /// The port other devices reach this phone on, for "pair by address".
+  @override
   int get port => _node.port();
 
   @override
@@ -267,6 +268,16 @@ class RustNode implements LinksyNode {
     ),
     name: _nameOf(id),
   );
+
+  @override
+  Future<void> directSend(String id, Map<String, Object?> step) => _guard(
+    () => _node.directSend(id: id, step: jsonEncode(step)),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> directLink(String id) =>
+      _guard(() => _node.directLink(id: id), name: _nameOf(id));
 
   @override
   Future<void> sendCallState(String id, String state) => _guard(

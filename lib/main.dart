@@ -72,7 +72,11 @@ Future<void> main() async {
         dataDir: '${support.path}/node',
         downloadDir: received.path,
         name: name,
-        features: _features,
+        features: [
+          ..._features,
+          // A Wi-Fi Direct group of its own for big transfers (§4.17)
+          if (await LinksyPlatform.directHost()) 'direct_host',
+        ],
         away: true,
         relay: service.cached()?.relay ?? defaultRelay,
       );

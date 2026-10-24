@@ -81,6 +81,17 @@ abstract interface class LinksyNode {
   /// `ringing`, `active` or `idle`.
   Future<void> sendCallState(String id, String state);
 
+  /// A step of a direct link this phone hosts, to [id] (docs/protocol.md
+  /// §4.17): `{'type': 'invite', 'address': ...}`, `connecting`, `up` with
+  /// `ip` and `port`, or `end` with a `reason`.
+  Future<void> directSend(String id, Map<String, Object?> step);
+
+  /// Set up a direct link with [id] now (testing).
+  Future<void> directLink(String id);
+
+  /// The port this node listens on.
+  int get port;
+
   /// Photo auto-import into [id]'s picture library; returns the transfer id.
   Future<String> importFiles(String id, List<String> paths);
 

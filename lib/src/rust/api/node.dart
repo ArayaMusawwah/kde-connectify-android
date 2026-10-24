@@ -44,6 +44,15 @@ abstract class LinksyNode implements RustOpaqueInterface {
   /// Every known device, as a JSON list of `DeviceView`.
   String devicesJson();
 
+  /// Set up a direct link with a device now and wait for it (testing; big transfers do
+  /// it by themselves).
+  Future<void> directLink({required String id});
+
+  /// A step of a direct link this phone hosts (docs/protocol.md §4.17), as JSON:
+  /// `{"type":"invite","address":…}`, `{"type":"connecting"}`, `{"type":"up","ip":…,"port":…}`
+  /// or `{"type":"end","reason":…}`.
+  Future<void> directSend({required String id, required String step});
+
   /// Stops sharing into a session (the Stop button, or the encoder ended).
   void endSession({required String session});
 

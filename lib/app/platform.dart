@@ -44,6 +44,8 @@ abstract final class LinksyPlatform {
   static final _openWebcam = StreamController<String>.broadcast();
   static final _transferAnswers = StreamController<(String, bool)>.broadcast();
   static final _usbPorts = StreamController<int>.broadcast();
+  static final _directSteps =
+      StreamController<(String, Map<String, Object?>)>.broadcast();
   static var _listening = false;
 
   /// Calls from Android: pairing links, second-display size and end, and
@@ -81,6 +83,10 @@ abstract final class LinksyPlatform {
           ));
         case 'openWebcam' when call.arguments is String:
           _openWebcam.add(call.arguments as String);
+        case 'directStep' when call.arguments is Map:
+          final a = (call.arguments as Map).cast<String, Object?>();
+          final device = a.remove('device');
+          if (device is String) _directSteps.add((device, a));
         case 'transferAnswer':
           final a = call.arguments as Map;
           _transferAnswers.add((a['transfer'] as String, a['accept'] == true));
@@ -275,6 +281,27 @@ abstract final class LinksyPlatform {
 
   static Future<void> cancelNotice(String transfer) =>
       _call<void>('cancelNotice', {'transfer': transfer});
+
+  /// Whether this phone can host a direct link (Wi-Fi Direct, Android 10+).
+  static Future<bool> directHost() async =>
+      await _call<bool>('directHost') ?? false;
+
+  /// A direct link's Wi-Fi part (docs/protocol.md §4.17): start it for
+  /// [device], connect once the computer listens at [address], drop it. Each
+  /// step it takes comes back on [directSteps].
+  static Future<void> directWanted(String device) =>
+      _call<void>('directWanted', {'device': device});
+  static Future<void> directListening(String device, String address) =>
+      _call<void>('directListening', {'device': device, 'address': address});
+  static Future<void> directEnded(String device) =>
+      _call<void>('directEnded', {'device': device});
+
+  /// (device, step): `invite` with `address`, `connecting`, `up` with `ip`,
+  /// or `end` with `reason`.
+  static Stream<(String, Map<String, Object?>)> get directSteps {
+    _listen();
+    return _directSteps.stream;
+  }
 
   static Stream<(String, bool)> get transferAnswers {
     _listen();

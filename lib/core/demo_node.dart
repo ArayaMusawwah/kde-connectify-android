@@ -363,6 +363,15 @@ class DemoNode implements LinksyNode {
   Future<void> sendCallState(String id, String state) async {}
 
   @override
+  Future<void> directSend(String id, Map<String, Object?> step) async {}
+
+  @override
+  Future<void> directLink(String id) async {}
+
+  @override
+  int get port => 0;
+
+  @override
   Future<String> importFiles(String id, List<String> paths) =>
       sendFiles(id, paths);
 

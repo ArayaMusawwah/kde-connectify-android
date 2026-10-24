@@ -192,6 +192,16 @@ LinksyEvent? eventFromJson(Json j) {
       image: j['image'] as String? ?? '',
     ),
     'locate_request' => LocateRequested(device('from')),
+    'direct_wanted' => DirectWanted(j['id'] as String),
+    'direct' => DirectStepReceived(
+      from: device('from'),
+      step: (j['step'] as Map).cast<String, Object?>(),
+    ),
+    'direct_linked' => DirectLinked(j['id'] as String),
+    'direct_ended' => DirectEnded(
+      id: j['id'] as String,
+      reason: j['reason'] as String?,
+    ),
     'clipboard_watch' => ClipboardWatchChanged(
       from: device('from'),
       on: j['on'] as bool? ?? false,
