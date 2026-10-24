@@ -34,16 +34,16 @@ class _IslandState extends State<Island> with SingleTickerProviderStateMixin {
   _Open? _open;
 
   static const _grow = Duration(milliseconds: 460);
-  static const _shrink = Duration(milliseconds: 560);
+  static const _shrink = Duration(milliseconds: 470);
 
   // Out fast and settle softly, both ways at once.
   static const _growCurve = Cubic(0.16, 1, 0.3, 1);
 
-  // Back in two steps: down to the pill's height first; when that's about
-  // nine tenths done, in to its width, with a small bounce at the end.
-  static const _shrinkHeight = Interval(0, 0.5, curve: Cubic(0.3, 0, 0.2, 1));
-  static const _shrinkWidth = Interval(0.42, 1, curve: Curves.easeOutBack);
-  static const _shrinkCurve = Interval(0, 0.5, curve: Curves.easeOut);
+  // Back in two steps: down to the pill's height first; when that's half
+  // done, in to its width, with a small bounce at the end.
+  static const _shrinkHeight = Interval(0, 0.6, curve: Cubic(0.3, 0, 0.2, 1));
+  static const _shrinkWidth = Interval(0.3, 1, curve: Curves.easeOutBack);
+  static const _shrinkCurve = Interval(0, 0.6, curve: Curves.easeOut);
 
   void _show(_Open what) {
     HapticFeedback.lightImpact();
