@@ -2153,4 +2153,13 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get news026VolumeBody =>
       'パソコンのページから、またはページを開いている間はこのスマホの音量ボタンで上げ下げできます。';
+
+  @override
+  String get transfersNone => '転送中のものはありません';
+
+  @override
+  String get transfersNoneBody => '送受信するファイルが速度と一緒にここに表示されます。';
+
+  @override
+  String get transfersRecent => '最近';
 }

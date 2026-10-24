@@ -2211,4 +2211,14 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get news026VolumeBody =>
       'Alzalo o abbassalo dalla sua pagina, o con i tasti del volume di questo telefono mentre la pagina è aperta.';
+
+  @override
+  String get transfersNone => 'Niente in corso';
+
+  @override
+  String get transfersNoneBody =>
+      'I file che invii o ricevi compaiono qui, con la loro velocità.';
+
+  @override
+  String get transfersRecent => 'Recenti';
 }

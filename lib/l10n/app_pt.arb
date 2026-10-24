@@ -584,5 +584,8 @@
   "deviceUnmute": "Ativar som",
   "deviceVolume": "Volume {percent} %",
   "news026VolumeTitle": "O volume do computador",
-  "news026VolumeBody": "Aumente ou diminua na página dele, ou com as teclas de volume deste telefone enquanto a página estiver aberta."
+  "news026VolumeBody": "Aumente ou diminua na página dele, ou com as teclas de volume deste telefone enquanto a página estiver aberta.",
+  "transfersNone": "Nada a caminho",
+  "transfersNoneBody": "Os arquivos que você envia ou recebe aparecem aqui, com a velocidade.",
+  "transfersRecent": "Recentes"
 }

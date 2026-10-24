@@ -2196,4 +2196,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get news026VolumeBody =>
       'Turn it up or down from its page, or with this phone\'s volume keys while the page is open.';
+
+  @override
+  String get transfersNone => 'Nothing on its way';
+
+  @override
+  String get transfersNoneBody =>
+      'Files you send or receive show up here, with their speed.';
+
+  @override
+  String get transfersRecent => 'Recent';
 }

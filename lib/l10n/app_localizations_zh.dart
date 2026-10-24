@@ -2126,4 +2126,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get news026VolumeBody => '在电脑的页面上调高或调低，页面打开时也可以用这台手机的音量键。';
+
+  @override
+  String get transfersNone => '没有正在传输的文件';
+
+  @override
+  String get transfersNoneBody => '你发送或接收的文件会显示在这里，并显示速度。';
+
+  @override
+  String get transfersRecent => '最近';
 }

@@ -2210,4 +2210,14 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get news026VolumeBody =>
       'Súbelo o bájalo desde su página, o con las teclas de volumen de este teléfono mientras la página está abierta.';
+
+  @override
+  String get transfersNone => 'Nada en camino';
+
+  @override
+  String get transfersNoneBody =>
+      'Los archivos que envías o recibes aparecen aquí, con su velocidad.';
+
+  @override
+  String get transfersRecent => 'Recientes';
 }

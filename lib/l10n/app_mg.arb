@@ -584,5 +584,8 @@
   "deviceUnmute": "Averina ny feo",
   "deviceVolume": "Feo {percent} %",
   "news026VolumeTitle": "Ny feon'ny solosaina",
-  "news026VolumeBody": "Ampiakaro na ampidino avy amin'ny pejiny, na amin'ny bokotra feon'ity finday ity raha mbola misokatra ny pejy."
+  "news026VolumeBody": "Ampiakaro na ampidino avy amin'ny pejiny, na amin'ny bokotra feon'ity finday ity raha mbola misokatra ny pejy.",
+  "transfersNone": "Tsy misy mandeha",
+  "transfersNoneBody": "Eto no hiseho ireo rakitra alefanao na raisinao, miaraka amin'ny hafainganany.",
+  "transfersRecent": "Vao haingana"
 }

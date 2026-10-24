@@ -2209,4 +2209,14 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get news026VolumeBody =>
       'Ampiakaro na ampidino avy amin\'ny pejiny, na amin\'ny bokotra feon\'ity finday ity raha mbola misokatra ny pejy.';
+
+  @override
+  String get transfersNone => 'Tsy misy mandeha';
+
+  @override
+  String get transfersNoneBody =>
+      'Eto no hiseho ireo rakitra alefanao na raisinao, miaraka amin\'ny hafainganany.';
+
+  @override
+  String get transfersRecent => 'Vao haingana';
 }

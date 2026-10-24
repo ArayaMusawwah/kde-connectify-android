@@ -1355,6 +1355,12 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       if (a.kind == ActivityKind.files && a.isLive) a,
   ];
 
+  /// File transfers that ended, on every device, newest first.
+  List<Activity> get recentTransfers => [
+    for (final a in _activity)
+      if (a.kind == ActivityKind.files && !a.isLive) a,
+  ].take(20).toList();
+
   Future<String?> sendFiles(String deviceId, List<String> paths) async {
     if (paths.isEmpty) return null;
     LinksyPlatform.sharedTo(deviceId);

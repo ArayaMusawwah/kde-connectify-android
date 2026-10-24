@@ -3002,5 +3002,11 @@
   "news026VolumeBody": "Turn it up or down from its page, or with this phone's volume keys while the page is open.",
   "@news026VolumeBody": {
     "description": "What's New 0.2.6: the computer's volume (body)"
-  }
+  },
+  "transfersNone": "Nothing on its way",
+  "@transfersNone": { "description": "Transfers page with nothing going (title)" },
+  "transfersNoneBody": "Files you send or receive show up here, with their speed.",
+  "@transfersNoneBody": { "description": "Transfers page with nothing going (body)" },
+  "transfersRecent": "Recent",
+  "@transfersRecent": { "description": "Transfers page: finished transfers (section label)" }
 }

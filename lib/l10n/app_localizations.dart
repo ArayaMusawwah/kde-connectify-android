@@ -3623,6 +3623,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Turn it up or down from its page, or with this phone\'s volume keys while the page is open.'**
   String get news026VolumeBody;
+
+  /// Transfers page with nothing going (title)
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing on its way'**
+  String get transfersNone;
+
+  /// Transfers page with nothing going (body)
+  ///
+  /// In en, this message translates to:
+  /// **'Files you send or receive show up here, with their speed.'**
+  String get transfersNoneBody;
+
+  /// Transfers page: finished transfers (section label)
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get transfersRecent;
 }
 
 class _AppLocalizationsDelegate

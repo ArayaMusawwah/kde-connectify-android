@@ -584,5 +584,8 @@
   "deviceUnmute": "Riattiva audio",
   "deviceVolume": "Volume {percent} %",
   "news026VolumeTitle": "Il volume del computer",
-  "news026VolumeBody": "Alzalo o abbassalo dalla sua pagina, o con i tasti del volume di questo telefono mentre la pagina è aperta."
+  "news026VolumeBody": "Alzalo o abbassalo dalla sua pagina, o con i tasti del volume di questo telefono mentre la pagina è aperta.",
+  "transfersNone": "Niente in corso",
+  "transfersNoneBody": "I file che invii o ricevi compaiono qui, con la loro velocità.",
+  "transfersRecent": "Recenti"
 }

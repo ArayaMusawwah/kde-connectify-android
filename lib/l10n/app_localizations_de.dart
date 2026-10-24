@@ -2204,4 +2204,14 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get news026VolumeBody =>
       'Lauter oder leiser auf seiner Seite, oder mit den Lautstärketasten dieses Telefons, solange die Seite offen ist.';
+
+  @override
+  String get transfersNone => 'Gerade nichts unterwegs';
+
+  @override
+  String get transfersNoneBody =>
+      'Dateien, die du sendest oder empfängst, erscheinen hier mit ihrer Geschwindigkeit.';
+
+  @override
+  String get transfersRecent => 'Zuletzt';
 }

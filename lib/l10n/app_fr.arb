@@ -584,5 +584,8 @@
   "deviceUnmute": "Remettre le son",
   "deviceVolume": "Volume {percent} %",
   "news026VolumeTitle": "Le volume de l'ordinateur",
-  "news026VolumeBody": "Montez-le ou baissez-le depuis sa page, ou avec les touches de volume de ce téléphone tant que la page est ouverte."
+  "news026VolumeBody": "Montez-le ou baissez-le depuis sa page, ou avec les touches de volume de ce téléphone tant que la page est ouverte.",
+  "transfersNone": "Rien en cours",
+  "transfersNoneBody": "Les fichiers envoyés ou reçus apparaissent ici, avec leur vitesse.",
+  "transfersRecent": "Récents"
 }

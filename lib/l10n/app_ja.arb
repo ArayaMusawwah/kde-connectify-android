@@ -584,5 +584,8 @@
   "deviceUnmute": "ミュート解除",
   "deviceVolume": "音量 {percent} %",
   "news026VolumeTitle": "パソコンの音量",
-  "news026VolumeBody": "パソコンのページから、またはページを開いている間はこのスマホの音量ボタンで上げ下げできます。"
+  "news026VolumeBody": "パソコンのページから、またはページを開いている間はこのスマホの音量ボタンで上げ下げできます。",
+  "transfersNone": "転送中のものはありません",
+  "transfersNoneBody": "送受信するファイルが速度と一緒にここに表示されます。",
+  "transfersRecent": "最近"
 }

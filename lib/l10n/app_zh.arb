@@ -584,5 +584,8 @@
   "deviceUnmute": "取消静音",
   "deviceVolume": "音量 {percent}%",
   "news026VolumeTitle": "电脑的音量",
-  "news026VolumeBody": "在电脑的页面上调高或调低，页面打开时也可以用这台手机的音量键。"
+  "news026VolumeBody": "在电脑的页面上调高或调低，页面打开时也可以用这台手机的音量键。",
+  "transfersNone": "没有正在传输的文件",
+  "transfersNoneBody": "你发送或接收的文件会显示在这里，并显示速度。",
+  "transfersRecent": "最近"
 }

@@ -584,5 +584,8 @@
   "deviceUnmute": "Activar sonido",
   "deviceVolume": "Volumen {percent} %",
   "news026VolumeTitle": "El volumen del ordenador",
-  "news026VolumeBody": "Súbelo o bájalo desde su página, o con las teclas de volumen de este teléfono mientras la página está abierta."
+  "news026VolumeBody": "Súbelo o bájalo desde su página, o con las teclas de volumen de este teléfono mientras la página está abierta.",
+  "transfersNone": "Nada en camino",
+  "transfersNoneBody": "Los archivos que envías o recibes aparecen aquí, con su velocidad.",
+  "transfersRecent": "Recientes"
 }

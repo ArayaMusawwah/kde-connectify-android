@@ -2232,4 +2232,14 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get news026VolumeBody =>
       'Меняйте её на странице компьютера или кнопками громкости этого телефона, пока страница открыта.';
+
+  @override
+  String get transfersNone => 'Сейчас ничего не передаётся';
+
+  @override
+  String get transfersNoneBody =>
+      'Здесь появятся файлы, которые вы отправляете или получаете, с их скоростью.';
+
+  @override
+  String get transfersRecent => 'Недавние';
 }

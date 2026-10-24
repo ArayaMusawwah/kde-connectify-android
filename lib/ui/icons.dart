@@ -90,6 +90,7 @@ abstract final class Ph {
   );
   static const musicNotes = IconData(0xe340, fontFamily: 'PhosphorRegular');
   static const numpad = IconData(0xe3c8, fontFamily: 'PhosphorRegular');
+  static const arrowsDownUp = IconData(0xe098, fontFamily: 'PhosphorRegular');
   static const speakerHigh = IconData(0xe44a, fontFamily: 'PhosphorRegular');
   static const speakerLow = IconData(0xe44c, fontFamily: 'PhosphorRegular');
   static const speakerSlash = IconData(0xe45a, fontFamily: 'PhosphorRegular');

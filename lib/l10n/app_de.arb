@@ -584,5 +584,8 @@
   "deviceUnmute": "Ton an",
   "deviceVolume": "Lautstärke {percent} %",
   "news026VolumeTitle": "Die Lautstärke des Computers",
-  "news026VolumeBody": "Lauter oder leiser auf seiner Seite, oder mit den Lautstärketasten dieses Telefons, solange die Seite offen ist."
+  "news026VolumeBody": "Lauter oder leiser auf seiner Seite, oder mit den Lautstärketasten dieses Telefons, solange die Seite offen ist.",
+  "transfersNone": "Gerade nichts unterwegs",
+  "transfersNoneBody": "Dateien, die du sendest oder empfängst, erscheinen hier mit ihrer Geschwindigkeit.",
+  "transfersRecent": "Zuletzt"
 }
