@@ -89,6 +89,7 @@ abstract final class Ph {
     fontFamily: 'PhosphorRegular',
   );
   static const musicNotes = IconData(0xe340, fontFamily: 'PhosphorRegular');
+  static const numpad = IconData(0xe3c8, fontFamily: 'PhosphorRegular');
   static const microphone = IconData(0xe326, fontFamily: 'PhosphorRegular');
   static const mapPin = IconData(0xe316, fontFamily: 'PhosphorRegular');
   static const usb = IconData(0xe956, fontFamily: 'PhosphorRegular');

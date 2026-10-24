@@ -154,7 +154,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
                   Expanded(
                     child: _mode == _Mode.touchpad
                         ? _Touchpad(send: _send, onKey: _key)
-                        : _Slides(onKey: _key),
+                        : _Slides(send: _send, onKey: _key),
                   ),
                 ],
               ],
@@ -291,20 +291,9 @@ class _TouchpadState extends State<_Touchpad> {
   Offset _pending = Offset.zero;
   Timer? _flush;
 
-  // The keyboard: a hidden field that always holds one placeholder, so
-  // Backspace on an empty field still shows up as a change.
-  static const _placeholder = '​';
-
-  /// What a US keyboard types with Shift, besides capitals.
-  static final _shifted = RegExp(r'[~!@#$%^&*()_+{}|:"<>?]');
-  final _field = TextEditingController(text: _placeholder);
-  final _focus = FocusNode();
-
   @override
   void dispose() {
     _flush?.cancel();
-    _field.dispose();
-    _focus.dispose();
     super.dispose();
   }
 
@@ -338,8 +327,15 @@ class _TouchpadState extends State<_Touchpad> {
       final now = _centroid();
       final d = now - _scrollFrom!;
       _scrollFrom = now;
+      // The content follows the fingers, unless turned the other way.
+      final sign = LinksyScope.read(context).scrollReversed ? 1 : -1;
       widget.send([
-        {'type': 'scroll', 'dx': -d.dx, 'dy': -d.dy, 'discrete': false},
+        {
+          'type': 'scroll',
+          'dx': sign * d.dx,
+          'dy': sign * d.dy,
+          'discrete': false,
+        },
       ]);
     }
   }
@@ -373,27 +369,6 @@ class _TouchpadState extends State<_Touchpad> {
       {'type': 'button', 'button': button, 'pressed': true},
       {'type': 'button', 'button': button, 'pressed': false},
     ]);
-  }
-
-  void _typed(String value) {
-    if (value.length < _placeholder.length || !value.startsWith(_placeholder)) {
-      widget.onKey(Keysym.backspace);
-    } else if (value.length > _placeholder.length) {
-      final text = value.substring(_placeholder.length);
-      widget.send([
-        {'type': 'text', 'text': text},
-        // Some computers (KDE's) hold Shift down to type a capital and
-        // never let go: let go of it here.
-        if (text.toLowerCase() != text || _shifted.hasMatch(text)) ...[
-          {'type': 'key', 'keysym': Keysym.shiftLeft, 'pressed': false},
-          {'type': 'key', 'keysym': Keysym.shiftRight, 'pressed': false},
-        ],
-      ]);
-    }
-    _field.value = const TextEditingValue(
-      text: _placeholder,
-      selection: TextSelection.collapsed(offset: _placeholder.length),
-    );
   }
 
   @override
@@ -449,6 +424,68 @@ class _TouchpadState extends State<_Touchpad> {
           ],
         ),
         const SizedBox(height: 10),
+        _Keyboard(send: widget.send, onKey: widget.onKey),
+      ],
+    );
+  }
+}
+
+/// A button that brings up the phone's keyboard, which types into whatever
+/// has focus on the computer.
+class _Keyboard extends StatefulWidget {
+  const _Keyboard({required this.send, required this.onKey});
+
+  final void Function(List<Map<String, Object>>) send;
+  final void Function(int keysym) onKey;
+
+  @override
+  State<_Keyboard> createState() => _KeyboardState();
+}
+
+class _KeyboardState extends State<_Keyboard> {
+  // The keyboard: a hidden field that always holds one placeholder, so
+  // Backspace on an empty field still shows up as a change.
+  static const _placeholder = '​';
+
+  /// What a US keyboard types with Shift, besides capitals.
+  static final _shifted = RegExp(r'[~!@#$%^&*()_+{}|:"<>?]');
+  final _field = TextEditingController(text: _placeholder);
+  final _focus = FocusNode();
+
+  @override
+  void dispose() {
+    _field.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  void _typed(String value) {
+    if (value.length < _placeholder.length || !value.startsWith(_placeholder)) {
+      widget.onKey(Keysym.backspace);
+    } else if (value.length > _placeholder.length) {
+      final text = value.substring(_placeholder.length);
+      widget.send([
+        {'type': 'text', 'text': text},
+        // Some computers (KDE's) hold Shift down to type a capital and
+        // never let go: let go of it here.
+        if (text.toLowerCase() != text || _shifted.hasMatch(text)) ...[
+          {'type': 'key', 'keysym': Keysym.shiftLeft, 'pressed': false},
+          {'type': 'key', 'keysym': Keysym.shiftRight, 'pressed': false},
+        ],
+      ]);
+    }
+    _field.value = const TextEditingValue(
+      text: _placeholder,
+      selection: TextSelection.collapsed(offset: _placeholder.length),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
         // Off screen, but focusable: it brings up the keyboard.
         SizedBox(
           height: 0,
@@ -517,15 +554,19 @@ class _PadButton extends StatelessWidget {
 }
 
 /// Presentation remote: big Back / Next, and the volume keys do the same
-/// with the phone in a pocket. The screen stays on meanwhile.
+/// with the phone in a pocket. The screen stays on meanwhile. A number pad
+/// jumps to a slide (its number, then Enter), and the keyboard types.
 class _Slides extends StatelessWidget {
-  const _Slides({required this.onKey});
+  const _Slides({required this.send, required this.onKey});
 
+  final void Function(List<Map<String, Object>>) send;
   final void Function(int keysym) onKey;
 
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
+    final c = LinksyScope.of(context);
+    final numpad = c.slidesNumpad;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -545,11 +586,15 @@ class _Slides extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Ph.caretRight, color: Colors.white, size: 56),
+                  Icon(
+                    Ph.caretRight,
+                    color: Colors.white,
+                    size: numpad ? 40 : 56,
+                  ),
                   Text(
                     context.l10n.remoteNext,
                     style: sora(
-                      26,
+                      numpad ? 20 : 26,
                       weight: FontWeight.w700,
                       color: Colors.white,
                     ),
@@ -573,10 +618,11 @@ class _Slides extends StatelessWidget {
                 color: s.card,
                 borderRadius: BorderRadius.circular(Radii.xl),
               ),
-              child: Column(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Ph.caretLeft, color: s.ink, size: 44),
+                  Icon(Ph.caretLeft, color: s.ink, size: 32),
+                  const SizedBox(width: 6),
                   Text(
                     context.l10n.remoteSlideBack,
                     style: sora(20, color: s.ink),
@@ -587,6 +633,7 @@ class _Slides extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
+        if (numpad) ...[_Numpad(onKey: onKey), const SizedBox(height: 12)],
         Row(
           children: [
             Expanded(
@@ -605,10 +652,92 @@ class _Slides extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        Text(
-          context.l10n.remoteVolumeHint,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: s.muted, fontSize: 13),
+        Row(
+          children: [
+            Expanded(
+              child: SigButton(
+                label: context.l10n.remoteNumbers,
+                icon: Ph.numpad,
+                kind: numpad ? SigButtonKind.primary : SigButtonKind.secondary,
+                expand: true,
+                onTap: () => c.setSlidesNumpad(!numpad),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _Keyboard(send: send, onKey: onKey),
+            ),
+          ],
+        ),
+        if (!numpad) ...[
+          const SizedBox(height: 10),
+          Text(
+            context.l10n.remoteVolumeHint,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: s.muted, fontSize: 13),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// 1–9, then Backspace, 0 and Enter: "12, Enter" goes to slide 12 in
+/// Impress, PowerPoint and most PDF viewers.
+class _Numpad extends StatelessWidget {
+  const _Numpad({required this.onKey});
+
+  final void Function(int keysym) onKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    Widget key(int keysym, String label, {IconData? icon}) => Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: Pressable(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            onKey(keysym);
+          },
+          semanticLabel: label,
+          child: Container(
+            height: 48,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: s.card,
+              borderRadius: BorderRadius.circular(Radii.md),
+            ),
+            child: icon != null
+                ? Icon(icon, color: s.ink, size: 22)
+                : Text(label, style: sora(20, color: s.ink)),
+          ),
+        ),
+      ),
+    );
+    Widget digit(int n) => key(0x30 + n, '$n');
+    return Column(
+      children: [
+        for (final row in const [
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9],
+        ])
+          Row(children: [for (final n in row) digit(n)]),
+        Row(
+          children: [
+            key(
+              Keysym.backspace,
+              context.l10n.remoteBackspace,
+              icon: Ph.backspace,
+            ),
+            digit(0),
+            key(
+              Keysym.enter,
+              context.l10n.remoteEnter,
+              icon: Ph.arrowElbowDownLeft,
+            ),
+          ],
         ),
       ],
     );

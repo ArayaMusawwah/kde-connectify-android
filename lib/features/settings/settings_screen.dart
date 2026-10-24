@@ -148,6 +148,15 @@ class SettingsScreen extends StatelessWidget {
                         ),
                       ),
                       _Row(
+                        icon: Ph.mouseSimple,
+                        title: context.l10n.settingsReverseScroll,
+                        caption: context.l10n.settingsReverseScrollCaption,
+                        trailing: Switch(
+                          value: c.scrollReversed,
+                          onChanged: c.setScrollReversed,
+                        ),
+                      ),
+                      _Row(
                         icon: Ph.folderOpen,
                         title: context.l10n.settingsBrowseFiles,
                         caption: c.filesFolder == null

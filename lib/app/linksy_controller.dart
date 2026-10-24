@@ -639,6 +639,16 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   // Calls (§4.5): paired computers that are around hear when a call rings,
   // goes on and ends, and pause what plays meanwhile.
 
+  /// Two fingers on the touchpad scroll the other way.
+  bool get scrollReversed => prefs['scroll_reverse'] == 'on';
+  Future<void> setScrollReversed(bool on) =>
+      _setPref('scroll_reverse', on ? 'on' : null);
+
+  /// The number pad on the presentation remote.
+  bool get slidesNumpad => prefs['slides_numpad'] == 'on';
+  Future<void> setSlidesNumpad(bool on) =>
+      _setPref('slides_numpad', on ? 'on' : null);
+
   Future<void> setPauseOnCalls(bool on) async {
     await _setPref('pause_calls', on ? null : 'off');
     await LinksyPlatform.watchCalls(on);
