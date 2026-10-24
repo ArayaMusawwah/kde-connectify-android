@@ -104,7 +104,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: paired.isEmpty ? null : const _Actions(),
+      floatingActionButton: _Actions(paired: paired),
     );
   }
 }
@@ -525,36 +525,170 @@ class _GetStarted extends StatelessWidget {
   }
 }
 
-/// At the thumb: Transfers and Add a device, joined in one pill.
+/// At the thumb, in one pill: Transfers on the left, then what comes next.
+/// With devices, Send files in the middle and Add on the right; before the
+/// first one, Add a device in the middle and Send on the right.
 class _Actions extends StatelessWidget {
-  const _Actions();
+  const _Actions({required this.paired});
+
+  final List<DeviceView> paired;
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(4),
-    decoration: BoxDecoration(
-      color: Sig.of(context).card,
-      borderRadius: BorderRadius.circular(99),
-      boxShadow: const [
-        BoxShadow(
-          color: Color(0x1A0A1024),
-          blurRadius: 18,
-          offset: Offset(0, 6),
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final l = context.l10n;
+    final none = paired.isEmpty;
+    // While files move the left part widens: the middle drops its icon.
+    final moving = LinksyScope.of(context).liveTransfers.isNotEmpty;
+    void add() => showAddDevice(context);
+    void send() {
+      if (none) {
+        showMessage(context, l.shareSheetNoComputers);
+        add();
+      } else if (paired.length == 1) {
+        pickAndSend(context, paired.single.device.id);
+      } else {
+        _sendTo(context, paired);
+      }
+    }
+
+    final pill = Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: s.card,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: s.ink.withValues(alpha: 0.04)),
+        // Wide and barely there.
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x050A1024),
+            blurRadius: 40,
+            spreadRadius: 4,
+            offset: Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const TransfersButton(),
+          const SizedBox(width: 4),
+          SigButton(
+            label: none ? l.homeAddDevice : l.homeSendFiles,
+            icon: moving
+                ? null
+                : none
+                ? PhBold.qrCode
+                : PhFill.paperPlaneTilt,
+            height: 52,
+            onTap: none ? add : send,
+          ),
+          const SizedBox(width: 4),
+          _Round(
+            icon: none ? PhFill.paperPlaneTilt : PhBold.plus,
+            label: none ? l.homeSendFiles : l.homeAddDevice,
+            onTap: none ? send : add,
+          ),
+        ],
+      ),
+    );
+    // Long labels on a narrow phone: smaller, never cut.
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.sizeOf(context).width - 32,
+      ),
+      child: FittedBox(fit: BoxFit.scaleDown, child: pill),
+    );
+  }
+
+  /// Several devices: which one, then the files.
+  static void _sendTo(BuildContext context, List<DeviceView> paired) {
+    final s = Sig.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (sheet) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
+                child: Text(
+                  context.l10n.homeSendFiles,
+                  style: sora(22, color: s.ink),
+                ),
+              ),
+              for (final v in paired)
+                Pressable(
+                  onTap: () {
+                    Navigator.of(sheet).pop();
+                    pickAndSend(context, v.device.id);
+                  },
+                  semanticLabel: v.device.name,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: s.ink.withValues(alpha: 0.05),
+                          ),
+                          child: Icon(
+                            kindIcon(v.device.kind),
+                            size: 18,
+                            color: s.ink,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            v.device.name,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: s.ink,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
-      ],
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const TransfersButton(),
-        const SizedBox(width: 4),
-        SigButton(
-          label: context.l10n.homeAddDevice,
-          icon: PhBold.qrCode,
-          height: 52,
-          onTap: () => showAddDevice(context),
-        ),
-      ],
+      ),
+    );
+  }
+}
+
+/// An icon-only part of the pill.
+class _Round extends StatelessWidget {
+  const _Round({required this.icon, required this.label, required this.onTap});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: label,
+    child: Pressable(
+      onTap: onTap,
+      scale: 0.9,
+      semanticLabel: label,
+      child: SizedBox.square(
+        dimension: 52,
+        child: Icon(icon, size: 21, color: Sig.of(context).ink),
+      ),
     ),
   );
 }

@@ -86,13 +86,51 @@ class TransfersButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _Live(
-    builder: (files, progress, state) => _Bubble(
-      files: files,
-      progress: progress,
-      state: state,
-      size: size,
-      raised: false,
-    ),
+    builder: (files, progress, state) {
+      final going = state == _BubbleState.going && progress != null;
+      final wide = state != _BubbleState.idle;
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 380),
+        curve: Curves.easeOutCubic,
+        decoration: BoxDecoration(
+          color: wide
+              ? Sig.blue.withValues(alpha: 0.07)
+              : Sig.blue.withValues(alpha: 0),
+          borderRadius: BorderRadius.circular(99),
+        ),
+        child: AnimatedSize(
+          duration: const Duration(milliseconds: 380),
+          curve: Curves.easeOutCubic,
+          // The ring stays put; the percentage slides out beside it.
+          alignment: AlignmentDirectional.centerStart,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _Bubble(
+                files: files,
+                progress: progress,
+                state: state,
+                size: size,
+                raised: false,
+              ),
+              if (going)
+                Padding(
+                  padding: const EdgeInsets.only(left: 2, right: 14),
+                  child: Text(
+                    '${(progress * 100).round()}%',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Sig.blue,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+    },
   );
 }
 
@@ -182,7 +220,7 @@ class _Bubble extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: s.card,
+          color: raised ? s.card : Colors.transparent,
           boxShadow: raised
               ? const [
                   BoxShadow(
