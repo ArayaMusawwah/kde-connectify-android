@@ -1084,7 +1084,7 @@ class _VolumeState extends State<_Volume> {
                       ? Ph.speakerLow
                       : Ph.speakerHigh,
                   size: 22,
-                  color: v.muted ? s.muted : s.ink,
+                  color: v.muted ? s.muted : Sig.blue,
                 ),
               ),
             ),
