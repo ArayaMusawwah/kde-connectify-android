@@ -148,6 +148,15 @@ class SettingsScreen extends StatelessWidget {
                         ),
                       ),
                       _Row(
+                        icon: Ph.musicNotes,
+                        title: context.l10n.settingsMediaNotice,
+                        caption: context.l10n.settingsMediaNoticeCaption,
+                        trailing: Switch(
+                          value: c.mediaNotice,
+                          onChanged: c.setMediaNotice,
+                        ),
+                      ),
+                      _Row(
                         icon: Ph.mouseSimple,
                         title: context.l10n.settingsReverseScroll,
                         caption: context.l10n.settingsReverseScrollCaption,

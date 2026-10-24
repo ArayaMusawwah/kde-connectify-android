@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -711,18 +712,98 @@ class _FindAction extends StatelessWidget {
   }
 }
 
-/// What a computer plays (its MPRIS players), with play/pause and skip.
-class _NowPlaying extends StatelessWidget {
+/// What a computer plays (its MPRIS players): play/pause and skip, and when
+/// it can seek, 10 seconds back and forward and where in the track.
+class _NowPlaying extends StatefulWidget {
   const _NowPlaying({required this.deviceId, required this.player});
 
   final String deviceId;
   final MediaPlayer player;
 
   @override
+  State<_NowPlaying> createState() => _NowPlayingState();
+}
+
+class _NowPlayingState extends State<_NowPlaying> {
+  /// When [MediaPlayer.positionMs] came: the computer says where it is only
+  /// when that changes, so the bar moves on by itself in between.
+  DateTime _since = DateTime.now();
+  Timer? _tick;
+
+  /// Where the finger holds the bar, while it does.
+  double? _dragging;
+
+  @override
+  void initState() {
+    super.initState();
+    _ticking();
+  }
+
+  @override
+  void didUpdateWidget(_NowPlaying old) {
+    super.didUpdateWidget(old);
+    final p = widget.player, o = old.player;
+    if (p.positionMs != o.positionMs || p.playing != o.playing) {
+      _since = DateTime.now();
+    }
+    _ticking();
+  }
+
+  void _ticking() {
+    final on = widget.player.playing && widget.player.lengthMs != null;
+    if (on && _tick == null) {
+      _tick = Timer.periodic(
+        const Duration(seconds: 1),
+        (_) => setState(() {}),
+      );
+    } else if (!on) {
+      _tick?.cancel();
+      _tick = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    _tick?.cancel();
+    super.dispose();
+  }
+
+  int? get _position {
+    final p = widget.player;
+    final at = p.positionMs;
+    if (at == null) return null;
+    final now = p.playing
+        ? at + DateTime.now().difference(_since).inMilliseconds
+        : at;
+    final length = p.lengthMs;
+    return length == null ? now : now.clamp(0, length);
+  }
+
+  void _seek(int to) {
+    final p = widget.player;
+    final length = p.lengthMs;
+    final at = length == null ? (to < 0 ? 0 : to) : to.clamp(0, length);
+    report(
+      context,
+      LinksyScope.read(context)
+          .mediaCommand(widget.deviceId, p.id, 'seek', positionMs: at),
+    );
+  }
+
+  static String _time(int ms) {
+    final t = Duration(milliseconds: ms);
+    final s = (t.inSeconds % 60).toString().padLeft(2, '0');
+    return t.inHours > 0
+        ? '${t.inHours}:${(t.inMinutes % 60).toString().padLeft(2, '0')}:$s'
+        : '${t.inMinutes}:$s';
+  }
+
+  @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     final c = LinksyScope.read(context);
-    final p = player;
+    final p = widget.player;
+    final deviceId = widget.deviceId;
     final art = p.art;
     Uint8List? cover;
     if (art != null) {
@@ -732,15 +813,17 @@ class _NowPlaying extends StatelessWidget {
         cover = null;
       }
     }
-    Widget control(
+    final position = _position, length = p.lengthMs;
+    final seekable = p.canSeek && position != null;
+    Widget button(
       IconData icon,
       String tip,
-      String action, {
+      VoidCallback onTap, {
       bool big = false,
     }) => Tooltip(
       message: tip,
       child: Pressable(
-        onTap: () => report(context, c.mediaCommand(deviceId, p.id, action)),
+        onTap: onTap,
         semanticLabel: tip,
         child: Container(
           width: big ? 48 : 40,
@@ -757,64 +840,145 @@ class _NowPlaying extends StatelessWidget {
         ),
       ),
     );
-    return SigCard(
-      padding: const EdgeInsets.fromLTRB(12, 12, 10, 12),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(Radii.sm),
-            child: SizedBox(
-              width: 52,
-              height: 52,
-              child: cover != null
-                  ? Image.memory(
-                      cover,
-                      // Decoded at the size shown, not the cover's own.
-                      cacheWidth: (52 * MediaQuery.devicePixelRatioOf(context))
-                          .round(),
-                      fit: BoxFit.cover,
-                      gaplessPlayback: true,
-                    )
-                  : ColoredBox(
-                      color: s.raised,
-                      child: Icon(Ph.musicNotes, color: s.muted),
-                    ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  p.title.isEmpty ? p.app : p.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                    color: s.ink,
+    Widget control(
+      IconData icon,
+      String tip,
+      String action, {
+      bool big = false,
+    }) => button(
+      icon,
+      tip,
+      () => report(context, c.mediaCommand(deviceId, p.id, action)),
+      big: big,
+    );
+    final controls = [
+      if (seekable)
+        button(
+          Ph.clockCounterClockwise,
+          context.l10n.deviceBack10,
+          () => _seek(position - 10000),
+        ),
+      if (p.canPrevious)
+        control(PhFill.skipBack, context.l10n.devicePrevious, 'previous'),
+      control(
+        p.playing ? PhFill.pause : PhFill.play,
+        p.playing ? context.l10n.devicePause : context.l10n.devicePlay,
+        'play_pause',
+        big: true,
+      ),
+      if (p.canNext)
+        control(PhFill.skipForward, context.l10n.deviceNext, 'next'),
+      if (seekable)
+        button(
+          Ph.clockClockwise,
+          context.l10n.deviceForward10,
+          () => _seek(position + 10000),
+        ),
+    ];
+    final info = Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(Radii.sm),
+          child: SizedBox(
+            width: 52,
+            height: 52,
+            child: cover != null
+                ? Image.memory(
+                    cover,
+                    // Decoded at the size shown, not the cover's own.
+                    cacheWidth: (52 * MediaQuery.devicePixelRatioOf(context))
+                        .round(),
+                    fit: BoxFit.cover,
+                    gaplessPlayback: true,
+                  )
+                : ColoredBox(
+                    color: s.raised,
+                    child: Icon(Ph.musicNotes, color: s.muted),
                   ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                p.title.isEmpty ? p.app : p.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: s.ink,
                 ),
-                Text(
-                  [if (p.artist.isNotEmpty) p.artist, p.app].join(' · '),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 13, color: s.muted),
-                ),
-              ],
+              ),
+              Text(
+                [if (p.artist.isNotEmpty) p.artist, p.app].join(' · '),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 13, color: s.muted),
+              ),
+            ],
+          ),
+        ),
+        if (!seekable) ...controls,
+      ],
+    );
+    if (!seekable) {
+      return SigCard(
+        padding: const EdgeInsets.fromLTRB(12, 12, 10, 12),
+        child: info,
+      );
+    }
+    final shown = _dragging?.round() ?? position;
+    final times = TextStyle(
+      fontSize: 12,
+      color: s.muted,
+      fontFeatures: const [FontFeature.tabularFigures()],
+    );
+    return SigCard(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          info,
+          if (length != null && length > 0) ...[
+            const SizedBox(height: 4),
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                trackHeight: 3,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+                activeTrackColor: Sig.blue,
+                thumbColor: Sig.blue,
+                inactiveTrackColor: s.raised,
+              ),
+              child: Slider(
+                value: shown.clamp(0, length).toDouble(),
+                max: length.toDouble(),
+                semanticFormatterCallback: (v) => _time(v.round()),
+                onChanged: (v) => setState(() => _dragging = v),
+                onChangeEnd: (v) {
+                  setState(() => _dragging = null);
+                  _seek(v.round());
+                },
+              ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(_time(shown), style: times),
+                  Text(_time(length), style: times),
+                ],
+              ),
+            ),
+          ],
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: controls,
           ),
-          if (p.canPrevious)
-            control(PhFill.skipBack, context.l10n.devicePrevious, 'previous'),
-          control(
-            p.playing ? PhFill.pause : PhFill.play,
-            p.playing ? context.l10n.devicePause : context.l10n.devicePlay,
-            'play_pause',
-            big: true,
-          ),
-          if (p.canNext)
-            control(PhFill.skipForward, context.l10n.deviceNext, 'next'),
         ],
       ),
     );

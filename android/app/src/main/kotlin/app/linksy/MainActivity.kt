@@ -65,6 +65,9 @@ class MainActivity : FlutterActivity() {
         }
         Push.subscribe()
         Updater.onStatus = { status -> channel?.invokeMethod("updateStatus", status) }
+        ComputerMedia.onAction = { action, position ->
+            runOnUiThread { channel?.invokeMethod("mediaAction", mapOf("action" to action, "position_ms" to position)) }
+        }
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "app.linksy/platform").apply {
             setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -193,6 +196,11 @@ class MainActivity : FlutterActivity() {
                     }
                     "pushToken" -> Push.token { token -> runOnUiThread { result.success(token) } }
                     "openUrl" -> result.success(openUrl(call.argument<String>("url")!!))
+                    "mediaNotice" -> {
+                        @Suppress("UNCHECKED_CAST")
+                        ComputerMedia.show(applicationContext, call.arguments as Map<String, Any?>?)
+                        result.success(null)
+                    }
                     "startRing" -> {
                         ring.start()
                         result.success(null)

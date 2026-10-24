@@ -20,4 +20,12 @@
     <string name="channel_sharing">画面とカメラの共有</string>
     <string name="stop_sharing">共有を停止</string>
     <string name="switch_camera">カメラを切り替え</string>
+    <string name="channel_computer_media">コンピュータの音楽</string>
+    <string name="media_on">%2$s の %1$s</string>
+    <string name="media_previous">前へ</string>
+    <string name="media_play">再生</string>
+    <string name="media_pause">一時停止</string>
+    <string name="media_next">次へ</string>
+    <string name="media_back10">10 秒戻る</string>
+    <string name="media_forward10">10 秒進む</string>
 </resources>

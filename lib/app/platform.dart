@@ -90,6 +90,11 @@ abstract final class LinksyPlatform {
           _usbPorts.add(call.arguments as int);
         case 'updateStatus' when call.arguments is String:
           _updateStatuses.add(call.arguments as String);
+        case 'mediaAction' when call.arguments is Map:
+          final a = call.arguments as Map;
+          if (a['action'] case final String action) {
+            _mediaActions.add((action, (a['position_ms'] as num?)?.toInt()));
+          }
         case 'batteryChanged':
           final b = _battery(call.arguments);
           if (b != null) _batteries.add(b);
@@ -344,6 +349,20 @@ abstract final class LinksyPlatform {
   }
 
   static final _updateStatuses = StreamController<String>.broadcast();
+
+  /// The computer's music as a media notification ([player]: its fields as
+  /// in `media_state`, plus `device`, the computer's name), or none.
+  static Future<void> mediaNotice(Map<String, Object?>? player) =>
+      _call<void>('mediaNotice', player);
+
+  /// Its buttons: `play`, `pause`, `play_pause`, `next`, `previous`, or
+  /// `seek` with where to, in milliseconds.
+  static Stream<(String, int?)> get mediaActions {
+    _listen();
+    return _mediaActions.stream;
+  }
+
+  static final _mediaActions = StreamController<(String, int?)>.broadcast();
 
   /// This install's Firebase push token (null without Google Play services).
   static Future<String?> pushToken() => _call<String>('pushToken');

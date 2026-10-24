@@ -20,4 +20,12 @@
     <string name="channel_sharing">Screen and camera sharing</string>
     <string name="stop_sharing">Stop sharing</string>
     <string name="switch_camera">Switch camera</string>
+    <string name="channel_computer_media">Music on your computers</string>
+    <string name="media_on">%1$s on %2$s</string>
+    <string name="media_previous">Previous</string>
+    <string name="media_play">Play</string>
+    <string name="media_pause">Pause</string>
+    <string name="media_next">Next</string>
+    <string name="media_back10">10 seconds back</string>
+    <string name="media_forward10">10 seconds forward</string>
 </resources>

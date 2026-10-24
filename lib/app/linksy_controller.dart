@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
@@ -120,6 +121,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   Timer? _importTimer;
   StreamSubscription<String>? _callSub;
   StreamSubscription<(String, bool)>? _answerSub;
+  StreamSubscription<(String, int?)>? _mediaActionSub;
 
   bool get pauseOnCalls => prefs['pause_calls'] != 'off';
   bool get locatable => prefs['locate'] == 'on';
@@ -251,6 +253,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     );
     WidgetsBinding.instance.addObserver(this);
     unawaited(updates.start());
+    _mediaActionSub = LinksyPlatform.mediaActions.listen(_onMediaAction);
     unawaited(
       LinksyPlatform.battery().then((b) {
         _battery ??= b;
@@ -603,6 +606,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   /// A computer connected (again): what it should know straight away.
   void _onConnected(String id) {
+    _watchForNotice(id);
     _tellBattery(id, always: true);
     _tellPicture(id);
     _watchClipboard(id);
@@ -678,7 +682,8 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     await LinksyPlatform.shareFiles(on && filesFolder != null);
   }
 
-  // Media (§4.5): a computer's players, while a page shows them.
+  // Media (§4.5): a computer's players, while a page or the media
+  // notification shows them.
 
   void watchMedia(String id) {
     final n = (_mediaWatchers[id] ?? 0) + 1;
@@ -696,9 +701,98 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     node.watchMedia(id, on: false).catchError((Object _) {});
   }
 
-  /// `play_pause`, `next`, `previous`…
-  Future<String?> mediaCommand(String id, String player, String action) =>
-      _run(() => node.mediaCommand(id, player, {'action': action}));
+  /// `play_pause`, `next`, `previous`, or `seek` to [positionMs].
+  Future<String?> mediaCommand(
+    String id,
+    String player,
+    String action, {
+    int? positionMs,
+  }) => _run(
+    () => node.mediaCommand(id, player, {
+      'action': action,
+      'position_ms': ?positionMs,
+    }),
+  );
+
+  /// The computers' music as a media notification, as KDE Connect does. On
+  /// unless turned off.
+  bool get mediaNotice => prefs['media_notice'] != 'off';
+
+  Future<void> setMediaNotice(bool on) async {
+    await _setPref('media_notice', on ? null : 'off');
+    if (on) {
+      for (final v in devices) {
+        if (v.connected) _watchForNotice(v.device.id);
+      }
+    } else {
+      _noticeWatching.forEach(unwatchMedia);
+      _noticeWatching.clear();
+    }
+    _showMediaNotice();
+  }
+
+  /// Computers whose players the notification watches.
+  final Set<String> _noticeWatching = {};
+
+  /// The computer and player the notification shows.
+  (String, String)? _noticed;
+  Map<String, Object?>? _noticeShown;
+
+  /// A computer connected: its players for the notification, and again for
+  /// a page that watched them before it went away (watching lasts one
+  /// connection).
+  void _watchForNotice(String id) {
+    final d = device(id)?.device;
+    if (mediaNotice && d != null && _isComputer(d) && _noticeWatching.add(id)) {
+      _mediaWatchers[id] = (_mediaWatchers[id] ?? 0) + 1;
+    }
+    if (_mediaWatchers.containsKey(id)) {
+      node.watchMedia(id, on: true).catchError((Object _) {});
+    }
+  }
+
+  /// One player at a time: what plays, keeping to the one shown; else the
+  /// one shown; else the first.
+  void _showMediaNotice() {
+    final all = [
+      if (mediaNotice)
+        for (final id in _noticeWatching)
+          for (final p in media[id]?.players ?? const <MediaPlayer>[]) (id, p),
+    ];
+    bool shown((String, MediaPlayer) e) => _noticed == (e.$1, e.$2.id);
+    final pick =
+        all.where((e) => e.$2.playing && shown(e)).firstOrNull ??
+        all.where((e) => e.$2.playing).firstOrNull ??
+        all.where(shown).firstOrNull ??
+        all.firstOrNull;
+    _noticed = pick == null ? null : (pick.$1, pick.$2.id);
+    final player = pick == null
+        ? null
+        : <String, Object?>{
+            'device': _name(pick.$1),
+            'app': pick.$2.app,
+            'title': pick.$2.title,
+            'artist': pick.$2.artist,
+            'album': pick.$2.album,
+            'playing': pick.$2.playing,
+            'position_ms': pick.$2.positionMs,
+            'length_ms': pick.$2.lengthMs,
+            'can_next': pick.$2.canNext,
+            'can_previous': pick.$2.canPrevious,
+            'can_seek': pick.$2.canSeek,
+            'art': pick.$2.art,
+          };
+    if (mapEquals(player, _noticeShown)) return;
+    _noticeShown = player;
+    LinksyPlatform.mediaNotice(player);
+  }
+
+  void _onMediaAction((String, int?) a) {
+    final (action, at) = a;
+    if (_noticed case (final id, final player)) {
+      mediaCommand(id, player, action, positionMs: at);
+    }
+  }
 
   // Remote (§4.8, `input`): this phone as the computer's touchpad and
   // keyboard.
@@ -866,6 +960,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         });
       case Disconnected(:final id):
         media.remove(id);
+        _showMediaNotice();
         _toldPicture.remove(id);
         _clipWatching.remove(id);
         refresh();
@@ -885,6 +980,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         final known = media[from.id];
         if (known == null || state.seq >= known.seq) {
           media[from.id] = state;
+          _showMediaNotice();
           notifyListeners();
         }
       case HeartbeatWatchChanged(:final from, :final on):
@@ -1449,6 +1545,8 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _batterySub?.cancel();
     _callSub?.cancel();
     _answerSub?.cancel();
+    _mediaActionSub?.cancel();
+    LinksyPlatform.mediaNotice(null);
     _usbSub?.cancel();
     updates.dispose();
     _usbNews.close();

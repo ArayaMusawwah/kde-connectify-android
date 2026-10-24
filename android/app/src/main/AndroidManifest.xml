@@ -118,6 +118,9 @@
         <receiver
             android:name=".Updater$Status"
             android:exported="false"/>
+        <receiver
+            android:name=".ComputerMedia$Button"
+            android:exported="false"/>
         <!-- Push notifications (Firebase Cloud Messaging). No analytics. -->
         <service
             android:name=".Push"

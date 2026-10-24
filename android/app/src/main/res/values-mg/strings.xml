@@ -20,4 +20,12 @@
     <string name="channel_sharing">Fizarana efijery sy fakantsary</string>
     <string name="stop_sharing">Atsaharo ny fizarana</string>
     <string name="switch_camera">Ovay ny fakantsary</string>
+    <string name="channel_computer_media">Mozika amin\'ny solosainao</string>
+    <string name="media_on">%1$s ao amin\'ny %2$s</string>
+    <string name="media_previous">Teo aloha</string>
+    <string name="media_play">Alefa</string>
+    <string name="media_pause">Ajanony kely</string>
+    <string name="media_next">Manaraka</string>
+    <string name="media_back10">Miverina 10 segondra</string>
+    <string name="media_forward10">Mandroso 10 segondra</string>
 </resources>

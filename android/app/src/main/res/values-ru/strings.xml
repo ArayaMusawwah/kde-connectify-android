@@ -20,4 +20,12 @@
     <string name="channel_sharing">Трансляция экрана и камеры</string>
     <string name="stop_sharing">Остановить</string>
     <string name="switch_camera">Сменить камеру</string>
+    <string name="channel_computer_media">Музыка на ваших компьютерах</string>
+    <string name="media_on">%1$s на %2$s</string>
+    <string name="media_previous">Назад</string>
+    <string name="media_play">Играть</string>
+    <string name="media_pause">Пауза</string>
+    <string name="media_next">Далее</string>
+    <string name="media_back10">Назад на 10 секунд</string>
+    <string name="media_forward10">Вперёд на 10 секунд</string>
 </resources>

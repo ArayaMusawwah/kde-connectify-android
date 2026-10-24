@@ -90,6 +90,11 @@ abstract final class Ph {
   );
   static const musicNotes = IconData(0xe340, fontFamily: 'PhosphorRegular');
   static const numpad = IconData(0xe3c8, fontFamily: 'PhosphorRegular');
+  static const clockCounterClockwise = IconData(
+    0xe1a0,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const clockClockwise = IconData(0xe19e, fontFamily: 'PhosphorRegular');
   static const microphone = IconData(0xe326, fontFamily: 'PhosphorRegular');
   static const mapPin = IconData(0xe316, fontFamily: 'PhosphorRegular');
   static const usb = IconData(0xe956, fontFamily: 'PhosphorRegular');

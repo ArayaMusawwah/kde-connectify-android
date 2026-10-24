@@ -20,4 +20,12 @@
     <string name="channel_sharing">Compartir pantalla y cámara</string>
     <string name="stop_sharing">Dejar de compartir</string>
     <string name="switch_camera">Cambiar de cámara</string>
+    <string name="channel_computer_media">Música en tus ordenadores</string>
+    <string name="media_on">%1$s en %2$s</string>
+    <string name="media_previous">Anterior</string>
+    <string name="media_play">Reproducir</string>
+    <string name="media_pause">Pausa</string>
+    <string name="media_next">Siguiente</string>
+    <string name="media_back10">10 segundos atrás</string>
+    <string name="media_forward10">10 segundos adelante</string>
 </resources>
