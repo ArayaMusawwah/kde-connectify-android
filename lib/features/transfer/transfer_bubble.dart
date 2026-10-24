@@ -462,24 +462,19 @@ class _Speed extends StatelessWidget {
     final s = Sig.of(context);
     final l = context.l10n;
     final first = batch.transfers.first;
-    final other = c.device(first.deviceId)?.device.kind ?? DeviceKind.desktop;
+    final device = c.device(first.deviceId);
+    final other = device?.device.kind ?? DeviceKind.desktop;
     final going = !batch.waiting && batch.speed > 0;
     final stage = c.direct[first.deviceId];
-    final linked = stage == DirectStage.up;
-    final settingUp = stage != null && !linked;
+    final settingUp = stage != null && stage != DirectStage.up;
     final computer = _End(kindIcon(other), Sig.incoming);
     const phone = _End(Ph.deviceMobile, Sig.outgoing);
     final speed = formatSpeed(batch.speed).split(' ');
-    final percent = batch.progress == null
-        ? null
-        : '${(batch.progress! * 100).round()}%';
     final body = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
-          crossAxisAlignment: going && !linked
-              ? CrossAxisAlignment.baseline
-              : CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
           children: [
             Expanded(
@@ -492,16 +487,6 @@ class _Speed extends StatelessWidget {
                             text: ' ${speed.skip(1).join(' ')}',
                             style: TextStyle(fontSize: 15, color: s.muted),
                           ),
-                          // Over a direct link the badge takes the right
-                          if (linked && percent != null)
-                            TextSpan(
-                              text: '  $percent',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Sig.blue,
-                              ),
-                            ),
                         ],
                       ),
                       style: sora(28, weight: FontWeight.w700, color: s.ink)
@@ -516,11 +501,9 @@ class _Speed extends StatelessWidget {
                       style: sora(22, color: s.ink),
                     ),
             ),
-            if (linked)
-              const _DirectBadge()
-            else if (percent != null)
+            if (batch.progress != null)
               Text(
-                percent,
+                '${(batch.progress! * 100).round()}%',
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -529,29 +512,58 @@ class _Speed extends StatelessWidget {
               ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
         Row(
           children: [
             if (first.incoming) computer else phone,
             const SizedBox(width: 10),
-            Expanded(child: _Flow(speed: going ? batch.speed : 0)),
+            // The way files go, riding in the middle of the lane
+            Expanded(
+              child: SizedBox(
+                height: 32,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      child: _Flow(
+                        speed: going ? batch.speed : 0,
+                        scanning: stage == DirectStage.find,
+                      ),
+                    ),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 260),
+                      transitionBuilder: (child, a) => ScaleTransition(
+                        scale: Tween(begin: 0.8, end: 1.0).animate(
+                          CurvedAnimation(parent: a, curve: Curves.easeOutBack),
+                        ),
+                        child: FadeTransition(opacity: a, child: child),
+                      ),
+                      child: switch (stage) {
+                        DirectStage.up => const _RoutePill.direct(
+                          key: ValueKey('direct'),
+                        ),
+                        final DirectStage st => _RoutePill.step(
+                          key: const ValueKey('step'),
+                          stage: st,
+                          name: device?.device.name ?? '',
+                        ),
+                        null when device != null => _RoutePill.network(
+                          key: ValueKey(linkWords(device)),
+                          view: device,
+                        ),
+                        null => const SizedBox.shrink(),
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(width: 10),
             if (first.incoming) phone else computer,
           ],
         ),
-        // Under the lane: the steps while a direct link comes up, else the
-        // way files go
-        if (!linked) ...[
-          const SizedBox(height: 10),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 240),
-            child: settingUp
-                ? _DirectSteps(key: const ValueKey('steps'), stage: stage)
-                : Center(
-                    child: _Route(c: c, deviceId: first.deviceId),
-                  ),
-          ),
-        ],
       ],
     );
     return flat
@@ -566,23 +578,48 @@ class _Speed extends StatelessWidget {
   }
 }
 
-/// A direct link coming up, step by step: finding the computer, connecting
-/// to it, the link itself. The current one pulses.
-class _DirectSteps extends StatefulWidget {
-  const _DirectSteps({super.key, required this.stage});
+/// The small pill in the middle of the lane: a direct link's step while it
+/// comes up, Wi-Fi Direct once it's up, else the network files go over.
+class _RoutePill extends StatefulWidget {
+  const _RoutePill.direct({super.key})
+    : stage = DirectStage.up,
+      name = '',
+      view = null;
+  const _RoutePill.step({super.key, required this.stage, required this.name})
+    : view = null;
+  const _RoutePill.network({super.key, required DeviceView this.view})
+    : stage = null,
+      name = '';
 
-  final DirectStage stage;
+  final DirectStage? stage;
+  final String name;
+  final DeviceView? view;
 
   @override
-  State<_DirectSteps> createState() => _DirectStepsState();
+  State<_RoutePill> createState() => _RoutePillState();
 }
 
-class _DirectStepsState extends State<_DirectSteps>
+class _RoutePillState extends State<_RoutePill>
     with SingleTickerProviderStateMixin {
   late final _pulse = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1100),
-  )..repeat(reverse: true);
+  );
+
+  bool get _settingUp => widget.stage != null && widget.stage != DirectStage.up;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_settingUp) _pulse.repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(_RoutePill old) {
+    super.didUpdateWidget(old);
+    if (_settingUp && !_pulse.isAnimating) _pulse.repeat(reverse: true);
+    if (!_settingUp) _pulse.stop();
+  }
 
   @override
   void dispose() {
@@ -594,102 +631,118 @@ class _DirectStepsState extends State<_DirectSteps>
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     final l = context.l10n;
-    final labels = [
-      l.transfersDirectFind,
-      l.transfersDirectConnect,
-      l.transfersDirectLink,
-    ];
-    final at = widget.stage.index;
-    Widget step(int i) {
-      final done = i < at;
-      final now = i == at;
-      final dot = Container(
-        width: 8,
-        height: 8,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: done || now ? Sig.blue : s.line,
+    final stage = widget.stage;
+    final blue = stage != null;
+    final List<Widget> children;
+    if (stage == DirectStage.up) {
+      children = [
+        const _DoubleBolt(),
+        const SizedBox(width: 4),
+        Text(l.transfersRouteDirect),
+      ];
+    } else if (stage != null) {
+      children = [
+        FadeTransition(
+          opacity: Tween(begin: 0.3, end: 1.0).animate(_pulse),
+          child: const _Dot(Sig.blue),
         ),
-      );
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (now)
-            FadeTransition(
-              opacity: Tween(begin: 0.35, end: 1.0).animate(_pulse),
-              child: dot,
-            )
-          else
-            dot,
-          const SizedBox(width: 6),
-          AnimatedDefaultTextStyle(
-            duration: const Duration(milliseconds: 240),
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: now ? FontWeight.w600 : FontWeight.w500,
-              color: now
-                  ? s.ink
-                  : done
-                  ? Sig.blue
-                  : s.faint,
+        const SizedBox(width: 6),
+        Flexible(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 220),
+            child: Text(
+              switch (stage) {
+                DirectStage.find => l.transfersDirectFinding(widget.name),
+                DirectStage.connect => l.transfersDirectConnecting,
+                _ => l.transfersDirectLinking,
+              },
+              key: ValueKey(stage),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: s.ink),
             ),
-            child: Text(labels[i]),
           ),
-        ],
-      );
+        ),
+        const SizedBox(width: 6),
+        for (var i = 0; i < 3; i++)
+          Padding(
+            padding: EdgeInsets.only(left: i == 0 ? 0 : 2),
+            child: _Dot(i <= stage.index ? Sig.blue : s.line, size: 4),
+          ),
+      ];
+    } else {
+      final v = widget.view!;
+      children = [
+        Icon(
+          v.usb
+              ? Ph.usb
+              : v.away
+              ? Ph.globe
+              : Ph.wifiHigh,
+          size: 12,
+          color: s.muted,
+        ),
+        const SizedBox(width: 4),
+        Text(linkWords(v)),
+      ];
     }
-
-    Widget joint(int i) => Expanded(
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 240),
-        height: 1.5,
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        color: i < at ? Sig.blue : s.line,
+    return Container(
+      padding: const EdgeInsets.fromLTRB(8, 3, 9, 3),
+      decoration: BoxDecoration(
+        color: s.card,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(
+          color: blue ? Sig.blue.withValues(alpha: 0.22) : s.line,
+        ),
+      ),
+      child: DefaultTextStyle.merge(
+        style: TextStyle(
+          fontSize: 10.5,
+          fontWeight: FontWeight.w600,
+          color: blue ? Sig.blue : s.muted,
+        ),
+        child: Row(mainAxisSize: MainAxisSize.min, children: children),
       ),
     );
-
-    return Row(children: [step(0), joint(0), step(1), joint(1), step(2)]);
   }
 }
 
-/// Over a direct link: a double bolt and its name, in blue.
-class _DirectBadge extends StatelessWidget {
-  const _DirectBadge();
+class _Dot extends StatelessWidget {
+  const _Dot(this.color, {this.size = 6});
+
+  final Color color;
+  final double size;
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.fromLTRB(8, 5, 11, 5),
-    decoration: BoxDecoration(
-      color: Sig.blue.withValues(alpha: 0.08),
-      borderRadius: BorderRadius.circular(99),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
+    width: size,
+    height: size,
+    decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+  );
+}
+
+/// Two bolts, the second a little behind: Wi-Fi Direct.
+class _DoubleBolt extends StatelessWidget {
+  const _DoubleBolt();
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: 16,
+    height: 12,
+    child: Stack(
+      clipBehavior: Clip.none,
       children: [
-        const SizedBox(
-          width: 18,
-          height: 14,
-          child: Stack(
-            children: [
-              Positioned(
-                left: 0,
-                child: Icon(PhFill.lightning, size: 14, color: Sig.blue),
-              ),
-              Positioned(
-                left: 6,
-                child: Icon(PhFill.lightning, size: 14, color: Sig.blue),
-              ),
-            ],
+        Positioned(
+          left: 6,
+          child: Icon(
+            PhFill.lightning,
+            size: 12,
+            color: Sig.blue.withValues(alpha: 0.55),
           ),
         ),
-        const SizedBox(width: 4),
-        Text(
-          context.l10n.transfersRouteDirect,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: Sig.blue,
-          ),
+        const Positioned(
+          left: 0,
+          child: Icon(PhFill.lightning, size: 12, color: Sig.blue),
         ),
       ],
     ),
@@ -718,10 +771,14 @@ class _End extends StatelessWidget {
 /// A lane with files running along it: the faster the transfer, the faster
 /// they run. Still while it waits.
 class _Flow extends StatefulWidget {
-  const _Flow({required this.speed});
+  const _Flow({required this.speed, this.scanning = false});
 
   /// Bytes per second.
   final double speed;
+
+  /// A light sweep along the lane, while a direct link looks for the other
+  /// device.
+  final bool scanning;
 
   @override
   State<_Flow> createState() => _FlowState();
@@ -737,6 +794,9 @@ class _FlowState extends State<_Flow> with SingleTickerProviderStateMixin {
   /// Lanes a second, eased towards the speed so a jump doesn't jolt.
   double _pace = 0;
 
+  /// Where the sweep is, in lanes.
+  double _scan = 0;
+
   @override
   void initState() {
     super.initState();
@@ -750,7 +810,8 @@ class _FlowState extends State<_Flow> with SingleTickerProviderStateMixin {
     final mb = widget.speed / 1e6;
     final target = mb <= 0 ? 0.0 : (0.12 + mb / 80).clamp(0.12, 1.6);
     _pace += (target - _pace) * (dt * 3).clamp(0.0, 1.0);
-    if (_pace < 0.001) return;
+    if (widget.scanning) _scan = (_scan + dt / 1.4) % 1;
+    if (_pace < 0.001 && !widget.scanning) return;
     setState(() => _phase = (_phase + _pace * dt) % 1);
   }
 
@@ -769,6 +830,7 @@ class _FlowState extends State<_Flow> with SingleTickerProviderStateMixin {
         track: Sig.of(context).raised,
         dot: Sig.blue,
         still: widget.speed <= 0,
+        scan: widget.scanning ? _scan : null,
       ),
     ),
   );
@@ -780,12 +842,16 @@ class _FlowPainter extends CustomPainter {
     required this.track,
     required this.dot,
     required this.still,
+    this.scan,
   });
 
   final double phase;
   final Color track;
   final Color dot;
   final bool still;
+
+  /// Where the sweep is (0 to 1), when there is one.
+  final double? scan;
 
   static const _dots = 6;
 
@@ -796,6 +862,25 @@ class _FlowPainter extends CustomPainter {
       Radius.circular(size.height / 2),
     );
     canvas.drawRRect(lane, Paint()..color = track);
+    if (scan case final t?) {
+      final w = size.width * 0.3;
+      final x = -w + t * (size.width + w);
+      final sweep = Rect.fromLTWH(x, 0, w, size.height);
+      canvas.save();
+      canvas.clipRRect(lane);
+      canvas.drawRect(
+        sweep,
+        Paint()
+          ..shader = LinearGradient(
+            colors: [
+              dot.withValues(alpha: 0),
+              dot.withValues(alpha: 0.55),
+              dot.withValues(alpha: 0),
+            ],
+          ).createShader(sweep),
+      );
+      canvas.restore();
+    }
     if (still) return;
     canvas.save();
     canvas.clipRRect(lane);
@@ -818,7 +903,10 @@ class _FlowPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_FlowPainter old) =>
-      old.phase != phase || old.still != still || old.track != track;
+      old.phase != phase ||
+      old.still != still ||
+      old.track != track ||
+      old.scan != scan;
 }
 
 /// The speed as something felt, under the card: a movie, photos, songs. A
@@ -961,49 +1049,6 @@ class _Transfer extends StatelessWidget {
 }
 
 /// The small caps above a list.
-/// Which way a transfer goes when it isn't a direct link: the cable, the
-/// internet, or the Wi-Fi network.
-class _Route extends StatelessWidget {
-  const _Route({required this.c, required this.deviceId});
-
-  final LinksyController c;
-  final String deviceId;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    final v = c.device(deviceId);
-    if (v == null) return const SizedBox.shrink();
-    final icon = v.usb
-        ? Ph.usb
-        : v.away
-        ? Ph.globe
-        : Ph.wifiHigh;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: s.line,
-        borderRadius: BorderRadius.circular(99),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 13, color: s.muted),
-          const SizedBox(width: 4),
-          Text(
-            linkWords(v),
-            style: TextStyle(
-              fontSize: 11.5,
-              fontWeight: FontWeight.w600,
-              color: s.muted,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 TextStyle _label(Sig s) => TextStyle(
   fontSize: 12,
   fontWeight: FontWeight.w600,
