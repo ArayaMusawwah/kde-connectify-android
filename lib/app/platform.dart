@@ -241,6 +241,11 @@ abstract final class LinksyPlatform {
   static Future<void> presentation(bool on) =>
       _call<void>('presentation', {'on': on});
 
+  /// The volume keys as [volumeKeys], held down too, while on: they step
+  /// a computer's volume instead of the phone's.
+  static Future<void> volumeSteps(bool on) =>
+      _call<void>('volumeSteps', {'on': on});
+
   static Stream<bool> get volumeKeys {
     _listen();
     return _volumeKeys.stream;

@@ -100,7 +100,31 @@ class _DeviceScreenState extends State<DeviceScreen> {
   @override
   void dispose() {
     _c.unwatchMedia(deviceId);
+    _volumeSteps(false);
     super.dispose();
+  }
+
+  /// While this page is in front and shows the computer's volume, the
+  /// phone's volume keys step it (5 % a press) instead of the phone's.
+  bool _stepping = false;
+  StreamSubscription<bool>? _steps;
+
+  void _volumeSteps(bool on) {
+    if (on == _stepping) return;
+    _stepping = on;
+    LinksyPlatform.volumeSteps(on);
+    _steps?.cancel();
+    _steps = on
+        ? LinksyPlatform.volumeKeys.listen((up) {
+            final v = _c.volume[deviceId];
+            if (v == null) return;
+            _c.setVolume(
+              deviceId,
+              level: (v.level + (up ? 0.05 : -0.05)).clamp(0.0, 1.0),
+              muted: up && v.muted ? false : null,
+            );
+          })
+        : null;
   }
 
   @override
@@ -111,6 +135,11 @@ class _DeviceScreenState extends State<DeviceScreen> {
       // Forgotten while open.
       return const Scaffold(body: SizedBox.shrink());
     }
+    final volume = view.connected ? c.volume[deviceId] : null;
+    final front = ModalRoute.of(context)?.isCurrent ?? false;
+    scheduleMicrotask(() {
+      if (mounted) _volumeSteps(front && volume != null);
+    });
     final all = c.activityFor(deviceId);
     final days = _byDay([
       for (final a in all)
@@ -180,6 +209,11 @@ class _DeviceScreenState extends State<DeviceScreen> {
                             padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                             child: _NowPlaying(deviceId: deviceId, player: p),
                           ),
+                      if (volume != null)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                          child: _Volume(deviceId: deviceId, volume: volume),
+                        ),
                       if (_isComputer(view.device))
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
@@ -978,6 +1012,119 @@ class _NowPlayingState extends State<_NowPlaying> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: controls,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The computer's own volume (desktop 0.9.8): a slider and mute.
+class _Volume extends StatefulWidget {
+  const _Volume({required this.deviceId, required this.volume});
+
+  final String deviceId;
+  final VolumeState volume;
+
+  @override
+  State<_Volume> createState() => _VolumeState();
+}
+
+class _VolumeState extends State<_Volume> {
+  /// Where the finger holds the slider, while it does.
+  double? _dragging;
+
+  /// A dragged slider tells the computer about 10 times a second.
+  DateTime _sent = DateTime(0);
+
+  void _set(double level, {bool last = false}) {
+    final now = DateTime.now();
+    if (!last && now.difference(_sent) < const Duration(milliseconds: 100)) {
+      return;
+    }
+    _sent = now;
+    report(
+      context,
+      LinksyScope.read(context).setVolume(
+        widget.deviceId,
+        level: level,
+        // Moving it unmutes, as on phones.
+        muted: widget.volume.muted ? false : null,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final v = widget.volume;
+    final level = _dragging ?? v.level;
+    final silent = v.muted || level == 0;
+    final tip = v.muted ? context.l10n.deviceUnmute : context.l10n.deviceMute;
+    return SigCard(
+      padding: const EdgeInsets.fromLTRB(4, 4, 16, 4),
+      child: Row(
+        children: [
+          Tooltip(
+            message: tip,
+            child: Pressable(
+              onTap: () => report(
+                context,
+                LinksyScope.read(context)
+                    .setVolume(widget.deviceId, muted: !v.muted),
+              ),
+              semanticLabel: tip,
+              child: SizedBox(
+                width: 44,
+                height: 44,
+                child: Icon(
+                  silent
+                      ? Ph.speakerSlash
+                      : level < 0.5
+                      ? Ph.speakerLow
+                      : Ph.speakerHigh,
+                  size: 22,
+                  color: v.muted ? s.muted : s.ink,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                trackHeight: 3,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+                activeTrackColor: v.muted ? s.muted : Sig.blue,
+                thumbColor: v.muted ? s.muted : Sig.blue,
+                inactiveTrackColor: s.raised,
+              ),
+              child: Slider(
+                value: level,
+                semanticFormatterCallback: (l) =>
+                    context.l10n.deviceVolume('${(l * 100).round()}'),
+                onChanged: (l) {
+                  setState(() => _dragging = l);
+                  _set(l);
+                },
+                onChangeEnd: (l) {
+                  setState(() => _dragging = null);
+                  _set(l, last: true);
+                },
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 40,
+            child: Text(
+              '${(level * 100).round()} %',
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontSize: 13,
+                color: s.muted,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
           ),
         ],
       ),

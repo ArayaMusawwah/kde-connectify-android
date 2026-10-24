@@ -99,6 +99,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   final Map<String, MediaState> media = {};
   final Map<String, int> _mediaWatchers = {};
 
+  /// Each computer's volume, while its players are watched (desktop 0.9.8).
+  final Map<String, VolumeState> volume = {};
+
   /// Computers that lock themselves when this phone leaves.
   final Map<String, int> lockWatchers = {};
 
@@ -688,7 +691,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   void watchMedia(String id) {
     final n = (_mediaWatchers[id] ?? 0) + 1;
     _mediaWatchers[id] = n;
-    if (n == 1) node.watchMedia(id, on: true).catchError((Object _) {});
+    if (n == 1) _watch(id, on: true);
   }
 
   void unwatchMedia(String id) {
@@ -698,7 +701,29 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       return;
     }
     _mediaWatchers.remove(id);
-    node.watchMedia(id, on: false).catchError((Object _) {});
+    _watch(id, on: false);
+  }
+
+  /// The players, and the volume when the computer has one to share.
+  void _watch(String id, {required bool on}) {
+    node.watchMedia(id, on: on).catchError((Object _) {});
+    if (device(id)?.device.features.contains('volume') ?? false) {
+      node.watchVolume(id, on: on).catchError((Object _) {});
+    }
+  }
+
+  /// The computer's volume: [level] from 0 to 1, [muted], or both. Shown
+  /// straight away; the computer's answer follows.
+  Future<String?> setVolume(String id, {double? level, bool? muted}) {
+    if (volume[id] case final v?) {
+      volume[id] = VolumeState(
+        seq: v.seq,
+        level: level ?? v.level,
+        muted: muted ?? v.muted,
+      );
+      notifyListeners();
+    }
+    return _run(() => node.setVolume(id, level: level, muted: muted));
   }
 
   /// `play_pause`, `next`, `previous`, or `seek` to [positionMs].
@@ -746,9 +771,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     if (mediaNotice && d != null && _isComputer(d) && _noticeWatching.add(id)) {
       _mediaWatchers[id] = (_mediaWatchers[id] ?? 0) + 1;
     }
-    if (_mediaWatchers.containsKey(id)) {
-      node.watchMedia(id, on: true).catchError((Object _) {});
-    }
+    if (_mediaWatchers.containsKey(id)) _watch(id, on: true);
   }
 
   /// One player at a time: what plays, keeping to the one shown; else the
@@ -960,6 +983,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         });
       case Disconnected(:final id):
         media.remove(id);
+        volume.remove(id);
         _showMediaNotice();
         _toldPicture.remove(id);
         _clipWatching.remove(id);
@@ -981,6 +1005,12 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         if (known == null || state.seq >= known.seq) {
           media[from.id] = state;
           _showMediaNotice();
+          notifyListeners();
+        }
+      case VolumeStateReceived(:final from, :final state):
+        final known = volume[from.id];
+        if (known == null || state.seq >= known.seq) {
+          volume[from.id] = state;
           notifyListeners();
         }
       case HeartbeatWatchChanged(:final from, :final on):

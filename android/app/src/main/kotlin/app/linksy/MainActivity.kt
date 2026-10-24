@@ -120,6 +120,10 @@ class MainActivity : FlutterActivity() {
                             runOnUiThread { result.success(batch) }
                         }.start()
                     }
+                    "volumeSteps" -> {
+                        stepping = call.argument<Boolean>("on") == true
+                        result.success(null)
+                    }
                     "presentation" -> {
                         presenting = call.argument<Boolean>("on") == true
                         updateScreenOn()
@@ -305,6 +309,7 @@ class MainActivity : FlutterActivity() {
 
     /// Presentation remote: the volume keys change slides instead of volume.
     private var presenting = false
+    private var stepping = false
 
     /// Sessions that keep the screen on: a second display, a computer's
     /// screen watched (docs/protocol.md §4.8: the timeout ended them).
@@ -432,6 +437,12 @@ class MainActivity : FlutterActivity() {
         val code = event.keyCode
         if (presenting && (code == android.view.KeyEvent.KEYCODE_VOLUME_UP || code == android.view.KeyEvent.KEYCODE_VOLUME_DOWN)) {
             if (event.action == android.view.KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+                channel?.invokeMethod("volumeKey", if (code == android.view.KeyEvent.KEYCODE_VOLUME_UP) "up" else "down")
+            }
+            return true
+        }
+        if (stepping && (code == android.view.KeyEvent.KEYCODE_VOLUME_UP || code == android.view.KeyEvent.KEYCODE_VOLUME_DOWN)) {
+            if (event.action == android.view.KeyEvent.ACTION_DOWN) {
                 channel?.invokeMethod("volumeKey", if (code == android.view.KeyEvent.KEYCODE_VOLUME_UP) "up" else "down")
             }
             return true
