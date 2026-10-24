@@ -2981,5 +2981,26 @@
   "news025RemoteBody": "Capitals no longer leave Shift stuck on the computer, and two-finger scrolling can go the other way (Settings).",
   "@news025RemoteBody": {
     "description": "What's New in 0.2.5"
+  },
+  "deviceMute": "Mute",
+  "@deviceMute": {
+    "description": "The computer's volume: mute it (tooltip)"
+  },
+  "deviceUnmute": "Unmute",
+  "@deviceUnmute": {
+    "description": "The computer's volume: unmute it (tooltip)"
+  },
+  "deviceVolume": "Volume {percent} %",
+  "@deviceVolume": {
+    "description": "The computer's volume slider, for screen readers",
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "news026VolumeTitle": "The computer's volume",
+  "@news026VolumeTitle": {
+    "description": "What's New 0.2.6: the computer's volume (title)"
+  },
+  "news026VolumeBody": "Turn it up or down from its page, or with this phone's volume keys while the page is open.",
+  "@news026VolumeBody": {
+    "description": "What's New 0.2.6: the computer's volume (body)"
   }
 }

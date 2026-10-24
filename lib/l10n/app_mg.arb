@@ -579,5 +579,10 @@
   "news025NumbersTitle": "Isa amin'ny fanaraha-mpanehoana",
   "news025NumbersBody": "Soraty ny laharan'ny slide, avy eo Ekena, dia mankany aminy. Mandeha ao koa ny fitendry.",
   "news025RemoteTitle": "Fanaraha-davitra azo antoka kokoa",
-  "news025RemoteBody": "Tsy mamikitra intsony ny Shift ao amin'ny solosaina rehefa manoratra litera lehibe, ary azo avadika ny fikodiadiana amin'ny rantsantanana roa (Fikirana)."
+  "news025RemoteBody": "Tsy mamikitra intsony ny Shift ao amin'ny solosaina rehefa manoratra litera lehibe, ary azo avadika ny fikodiadiana amin'ny rantsantanana roa (Fikirana).",
+  "deviceMute": "Atsahatra ny feo",
+  "deviceUnmute": "Averina ny feo",
+  "deviceVolume": "Feo {percent} %",
+  "news026VolumeTitle": "Ny feon'ny solosaina",
+  "news026VolumeBody": "Ampiakaro na ampidino avy amin'ny pejiny, na amin'ny bokotra feon'ity finday ity raha mbola misokatra ny pejy."
 }

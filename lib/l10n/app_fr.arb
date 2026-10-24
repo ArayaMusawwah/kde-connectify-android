@@ -579,5 +579,10 @@
   "news025NumbersTitle": "Des chiffres sur la télécommande de présentation",
   "news025NumbersBody": "Tapez le numéro d’une diapositive, puis Entrée, pour y aller. Le clavier y marche aussi.",
   "news025RemoteTitle": "Une télécommande plus fiable",
-  "news025RemoteBody": "Les majuscules ne bloquent plus Maj sur l’ordinateur, et le défilement à deux doigts peut s’inverser (Réglages)."
+  "news025RemoteBody": "Les majuscules ne bloquent plus Maj sur l’ordinateur, et le défilement à deux doigts peut s’inverser (Réglages).",
+  "deviceMute": "Couper le son",
+  "deviceUnmute": "Remettre le son",
+  "deviceVolume": "Volume {percent} %",
+  "news026VolumeTitle": "Le volume de l'ordinateur",
+  "news026VolumeBody": "Montez-le ou baissez-le depuis sa page, ou avec les touches de volume de ce téléphone tant que la page est ouverte."
 }

@@ -2186,4 +2186,22 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get news025RemoteBody =>
       'Maiúsculas não deixam mais o Shift preso no computador, e a rolagem com dois dedos pode ser invertida (Configurações).';
+
+  @override
+  String get deviceMute => 'Silenciar';
+
+  @override
+  String get deviceUnmute => 'Ativar som';
+
+  @override
+  String deviceVolume(String percent) {
+    return 'Volume $percent %';
+  }
+
+  @override
+  String get news026VolumeTitle => 'O volume do computador';
+
+  @override
+  String get news026VolumeBody =>
+      'Aumente ou diminua na página dele, ou com as teclas de volume deste telefone enquanto a página estiver aberta.';
 }

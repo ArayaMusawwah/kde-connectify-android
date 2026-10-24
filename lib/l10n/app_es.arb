@@ -579,5 +579,10 @@
   "news025NumbersTitle": "Números en el mando de presentaciones",
   "news025NumbersBody": "Escribe el número de una diapositiva y luego Intro para ir a ella. El teclado también funciona ahí.",
   "news025RemoteTitle": "Un mando más fiable",
-  "news025RemoteBody": "Las mayúsculas ya no dejan Mayús pulsada en el ordenador, y el desplazamiento con dos dedos puede invertirse (Ajustes)."
+  "news025RemoteBody": "Las mayúsculas ya no dejan Mayús pulsada en el ordenador, y el desplazamiento con dos dedos puede invertirse (Ajustes).",
+  "deviceMute": "Silenciar",
+  "deviceUnmute": "Activar sonido",
+  "deviceVolume": "Volumen {percent} %",
+  "news026VolumeTitle": "El volumen del ordenador",
+  "news026VolumeBody": "Súbelo o bájalo desde su página, o con las teclas de volumen de este teléfono mientras la página está abierta."
 }

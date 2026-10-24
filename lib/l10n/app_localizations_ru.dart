@@ -2214,4 +2214,22 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get news025RemoteBody =>
       'Заглавные буквы больше не оставляют Shift зажатым на компьютере, а прокрутку двумя пальцами можно развернуть (Настройки).';
+
+  @override
+  String get deviceMute => 'Без звука';
+
+  @override
+  String get deviceUnmute => 'Включить звук';
+
+  @override
+  String deviceVolume(String percent) {
+    return 'Громкость $percent %';
+  }
+
+  @override
+  String get news026VolumeTitle => 'Громкость компьютера';
+
+  @override
+  String get news026VolumeBody =>
+      'Меняйте её на странице компьютера или кнопками громкости этого телефона, пока страница открыта.';
 }

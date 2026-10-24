@@ -2193,4 +2193,22 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get news025RemoteBody =>
       'Le maiuscole non lasciano più Maiusc premuto sul computer, e lo scorrimento a due dita può invertirsi (Impostazioni).';
+
+  @override
+  String get deviceMute => 'Disattiva audio';
+
+  @override
+  String get deviceUnmute => 'Riattiva audio';
+
+  @override
+  String deviceVolume(String percent) {
+    return 'Volume $percent %';
+  }
+
+  @override
+  String get news026VolumeTitle => 'Il volume del computer';
+
+  @override
+  String get news026VolumeBody =>
+      'Alzalo o abbassalo dalla sua pagina, o con i tasti del volume di questo telefono mentre la pagina è aperta.';
 }

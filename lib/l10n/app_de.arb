@@ -579,5 +579,10 @@
   "news025NumbersTitle": "Zahlen auf der Präsentationsfernbedienung",
   "news025NumbersBody": "Gib die Nummer einer Folie ein, dann Eingabe, um dorthin zu springen. Die Tastatur geht dort auch.",
   "news025RemoteTitle": "Zuverlässigere Fernbedienung",
-  "news025RemoteBody": "Großbuchstaben lassen Shift auf dem Computer nicht mehr hängen, und das Scrollen mit zwei Fingern lässt sich umkehren (Einstellungen)."
+  "news025RemoteBody": "Großbuchstaben lassen Shift auf dem Computer nicht mehr hängen, und das Scrollen mit zwei Fingern lässt sich umkehren (Einstellungen).",
+  "deviceMute": "Stumm",
+  "deviceUnmute": "Ton an",
+  "deviceVolume": "Lautstärke {percent} %",
+  "news026VolumeTitle": "Die Lautstärke des Computers",
+  "news026VolumeBody": "Lauter oder leiser auf seiner Seite, oder mit den Lautstärketasten dieses Telefons, solange die Seite offen ist."
 }

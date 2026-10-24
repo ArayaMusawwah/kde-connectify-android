@@ -2195,4 +2195,22 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get news025RemoteBody =>
       'Les majuscules ne bloquent plus Maj sur l’ordinateur, et le défilement à deux doigts peut s’inverser (Réglages).';
+
+  @override
+  String get deviceMute => 'Couper le son';
+
+  @override
+  String get deviceUnmute => 'Remettre le son';
+
+  @override
+  String deviceVolume(String percent) {
+    return 'Volume $percent %';
+  }
+
+  @override
+  String get news026VolumeTitle => 'Le volume de l\'ordinateur';
+
+  @override
+  String get news026VolumeBody =>
+      'Montez-le ou baissez-le depuis sa page, ou avec les touches de volume de ce téléphone tant que la page est ouverte.';
 }

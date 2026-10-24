@@ -3593,6 +3593,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Capitals no longer leave Shift stuck on the computer, and two-finger scrolling can go the other way (Settings).'**
   String get news025RemoteBody;
+
+  /// The computer's volume: mute it (tooltip)
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get deviceMute;
+
+  /// The computer's volume: unmute it (tooltip)
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get deviceUnmute;
+
+  /// The computer's volume slider, for screen readers
+  ///
+  /// In en, this message translates to:
+  /// **'Volume {percent} %'**
+  String deviceVolume(String percent);
+
+  /// What's New 0.2.6: the computer's volume (title)
+  ///
+  /// In en, this message translates to:
+  /// **'The computer\'s volume'**
+  String get news026VolumeTitle;
+
+  /// What's New 0.2.6: the computer's volume (body)
+  ///
+  /// In en, this message translates to:
+  /// **'Turn it up or down from its page, or with this phone\'s volume keys while the page is open.'**
+  String get news026VolumeBody;
 }
 
 class _AppLocalizationsDelegate

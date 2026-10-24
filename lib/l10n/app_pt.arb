@@ -579,5 +579,10 @@
   "news025NumbersTitle": "Números no controle de apresentação",
   "news025NumbersBody": "Digite o número de um slide e depois Enter para ir até ele. O teclado também funciona ali.",
   "news025RemoteTitle": "Controle mais confiável",
-  "news025RemoteBody": "Maiúsculas não deixam mais o Shift preso no computador, e a rolagem com dois dedos pode ser invertida (Configurações)."
+  "news025RemoteBody": "Maiúsculas não deixam mais o Shift preso no computador, e a rolagem com dois dedos pode ser invertida (Configurações).",
+  "deviceMute": "Silenciar",
+  "deviceUnmute": "Ativar som",
+  "deviceVolume": "Volume {percent} %",
+  "news026VolumeTitle": "O volume do computador",
+  "news026VolumeBody": "Aumente ou diminua na página dele, ou com as teclas de volume deste telefone enquanto a página estiver aberta."
 }

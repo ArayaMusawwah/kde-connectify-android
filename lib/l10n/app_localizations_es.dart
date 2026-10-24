@@ -2192,4 +2192,22 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get news025RemoteBody =>
       'Las mayúsculas ya no dejan Mayús pulsada en el ordenador, y el desplazamiento con dos dedos puede invertirse (Ajustes).';
+
+  @override
+  String get deviceMute => 'Silenciar';
+
+  @override
+  String get deviceUnmute => 'Activar sonido';
+
+  @override
+  String deviceVolume(String percent) {
+    return 'Volumen $percent %';
+  }
+
+  @override
+  String get news026VolumeTitle => 'El volumen del ordenador';
+
+  @override
+  String get news026VolumeBody =>
+      'Súbelo o bájalo desde su página, o con las teclas de volumen de este teléfono mientras la página está abierta.';
 }

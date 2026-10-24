@@ -2109,4 +2109,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get news025RemoteBody => '输入大写字母后电脑上的 Shift 不会再卡住，双指滚动也可以反向（设置）。';
+
+  @override
+  String get deviceMute => '静音';
+
+  @override
+  String get deviceUnmute => '取消静音';
+
+  @override
+  String deviceVolume(String percent) {
+    return '音量 $percent%';
+  }
+
+  @override
+  String get news026VolumeTitle => '电脑的音量';
+
+  @override
+  String get news026VolumeBody => '在电脑的页面上调高或调低，页面打开时也可以用这台手机的音量键。';
 }

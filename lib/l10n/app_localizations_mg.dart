@@ -2191,4 +2191,22 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get news025RemoteBody =>
       'Tsy mamikitra intsony ny Shift ao amin\'ny solosaina rehefa manoratra litera lehibe, ary azo avadika ny fikodiadiana amin\'ny rantsantanana roa (Fikirana).';
+
+  @override
+  String get deviceMute => 'Atsahatra ny feo';
+
+  @override
+  String get deviceUnmute => 'Averina ny feo';
+
+  @override
+  String deviceVolume(String percent) {
+    return 'Feo $percent %';
+  }
+
+  @override
+  String get news026VolumeTitle => 'Ny feon\'ny solosaina';
+
+  @override
+  String get news026VolumeBody =>
+      'Ampiakaro na ampidino avy amin\'ny pejiny, na amin\'ny bokotra feon\'ity finday ity raha mbola misokatra ny pejy.';
 }

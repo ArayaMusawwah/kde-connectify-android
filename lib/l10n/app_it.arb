@@ -579,5 +579,10 @@
   "news025NumbersTitle": "Numeri sul telecomando per presentazioni",
   "news025NumbersBody": "Digita il numero di una diapositiva, poi Invio, per andarci. Lì funziona anche la tastiera.",
   "news025RemoteTitle": "Telecomando più affidabile",
-  "news025RemoteBody": "Le maiuscole non lasciano più Maiusc premuto sul computer, e lo scorrimento a due dita può invertirsi (Impostazioni)."
+  "news025RemoteBody": "Le maiuscole non lasciano più Maiusc premuto sul computer, e lo scorrimento a due dita può invertirsi (Impostazioni).",
+  "deviceMute": "Disattiva audio",
+  "deviceUnmute": "Riattiva audio",
+  "deviceVolume": "Volume {percent} %",
+  "news026VolumeTitle": "Il volume del computer",
+  "news026VolumeBody": "Alzalo o abbassalo dalla sua pagina, o con i tasti del volume di questo telefono mentre la pagina è aperta."
 }

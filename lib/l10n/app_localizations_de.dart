@@ -2186,4 +2186,22 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get news025RemoteBody =>
       'Großbuchstaben lassen Shift auf dem Computer nicht mehr hängen, und das Scrollen mit zwei Fingern lässt sich umkehren (Einstellungen).';
+
+  @override
+  String get deviceMute => 'Stumm';
+
+  @override
+  String get deviceUnmute => 'Ton an';
+
+  @override
+  String deviceVolume(String percent) {
+    return 'Lautstärke $percent %';
+  }
+
+  @override
+  String get news026VolumeTitle => 'Die Lautstärke des Computers';
+
+  @override
+  String get news026VolumeBody =>
+      'Lauter oder leiser auf seiner Seite, oder mit den Lautstärketasten dieses Telefons, solange die Seite offen ist.';
 }

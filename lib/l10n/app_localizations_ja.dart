@@ -2135,4 +2135,22 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get news025RemoteBody =>
       '大文字を入力してもコンピュータの Shift が押されたままにならなくなりました。2 本指スクロールは逆向きにもできます（設定）。';
+
+  @override
+  String get deviceMute => 'ミュート';
+
+  @override
+  String get deviceUnmute => 'ミュート解除';
+
+  @override
+  String deviceVolume(String percent) {
+    return '音量 $percent %';
+  }
+
+  @override
+  String get news026VolumeTitle => 'パソコンの音量';
+
+  @override
+  String get news026VolumeBody =>
+      'パソコンのページから、またはページを開いている間はこのスマホの音量ボタンで上げ下げできます。';
 }

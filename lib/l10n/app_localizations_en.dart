@@ -2178,4 +2178,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get news025RemoteBody =>
       'Capitals no longer leave Shift stuck on the computer, and two-finger scrolling can go the other way (Settings).';
+
+  @override
+  String get deviceMute => 'Mute';
+
+  @override
+  String get deviceUnmute => 'Unmute';
+
+  @override
+  String deviceVolume(String percent) {
+    return 'Volume $percent %';
+  }
+
+  @override
+  String get news026VolumeTitle => 'The computer\'s volume';
+
+  @override
+  String get news026VolumeBody =>
+      'Turn it up or down from its page, or with this phone\'s volume keys while the page is open.';
 }
