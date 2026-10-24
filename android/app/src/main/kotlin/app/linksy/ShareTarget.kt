@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.ParcelFileDescriptor
 import android.provider.OpenableColumns
+import android.system.Os
 import java.io.File
 
 /// "Share → Linksy" lands here. Shared files are copied while this activity
@@ -53,21 +55,53 @@ class ShareTarget : Activity() {
         const val EXTRA_FILES = "app.linksy.files"
         const val EXTRA_DEVICE = "app.linksy.device"
 
-        /// Copies content into the app's cache under [folder] (emptied first):
-        /// the node sends from paths. Each in its own folder, so two with one
-        /// name both keep it. Unreadable ones are left out.
+        /// Hands content over to the node, which sends from paths: each file
+        /// as a link, under its own name, to a descriptor kept open here, so
+        /// nothing is copied first (a long video would need its own size free
+        /// again, and the transfer waits for the copy). Content that isn't a
+        /// plain file (some cloud documents) is copied into the cache instead.
+        /// Each hand-over gets its own folder under [folder], so a transfer
+        /// still waiting keeps its files; folders a day old go, with their
+        /// descriptors. Unreadable ones are left out.
         fun copyUris(context: Context, uris: List<Uri>, folder: String): List<String> {
-            val dir = File(context.cacheDir, folder).apply { deleteRecursively(); mkdirs() }
+            val root = File(context.cacheDir, folder).apply { mkdirs() }
+            sweep(root)
+            val dir = File(root, "${System.currentTimeMillis()}").apply { mkdirs() }
+            val kept = mutableListOf<ParcelFileDescriptor>()
             val resolver = context.contentResolver
-            return uris.mapIndexedNotNull { i, uri ->
+            val paths = uris.mapIndexedNotNull { i, uri ->
                 runCatching {
                     val name = resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
                         ?.use { c -> if (c.moveToFirst()) c.getString(0) else null }
                         ?.replace('/', '_') ?: "file-$i"
                     val file = File(File(dir, "$i").apply { mkdirs() }, name)
-                    resolver.openInputStream(uri)!!.use { input -> file.outputStream().use { input.copyTo(it) } }
+                    val fd = runCatching { resolver.openFileDescriptor(uri, "r") }.getOrNull()
+                    if (fd != null && fd.statSize >= 0) {
+                        Os.symlink("/proc/self/fd/${fd.fd}", file.path)
+                        kept += fd
+                    } else {
+                        fd?.close()
+                        resolver.openInputStream(uri)!!.use { input -> file.outputStream().use { input.copyTo(it) } }
+                    }
                     file.path
                 }.getOrNull()
+            }
+            synchronized(open) { open[dir.path] = kept }
+            return paths
+        }
+
+        /// Descriptors behind each hand-over folder, closed when it goes.
+        private val open = mutableMapOf<String, List<ParcelFileDescriptor>>()
+
+        private fun sweep(root: File) {
+            val old = System.currentTimeMillis() - 24 * 60 * 60 * 1000L
+            for (dir in root.listFiles().orEmpty()) {
+                val made = dir.name.toLongOrNull()
+                // From an older run (its links lead nowhere now), or a day old.
+                val stale = synchronized(open) { dir.path !in open } || made == null || made < old
+                if (!stale) continue
+                synchronized(open) { open.remove(dir.path) }?.forEach { runCatching { it.close() } }
+                dir.deleteRecursively()
             }
         }
     }
