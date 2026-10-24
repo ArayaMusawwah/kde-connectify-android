@@ -42,17 +42,79 @@ class _Batch {
   }
 }
 
-/// Always at the bottom left, so the transfers page is always a tap away.
-/// While files are sent or received it shows how many, ringed by their
-/// progress, and a check for a moment when they're all done.
-class TransferBubble extends StatefulWidget {
+/// Files on their way, as a circle: how many, ringed by their progress, and
+/// a check for a moment when they're all done. Tapping it opens
+/// [TransfersScreen].
+///
+/// On a device's page it floats at the bottom left only while files move.
+/// Home has it all the time, joined to Add a device: [TransfersButton].
+class TransferBubble extends StatelessWidget {
   const TransferBubble({super.key});
 
   @override
-  State<TransferBubble> createState() => _TransferBubbleState();
+  Widget build(BuildContext context) => Positioned(
+    left: 16,
+    bottom: 16 + MediaQuery.paddingOf(context).bottom,
+    child: _Live(
+      builder: (files, progress, state) {
+        final visible = state != _BubbleState.idle;
+        return AnimatedScale(
+          scale: visible ? 1 : 0,
+          duration: const Duration(milliseconds: 220),
+          curve: visible ? Curves.easeOutBack : Curves.easeIn,
+          child: visible
+              ? _Bubble(
+                  files: files,
+                  progress: progress,
+                  state: state,
+                  size: 60,
+                  raised: true,
+                )
+              : const SizedBox.square(dimension: 60),
+        );
+      },
+    ),
+  );
 }
 
-class _TransferBubbleState extends State<TransferBubble> {
+/// Home's way into Transfers, on the left of Add a device: the arrows when
+/// nothing moves, the count and its ring when files do.
+class TransfersButton extends StatelessWidget {
+  const TransfersButton({super.key, this.size = 52});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => _Live(
+    builder: (files, progress, state) => _Bubble(
+      files: files,
+      progress: progress,
+      state: state,
+      size: size,
+      raised: false,
+    ),
+  );
+}
+
+void _open(BuildContext context) =>
+    Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (_) => const TransfersScreen()));
+
+enum _BubbleState { idle, going, done }
+
+/// Follows the transfers, and keeps the check up for a moment after they
+/// all end.
+class _Live extends StatefulWidget {
+  const _Live({required this.builder});
+
+  final Widget Function(int files, double? progress, _BubbleState state)
+  builder;
+
+  @override
+  State<_Live> createState() => _LiveState();
+}
+
+class _LiveState extends State<_Live> {
   /// How many files the last batch had, kept for the check after it ends.
   int _lastFiles = 0;
   Timer? _done;
@@ -77,63 +139,59 @@ class _TransferBubbleState extends State<TransferBubble> {
         if (mounted) setState(() => _lastFiles = 0);
       });
     }
-    final finished = !live && _lastFiles > 0;
-    return Positioned(
-      left: 16,
-      bottom: 16 + MediaQuery.paddingOf(context).bottom,
-      child: _Bubble(
-        files: live ? batch.files : _lastFiles,
-        progress: live ? batch.progress : 1,
-        state: live
-            ? _BubbleState.going
-            : finished
-            ? _BubbleState.done
-            : _BubbleState.idle,
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const TransfersScreen()),
-        ),
-      ),
+    return widget.builder(
+      live ? batch.files : _lastFiles,
+      live ? batch.progress : 1,
+      live
+          ? _BubbleState.going
+          : _lastFiles > 0
+          ? _BubbleState.done
+          : _BubbleState.idle,
     );
   }
 }
-
-enum _BubbleState { idle, going, done }
 
 class _Bubble extends StatelessWidget {
   const _Bubble({
     required this.files,
     required this.progress,
     required this.state,
-    required this.onTap,
+    required this.size,
+    required this.raised,
   });
 
   final int files;
   final double? progress;
   final _BubbleState state;
-  final VoidCallback onTap;
+  final double size;
+
+  /// Floating, with a shadow; else sitting in the pill.
+  final bool raised;
 
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     final done = state == _BubbleState.done;
     return Pressable(
-      onTap: onTap,
+      onTap: () => _open(context),
       semanticLabel: state == _BubbleState.idle
           ? context.l10n.transfersTitle
           : context.l10n.transfersBubble(files),
       child: Container(
-        width: 60,
-        height: 60,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: s.card,
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x2E0A1024),
-              blurRadius: 14,
-              offset: Offset(0, 5),
-            ),
-          ],
+          boxShadow: raised
+              ? const [
+                  BoxShadow(
+                    color: Color(0x2E0A1024),
+                    blurRadius: 14,
+                    offset: Offset(0, 5),
+                  ),
+                ]
+              : null,
         ),
         padding: const EdgeInsets.all(4),
         child: AnimatedSwitcher(
@@ -143,7 +201,7 @@ class _Bubble extends StatelessWidget {
                   Ph.arrowsDownUp,
                   key: const ValueKey('idle'),
                   color: Sig.blue,
-                  size: 24,
+                  size: 22,
                 )
               : Stack(
                   key: const ValueKey('going'),
@@ -155,7 +213,7 @@ class _Bubble extends StatelessWidget {
                       duration: const Duration(milliseconds: 400),
                       builder: (context, value, _) => CircularProgressIndicator(
                         value: progress == null ? null : value,
-                        strokeWidth: 4,
+                        strokeWidth: size > 56 ? 4 : 3,
                         strokeCap: StrokeCap.round,
                         color: done ? Sig.cyan : Sig.blue,
                         backgroundColor: s.line,
@@ -163,11 +221,11 @@ class _Bubble extends StatelessWidget {
                     ),
                     Center(
                       child: done
-                          ? const Icon(PhBold.check, color: Sig.cyan, size: 24)
+                          ? const Icon(PhBold.check, color: Sig.cyan, size: 22)
                           : Text(
                               '$files',
                               style: sora(
-                                files > 99 ? 14 : 18,
+                                files > 99 ? 13 : 17,
                                 weight: FontWeight.w700,
                                 color: s.ink,
                               ),

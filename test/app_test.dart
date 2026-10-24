@@ -194,7 +194,7 @@ void main() {
     expect(sent.names, ['a.jpg', 'b.jpg']);
     expect(
       find.descendant(
-        of: find.byType(TransferBubble),
+        of: find.byType(TransfersButton),
         matching: find.text('2'),
       ),
       findsOneWidget,

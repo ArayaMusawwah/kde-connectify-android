@@ -101,18 +101,10 @@ class HomeScreen extends StatelessWidget {
               const SliverToBoxAdapter(child: SizedBox(height: 120)),
             ],
           ),
-          // Files on their way, from any page.
-          const TransferBubble(),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: paired.isEmpty
-          ? null
-          : SigButton(
-              label: context.l10n.homeAddDevice,
-              icon: PhBold.qrCode,
-              onTap: () => showAddDevice(context),
-            ),
+      floatingActionButton: paired.isEmpty ? null : const _Actions(),
     );
   }
 }
@@ -531,4 +523,38 @@ class _GetStarted extends StatelessWidget {
       ),
     );
   }
+}
+
+/// At the thumb: Transfers and Add a device, joined in one pill.
+class _Actions extends StatelessWidget {
+  const _Actions();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(4),
+    decoration: BoxDecoration(
+      color: Sig.of(context).card,
+      borderRadius: BorderRadius.circular(99),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x1A0A1024),
+          blurRadius: 18,
+          offset: Offset(0, 6),
+        ),
+      ],
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const TransfersButton(),
+        const SizedBox(width: 4),
+        SigButton(
+          label: context.l10n.homeAddDevice,
+          icon: PhBold.qrCode,
+          height: 52,
+          onTap: () => showAddDevice(context),
+        ),
+      ],
+    ),
+  );
 }
