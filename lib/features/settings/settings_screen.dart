@@ -10,7 +10,9 @@ import '../../app/scope.dart';
 import '../../core/demo_node.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
+import '../news/whats_new.dart';
 import '../permissions/permissions_sheet.dart';
+import '../update/update_sheet.dart';
 import '../../ui/sig.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -217,6 +219,18 @@ class SettingsScreen extends StatelessWidget {
                         onTap: () => showLanguagePicker(context),
                       ),
                       const _ThemeChoice(),
+                      _Row(
+                        icon: Ph.sparkle,
+                        title: context.l10n.newsTitle,
+                        onTap: () async {
+                          final v = (await LinksyPlatform.appVersion())
+                              ?.split(' ')
+                              .first;
+                          if (v == null || !context.mounted) return;
+                          await showWhatsNew(context, v, highlights(v));
+                        },
+                      ),
+                      const _CheckUpdates(),
                     ],
                   ),
                   SectionLabel(context.l10n.settingsPermissions),
@@ -546,6 +560,44 @@ class _Group extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Check for Updates: asks GitHub now, then offers Update Now.
+class _CheckUpdates extends StatefulWidget {
+  const _CheckUpdates();
+
+  @override
+  State<_CheckUpdates> createState() => _CheckUpdatesState();
+}
+
+class _CheckUpdatesState extends State<_CheckUpdates> {
+  var _checking = false;
+
+  Future<void> _check() async {
+    final u = LinksyScope.read(context).updates;
+    setState(() => _checking = true);
+    final found = await u.check();
+    if (!mounted) return;
+    setState(() => _checking = false);
+    if (found) {
+      await showUpdate(context);
+    } else {
+      showMessage(context, context.l10n.updateNewest(u.installed ?? ''));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => _Row(
+    icon: Ph.arrowCircleUp,
+    title: context.l10n.updateCheck,
+    onTap: _checking ? null : _check,
+    trailing: _checking
+        ? const SizedBox.square(
+            dimension: 18,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          )
+        : null,
+  );
 }
 
 class _Row extends StatelessWidget {

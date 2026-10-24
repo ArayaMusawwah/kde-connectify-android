@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../core/invite.dart';
 import '../core/models.dart';
 import '../features/devices/home_screen.dart';
+import '../features/news/whats_new.dart';
 import '../features/pairing/pairing_flows.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/ring/ring_screen.dart';
@@ -73,6 +74,17 @@ class _LinksyAppState extends State<LinksyApp> {
         );
       });
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _whatsNew());
+  }
+
+  /// The first time a new version opens: what it brings.
+  Future<void> _whatsNew() async {
+    final version = (await LinksyPlatform.appVersion())?.split(' ').first;
+    if (version == null) return;
+    final list = toShow(widget.controller, version);
+    final context = _navigator.currentContext;
+    if (list.isEmpty || context == null || !context.mounted) return;
+    await showWhatsNew(context, version, list);
   }
 
   @override
