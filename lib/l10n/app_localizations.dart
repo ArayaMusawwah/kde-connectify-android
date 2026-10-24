@@ -3359,6 +3359,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 file on its way} other{{count} files on their way}}'**
   String transfersBubble(int count);
+
+  /// Title of the What's New page
+  ///
+  /// In en, this message translates to:
+  /// **'What’s New'**
+  String get newsTitle;
+
+  /// Heading on the What's New page
+  ///
+  /// In en, this message translates to:
+  /// **'What’s New in Linksy {version}'**
+  String newsHeading(String version);
+
+  /// Link to the full release notes
+  ///
+  /// In en, this message translates to:
+  /// **'All Changes in {version}'**
+  String newsAllChanges(String version);
+
+  /// Button that closes What's New
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get newsContinue;
+
+  /// Button that opens Linksy on GitHub
+  ///
+  /// In en, this message translates to:
+  /// **'Star Linksy on GitHub'**
+  String get newsStar;
+
+  /// Under the GitHub star button
+  ///
+  /// In en, this message translates to:
+  /// **'Linksy is free and open source. A star on GitHub helps others find it.'**
+  String get newsStarCaption;
+
+  /// 0.2.4 highlight: private discovery
+  ///
+  /// In en, this message translates to:
+  /// **'Private on Every Network'**
+  String get news024PrivateTitle;
+
+  /// 0.2.4 highlight body
+  ///
+  /// In en, this message translates to:
+  /// **'On a café’s or an office’s Wi-Fi, strangers no longer see this phone’s name. Your computers still find it, and Add Device shows it to a new one.'**
+  String get news024PrivateBody;
+
+  /// 0.2.4 highlight: Update Now
+  ///
+  /// In en, this message translates to:
+  /// **'Update in One Tap'**
+  String get news024UpdateTitle;
+
+  /// 0.2.4 highlight body
+  ///
+  /// In en, this message translates to:
+  /// **'When a new version is out, Update Now downloads it and checks it, then Android installs it.'**
+  String get news024UpdateBody;
+
+  /// 0.2.4 highlight: What's New
+  ///
+  /// In en, this message translates to:
+  /// **'What’s New, Right Here'**
+  String get news024NewsTitle;
+
+  /// 0.2.4 highlight body
+  ///
+  /// In en, this message translates to:
+  /// **'Each update now shows what changed, the first time it opens. It’s also in Settings.'**
+  String get news024NewsBody;
+
+  /// Card and sheet title when a newer version is out
+  ///
+  /// In en, this message translates to:
+  /// **'Linksy {version} Is Available'**
+  String updateAvailable(String version);
+
+  /// Update sheet text
+  ///
+  /// In en, this message translates to:
+  /// **'This is {current}. Linksy downloads the update and checks it, then Android asks you to install it.'**
+  String updateBody(String current);
+
+  /// Button that downloads and installs the update
+  ///
+  /// In en, this message translates to:
+  /// **'Update Now'**
+  String get updateNow;
+
+  /// Closes the update sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get updateLater;
+
+  /// Download progress
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading, {percent}%'**
+  String updateDownloading(String percent);
+
+  /// While Android's installer runs
+  ///
+  /// In en, this message translates to:
+  /// **'Android is installing it…'**
+  String get updateInstalling;
+
+  /// After Check for Updates finds nothing newer
+  ///
+  /// In en, this message translates to:
+  /// **'Linksy {version} is the newest version.'**
+  String updateNewest(String version);
+
+  /// Settings row that checks for a newer version
+  ///
+  /// In en, this message translates to:
+  /// **'Check for Updates'**
+  String get updateCheck;
+
+  /// Download failed
+  ///
+  /// In en, this message translates to:
+  /// **'The download didn’t finish. Check the connection and try again.'**
+  String get updateFailedNetwork;
+
+  /// Checksum mismatch or missing
+  ///
+  /// In en, this message translates to:
+  /// **'The download doesn’t match the release’s checksum, so it wasn’t installed.'**
+  String get updateFailedCheck;
+
+  /// Linksy may not install apps yet
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Linksy to install apps, then tap Update Now again.'**
+  String get updateAllow;
+
+  /// The installer refused
+  ///
+  /// In en, this message translates to:
+  /// **'Android didn’t install it: {message}'**
+  String updateFailedInstall(String message);
 }
 
 class _AppLocalizationsDelegate

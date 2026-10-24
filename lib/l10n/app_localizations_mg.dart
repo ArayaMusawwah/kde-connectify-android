@@ -2047,4 +2047,97 @@ class AppLocalizationsMg extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get newsTitle => 'Inona no vaovao';
+
+  @override
+  String newsHeading(String version) {
+    return 'Ny vaovao ao amin\'ny Linksy $version';
+  }
+
+  @override
+  String newsAllChanges(String version) {
+    return 'Ny fiovana rehetra amin\'ny $version';
+  }
+
+  @override
+  String get newsContinue => 'Tohizo';
+
+  @override
+  String get newsStar => 'Omeo kintana ny Linksy amin\'ny GitHub';
+
+  @override
+  String get newsStarCaption =>
+      'Maimaim-poana sy misokatra ny Linksy. Kintana iray amin\'ny GitHub dia manampy ny hafa hahita azy.';
+
+  @override
+  String get news024PrivateTitle => 'Miafina amin\'ny tambajotra rehetra';
+
+  @override
+  String get news024PrivateBody =>
+      'Amin\'ny Wi-Fi any amin\'ny trano fisotroana na birao, tsy hitan\'ny olon-tsy fantatra intsony ny anaran\'ity finday ity. Mbola mahita azy ny solosainao, ary aseho amin\'ny solosaina vaovao izy rehefa misokatra ny Hanampy fitaovana.';
+
+  @override
+  String get news024UpdateTitle => 'Fanavaozana amin\'ny tsindry iray';
+
+  @override
+  String get news024UpdateBody =>
+      'Rehefa misy dikan-teny vaovao, ny Havaozy izao no maka sy manamarina azy, dia i Android no mametraka azy.';
+
+  @override
+  String get news024NewsTitle => 'Ny vaovao, eto mihitsy';
+
+  @override
+  String get news024NewsBody =>
+      'Isaky ny fanavaozana dia asehony izay niova, amin\'ny fanokafana voalohany. Hita ao amin\'ny Fikirana koa izany.';
+
+  @override
+  String updateAvailable(String version) {
+    return 'Efa misy i Linksy $version';
+  }
+
+  @override
+  String updateBody(String current) {
+    return 'Ity no $current. Maka sy manamarina ny fanavaozana ny Linksy, avy eo i Android no mangataka anao hametraka azy.';
+  }
+
+  @override
+  String get updateNow => 'Havaozy izao';
+
+  @override
+  String get updateLater => 'Any aoriana';
+
+  @override
+  String updateDownloading(String percent) {
+    return 'Maka, $percent%';
+  }
+
+  @override
+  String get updateInstalling => 'Mametraka azy i Android…';
+
+  @override
+  String updateNewest(String version) {
+    return 'Linksy $version no vaovao indrindra.';
+  }
+
+  @override
+  String get updateCheck => 'Hijery fanavaozana';
+
+  @override
+  String get updateFailedNetwork =>
+      'Tsy vita ny fakana. Hamarino ny fifandraisana dia andramo indray.';
+
+  @override
+  String get updateFailedCheck =>
+      'Tsy mifanaraka amin\'ny checksum an\'ilay famoahana ilay rakitra, ka tsy napetraka.';
+
+  @override
+  String get updateAllow =>
+      'Avelao hametraka fampiharana ny Linksy, dia tsindrio indray ny Havaozy izao.';
+
+  @override
+  String updateFailedInstall(String message) {
+    return 'Tsy napetrak\'i Android: $message';
+  }
 }

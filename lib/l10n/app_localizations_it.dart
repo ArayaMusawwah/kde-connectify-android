@@ -2050,4 +2050,97 @@ class AppLocalizationsIt extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get newsTitle => 'Novità';
+
+  @override
+  String newsHeading(String version) {
+    return 'Novità di Linksy $version';
+  }
+
+  @override
+  String newsAllChanges(String version) {
+    return 'Tutte le novità della $version';
+  }
+
+  @override
+  String get newsContinue => 'Continua';
+
+  @override
+  String get newsStar => 'Metti una stella a Linksy su GitHub';
+
+  @override
+  String get newsStarCaption =>
+      'Linksy è libero e open source. Una stella su GitHub aiuta altri a trovarlo.';
+
+  @override
+  String get news024PrivateTitle => 'Riservato su ogni rete';
+
+  @override
+  String get news024PrivateBody =>
+      'Sul Wi-Fi di un bar o di un ufficio, gli estranei non vedono più il nome di questo telefono. I tuoi computer lo trovano comunque, e Aggiungi dispositivo lo mostra a uno nuovo.';
+
+  @override
+  String get news024UpdateTitle => 'Aggiorna con un tocco';
+
+  @override
+  String get news024UpdateBody =>
+      'Quando esce una nuova versione, Aggiorna ora la scarica e la verifica, poi Android la installa.';
+
+  @override
+  String get news024NewsTitle => 'Le novità, proprio qui';
+
+  @override
+  String get news024NewsBody =>
+      'Ogni aggiornamento ora mostra cosa è cambiato, la prima volta che si apre. È anche nelle Impostazioni.';
+
+  @override
+  String updateAvailable(String version) {
+    return 'Linksy $version è disponibile';
+  }
+
+  @override
+  String updateBody(String current) {
+    return 'Hai la $current. Linksy scarica l’aggiornamento e lo verifica, poi Android ti chiede di installarlo.';
+  }
+
+  @override
+  String get updateNow => 'Aggiorna ora';
+
+  @override
+  String get updateLater => 'Più tardi';
+
+  @override
+  String updateDownloading(String percent) {
+    return 'Download, $percent%';
+  }
+
+  @override
+  String get updateInstalling => 'Android lo sta installando…';
+
+  @override
+  String updateNewest(String version) {
+    return 'Linksy $version è la versione più recente.';
+  }
+
+  @override
+  String get updateCheck => 'Cerca aggiornamenti';
+
+  @override
+  String get updateFailedNetwork =>
+      'Il download non è terminato. Controlla la connessione e riprova.';
+
+  @override
+  String get updateFailedCheck =>
+      'Il download non corrisponde al checksum della versione, quindi non è stato installato.';
+
+  @override
+  String get updateAllow =>
+      'Consenti a Linksy di installare app, poi tocca di nuovo Aggiorna ora.';
+
+  @override
+  String updateFailedInstall(String message) {
+    return 'Android non l’ha installato: $message';
+  }
 }

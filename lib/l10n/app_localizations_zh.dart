@@ -1976,4 +1976,91 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get newsTitle => '新功能';
+
+  @override
+  String newsHeading(String version) {
+    return 'Linksy $version 新功能';
+  }
+
+  @override
+  String newsAllChanges(String version) {
+    return '$version 的全部更改';
+  }
+
+  @override
+  String get newsContinue => '继续';
+
+  @override
+  String get newsStar => '在 GitHub 上为 Linksy 点星';
+
+  @override
+  String get newsStarCaption => 'Linksy 是自由开源软件。在 GitHub 上点个星，能帮助更多人发现它。';
+
+  @override
+  String get news024PrivateTitle => '在任何网络上都不暴露';
+
+  @override
+  String get news024PrivateBody =>
+      '在咖啡馆或办公室的 Wi-Fi 上，陌生人不再能看到这部手机的名称。你的电脑仍能找到它，“添加设备”会把它显示给新电脑。';
+
+  @override
+  String get news024UpdateTitle => '一键更新';
+
+  @override
+  String get news024UpdateBody => '有新版本时，“立即更新”会下载并校验它，然后由 Android 安装。';
+
+  @override
+  String get news024NewsTitle => '新功能就在这里';
+
+  @override
+  String get news024NewsBody => '每次更新后首次打开时，都会显示有哪些变化。设置里也能看到。';
+
+  @override
+  String updateAvailable(String version) {
+    return 'Linksy $version 已推出';
+  }
+
+  @override
+  String updateBody(String current) {
+    return '当前是 $current。Linksy 会下载并校验更新，然后 Android 会请你确认安装。';
+  }
+
+  @override
+  String get updateNow => '立即更新';
+
+  @override
+  String get updateLater => '稍后';
+
+  @override
+  String updateDownloading(String percent) {
+    return '正在下载，$percent%';
+  }
+
+  @override
+  String get updateInstalling => 'Android 正在安装…';
+
+  @override
+  String updateNewest(String version) {
+    return 'Linksy $version 已是最新版本。';
+  }
+
+  @override
+  String get updateCheck => '检查更新';
+
+  @override
+  String get updateFailedNetwork => '下载未完成。请检查网络连接后重试。';
+
+  @override
+  String get updateFailedCheck => '下载的文件与该版本的校验和不符，因此没有安装。';
+
+  @override
+  String get updateAllow => '请允许 Linksy 安装应用，然后再点一次“立即更新”。';
+
+  @override
+  String updateFailedInstall(String message) {
+    return 'Android 未能安装：$message';
+  }
 }

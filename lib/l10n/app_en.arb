@@ -2790,5 +2790,136 @@
         "type": "int"
       }
     }
+  },
+  "newsTitle": "What’s New",
+  "@newsTitle": {
+    "description": "Title of the What's New page"
+  },
+  "newsHeading": "What’s New in Linksy {version}",
+  "@newsHeading": {
+    "description": "Heading on the What's New page",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "newsAllChanges": "All Changes in {version}",
+  "@newsAllChanges": {
+    "description": "Link to the full release notes",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "newsContinue": "Continue",
+  "@newsContinue": {
+    "description": "Button that closes What's New"
+  },
+  "newsStar": "Star Linksy on GitHub",
+  "@newsStar": {
+    "description": "Button that opens Linksy on GitHub"
+  },
+  "newsStarCaption": "Linksy is free and open source. A star on GitHub helps others find it.",
+  "@newsStarCaption": {
+    "description": "Under the GitHub star button"
+  },
+  "news024PrivateTitle": "Private on Every Network",
+  "@news024PrivateTitle": {
+    "description": "0.2.4 highlight: private discovery"
+  },
+  "news024PrivateBody": "On a café’s or an office’s Wi-Fi, strangers no longer see this phone’s name. Your computers still find it, and Add Device shows it to a new one.",
+  "@news024PrivateBody": {
+    "description": "0.2.4 highlight body"
+  },
+  "news024UpdateTitle": "Update in One Tap",
+  "@news024UpdateTitle": {
+    "description": "0.2.4 highlight: Update Now"
+  },
+  "news024UpdateBody": "When a new version is out, Update Now downloads it and checks it, then Android installs it.",
+  "@news024UpdateBody": {
+    "description": "0.2.4 highlight body"
+  },
+  "news024NewsTitle": "What’s New, Right Here",
+  "@news024NewsTitle": {
+    "description": "0.2.4 highlight: What's New"
+  },
+  "news024NewsBody": "Each update now shows what changed, the first time it opens. It’s also in Settings.",
+  "@news024NewsBody": {
+    "description": "0.2.4 highlight body"
+  },
+  "updateAvailable": "Linksy {version} Is Available",
+  "@updateAvailable": {
+    "description": "Card and sheet title when a newer version is out",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateBody": "This is {current}. Linksy downloads the update and checks it, then Android asks you to install it.",
+  "@updateBody": {
+    "description": "Update sheet text",
+    "placeholders": {
+      "current": {
+        "type": "String"
+      }
+    }
+  },
+  "updateNow": "Update Now",
+  "@updateNow": {
+    "description": "Button that downloads and installs the update"
+  },
+  "updateLater": "Later",
+  "@updateLater": {
+    "description": "Closes the update sheet"
+  },
+  "updateDownloading": "Downloading, {percent}%",
+  "@updateDownloading": {
+    "description": "Download progress",
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "updateInstalling": "Android is installing it…",
+  "@updateInstalling": {
+    "description": "While Android's installer runs"
+  },
+  "updateNewest": "Linksy {version} is the newest version.",
+  "@updateNewest": {
+    "description": "After Check for Updates finds nothing newer",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateCheck": "Check for Updates",
+  "@updateCheck": {
+    "description": "Settings row that checks for a newer version"
+  },
+  "updateFailedNetwork": "The download didn’t finish. Check the connection and try again.",
+  "@updateFailedNetwork": {
+    "description": "Download failed"
+  },
+  "updateFailedCheck": "The download doesn’t match the release’s checksum, so it wasn’t installed.",
+  "@updateFailedCheck": {
+    "description": "Checksum mismatch or missing"
+  },
+  "updateAllow": "Allow Linksy to install apps, then tap Update Now again.",
+  "@updateAllow": {
+    "description": "Linksy may not install apps yet"
+  },
+  "updateFailedInstall": "Android didn’t install it: {message}",
+  "@updateFailedInstall": {
+    "description": "The installer refused",
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -1997,4 +1997,94 @@ class AppLocalizationsJa extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get newsTitle => '新機能';
+
+  @override
+  String newsHeading(String version) {
+    return 'Linksy $version の新機能';
+  }
+
+  @override
+  String newsAllChanges(String version) {
+    return '$version のすべての変更';
+  }
+
+  @override
+  String get newsContinue => '続ける';
+
+  @override
+  String get newsStar => 'GitHub で Linksy にスターを付ける';
+
+  @override
+  String get newsStarCaption =>
+      'Linksy は自由なオープンソースです。GitHub でスターを付けると、ほかの人が見つけやすくなります。';
+
+  @override
+  String get news024PrivateTitle => 'どのネットワークでもプライベート';
+
+  @override
+  String get news024PrivateBody =>
+      'カフェやオフィスの Wi-Fi で、知らない人にこのスマートフォンの名前が見えなくなりました。あなたのコンピューターは引き続き見つけられ、「デバイスを追加」を開くと新しいコンピューターにも表示されます。';
+
+  @override
+  String get news024UpdateTitle => 'ワンタップで更新';
+
+  @override
+  String get news024UpdateBody =>
+      '新しいバージョンが出たら、「今すぐ更新」でダウンロードと確認を行い、Android がインストールします。';
+
+  @override
+  String get news024NewsTitle => '新機能をここで';
+
+  @override
+  String get news024NewsBody => 'アップデート後に初めて開くと、変わった点が表示されます。設定からも見られます。';
+
+  @override
+  String updateAvailable(String version) {
+    return 'Linksy $version が利用可能です';
+  }
+
+  @override
+  String updateBody(String current) {
+    return '現在は $current です。Linksy が更新をダウンロードして確認し、Android がインストールの確認を求めます。';
+  }
+
+  @override
+  String get updateNow => '今すぐ更新';
+
+  @override
+  String get updateLater => '後で';
+
+  @override
+  String updateDownloading(String percent) {
+    return 'ダウンロード中 $percent%';
+  }
+
+  @override
+  String get updateInstalling => 'Android がインストールしています…';
+
+  @override
+  String updateNewest(String version) {
+    return 'Linksy $version が最新です。';
+  }
+
+  @override
+  String get updateCheck => 'アップデートを確認';
+
+  @override
+  String get updateFailedNetwork => 'ダウンロードが完了しませんでした。接続を確認して、もう一度お試しください。';
+
+  @override
+  String get updateFailedCheck =>
+      'ダウンロードしたファイルがリリースのチェックサムと一致しないため、インストールしませんでした。';
+
+  @override
+  String get updateAllow => 'Linksy にアプリのインストールを許可してから、もう一度「今すぐ更新」をタップしてください。';
+
+  @override
+  String updateFailedInstall(String message) {
+    return 'Android はインストールしませんでした: $message';
+  }
 }
