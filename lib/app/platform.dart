@@ -88,6 +88,8 @@ abstract final class LinksyPlatform {
           _volumeKeys.add(call.arguments == 'up');
         case 'usbPort' when call.arguments is int:
           _usbPorts.add(call.arguments as int);
+        case 'updateStatus' when call.arguments is String:
+          _updateStatuses.add(call.arguments as String);
         case 'batteryChanged':
           final b = _battery(call.arguments);
           if (b != null) _batteries.add(b);
@@ -319,6 +321,29 @@ abstract final class LinksyPlatform {
 
   /// "0.1.14 (3015)": the installed version and its version code.
   static Future<String?> appVersion() => _call<String>('appVersion');
+
+  /// The ABI this phone prefers (`arm64-v8a`…), for the smaller APK.
+  static Future<String?> abi() => _call<String>('abi');
+
+  /// Whether Linksy may install its updates (Install unknown apps).
+  static Future<bool> updatesAllowed() async =>
+      await _call<bool>('updatesAllowed') ?? false;
+
+  /// Opens Install unknown apps for Linksy.
+  static Future<void> allowUpdates() => _call<void>('allowUpdates');
+
+  /// Checks [path] against [sha256] and hands it to Android's installer; the
+  /// outcome comes on [updateStatuses].
+  static Future<void> installUpdate(String path, String sha256) =>
+      _call<void>('installUpdate', {'path': path, 'sha256': sha256});
+
+  /// `installed`, `cancelled`, `bad_sum` or `failed:<message>`.
+  static Stream<String> get updateStatuses {
+    _listen();
+    return _updateStatuses.stream;
+  }
+
+  static final _updateStatuses = StreamController<String>.broadcast();
 
   /// This install's Firebase push token (null without Google Play services).
   static Future<String?> pushToken() => _call<String>('pushToken');

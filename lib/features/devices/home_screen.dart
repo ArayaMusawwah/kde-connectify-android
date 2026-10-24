@@ -14,6 +14,7 @@ import '../pairing/pairing_flows.dart';
 import '../sharing/sharing.dart';
 import '../settings/settings_screen.dart';
 import '../transfer/transfer_bubble.dart';
+import '../update/update_sheet.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -52,7 +53,12 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               SliverToBoxAdapter(child: _Visible(controller: c)),
-              SliverToBoxAdapter(child: _Notices(controller: c)),
+              SliverToBoxAdapter(
+                child: ListenableBuilder(
+                  listenable: c.updates,
+                  builder: (_, _) => _Notices(controller: c),
+                ),
+              ),
               SliverToBoxAdapter(child: SharingBanners(controller: c)),
               if (paired.isEmpty)
                 const SliverToBoxAdapter(child: _GetStarted())
@@ -152,7 +158,18 @@ class _Notices extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = controller;
     final download = c.serviceInfo?.androidDownload;
+    final update = c.updates.available;
     final cards = [
+      if (update != null && c.prefs['update_later'] != update.version)
+        _Notice(
+          icon: Ph.arrowCircleUp,
+          warning: false,
+          title: context.l10n.updateAvailable(update.version),
+          body: '',
+          action: context.l10n.updateNow,
+          onAction: () => showUpdate(context),
+          onDismiss: () => c.setPref('update_later', update.version),
+        ),
       if (c.outdated)
         _Notice(
           icon: Ph.warningCircle,
@@ -160,7 +177,9 @@ class _Notices extends StatelessWidget {
           title: context.l10n.homeUpdateTitle,
           body: context.l10n.homeUpdateBody,
           action: download == null ? null : context.l10n.homeGetUpdate,
-          onAction: download == null
+          onAction: update != null
+              ? () => showUpdate(context)
+              : download == null
               ? null
               : () => LinksyPlatform.openUrl(download),
         ),

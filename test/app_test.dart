@@ -5,6 +5,7 @@ import 'package:linksy/app/activity.dart';
 import 'package:linksy/app/app.dart';
 import 'package:linksy/app/linksy_controller.dart';
 import 'package:linksy/core/demo_node.dart';
+import 'package:linksy/core/updates.dart';
 import 'package:linksy/features/terminal/terminal_screen.dart';
 import 'package:linksy/features/transfer/transfer_bubble.dart';
 import 'package:xterm/xterm.dart';
@@ -48,6 +49,26 @@ void main() {
     expect(find.text('NEARBY, NOT PAIRED'), findsOneWidget);
     expect(find.text('Living Room PC'), findsOneWidget);
     expect(find.text('Pair'), findsOneWidget);
+  });
+
+  testWidgets('a newer version: the card, then Update Now', (tester) async {
+    final (c, _) = await pumpApp(tester);
+    c.updates
+      ..installed = '0.2.4'
+      ..available = const AppRelease(
+        version: '0.2.5',
+        page: 'https://example.com/v0.2.5',
+        notes: '### Fixed\n- **Faster** sending.',
+        assets: {'linksy-0.2.5.apk': 'https://example.com/a.apk'},
+      )
+      ..notifyListeners();
+    await tester.pumpAndSettle();
+    expect(find.text('Linksy 0.2.5 Is Available'), findsOneWidget);
+    await tester.tap(find.text('Update Now'));
+    await tester.pumpAndSettle();
+    expect(find.text('Linksy 0.2.5 Is Available'), findsNWidgets(2));
+    expect(find.textContaining('Faster sending'), findsOneWidget);
+    expect(find.text('Later'), findsOneWidget);
   });
 
   testWidgets('a device page offers its actions', (tester) async {

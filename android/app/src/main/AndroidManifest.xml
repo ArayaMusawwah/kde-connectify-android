@@ -27,6 +27,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Update Now: Android's installer, asked each time ("Install unknown apps"). -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     <!-- "Ring my phone" also vibrates. -->
     <uses-permission android:name="android.permission.VIBRATE"/>
 
@@ -112,6 +114,9 @@
         <!-- Accept / Decline on the incoming-files notification. -->
         <receiver
             android:name=".TransferNotice$Answer"
+            android:exported="false"/>
+        <receiver
+            android:name=".Updater$Status"
             android:exported="false"/>
         <!-- Push notifications (Firebase Cloud Messaging). No analytics. -->
         <service

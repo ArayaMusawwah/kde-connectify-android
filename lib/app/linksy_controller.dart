@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import '../core/linksy_node.dart';
 import '../core/models.dart';
 import '../core/service_info.dart';
+import 'app_update.dart';
 import '../ui/format.dart';
 import '../ui/l10n.dart';
 import 'activity.dart';
@@ -20,10 +21,16 @@ import 'terminals.dart';
 /// device's activity. Consent prompts and notices go out on [prompts] for the
 /// UI to show.
 class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
-  LinksyController(this.node, this._store, {this.service, Directory? dir})
-    : _peerPictures = dir == null
-          ? null
-          : Directory('${dir.path}/peer_pictures');
+  LinksyController(
+    this.node,
+    this._store, {
+    this.service,
+    Directory? dir,
+    AppUpdate? updates,
+  }) : updates = updates ?? AppUpdate(null, null),
+       _peerPictures = dir == null
+           ? null
+           : Directory('${dir.path}/peer_pictures');
 
   final LinksyNode node;
   final ActivityStore _store;
@@ -34,6 +41,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   /// Linksy's service information (§4.12): notices, newer versions.
   final ServiceInfoStore? service;
   ServiceInfo? serviceInfo;
+
+  /// Update Now: a newer Linksy for Android, downloaded and installed on a tap.
+  final AppUpdate updates;
 
   /// Pictures computers sent of themselves (§4.5 `picture`), by device.
   final Directory? _peerPictures;
@@ -240,6 +250,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       }),
     );
     WidgetsBinding.instance.addObserver(this);
+    unawaited(updates.start());
     unawaited(
       LinksyPlatform.battery().then((b) {
         _battery ??= b;
@@ -1429,6 +1440,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _callSub?.cancel();
     _answerSub?.cancel();
     _usbSub?.cancel();
+    updates.dispose();
     _usbNews.close();
     WidgetsBinding.instance.removeObserver(this);
     _importTimer?.cancel();

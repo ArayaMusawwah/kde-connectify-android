@@ -64,6 +64,7 @@ class MainActivity : FlutterActivity() {
             runOnUiThread { channel?.invokeMethod("transferAnswer", mapOf("transfer" to transfer, "accept" to accept)) }
         }
         Push.subscribe()
+        Updater.onStatus = { status -> channel?.invokeMethod("updateStatus", status) }
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "app.linksy/platform").apply {
             setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -130,6 +131,16 @@ class MainActivity : FlutterActivity() {
                     "screenSize" -> result.success(screenSize())
                     "shareProtections" -> result.success(shareProtections())
                     "developerOptions" -> result.success(openDeveloperOptions())
+                    "abi" -> result.success(Updater.abi())
+                    "updatesAllowed" -> result.success(Updater.allowed(this@MainActivity))
+                    "allowUpdates" -> {
+                        Updater.allow(this@MainActivity)
+                        result.success(null)
+                    }
+                    "installUpdate" -> {
+                        Updater.install(this@MainActivity, call.argument<String>("path")!!, call.argument<String>("sha256")!!)
+                        result.success(null)
+                    }
                     "pictureJpeg" -> {
                         val path = call.argument<String>("path")!!
                         Thread { Clip.pictureJpeg(path).let { runOnUiThread { result.success(it) } } }.start()
