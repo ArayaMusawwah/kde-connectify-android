@@ -19,6 +19,8 @@ abstract final class Keysym {
   static const backspace = 0xff08;
   static const escape = 0xff1b;
   static const f5 = 0xffc2;
+  static const shiftLeft = 0xffe1;
+  static const shiftRight = 0xffe2;
 }
 
 /// This phone as a computer's touchpad, keyboard and presentation remote
@@ -292,6 +294,9 @@ class _TouchpadState extends State<_Touchpad> {
   // The keyboard: a hidden field that always holds one placeholder, so
   // Backspace on an empty field still shows up as a change.
   static const _placeholder = '​';
+
+  /// What a US keyboard types with Shift, besides capitals.
+  static final _shifted = RegExp(r'[~!@#$%^&*()_+{}|:"<>?]');
   final _field = TextEditingController(text: _placeholder);
   final _focus = FocusNode();
 
@@ -374,8 +379,15 @@ class _TouchpadState extends State<_Touchpad> {
     if (value.length < _placeholder.length || !value.startsWith(_placeholder)) {
       widget.onKey(Keysym.backspace);
     } else if (value.length > _placeholder.length) {
+      final text = value.substring(_placeholder.length);
       widget.send([
-        {'type': 'text', 'text': value.substring(_placeholder.length)},
+        {'type': 'text', 'text': text},
+        // Some computers (KDE's) hold Shift down to type a capital and
+        // never let go: let go of it here.
+        if (text.toLowerCase() != text || _shifted.hasMatch(text)) ...[
+          {'type': 'key', 'keysym': Keysym.shiftLeft, 'pressed': false},
+          {'type': 'key', 'keysym': Keysym.shiftRight, 'pressed': false},
+        ],
       ]);
     }
     _field.value = const TextEditingValue(
