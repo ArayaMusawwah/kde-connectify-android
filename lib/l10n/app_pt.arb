@@ -587,5 +587,8 @@
   "news026VolumeBody": "Aumente ou diminua na página dele, ou com as teclas de volume deste telefone enquanto a página estiver aberta.",
   "transfersNone": "Nada a caminho",
   "transfersNoneBody": "Os arquivos que você envia ou recebe aparecem aqui, com a velocidade.",
-  "transfersRecent": "Recentes"
+  "transfersRecent": "Recentes",
+  "transfersFastMovie": "Um filme de 1 GB a cada {seconds} s",
+  "transfersFastPhotos": "Cerca de {count} fotos por segundo",
+  "transfersFastSongs": "{count} músicas por segundo"
 }

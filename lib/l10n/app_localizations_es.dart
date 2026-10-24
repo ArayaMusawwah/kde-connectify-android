@@ -2220,4 +2220,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get transfersRecent => 'Recientes';
+
+  @override
+  String transfersFastMovie(int seconds) {
+    return 'Una película de 1 GB cada $seconds s';
+  }
+
+  @override
+  String transfersFastPhotos(int count) {
+    return 'Unas $count fotos por segundo';
+  }
+
+  @override
+  String transfersFastSongs(int count) {
+    return '$count canciones por segundo';
+  }
 }

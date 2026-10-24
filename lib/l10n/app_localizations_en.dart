@@ -2206,4 +2206,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transfersRecent => 'Recent';
+
+  @override
+  String transfersFastMovie(int seconds) {
+    return 'A 1 GB movie every $seconds s';
+  }
+
+  @override
+  String transfersFastPhotos(int count) {
+    return 'About $count photos a second';
+  }
+
+  @override
+  String transfersFastSongs(int count) {
+    return '$count songs a second';
+  }
 }

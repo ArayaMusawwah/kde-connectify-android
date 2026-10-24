@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../../app/activity.dart';
 import '../../app/linksy_controller.dart';
@@ -244,7 +245,8 @@ class TransfersScreen extends StatelessWidget {
           if (batch.transfers.isEmpty)
             const _Nothing()
           else ...[
-            _Speed(batch: batch),
+            _Speed(c: c, batch: batch),
+            _Feels(speed: batch.waiting ? 0 : batch.speed),
             for (final a in batch.transfers) _Transfer(c: c, activity: a),
           ],
           if (recent.isNotEmpty) ...[
@@ -260,22 +262,7 @@ class TransfersScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SigCard(
-              padding: EdgeInsets.zero,
-              child: Column(
-                children: [
-                  for (var i = 0; i < recent.length; i++) ...[
-                    if (i > 0)
-                      Divider(
-                        height: 1,
-                        indent: 62,
-                        color: Sig.of(context).line,
-                      ),
-                    _Recent(c: c, activity: recent[i]),
-                  ],
-                ],
-              ),
-            ),
+            for (final a in recent) _Recent(c: c, activity: a),
           ],
         ],
       ),
@@ -335,74 +322,274 @@ class _Nothing extends StatelessWidget {
   }
 }
 
-/// The speed of everything together, on a card that fills as it goes.
+/// The speed of everything together, with files flowing between the two
+/// devices as fast as they really go.
 class _Speed extends StatelessWidget {
-  const _Speed({required this.batch});
+  const _Speed({required this.c, required this.batch});
 
+  final LinksyController c;
   final _Batch batch;
 
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     final l = context.l10n;
-    final left = batch.total - batch.bytes;
-    final percent = ((batch.progress ?? 0) * 100).round();
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(Radii.lg),
-      child: ColoredBox(
-        color: s.card,
-        child: _Filled(
-          progress: batch.progress,
-          color: Sig.blue,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        batch.waiting || batch.speed == 0
-                            ? l.transfersWaiting
-                            : formatSpeed(batch.speed),
-                        style: sora(34, weight: FontWeight.w700, color: s.ink)
+    final first = batch.transfers.first;
+    final other = c.device(first.deviceId)?.device.kind ?? DeviceKind.desktop;
+    final going = !batch.waiting && batch.speed > 0;
+    final computer = _End(kindIcon(other), Sig.incoming);
+    const phone = _End(Ph.deviceMobile, Sig.outgoing);
+    final speed = formatSpeed(batch.speed).split(' ');
+    return SigCard(
+      padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Expanded(
+                child: going
+                    ? Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(text: speed.first),
+                            TextSpan(
+                              text: ' ${speed.skip(1).join(' ')}',
+                              style: TextStyle(fontSize: 15, color: s.muted),
+                            ),
+                          ],
+                        ),
+                        style: sora(28, weight: FontWeight.w700, color: s.ink)
                             .copyWith(
                               fontFeatures: const [
                                 FontFeature.tabularFigures(),
                               ],
                             ),
-                      ),
-                    ),
-                    if (batch.progress != null)
-                      Text(
-                        '$percent%',
-                        style: sora(
-                          20,
-                          weight: FontWeight.w700,
-                          color: Sig.blue,
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 6),
+                      )
+                    : Text(l.transfersWaiting, style: sora(22, color: s.ink)),
+              ),
+              if (batch.progress != null)
                 Text(
-                  [
-                    l.transfersFilesDone(batch.filesDone, batch.files),
-                    l.activityProgress(
-                      formatBytes(batch.bytes),
-                      formatBytes(batch.total),
-                    ),
-                    if (batch.speed > 0 && left > 0)
-                      formatTimeLeft(left, batch.speed),
-                  ].join(' · '),
-                  style: TextStyle(fontSize: 14, color: s.muted),
+                  '${(batch.progress! * 100).round()}%',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Sig.blue,
+                  ),
                 ),
-              ],
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (first.incoming) computer else phone,
+              const SizedBox(width: 10),
+              Expanded(child: _Flow(speed: going ? batch.speed : 0)),
+              const SizedBox(width: 10),
+              if (first.incoming) phone else computer,
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One end of the lane: a device in a tinted tile.
+class _End extends StatelessWidget {
+  const _End(this.icon, this.color);
+
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 32,
+    height: 32,
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: 0.13),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Icon(icon, size: 18, color: color),
+  );
+}
+
+/// A lane with files running along it: the faster the transfer, the faster
+/// they run. Still while it waits.
+class _Flow extends StatefulWidget {
+  const _Flow({required this.speed});
+
+  /// Bytes per second.
+  final double speed;
+
+  @override
+  State<_Flow> createState() => _FlowState();
+}
+
+class _FlowState extends State<_Flow> with SingleTickerProviderStateMixin {
+  late final Ticker _ticker;
+  Duration _last = Duration.zero;
+
+  /// How far the files have run, in lanes.
+  double _phase = 0;
+
+  /// Lanes a second, eased towards the speed so a jump doesn't jolt.
+  double _pace = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _ticker = createTicker(_tick)..start();
+  }
+
+  void _tick(Duration now) {
+    final dt = (now - _last).inMicroseconds / 1e6;
+    _last = now;
+    // 1 MB/s crawls, 100 MB/s races; past that it stays readable.
+    final mb = widget.speed / 1e6;
+    final target = mb <= 0 ? 0.0 : (0.12 + mb / 80).clamp(0.12, 1.6);
+    _pace += (target - _pace) * (dt * 3).clamp(0.0, 1.0);
+    if (_pace < 0.001) return;
+    setState(() => _phase = (_phase + _pace * dt) % 1);
+  }
+
+  @override
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 10,
+    child: CustomPaint(
+      painter: _FlowPainter(
+        phase: _phase,
+        track: Sig.of(context).raised,
+        dot: Sig.blue,
+        still: widget.speed <= 0,
+      ),
+    ),
+  );
+}
+
+class _FlowPainter extends CustomPainter {
+  _FlowPainter({
+    required this.phase,
+    required this.track,
+    required this.dot,
+    required this.still,
+  });
+
+  final double phase;
+  final Color track;
+  final Color dot;
+  final bool still;
+
+  static const _dots = 6;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final lane = RRect.fromRectAndRadius(
+      Offset.zero & size,
+      Radius.circular(size.height / 2),
+    );
+    canvas.drawRRect(lane, Paint()..color = track);
+    if (still) return;
+    canvas.save();
+    canvas.clipRRect(lane);
+    const w = 14.0, h = 6.0;
+    for (var i = 0; i < _dots; i++) {
+      final t = (phase + i / _dots) % 1;
+      final x = -w + t * (size.width + w);
+      // Fade in at the start, out at the end.
+      final fade = (t * 8).clamp(0.0, 1.0) * ((1 - t) * 8).clamp(0.0, 1.0);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(x, (size.height - h) / 2, w, h),
+          const Radius.circular(3),
+        ),
+        Paint()..color = dot.withValues(alpha: fade),
+      );
+    }
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(_FlowPainter old) =>
+      old.phase != phase || old.still != still || old.track != track;
+}
+
+/// The speed as something felt, under the card: a movie, photos, songs. A
+/// new one every few seconds.
+class _Feels extends StatefulWidget {
+  const _Feels({required this.speed});
+
+  final double speed;
+
+  @override
+  State<_Feels> createState() => _FeelsState();
+}
+
+class _FeelsState extends State<_Feels> {
+  int _turn = 0;
+  late final Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(
+      const Duration(seconds: 4),
+      (_) => setState(() => _turn++),
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final mb = widget.speed / 1e6;
+    final lines = [
+      // A 1 GB movie, 3 MB photos, 5 MB songs.
+      // Only when it's something to enjoy: a movie a minute or faster.
+      if (mb >= 1000 / 60) l.transfersFastMovie((1000 / mb).round()),
+      if (mb / 3 >= 2) l.transfersFastPhotos((mb / 3).round()),
+      if (mb / 5 >= 2) l.transfersFastSongs((mb / 5).round()),
+    ];
+    if (lines.isEmpty) return const SizedBox(height: 4);
+    final i = _turn % lines.length;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
+      child: Row(
+        children: [
+          const Icon(PhFill.lightning, size: 15, color: Sig.blue),
+          const SizedBox(width: 7),
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              layoutBuilder: (current, previous) => Stack(
+                alignment: AlignmentDirectional.centerStart,
+                children: [...previous, ?current],
+              ),
+              child: Text(
+                lines[i],
+                key: ValueKey(i),
+                style: const TextStyle(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w500,
+                  color: Sig.blue,
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -476,29 +663,22 @@ class _Transfer extends StatelessWidget {
               ],
             ),
           ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(Radii.lg),
-            child: ColoredBox(
-              color: s.card,
-              child: Column(
-                children: [
-                  for (var i = 0; i < a.names.length; i++) ...[
-                    if (i > 0) Divider(height: 1, color: s.line),
-                    _File(
-                      name: a.names[i],
-                      size: i < a.sizes.length ? a.sizes[i] : null,
-                      state: i < doneCount
-                          ? _FileState.done
-                          : i == doneCount && a.status == ActivityStatus.active
-                          ? _FileState.going
-                          : _FileState.next,
-                      progress: _fileProgress(a, i),
-                      color: color,
-                    ),
-                  ],
-                ],
-              ),
-            ),
+          Column(
+            children: [
+              for (var i = 0; i < a.names.length; i++) ...[
+                _File(
+                  name: a.names[i],
+                  size: i < a.sizes.length ? a.sizes[i] : null,
+                  state: i < doneCount
+                      ? _FileState.done
+                      : i == doneCount && a.status == ActivityStatus.active
+                      ? _FileState.going
+                      : _FileState.next,
+                  progress: _fileProgress(a, i),
+                  color: color,
+                ),
+              ],
+            ],
           ),
         ],
       ),
@@ -534,69 +714,73 @@ class _File extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     final size = this.size;
-    return _Filled(
-      progress: switch (state) {
-        _FileState.done => 1,
-        _FileState.going => progress,
-        _FileState.next => null,
-      },
-      color: Sig.blue,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 13, 16, 13),
-        child: Row(
-          children: [
-            Icon(
-              fileIcon(name),
-              size: 22,
-              color: state == _FileState.next ? s.faint : color,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.w500,
-                      color: state == _FileState.next ? s.muted : s.ink,
-                    ),
-                  ),
-                  if (size != null)
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(Radii.md),
+      child: _Filled(
+        progress: switch (state) {
+          // Only the one on its way: the others are plain rows.
+          _FileState.done => null,
+          _FileState.going => progress,
+          _FileState.next => null,
+        },
+        color: Sig.blue,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 11, 8, 11),
+          child: Row(
+            children: [
+              Icon(
+                fileIcon(name),
+                size: 22,
+                color: state == _FileState.next ? s.faint : color,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      state == _FileState.going && progress != null
-                          ? context.l10n.activityProgress(
-                              formatBytes((size * progress!).round()),
-                              formatBytes(size),
-                            )
-                          : formatBytes(size),
-                      style: TextStyle(fontSize: 12.5, color: s.muted),
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w500,
+                        color: state == _FileState.next ? s.muted : s.ink,
+                      ),
                     ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 10),
-            switch (state) {
-              _FileState.done => const Icon(
-                PhBold.check,
-                size: 18,
-                color: Sig.cyan,
-              ),
-              _FileState.going => Text(
-                '${((progress ?? 0) * 100).round()}%',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: color,
-                  fontFeatures: const [FontFeature.tabularFigures()],
+                    if (size != null)
+                      Text(
+                        state == _FileState.going && progress != null
+                            ? context.l10n.activityProgress(
+                                formatBytes((size * progress!).round()),
+                                formatBytes(size),
+                              )
+                            : formatBytes(size),
+                        style: TextStyle(fontSize: 12.5, color: s.muted),
+                      ),
+                  ],
                 ),
               ),
-              _FileState.next => Icon(Ph.clock, size: 18, color: s.faint),
-            },
-          ],
+              const SizedBox(width: 10),
+              switch (state) {
+                _FileState.done => const Icon(
+                  PhBold.check,
+                  size: 18,
+                  color: Sig.cyan,
+                ),
+                _FileState.going => Text(
+                  '${((progress ?? 0) * 100).round()}%',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: color,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+                _FileState.next => Icon(Ph.clock, size: 18, color: s.faint),
+              },
+            ],
+          ),
         ),
       ),
     );
@@ -619,7 +803,7 @@ class _Recent extends StatelessWidget {
     final ok = a.status == ActivityStatus.done;
     final today = DateUtils.isSameDay(a.time, DateTime.now());
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 12, 16, 12),
+      padding: const EdgeInsets.fromLTRB(4, 10, 8, 10),
       child: Row(
         children: [
           _Badge(

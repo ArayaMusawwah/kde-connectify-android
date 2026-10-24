@@ -3641,6 +3641,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recent'**
   String get transfersRecent;
+
+  /// Transfers: the speed as something felt
+  ///
+  /// In en, this message translates to:
+  /// **'A 1 GB movie every {seconds} s'**
+  String transfersFastMovie(int seconds);
+
+  /// Transfers: the speed as photos (about 3 MB each)
+  ///
+  /// In en, this message translates to:
+  /// **'About {count} photos a second'**
+  String transfersFastPhotos(int count);
+
+  /// Transfers: the speed as songs (about 5 MB each)
+  ///
+  /// In en, this message translates to:
+  /// **'{count} songs a second'**
+  String transfersFastSongs(int count);
 }
 
 class _AppLocalizationsDelegate

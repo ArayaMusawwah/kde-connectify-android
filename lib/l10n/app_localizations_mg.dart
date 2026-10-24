@@ -2219,4 +2219,19 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get transfersRecent => 'Vao haingana';
+
+  @override
+  String transfersFastMovie(int seconds) {
+    return 'Sarimihetsika 1 GB isaky ny $seconds s';
+  }
+
+  @override
+  String transfersFastPhotos(int count) {
+    return 'Sary eo amin\'ny $count isan-tsegondra';
+  }
+
+  @override
+  String transfersFastSongs(int count) {
+    return 'Hira $count isan-tsegondra';
+  }
 }

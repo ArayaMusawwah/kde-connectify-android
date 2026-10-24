@@ -3008,5 +3008,11 @@
   "transfersNoneBody": "Files you send or receive show up here, with their speed.",
   "@transfersNoneBody": { "description": "Transfers page with nothing going (body)" },
   "transfersRecent": "Recent",
-  "@transfersRecent": { "description": "Transfers page: finished transfers (section label)" }
+  "@transfersRecent": { "description": "Transfers page: finished transfers (section label)" },
+  "transfersFastMovie": "A 1 GB movie every {seconds} s",
+  "@transfersFastMovie": { "description": "Transfers: the speed as something felt", "placeholders": { "seconds": { "type": "int" } } },
+  "transfersFastPhotos": "About {count} photos a second",
+  "@transfersFastPhotos": { "description": "Transfers: the speed as photos (about 3 MB each)", "placeholders": { "count": { "type": "int" } } },
+  "transfersFastSongs": "{count} songs a second",
+  "@transfersFastSongs": { "description": "Transfers: the speed as songs (about 5 MB each)", "placeholders": { "count": { "type": "int" } } }
 }

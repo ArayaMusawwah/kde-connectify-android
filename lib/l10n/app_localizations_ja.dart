@@ -2162,4 +2162,19 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get transfersRecent => '最近';
+
+  @override
+  String transfersFastMovie(int seconds) {
+    return '1 GB の映画が $seconds 秒ごと';
+  }
+
+  @override
+  String transfersFastPhotos(int count) {
+    return '1 秒に約 $count 枚の写真';
+  }
+
+  @override
+  String transfersFastSongs(int count) {
+    return '1 秒に $count 曲';
+  }
 }

@@ -129,6 +129,7 @@ abstract final class PhBold {
 
 abstract final class PhFill {
   static const flashlight = IconData(0xe246, fontFamily: 'PhosphorFill');
+  static const lightning = IconData(0xe2de, fontFamily: 'PhosphorFill');
   static const paperPlaneTilt = IconData(0xe398, fontFamily: 'PhosphorFill');
   static const bellRinging = IconData(0xe5e8, fontFamily: 'PhosphorFill');
   static const play = IconData(0xe3d0, fontFamily: 'PhosphorFill');

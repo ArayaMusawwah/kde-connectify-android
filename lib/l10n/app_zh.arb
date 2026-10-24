@@ -587,5 +587,8 @@
   "news026VolumeBody": "在电脑的页面上调高或调低，页面打开时也可以用这台手机的音量键。",
   "transfersNone": "没有正在传输的文件",
   "transfersNoneBody": "你发送或接收的文件会显示在这里，并显示速度。",
-  "transfersRecent": "最近"
+  "transfersRecent": "最近",
+  "transfersFastMovie": "每 {seconds} 秒一部 1 GB 的电影",
+  "transfersFastPhotos": "每秒约 {count} 张照片",
+  "transfersFastSongs": "每秒 {count} 首歌"
 }

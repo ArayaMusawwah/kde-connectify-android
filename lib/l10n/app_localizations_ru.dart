@@ -2242,4 +2242,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get transfersRecent => 'Недавние';
+
+  @override
+  String transfersFastMovie(int seconds) {
+    return 'Фильм на 1 ГБ каждые $seconds с';
+  }
+
+  @override
+  String transfersFastPhotos(int count) {
+    return 'Около $count фото в секунду';
+  }
+
+  @override
+  String transfersFastSongs(int count) {
+    return '$count песен в секунду';
+  }
 }

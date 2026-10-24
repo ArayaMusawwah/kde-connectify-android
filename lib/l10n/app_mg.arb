@@ -587,5 +587,8 @@
   "news026VolumeBody": "Ampiakaro na ampidino avy amin'ny pejiny, na amin'ny bokotra feon'ity finday ity raha mbola misokatra ny pejy.",
   "transfersNone": "Tsy misy mandeha",
   "transfersNoneBody": "Eto no hiseho ireo rakitra alefanao na raisinao, miaraka amin'ny hafainganany.",
-  "transfersRecent": "Vao haingana"
+  "transfersRecent": "Vao haingana",
+  "transfersFastMovie": "Sarimihetsika 1 GB isaky ny {seconds} s",
+  "transfersFastPhotos": "Sary eo amin'ny {count} isan-tsegondra",
+  "transfersFastSongs": "Hira {count} isan-tsegondra"
 }

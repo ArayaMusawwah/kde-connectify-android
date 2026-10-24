@@ -587,5 +587,8 @@
   "news026VolumeBody": "Меняйте её на странице компьютера или кнопками громкости этого телефона, пока страница открыта.",
   "transfersNone": "Сейчас ничего не передаётся",
   "transfersNoneBody": "Здесь появятся файлы, которые вы отправляете или получаете, с их скоростью.",
-  "transfersRecent": "Недавние"
+  "transfersRecent": "Недавние",
+  "transfersFastMovie": "Фильм на 1 ГБ каждые {seconds} с",
+  "transfersFastPhotos": "Около {count} фото в секунду",
+  "transfersFastSongs": "{count} песен в секунду"
 }

@@ -587,5 +587,8 @@
   "news026VolumeBody": "Súbelo o bájalo desde su página, o con las teclas de volumen de este teléfono mientras la página está abierta.",
   "transfersNone": "Nada en camino",
   "transfersNoneBody": "Los archivos que envías o recibes aparecen aquí, con su velocidad.",
-  "transfersRecent": "Recientes"
+  "transfersRecent": "Recientes",
+  "transfersFastMovie": "Una película de 1 GB cada {seconds} s",
+  "transfersFastPhotos": "Unas {count} fotos por segundo",
+  "transfersFastSongs": "{count} canciones por segundo"
 }

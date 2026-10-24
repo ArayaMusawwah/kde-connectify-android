@@ -2135,4 +2135,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get transfersRecent => '最近';
+
+  @override
+  String transfersFastMovie(int seconds) {
+    return '每 $seconds 秒一部 1 GB 的电影';
+  }
+
+  @override
+  String transfersFastPhotos(int count) {
+    return '每秒约 $count 张照片';
+  }
+
+  @override
+  String transfersFastSongs(int count) {
+    return '每秒 $count 首歌';
+  }
 }

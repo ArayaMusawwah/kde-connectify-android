@@ -587,5 +587,8 @@
   "news026VolumeBody": "Lauter oder leiser auf seiner Seite, oder mit den Lautstärketasten dieses Telefons, solange die Seite offen ist.",
   "transfersNone": "Gerade nichts unterwegs",
   "transfersNoneBody": "Dateien, die du sendest oder empfängst, erscheinen hier mit ihrer Geschwindigkeit.",
-  "transfersRecent": "Zuletzt"
+  "transfersRecent": "Zuletzt",
+  "transfersFastMovie": "Ein 1-GB-Film alle {seconds} s",
+  "transfersFastPhotos": "Etwa {count} Fotos pro Sekunde",
+  "transfersFastSongs": "{count} Songs pro Sekunde"
 }

@@ -587,5 +587,8 @@
   "news026VolumeBody": "パソコンのページから、またはページを開いている間はこのスマホの音量ボタンで上げ下げできます。",
   "transfersNone": "転送中のものはありません",
   "transfersNoneBody": "送受信するファイルが速度と一緒にここに表示されます。",
-  "transfersRecent": "最近"
+  "transfersRecent": "最近",
+  "transfersFastMovie": "1 GB の映画が {seconds} 秒ごと",
+  "transfersFastPhotos": "1 秒に約 {count} 枚の写真",
+  "transfersFastSongs": "1 秒に {count} 曲"
 }
