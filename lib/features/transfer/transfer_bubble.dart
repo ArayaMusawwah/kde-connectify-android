@@ -181,48 +181,8 @@ class _Bubble extends StatelessWidget {
   }
 }
 
-/// How much of a tint the done part of a card or row gets.
-const _tint = 0.02;
-
-/// [child] on a card whose done part, from the left, is tinted [color]: the
-/// progress is the card itself, not a bar in it.
-class _Filled extends StatelessWidget {
-  const _Filled({
-    required this.progress,
-    required this.color,
-    required this.child,
-  });
-
-  /// Null when it hasn't started: no tint.
-  final double? progress;
-  final Color color;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Stack(
-    children: [
-      Positioned.fill(
-        child: Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: TweenAnimationBuilder<double>(
-            tween: Tween(end: progress ?? 0),
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeOut,
-            builder: (context, v, _) => FractionallySizedBox(
-              widthFactor: v,
-              heightFactor: 1,
-              child: ColoredBox(color: color.withValues(alpha: _tint)),
-            ),
-          ),
-        ),
-      ),
-      child,
-    ],
-  );
-}
-
-/// Everything on its way: the speed on top, then each transfer with its
-/// own speed above its files, then the ones that ended.
+/// Everything on its way: the speed on top, then each transfer's files,
+/// then the ones that ended.
 class TransfersScreen extends StatelessWidget {
   const TransfersScreen({super.key});
 
@@ -254,12 +214,7 @@ class TransfersScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 28, 8, 10),
               child: Text(
                 l.transfersRecent.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.4,
-                  color: Sig.of(context).muted,
-                ),
+                style: _label(Sig.of(context)),
               ),
             ),
             for (final a in recent) _Recent(c: c, activity: a),
@@ -556,10 +511,11 @@ class _FeelsState extends State<_Feels> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final mb = widget.speed / 1e6;
+    // Only once it's fast enough to enjoy.
+    if (mb < 15) return const SizedBox.shrink();
     final lines = [
       // A 1 GB movie, 3 MB photos, 5 MB songs.
-      // Only when it's something to enjoy: a movie a minute or faster.
-      if (mb >= 1000 / 60) l.transfersFastMovie((1000 / mb).round()),
+      l.transfersFastMovie((1000 / mb).round()),
       if (mb / 3 >= 2) l.transfersFastPhotos((mb / 3).round()),
       if (mb / 5 >= 2) l.transfersFastSongs((mb / 5).round()),
     ];
@@ -607,79 +563,46 @@ class _Transfer extends StatelessWidget {
     final s = Sig.of(context);
     final l = context.l10n;
     final name = c.device(a.deviceId)?.device.name ?? shortDeviceId(a.deviceId);
-    final color = a.incoming ? Sig.incoming : Sig.outgoing;
     final doneCount = _Batch._done(a);
-    final going = a.status == ActivityStatus.active && a.speed > 0;
     return Padding(
       padding: const EdgeInsets.only(top: 22),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Its own speed, on top of its files.
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 0, 0, 8),
-            child: Row(
-              children: [
-                _Badge(
-                  a.incoming ? PhBold.arrowDownLeft : PhBold.arrowUpRight,
-                  color,
-                  size: 32,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        a.incoming
-                            ? l.transfersFrom(name)
-                            : l.transfersTo(name),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: sora(15, weight: FontWeight.w600, color: s.ink),
-                      ),
-                      Text(
-                        l.transfersFilesDone(doneCount, a.names.length),
-                        style: TextStyle(fontSize: 12.5, color: s.muted),
-                      ),
-                    ],
-                  ),
-                ),
-                Text(
-                  going ? formatSpeed(a.speed) : l.transfersWaiting,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: going ? color : s.muted,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => c.cancel(a.id),
-                  tooltip: l.commonCancel,
-                  icon: Icon(Ph.x, size: 18, color: s.muted),
-                  visualDensity: VisualDensity.compact,
-                ),
-              ],
-            ),
-          ),
-          Column(
+          Row(
             children: [
-              for (var i = 0; i < a.names.length; i++) ...[
-                _File(
-                  name: a.names[i],
-                  size: i < a.sizes.length ? a.sizes[i] : null,
-                  state: i < doneCount
-                      ? _FileState.done
-                      : i == doneCount && a.status == ActivityStatus.active
-                      ? _FileState.going
-                      : _FileState.next,
-                  progress: _fileProgress(a, i),
-                  color: color,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Text(
+                    [
+                      a.incoming ? l.transfersFrom(name) : l.transfersTo(name),
+                      l.transfersFilesDone(doneCount, a.names.length),
+                    ].join(' · ').toUpperCase(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: _label(s),
+                  ),
                 ),
-              ],
+              ),
+              TextButton(
+                onPressed: () => c.cancel(a.id),
+                style: TextButton.styleFrom(foregroundColor: s.muted),
+                child: Text(l.commonCancel),
+              ),
             ],
           ),
+          for (var i = 0; i < a.names.length; i++)
+            _File(
+              name: a.names[i],
+              size: i < a.sizes.length ? a.sizes[i] : null,
+              state: i < doneCount
+                  ? _FileState.done
+                  : i == doneCount && a.status == ActivityStatus.active
+                  ? _FileState.going
+                  : _FileState.next,
+              progress: _fileProgress(a, i),
+            ),
         ],
       ),
     );
@@ -693,7 +616,59 @@ class _Transfer extends StatelessWidget {
   }
 }
 
+/// The small caps above a list.
+TextStyle _label(Sig s) => TextStyle(
+  fontSize: 12,
+  fontWeight: FontWeight.w600,
+  letterSpacing: 1.3,
+  color: s.muted,
+);
+
 enum _FileState { done, going, next }
+
+/// A small icon in a soft circle; for the file on its way, blue and ringed
+/// by its progress, like the bubble on the home screen.
+class _Round extends StatelessWidget {
+  const _Round(this.icon, {this.progress, this.going = false});
+
+  final IconData icon;
+  final double? progress;
+  final bool going;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    return SizedBox.square(
+      dimension: 40,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: going
+                  ? Sig.blue.withValues(alpha: 0.10)
+                  : s.ink.withValues(alpha: 0.05),
+            ),
+          ),
+          if (going)
+            TweenAnimationBuilder<double>(
+              tween: Tween(end: progress ?? 0),
+              duration: const Duration(milliseconds: 400),
+              builder: (context, v, _) => CircularProgressIndicator(
+                value: progress == null ? null : v,
+                strokeWidth: 2.5,
+                strokeCap: StrokeCap.round,
+                color: Sig.blue,
+                backgroundColor: s.line,
+              ),
+            ),
+          Icon(icon, size: 18, color: going ? Sig.blue : s.faint),
+        ],
+      ),
+    );
+  }
+}
 
 class _File extends StatelessWidget {
   const _File({
@@ -701,87 +676,76 @@ class _File extends StatelessWidget {
     required this.size,
     required this.state,
     required this.progress,
-    required this.color,
   });
 
   final String name;
   final int? size;
   final _FileState state;
   final double? progress;
-  final Color color;
 
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
+    final l = context.l10n;
     final size = this.size;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(Radii.md),
-      child: _Filled(
-        progress: switch (state) {
-          // Only the one on its way: the others are plain rows.
-          _FileState.done => null,
-          _FileState.going => progress,
-          _FileState.next => null,
-        },
-        color: Sig.blue,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 11, 8, 11),
-          child: Row(
-            children: [
-              Icon(
-                fileIcon(name),
-                size: 22,
-                color: state == _FileState.next ? s.faint : color,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w500,
-                        color: state == _FileState.next ? s.muted : s.ink,
-                      ),
-                    ),
-                    if (size != null)
-                      Text(
-                        state == _FileState.going && progress != null
-                            ? context.l10n.activityProgress(
-                                formatBytes((size * progress!).round()),
-                                formatBytes(size),
-                              )
-                            : formatBytes(size),
-                        style: TextStyle(fontSize: 12.5, color: s.muted),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              switch (state) {
-                _FileState.done => const Icon(
-                  PhBold.check,
-                  size: 18,
-                  color: Sig.cyan,
-                ),
-                _FileState.going => Text(
-                  '${((progress ?? 0) * 100).round()}%',
+    final going = state == _FileState.going;
+    final percent = '${((progress ?? 0) * 100).round()}%';
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      child: Row(
+        children: [
+          _Round(fileIcon(name), progress: progress, going: going),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: color,
-                    fontFeatures: const [FontFeature.tabularFigures()],
+                    fontSize: 14.5,
+                    fontWeight: going ? FontWeight.w600 : FontWeight.w500,
+                    color: going ? s.ink : s.muted,
                   ),
                 ),
-                _FileState.next => Icon(Ph.clock, size: 18, color: s.faint),
-              },
-            ],
+                if (going && size != null && progress != null)
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text:
+                              '${l.activityProgress(formatBytes((size * progress!).round()), formatBytes(size))} · ',
+                        ),
+                        TextSpan(
+                          text: percent,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Sig.blue,
+                          ),
+                        ),
+                      ],
+                    ),
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: s.muted,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  )
+                else if (size != null)
+                  Text(
+                    formatBytes(size),
+                    style: TextStyle(fontSize: 12.5, color: s.faint),
+                  ),
+              ],
+            ),
           ),
-        ),
+          if (state == _FileState.done) ...[
+            const SizedBox(width: 10),
+            Icon(PhBold.check, size: 16, color: s.faint),
+          ],
+        ],
       ),
     );
   }
@@ -800,15 +764,17 @@ class _Recent extends StatelessWidget {
     final s = Sig.of(context);
     final l = context.l10n;
     final name = c.device(a.deviceId)?.device.name ?? shortDeviceId(a.deviceId);
-    final ok = a.status == ActivityStatus.done;
     final today = DateUtils.isSameDay(a.time, DateTime.now());
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 10, 8, 10),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Row(
         children: [
-          _Badge(
-            a.incoming ? PhBold.arrowDownLeft : PhBold.arrowUpRight,
-            a.incoming ? Sig.incoming : Sig.outgoing,
+          _Round(
+            a.names.length == 1
+                ? fileIcon(a.names.first)
+                : a.incoming
+                ? PhBold.arrowDownLeft
+                : PhBold.arrowUpRight,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -835,24 +801,20 @@ class _Recent extends StatelessWidget {
                   ].join(' · '),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 12.5, color: s.muted),
+                  style: TextStyle(fontSize: 12.5, color: s.faint),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 10),
-          ok
-              ? const Icon(PhBold.check, size: 18, color: Sig.cyan)
-              : Text(
-                  a.status == ActivityStatus.declined
-                      ? l.activityDeclined
-                      : l.activityFailed,
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w600,
-                    color: s.red,
-                  ),
-                ),
+          if (a.status != ActivityStatus.done) ...[
+            const SizedBox(width: 10),
+            Text(
+              a.status == ActivityStatus.declined
+                  ? l.activityDeclined
+                  : l.activityFailed,
+              style: TextStyle(fontSize: 12.5, color: s.red),
+            ),
+          ],
         ],
       ),
     );

@@ -34,6 +34,11 @@ abstract final class Ph {
   static const fileText = IconData(0xe23a, fontFamily: 'PhosphorRegular');
   static const fileVideo = IconData(0xea22, fontFamily: 'PhosphorRegular');
   static const fileZip = IconData(0xe958, fontFamily: 'PhosphorRegular');
+  static const fileDoc = IconData(0xeb1e, fontFamily: 'PhosphorRegular');
+  static const fileXls = IconData(0xeb22, fontFamily: 'PhosphorRegular');
+  static const filePpt = IconData(0xeb20, fontFamily: 'PhosphorRegular');
+  static const fileCsv = IconData(0xeb1c, fontFamily: 'PhosphorRegular');
+  static const fileCode = IconData(0xe914, fontFamily: 'PhosphorRegular');
   static const files = IconData(0xe710, fontFamily: 'PhosphorRegular');
   static const flashlight = IconData(0xe246, fontFamily: 'PhosphorRegular');
   static const folderSimple = IconData(0xe25a, fontFamily: 'PhosphorRegular');

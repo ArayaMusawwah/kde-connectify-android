@@ -467,12 +467,50 @@ IconData fileIcon(String name) {
     'gif' ||
     'webp' ||
     'heic' ||
-    'svg' => Ph.fileImage,
-    'mp4' || 'mov' || 'mkv' || 'webm' || 'avi' => Ph.fileVideo,
-    'mp3' || 'wav' || 'flac' || 'ogg' || 'm4a' || 'opus' => Ph.fileAudio,
+    'heif' ||
+    'bmp' ||
+    'svg' ||
+    'raw' ||
+    'dng' => Ph.fileImage,
+    'mp4' ||
+    'mov' ||
+    'mkv' ||
+    'webm' ||
+    'avi' ||
+    'm4v' ||
+    '3gp' => Ph.fileVideo,
+    'mp3' ||
+    'wav' ||
+    'flac' ||
+    'ogg' ||
+    'm4a' ||
+    'opus' ||
+    'aac' => Ph.fileAudio,
     'pdf' => Ph.filePdf,
-    'zip' || 'tar' || 'gz' || '7z' || 'rar' => Ph.fileZip,
-    'txt' || 'md' || 'doc' || 'docx' || 'odt' => Ph.fileText,
+    'zip' || 'tar' || 'gz' || '7z' || 'rar' || 'xz' || 'bz2' => Ph.fileZip,
+    'doc' || 'docx' || 'odt' || 'rtf' || 'pages' => Ph.fileDoc,
+    'xls' || 'xlsx' || 'ods' || 'numbers' => Ph.fileXls,
+    'csv' || 'tsv' => Ph.fileCsv,
+    'ppt' || 'pptx' || 'odp' || 'key' => Ph.filePpt,
+    'txt' || 'md' || 'log' => Ph.fileText,
+    'json' ||
+    'xml' ||
+    'yaml' ||
+    'yml' ||
+    'html' ||
+    'css' ||
+    'js' ||
+    'ts' ||
+    'dart' ||
+    'rs' ||
+    'py' ||
+    'kt' ||
+    'java' ||
+    'c' ||
+    'cpp' ||
+    'h' ||
+    'go' ||
+    'sh' => Ph.fileCode,
     _ => Ph.file,
   };
 }
