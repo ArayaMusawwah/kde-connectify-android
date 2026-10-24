@@ -138,7 +138,11 @@ class _IslandState extends State<Island> with SingleTickerProviderStateMixin {
                   shrinkWidth: _shrinkWidth,
                   shrinkHeight: _shrinkHeight,
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 340),
+                    // Closing, as long as the island's own shrink, so the
+                    // pill comes back with it.
+                    duration: open
+                        ? const Duration(milliseconds: 340)
+                        : _shrink,
                     // Only what's coming sets the size, so the island starts
                     // moving at once; what's leaving keeps its own size,
                     // clipped, while it fades.
@@ -158,11 +162,16 @@ class _IslandState extends State<Island> with SingleTickerProviderStateMixin {
                       ],
                     ),
                     // The old leaves in the first half, the new comes in the
-                    // second: they never show together.
+                    // second: they never show together. The pill's content
+                    // never shows inside the card: opening, it's gone in a
+                    // frame or two; closing, it comes back in the bounce,
+                    // once the island is the pill's size again.
                     transitionBuilder: (child, animation) => FadeTransition(
                       opacity: CurvedAnimation(
                         parent: animation,
-                        curve: const Interval(0.5, 1, curve: Curves.easeOut),
+                        curve: child.key == const ValueKey('pill')
+                            ? Interval(open ? 0.98 : 0.85, 1)
+                            : const Interval(0.5, 1, curve: Curves.easeOut),
                       ),
                       child: ScaleTransition(
                         scale: Tween(begin: 0.96, end: 1.0).animate(animation),
