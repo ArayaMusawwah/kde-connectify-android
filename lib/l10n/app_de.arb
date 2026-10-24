@@ -596,7 +596,11 @@
   "islandSeeMore": "Mehr anzeigen",
   "transfersRouteDirect": "Wi-Fi Direct",
   "transfersRouteDirectSetup": "Wi-Fi Direct wird eingerichtet",
-  "transfersDirectFind": "Suchen",
-  "transfersDirectConnect": "Verbinden",
-  "transfersDirectLink": "Koppeln"
+  "transfersDirectFinding": "Suche {name}",
+  "transfersDirectConnecting": "Verbinden",
+  "transfersDirectLinking": "Verknüpfen",
+  "news028DirectTitle": "Wi-Fi Direct für große Dateien",
+  "news028DirectBody": "Dateien ab 256 MB gehen über eine eigene WLAN-Verbindung direkt an deinen Computer, viel schneller als über den Router. Braucht Linksy 0.9.9 auf dem Computer.",
+  "news028BackgroundTitle": "Große Dateien, im Hintergrund",
+  "news028BackgroundBody": "Lange Videos werden sofort gesendet, und Übertragungen laufen bei ausgeschaltetem Bildschirm weiter, mit Fortschritt in der Benachrichtigungsleiste."
 }

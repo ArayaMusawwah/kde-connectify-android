@@ -596,7 +596,11 @@
   "islandSeeMore": "Hijery bebe kokoa",
   "transfersRouteDirect": "Wi-Fi Direct",
   "transfersRouteDirectSetup": "Manomana Wi-Fi Direct",
-  "transfersDirectFind": "Mitady",
-  "transfersDirectConnect": "Mampifandray",
-  "transfersDirectLink": "Mampitohy"
+  "transfersDirectFinding": "Mitady {name}",
+  "transfersDirectConnecting": "Mampifandray",
+  "transfersDirectLinking": "Mampitohy",
+  "news028DirectTitle": "Wi-Fi Direct ho an'ny rakitra lehibe",
+  "news028DirectBody": "Ny rakitra 256 MB na mihoatra dia mandeha mivantana any amin'ny solosainao amin'ny rohy Wi-Fi manokana, haingana lavitra noho ny mandalo amin'ny router. Mila Linksy 0.9.9 ao amin'ny solosaina.",
+  "news028BackgroundTitle": "Rakitra lehibe, ao ambadika",
+  "news028BackgroundBody": "Mandeha avy hatrany ny horonan-tsary lava, ary mitohy ny fandefasana na maty aza ny efijery, miseho ao amin'ny fampandrenesana ny fandrosoany."
 }

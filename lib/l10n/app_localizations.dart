@@ -3690,23 +3690,47 @@ abstract class AppLocalizations {
   /// **'Setting up Wi-Fi Direct'**
   String get transfersRouteDirectSetup;
 
-  /// No description provided for @transfersDirectFind.
+  /// Setting up a Wi-Fi Direct link: looking for the other device, by its name. Short, it sits in a small pill.
   ///
   /// In en, this message translates to:
-  /// **'Find'**
-  String get transfersDirectFind;
+  /// **'Finding {name}'**
+  String transfersDirectFinding(String name);
 
-  /// No description provided for @transfersDirectConnect.
+  /// No description provided for @transfersDirectConnecting.
   ///
   /// In en, this message translates to:
-  /// **'Connect'**
-  String get transfersDirectConnect;
+  /// **'Connecting'**
+  String get transfersDirectConnecting;
 
-  /// Steps of setting up a Wi-Fi Direct link: finding the computer, connecting to it, the link coming up. One short word each.
+  /// No description provided for @transfersDirectLinking.
   ///
   /// In en, this message translates to:
-  /// **'Link'**
-  String get transfersDirectLink;
+  /// **'Linking up'**
+  String get transfersDirectLinking;
+
+  /// What's New 0.2.8: Wi-Fi Direct (title)
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi Direct for big files'**
+  String get news028DirectTitle;
+
+  /// What's New 0.2.8: Wi-Fi Direct (body)
+  ///
+  /// In en, this message translates to:
+  /// **'Files of 256 MB or more go straight to your computer over a Wi-Fi link of their own, much faster than through the router. Needs Linksy 0.9.9 on the computer.'**
+  String get news028DirectBody;
+
+  /// What's New 0.2.8: big files and background transfers (title)
+  ///
+  /// In en, this message translates to:
+  /// **'Big files, in the background'**
+  String get news028BackgroundTitle;
+
+  /// What's New 0.2.8: big files and background transfers (body)
+  ///
+  /// In en, this message translates to:
+  /// **'Long videos start sending right away, and transfers keep going with the screen off, their progress in the notification bar.'**
+  String get news028BackgroundBody;
 }
 
 class _AppLocalizationsDelegate

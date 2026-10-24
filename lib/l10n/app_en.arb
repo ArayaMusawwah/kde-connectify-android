@@ -2993,7 +2993,11 @@
   "deviceVolume": "Volume {percent} %",
   "@deviceVolume": {
     "description": "The computer's volume slider, for screen readers",
-    "placeholders": { "percent": { "type": "String" } }
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
   },
   "news026VolumeTitle": "The computer's volume",
   "@news026VolumeTitle": {
@@ -3004,29 +3008,81 @@
     "description": "What's New 0.2.6: the computer's volume (body)"
   },
   "transfersNone": "Nothing on its way",
-  "@transfersNone": { "description": "Transfers page with nothing going (title)" },
+  "@transfersNone": {
+    "description": "Transfers page with nothing going (title)"
+  },
   "transfersNoneBody": "Files you send or receive show up here, with their speed.",
-  "@transfersNoneBody": { "description": "Transfers page with nothing going (body)" },
+  "@transfersNoneBody": {
+    "description": "Transfers page with nothing going (body)"
+  },
   "transfersRecent": "Recent",
-  "@transfersRecent": { "description": "Transfers page: finished transfers (section label)" },
+  "@transfersRecent": {
+    "description": "Transfers page: finished transfers (section label)"
+  },
   "transfersFastMovie": "A 1 GB movie every {seconds} s",
-  "@transfersFastMovie": { "description": "Transfers: the speed as something felt", "placeholders": { "seconds": { "type": "int" } } },
+  "@transfersFastMovie": {
+    "description": "Transfers: the speed as something felt",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "transfersFastPhotos": "About {count} photos a second",
-  "@transfersFastPhotos": { "description": "Transfers: the speed as photos (about 3 MB each)", "placeholders": { "count": { "type": "int" } } },
+  "@transfersFastPhotos": {
+    "description": "Transfers: the speed as photos (about 3 MB each)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "transfersFastSongs": "{count} songs a second",
-  "@transfersFastSongs": { "description": "Transfers: the speed as songs (about 5 MB each)", "placeholders": { "count": { "type": "int" } } },
+  "@transfersFastSongs": {
+    "description": "Transfers: the speed as songs (about 5 MB each)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "news026TransfersTitle": "Transfers, always a tap away",
-  "@news026TransfersTitle": { "description": "What's New 0.2.6: the transfers page (title)" },
+  "@news026TransfersTitle": {
+    "description": "What's New 0.2.6: the transfers page (title)"
+  },
   "news026TransfersBody": "The button at the bottom left opens Transfers any time: files flowing at their real speed, each file's progress, and what came and went lately.",
-  "@news026TransfersBody": { "description": "What's New 0.2.6: the transfers page (body)" },
+  "@news026TransfersBody": {
+    "description": "What's New 0.2.6: the transfers page (body)"
+  },
   "islandSeeMore": "See more",
-  "@islandSeeMore": { "description": "Home's bottom island: open the whole list (Transfers)" },
+  "@islandSeeMore": {
+    "description": "Home's bottom island: open the whole list (Transfers)"
+  },
   "transfersRouteDirect": "Wi-Fi Direct",
-  "@transfersRouteDirect": {"description": "A transfer goes over a Wi-Fi Direct link between the two devices (brand name, usually kept)."},
+  "@transfersRouteDirect": {
+    "description": "A transfer goes over a Wi-Fi Direct link between the two devices (brand name, usually kept)."
+  },
   "transfersRouteDirectSetup": "Setting up Wi-Fi Direct",
-  "@transfersRouteDirectSetup": {"description": "A Wi-Fi Direct link is being set up before a big transfer starts."},
-  "transfersDirectFind": "Find",
-  "transfersDirectConnect": "Connect",
-  "transfersDirectLink": "Link",
-  "@transfersDirectLink": {"description": "Steps of setting up a Wi-Fi Direct link: finding the computer, connecting to it, the link coming up. One short word each."}
+  "@transfersRouteDirectSetup": {
+    "description": "A Wi-Fi Direct link is being set up before a big transfer starts."
+  },
+  "transfersDirectFinding": "Finding {name}",
+  "@transfersDirectFinding": {
+    "description": "Setting up a Wi-Fi Direct link: looking for the other device, by its name. Short, it sits in a small pill.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersDirectConnecting": "Connecting",
+  "transfersDirectLinking": "Linking up",
+  "news028DirectTitle": "Wi-Fi Direct for big files",
+  "@news028DirectTitle": {"description": "What's New 0.2.8: Wi-Fi Direct (title)"},
+  "news028DirectBody": "Files of 256 MB or more go straight to your computer over a Wi-Fi link of their own, much faster than through the router. Needs Linksy 0.9.9 on the computer.",
+  "@news028DirectBody": {"description": "What's New 0.2.8: Wi-Fi Direct (body)"},
+  "news028BackgroundTitle": "Big files, in the background",
+  "@news028BackgroundTitle": {"description": "What's New 0.2.8: big files and background transfers (title)"},
+  "news028BackgroundBody": "Long videos start sending right away, and transfers keep going with the screen off, their progress in the notification bar.",
+  "@news028BackgroundBody": {"description": "What's New 0.2.8: big files and background transfers (body)"}
 }

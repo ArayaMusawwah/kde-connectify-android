@@ -596,7 +596,11 @@
   "islandSeeMore": "查看更多",
   "transfersRouteDirect": "Wi-Fi Direct",
   "transfersRouteDirectSetup": "正在建立 Wi-Fi Direct",
-  "transfersDirectFind": "查找",
-  "transfersDirectConnect": "连接",
-  "transfersDirectLink": "建立链接"
+  "transfersDirectFinding": "正在查找 {name}",
+  "transfersDirectConnecting": "正在连接",
+  "transfersDirectLinking": "正在建立链接",
+  "news028DirectTitle": "大文件走 Wi-Fi Direct",
+  "news028DirectBody": "256 MB 及以上的文件通过专属 Wi-Fi 连接直接传到电脑，比经过路由器快得多。电脑需要 Linksy 0.9.9。",
+  "news028BackgroundTitle": "大文件，后台传输",
+  "news028BackgroundBody": "长视频立即开始发送，熄屏时传输也会继续，进度显示在通知栏中。"
 }

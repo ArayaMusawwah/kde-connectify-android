@@ -2275,11 +2275,27 @@ class AppLocalizationsRu extends AppLocalizations {
   String get transfersRouteDirectSetup => 'Подключение Wi-Fi Direct';
 
   @override
-  String get transfersDirectFind => 'Поиск';
+  String transfersDirectFinding(String name) {
+    return 'Поиск $name';
+  }
 
   @override
-  String get transfersDirectConnect => 'Подключение';
+  String get transfersDirectConnecting => 'Подключение';
 
   @override
-  String get transfersDirectLink => 'Связь';
+  String get transfersDirectLinking => 'Связывание';
+
+  @override
+  String get news028DirectTitle => 'Wi-Fi Direct для больших файлов';
+
+  @override
+  String get news028DirectBody =>
+      'Файлы от 256 МБ идут прямо на компьютер по отдельному Wi-Fi-соединению, гораздо быстрее, чем через роутер. Нужен Linksy 0.9.9 на компьютере.';
+
+  @override
+  String get news028BackgroundTitle => 'Большие файлы — в фоне';
+
+  @override
+  String get news028BackgroundBody =>
+      'Длинные видео начинают отправляться сразу, а передача продолжается при выключенном экране, с прогрессом в панели уведомлений.';
 }

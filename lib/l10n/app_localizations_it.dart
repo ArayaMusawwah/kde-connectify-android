@@ -2254,11 +2254,27 @@ class AppLocalizationsIt extends AppLocalizations {
   String get transfersRouteDirectSetup => 'Preparazione Wi-Fi Direct';
 
   @override
-  String get transfersDirectFind => 'Trova';
+  String transfersDirectFinding(String name) {
+    return 'Ricerca di $name';
+  }
 
   @override
-  String get transfersDirectConnect => 'Connetti';
+  String get transfersDirectConnecting => 'Connessione';
 
   @override
-  String get transfersDirectLink => 'Collega';
+  String get transfersDirectLinking => 'Collegamento';
+
+  @override
+  String get news028DirectTitle => 'Wi-Fi Direct per i file grandi';
+
+  @override
+  String get news028DirectBody =>
+      'I file da 256 MB in su vanno dritti al computer su un collegamento Wi-Fi tutto loro, molto più veloce che passando dal router. Serve Linksy 0.9.9 sul computer.';
+
+  @override
+  String get news028BackgroundTitle => 'File grandi, in background';
+
+  @override
+  String get news028BackgroundBody =>
+      'I video lunghi partono subito e i trasferimenti continuano a schermo spento, con l\'avanzamento nella barra delle notifiche.';
 }

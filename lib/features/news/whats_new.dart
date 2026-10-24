@@ -29,6 +29,21 @@ const _most = 5;
 /// Newest first.
 final List<(String, List<Highlight>)> _releases = [
   (
+    '0.2.8',
+    [
+      Highlight(
+        PhFill.lightning,
+        (l) => l.news028DirectTitle,
+        (l) => l.news028DirectBody,
+      ),
+      Highlight(
+        Ph.arrowsDownUp,
+        (l) => l.news028BackgroundTitle,
+        (l) => l.news028BackgroundBody,
+      ),
+    ],
+  ),
+  (
     '0.2.6',
     [
       Highlight(

@@ -2195,11 +2195,27 @@ class AppLocalizationsJa extends AppLocalizations {
   String get transfersRouteDirectSetup => 'Wi-Fi Direct を準備中';
 
   @override
-  String get transfersDirectFind => '検索';
+  String transfersDirectFinding(String name) {
+    return '$name を検索中';
+  }
 
   @override
-  String get transfersDirectConnect => '接続';
+  String get transfersDirectConnecting => '接続中';
 
   @override
-  String get transfersDirectLink => 'リンク';
+  String get transfersDirectLinking => 'リンク中';
+
+  @override
+  String get news028DirectTitle => '大きなファイルに Wi-Fi Direct';
+
+  @override
+  String get news028DirectBody =>
+      '256 MB 以上のファイルは専用の Wi-Fi 接続でパソコンに直接届き、ルーター経由よりずっと速くなります。パソコンに Linksy 0.9.9 が必要です。';
+
+  @override
+  String get news028BackgroundTitle => '大きなファイルもバックグラウンドで';
+
+  @override
+  String get news028BackgroundBody =>
+      '長い動画もすぐに送信が始まり、画面がオフでも転送は続きます。進行状況は通知バーに表示されます。';
 }

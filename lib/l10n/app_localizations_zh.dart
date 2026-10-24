@@ -2168,11 +2168,26 @@ class AppLocalizationsZh extends AppLocalizations {
   String get transfersRouteDirectSetup => '正在建立 Wi-Fi Direct';
 
   @override
-  String get transfersDirectFind => '查找';
+  String transfersDirectFinding(String name) {
+    return '正在查找 $name';
+  }
 
   @override
-  String get transfersDirectConnect => '连接';
+  String get transfersDirectConnecting => '正在连接';
 
   @override
-  String get transfersDirectLink => '建立链接';
+  String get transfersDirectLinking => '正在建立链接';
+
+  @override
+  String get news028DirectTitle => '大文件走 Wi-Fi Direct';
+
+  @override
+  String get news028DirectBody =>
+      '256 MB 及以上的文件通过专属 Wi-Fi 连接直接传到电脑，比经过路由器快得多。电脑需要 Linksy 0.9.9。';
+
+  @override
+  String get news028BackgroundTitle => '大文件，后台传输';
+
+  @override
+  String get news028BackgroundBody => '长视频立即开始发送，熄屏时传输也会继续，进度显示在通知栏中。';
 }

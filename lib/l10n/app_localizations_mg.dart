@@ -2252,11 +2252,27 @@ class AppLocalizationsMg extends AppLocalizations {
   String get transfersRouteDirectSetup => 'Manomana Wi-Fi Direct';
 
   @override
-  String get transfersDirectFind => 'Mitady';
+  String transfersDirectFinding(String name) {
+    return 'Mitady $name';
+  }
 
   @override
-  String get transfersDirectConnect => 'Mampifandray';
+  String get transfersDirectConnecting => 'Mampifandray';
 
   @override
-  String get transfersDirectLink => 'Mampitohy';
+  String get transfersDirectLinking => 'Mampitohy';
+
+  @override
+  String get news028DirectTitle => 'Wi-Fi Direct ho an\'ny rakitra lehibe';
+
+  @override
+  String get news028DirectBody =>
+      'Ny rakitra 256 MB na mihoatra dia mandeha mivantana any amin\'ny solosainao amin\'ny rohy Wi-Fi manokana, haingana lavitra noho ny mandalo amin\'ny router. Mila Linksy 0.9.9 ao amin\'ny solosaina.';
+
+  @override
+  String get news028BackgroundTitle => 'Rakitra lehibe, ao ambadika';
+
+  @override
+  String get news028BackgroundBody =>
+      'Mandeha avy hatrany ny horonan-tsary lava, ary mitohy ny fandefasana na maty aza ny efijery, miseho ao amin\'ny fampandrenesana ny fandrosoany.';
 }
