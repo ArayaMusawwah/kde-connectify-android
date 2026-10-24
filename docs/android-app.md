@@ -134,6 +134,8 @@ default SMS app.
   (`volume_watch` alongside `media_watch`, `volume_set` with `level` and/or `muted`,
   newest `seq` kept), the number pad steps aside while the keyboard is up on the presenter
   remote, and a redesigned Transfers page that is always a tap away.
+- **2026-10-24** — Phone 0.2.7, same core: home's bottom pill (Transfers, Send files, Add a
+  device); no protocol change.
 
 - **2026-10-24** — Phone 0.2.4 on core `6282520`: private discovery (§4.16), with
   pairing mode while Add Device, the scanner or Pair by address is open; Update Now

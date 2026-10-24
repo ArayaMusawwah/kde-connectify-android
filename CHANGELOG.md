@@ -2,6 +2,12 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.2.7] - 2026-10-24
+
+### Changed
+- **One pill at the bottom of home**: Transfers on the left, Send files in the middle, Add a device on the right. Before your first device, Add a device takes the middle. Send files asks which device when you have several. While files move, the Transfers part widens to show its ring and percentage; the rest of the time nothing floats over your devices. On a device's page, the transfers circle only shows while files move.
+- Lighter shadow under the bottom buttons.
+
 ## [0.2.6] - 2026-10-24
 
 ### Added
