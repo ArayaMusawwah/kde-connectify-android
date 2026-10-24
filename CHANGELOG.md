@@ -2,6 +2,18 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.2.5] - 2026-10-24
+
+### Added
+- **Your computer's music in notifications**: what a computer plays shows as a media notification, with play/pause, previous/next, 10 seconds back and forward, and a seek bar, as KDE Connect does. Settings › Music in notifications turns it off.
+- **Seek bar and 10 s skips** on a computer's player on its page, when the player can seek.
+- **Numbers on the presenter remote**: Numbers shows 0-9, Backspace and Enter under the slide buttons; type a slide's number, then Enter, to jump to it. Remembered. The Keyboard button works there too.
+- **Reverse scrolling**: Settings › Reverse scrolling turns two-finger scrolling on the touchpad the other way.
+
+### Fixed
+- Typing a capital on the remote keyboard no longer leaves Shift held on KDE (stuck caps, shifted clicks).
+- Find my phone rings on phones that don't let other apps read their alarm sound (Xiaomi): it falls back to the ringtone, then to Linksy's own sound.
+
 ## [0.2.4] - 2026-10-24
 
 ### Added
