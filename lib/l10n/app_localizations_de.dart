@@ -2246,4 +2246,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get transfersRouteDirectSetup => 'Wi-Fi Direct wird eingerichtet';
+
+  @override
+  String get transfersDirectFind => 'Suchen';
+
+  @override
+  String get transfersDirectConnect => 'Verbinden';
+
+  @override
+  String get transfersDirectLink => 'Koppeln';
 }

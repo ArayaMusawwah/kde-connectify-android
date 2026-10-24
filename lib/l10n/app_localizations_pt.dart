@@ -2245,4 +2245,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get transfersRouteDirectSetup => 'Preparando o Wi-Fi Direct';
+
+  @override
+  String get transfersDirectFind => 'Encontrar';
+
+  @override
+  String get transfersDirectConnect => 'Conectar';
+
+  @override
+  String get transfersDirectLink => 'Ligar';
 }

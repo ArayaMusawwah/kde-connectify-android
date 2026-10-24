@@ -2254,4 +2254,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get transfersRouteDirectSetup => 'Wi-Fi Direct en préparation';
+
+  @override
+  String get transfersDirectFind => 'Trouver';
+
+  @override
+  String get transfersDirectConnect => 'Connecter';
+
+  @override
+  String get transfersDirectLink => 'Relier';
 }

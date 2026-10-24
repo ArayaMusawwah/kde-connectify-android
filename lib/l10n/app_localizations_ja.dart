@@ -2193,4 +2193,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get transfersRouteDirectSetup => 'Wi-Fi Direct を準備中';
+
+  @override
+  String get transfersDirectFind => '検索';
+
+  @override
+  String get transfersDirectConnect => '接続';
+
+  @override
+  String get transfersDirectLink => 'リンク';
 }

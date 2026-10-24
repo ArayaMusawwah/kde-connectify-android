@@ -2166,4 +2166,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get transfersRouteDirectSetup => '正在建立 Wi-Fi Direct';
+
+  @override
+  String get transfersDirectFind => '查找';
+
+  @override
+  String get transfersDirectConnect => '连接';
+
+  @override
+  String get transfersDirectLink => '建立链接';
 }

@@ -3689,6 +3689,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Setting up Wi-Fi Direct'**
   String get transfersRouteDirectSetup;
+
+  /// No description provided for @transfersDirectFind.
+  ///
+  /// In en, this message translates to:
+  /// **'Find'**
+  String get transfersDirectFind;
+
+  /// No description provided for @transfersDirectConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get transfersDirectConnect;
+
+  /// Steps of setting up a Wi-Fi Direct link: finding the computer, connecting to it, the link coming up. One short word each.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get transfersDirectLink;
 }
 
 class _AppLocalizationsDelegate

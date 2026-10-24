@@ -3024,5 +3024,9 @@
   "transfersRouteDirect": "Wi-Fi Direct",
   "@transfersRouteDirect": {"description": "A transfer goes over a Wi-Fi Direct link between the two devices (brand name, usually kept)."},
   "transfersRouteDirectSetup": "Setting up Wi-Fi Direct",
-  "@transfersRouteDirectSetup": {"description": "A Wi-Fi Direct link is being set up before a big transfer starts."}
+  "@transfersRouteDirectSetup": {"description": "A Wi-Fi Direct link is being set up before a big transfer starts."},
+  "transfersDirectFind": "Find",
+  "transfersDirectConnect": "Connect",
+  "transfersDirectLink": "Link",
+  "@transfersDirectLink": {"description": "Steps of setting up a Wi-Fi Direct link: finding the computer, connecting to it, the link coming up. One short word each."}
 }

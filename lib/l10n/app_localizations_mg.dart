@@ -2250,4 +2250,13 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get transfersRouteDirectSetup => 'Manomana Wi-Fi Direct';
+
+  @override
+  String get transfersDirectFind => 'Mitady';
+
+  @override
+  String get transfersDirectConnect => 'Mampifandray';
+
+  @override
+  String get transfersDirectLink => 'Mampitohy';
 }

@@ -595,5 +595,8 @@
   "news026TransfersBody": "Il pulsante in basso a sinistra apre i trasferimenti in ogni momento: i file che scorrono alla loro vera velocità, l'avanzamento di ognuno e cosa è arrivato o partito di recente.",
   "islandSeeMore": "Vedi altro",
   "transfersRouteDirect": "Wi-Fi Direct",
-  "transfersRouteDirectSetup": "Preparazione Wi-Fi Direct"
+  "transfersRouteDirectSetup": "Preparazione Wi-Fi Direct",
+  "transfersDirectFind": "Trova",
+  "transfersDirectConnect": "Connetti",
+  "transfersDirectLink": "Collega"
 }

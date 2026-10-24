@@ -2252,4 +2252,13 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get transfersRouteDirectSetup => 'Preparazione Wi-Fi Direct';
+
+  @override
+  String get transfersDirectFind => 'Trova';
+
+  @override
+  String get transfersDirectConnect => 'Connetti';
+
+  @override
+  String get transfersDirectLink => 'Collega';
 }

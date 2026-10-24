@@ -2273,4 +2273,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get transfersRouteDirectSetup => 'Подключение Wi-Fi Direct';
+
+  @override
+  String get transfersDirectFind => 'Поиск';
+
+  @override
+  String get transfersDirectConnect => 'Подключение';
+
+  @override
+  String get transfersDirectLink => 'Связь';
 }

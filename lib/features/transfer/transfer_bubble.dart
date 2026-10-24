@@ -464,14 +464,22 @@ class _Speed extends StatelessWidget {
     final first = batch.transfers.first;
     final other = c.device(first.deviceId)?.device.kind ?? DeviceKind.desktop;
     final going = !batch.waiting && batch.speed > 0;
+    final stage = c.direct[first.deviceId];
+    final linked = stage == DirectStage.up;
+    final settingUp = stage != null && !linked;
     final computer = _End(kindIcon(other), Sig.incoming);
     const phone = _End(Ph.deviceMobile, Sig.outgoing);
     final speed = formatSpeed(batch.speed).split(' ');
+    final percent = batch.progress == null
+        ? null
+        : '${(batch.progress! * 100).round()}%';
     final body = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
+          crossAxisAlignment: going && !linked
+              ? CrossAxisAlignment.baseline
+              : CrossAxisAlignment.center,
           textBaseline: TextBaseline.alphabetic,
           children: [
             Expanded(
@@ -484,6 +492,16 @@ class _Speed extends StatelessWidget {
                             text: ' ${speed.skip(1).join(' ')}',
                             style: TextStyle(fontSize: 15, color: s.muted),
                           ),
+                          // Over a direct link the badge takes the right
+                          if (linked && percent != null)
+                            TextSpan(
+                              text: '  $percent',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: Sig.blue,
+                              ),
+                            ),
                         ],
                       ),
                       style: sora(28, weight: FontWeight.w700, color: s.ink)
@@ -491,11 +509,18 @@ class _Speed extends StatelessWidget {
                             fontFeatures: const [FontFeature.tabularFigures()],
                           ),
                     )
-                  : Text(l.transfersWaiting, style: sora(22, color: s.ink)),
+                  : Text(
+                      settingUp
+                          ? l.transfersRouteDirectSetup
+                          : l.transfersWaiting,
+                      style: sora(22, color: s.ink),
+                    ),
             ),
-            if (batch.progress != null)
+            if (linked)
+              const _DirectBadge()
+            else if (percent != null)
               Text(
-                '${(batch.progress! * 100).round()}%',
+                percent,
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -514,11 +539,19 @@ class _Speed extends StatelessWidget {
             if (first.incoming) phone else computer,
           ],
         ),
-        // The way it goes, under the lane
-        const SizedBox(height: 10),
-        Center(
-          child: _Route(c: c, deviceId: first.deviceId),
-        ),
+        // Under the lane: the steps while a direct link comes up, else the
+        // way files go
+        if (!linked) ...[
+          const SizedBox(height: 10),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 240),
+            child: settingUp
+                ? _DirectSteps(key: const ValueKey('steps'), stage: stage)
+                : Center(
+                    child: _Route(c: c, deviceId: first.deviceId),
+                  ),
+          ),
+        ],
       ],
     );
     return flat
@@ -531,6 +564,136 @@ class _Speed extends StatelessWidget {
             child: body,
           );
   }
+}
+
+/// A direct link coming up, step by step: finding the computer, connecting
+/// to it, the link itself. The current one pulses.
+class _DirectSteps extends StatefulWidget {
+  const _DirectSteps({super.key, required this.stage});
+
+  final DirectStage stage;
+
+  @override
+  State<_DirectSteps> createState() => _DirectStepsState();
+}
+
+class _DirectStepsState extends State<_DirectSteps>
+    with SingleTickerProviderStateMixin {
+  late final _pulse = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1100),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final l = context.l10n;
+    final labels = [
+      l.transfersDirectFind,
+      l.transfersDirectConnect,
+      l.transfersDirectLink,
+    ];
+    final at = widget.stage.index;
+    Widget step(int i) {
+      final done = i < at;
+      final now = i == at;
+      final dot = Container(
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: done || now ? Sig.blue : s.line,
+        ),
+      );
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (now)
+            FadeTransition(
+              opacity: Tween(begin: 0.35, end: 1.0).animate(_pulse),
+              child: dot,
+            )
+          else
+            dot,
+          const SizedBox(width: 6),
+          AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 240),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: now ? FontWeight.w600 : FontWeight.w500,
+              color: now
+                  ? s.ink
+                  : done
+                  ? Sig.blue
+                  : s.faint,
+            ),
+            child: Text(labels[i]),
+          ),
+        ],
+      );
+    }
+
+    Widget joint(int i) => Expanded(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 240),
+        height: 1.5,
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        color: i < at ? Sig.blue : s.line,
+      ),
+    );
+
+    return Row(children: [step(0), joint(0), step(1), joint(1), step(2)]);
+  }
+}
+
+/// Over a direct link: a double bolt and its name, in blue.
+class _DirectBadge extends StatelessWidget {
+  const _DirectBadge();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.fromLTRB(8, 5, 11, 5),
+    decoration: BoxDecoration(
+      color: Sig.blue.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(99),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(
+          width: 18,
+          height: 14,
+          child: Stack(
+            children: [
+              Positioned(
+                left: 0,
+                child: Icon(PhFill.lightning, size: 14, color: Sig.blue),
+              ),
+              Positioned(
+                left: 6,
+                child: Icon(PhFill.lightning, size: 14, color: Sig.blue),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          context.l10n.transfersRouteDirect,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Sig.blue,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 /// One end of the lane: a device in a tinted tile.
@@ -798,8 +961,8 @@ class _Transfer extends StatelessWidget {
 }
 
 /// The small caps above a list.
-/// Which way a transfer goes: Wi-Fi Direct (or being set up), the cable,
-/// the internet, or the Wi-Fi network.
+/// Which way a transfer goes when it isn't a direct link: the cable, the
+/// internet, or the Wi-Fi network.
 class _Route extends StatelessWidget {
   const _Route({required this.c, required this.deviceId});
 
@@ -809,42 +972,30 @@ class _Route extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
-    final l = context.l10n;
     final v = c.device(deviceId);
-    final (icon, words, direct) = switch (c.direct[deviceId]) {
-      true => (PhFill.lightning, l.transfersRouteDirect, true),
-      false => (Ph.lightning, l.transfersRouteDirectSetup, false),
-      null when v == null => (null, '', false),
-      null => (
-        v!.usb
-            ? Ph.usb
-            : v.away
-            ? Ph.globe
-            : Ph.wifiHigh,
-        linkWords(v),
-        false,
-      ),
-    };
-    if (icon == null) return const SizedBox.shrink();
-    final color = direct ? Sig.blue : s.muted;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 240),
+    if (v == null) return const SizedBox.shrink();
+    final icon = v.usb
+        ? Ph.usb
+        : v.away
+        ? Ph.globe
+        : Ph.wifiHigh;
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: direct ? Sig.blue.withValues(alpha: 0.08) : s.line,
+        color: s.line,
         borderRadius: BorderRadius.circular(99),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: color),
+          Icon(icon, size: 13, color: s.muted),
           const SizedBox(width: 4),
           Text(
-            words,
+            linkWords(v),
             style: TextStyle(
               fontSize: 11.5,
               fontWeight: FontWeight.w600,
-              color: color,
+              color: s.muted,
             ),
           ),
         ],

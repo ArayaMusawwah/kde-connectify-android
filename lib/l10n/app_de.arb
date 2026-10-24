@@ -595,5 +595,8 @@
   "news026TransfersBody": "Der Knopf unten links öffnet jederzeit die Übertragungen: Dateien in ihrer echten Geschwindigkeit, der Fortschritt jeder Datei und was zuletzt kam und ging.",
   "islandSeeMore": "Mehr anzeigen",
   "transfersRouteDirect": "Wi-Fi Direct",
-  "transfersRouteDirectSetup": "Wi-Fi Direct wird eingerichtet"
+  "transfersRouteDirectSetup": "Wi-Fi Direct wird eingerichtet",
+  "transfersDirectFind": "Suchen",
+  "transfersDirectConnect": "Verbinden",
+  "transfersDirectLink": "Koppeln"
 }

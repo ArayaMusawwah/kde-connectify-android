@@ -595,5 +595,8 @@
   "news026TransfersBody": "左下角的按钮随时打开传输页面：文件以真实速度流动，每个文件的进度，以及最近收发的内容。",
   "islandSeeMore": "查看更多",
   "transfersRouteDirect": "Wi-Fi Direct",
-  "transfersRouteDirectSetup": "正在建立 Wi-Fi Direct"
+  "transfersRouteDirectSetup": "正在建立 Wi-Fi Direct",
+  "transfersDirectFind": "查找",
+  "transfersDirectConnect": "连接",
+  "transfersDirectLink": "建立链接"
 }

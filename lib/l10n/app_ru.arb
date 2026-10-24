@@ -595,5 +595,8 @@
   "news026TransfersBody": "Кнопка слева внизу в любой момент открывает передачи: файлы бегут с реальной скоростью, видно продвижение каждого и что недавно пришло и ушло.",
   "islandSeeMore": "Показать ещё",
   "transfersRouteDirect": "Wi-Fi Direct",
-  "transfersRouteDirectSetup": "Подключение Wi-Fi Direct"
+  "transfersRouteDirectSetup": "Подключение Wi-Fi Direct",
+  "transfersDirectFind": "Поиск",
+  "transfersDirectConnect": "Подключение",
+  "transfersDirectLink": "Связь"
 }
