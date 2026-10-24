@@ -54,6 +54,12 @@ MediaState mediaStateFromJson(Json j) => MediaState(
   ],
 );
 
+VolumeState volumeStateFromJson(Json j) => VolumeState(
+  seq: _int(j['seq']),
+  level: ((j['level'] as num?)?.toDouble() ?? 0).clamp(0, 1),
+  muted: j['muted'] as bool? ?? false,
+);
+
 Battery batteryFromJson(Json j) => Battery(
   level: _int(j['level']).clamp(0, 100),
   charging: j['charging'] as bool? ?? false,
@@ -171,6 +177,10 @@ LinksyEvent? eventFromJson(Json j) {
     'media_state' => MediaStateReceived(
       from: device('from'),
       state: mediaStateFromJson(j['state'] as Json),
+    ),
+    'volume_state' => VolumeStateReceived(
+      from: device('from'),
+      state: volumeStateFromJson(j['state'] as Json),
     ),
     'heartbeat_watch' => HeartbeatWatchChanged(
       from: device('from'),

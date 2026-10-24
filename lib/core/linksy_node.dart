@@ -72,6 +72,12 @@ abstract interface class LinksyNode {
     Map<String, Object> command,
   );
 
+  /// Ask [id] for its volume while [on] (`VolumeStateReceived` events).
+  Future<void> watchVolume(String id, {required bool on});
+
+  /// [id]'s volume: [level] from 0 to 1, [muted], or both.
+  Future<void> setVolume(String id, {double? level, bool? muted});
+
   /// `ringing`, `active` or `idle`.
   Future<void> sendCallState(String id, String state);
 

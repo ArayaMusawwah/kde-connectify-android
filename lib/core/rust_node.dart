@@ -243,6 +243,18 @@ class RustNode implements LinksyNode {
   );
 
   @override
+  Future<void> watchVolume(String id, {required bool on}) => _guard(
+    () => _node.watchVolume(id: id, on_: on),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> setVolume(String id, {double? level, bool? muted}) => _guard(
+    () => _node.setVolume(id: id, level: level, muted: muted),
+    name: _nameOf(id),
+  );
+
+  @override
   Future<void> mediaCommand(
     String id,
     String player,

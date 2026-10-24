@@ -456,6 +456,25 @@ class MediaStateReceived extends LinksyEvent {
   final MediaState state;
 }
 
+/// A computer's system volume: [level] from 0 to 1, and [muted].
+class VolumeState {
+  const VolumeState({
+    required this.seq,
+    required this.level,
+    required this.muted,
+  });
+  final int seq;
+  final double level;
+  final bool muted;
+}
+
+/// A computer's volume changed (while this phone watches it).
+class VolumeStateReceived extends LinksyEvent {
+  const VolumeStateReceived({required this.from, required this.state});
+  final DeviceInfo from;
+  final VolumeState state;
+}
+
 /// A computer wants (or no longer wants) a heartbeat every [everyS] seconds,
 /// to lock itself when this phone leaves.
 class HeartbeatWatchChanged extends LinksyEvent {

@@ -347,6 +347,12 @@ class DemoNode implements LinksyNode {
   Future<void> watchMedia(String id, {required bool on}) async {}
 
   @override
+  Future<void> watchVolume(String id, {required bool on}) async {}
+
+  @override
+  Future<void> setVolume(String id, {double? level, bool? muted}) async {}
+
+  @override
   Future<void> mediaCommand(
     String id,
     String player,

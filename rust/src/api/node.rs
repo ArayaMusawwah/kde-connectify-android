@@ -307,6 +307,20 @@ impl LinksyNode {
         run(async move { node.media_command(&id, &player, command).await }).await
     }
 
+    /// Ask the computer for its volume (`volume_state` events) while `on`.
+    pub async fn watch_volume(&self, id: String, on: bool) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.watch_volume(&id, on).await }).await
+    }
+
+    /// The computer's volume: `level` from 0 to 1, `muted`, or both.
+    pub async fn set_volume(&self, id: String, level: Option<f64>, muted: Option<bool>) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.set_volume(&id, level, muted).await }).await
+    }
+
     /// `ringing`, `active` or `idle`.
     pub async fn send_call_state(&self, id: String, state: String) -> Result<(), String> {
         let id = fingerprint(&id)?;

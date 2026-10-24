@@ -40,7 +40,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1595088441;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -25121468;
 
 // Section: executor
 
@@ -1936,6 +1936,70 @@ fn wire__crate__api__node__LinksyNode_set_away_all_impl(
         },
     )
 }
+fn wire__crate__api__node__LinksyNode_set_volume_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "LinksyNode_set_volume",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<LinksyNode>,
+            >>::sse_decode(&mut deserializer);
+            let api_id = <String>::sse_decode(&mut deserializer);
+            let api_level = <Option<f64>>::sse_decode(&mut deserializer);
+            let api_muted = <Option<bool>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::node::LinksyNode::set_volume(
+                            &*api_that_guard,
+                            api_id,
+                            api_level,
+                            api_muted,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
 fn wire__crate__api__node__LinksyNode_settings_json_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -2511,6 +2575,68 @@ fn wire__crate__api__node__LinksyNode_watch_media_impl(
         },
     )
 }
+fn wire__crate__api__node__LinksyNode_watch_volume_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "LinksyNode_watch_volume",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<LinksyNode>,
+            >>::sse_decode(&mut deserializer);
+            let api_id = <String>::sse_decode(&mut deserializer);
+            let api_on = <bool>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::node::LinksyNode::watch_volume(
+                            &*api_that_guard,
+                            api_id,
+                            api_on,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
 fn wire__crate__api__node__init_app_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -2704,6 +2830,17 @@ impl SseDecode for Option<String> {
     }
 }
 
+impl SseDecode for Option<bool> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<bool>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<f64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2842,35 +2979,39 @@ fn pde_ffi_dispatcher_primary_impl(
         32 => {
             wire__crate__api__node__LinksyNode_session_write_impl(port, ptr, rust_vec_len, data_len)
         }
-        36 => wire__crate__api__node__LinksyNode_shutdown_impl(port, ptr, rust_vec_len, data_len),
-        37 => {
+        34 => wire__crate__api__node__LinksyNode_set_volume_impl(port, ptr, rust_vec_len, data_len),
+        37 => wire__crate__api__node__LinksyNode_shutdown_impl(port, ptr, rust_vec_len, data_len),
+        38 => {
             wire__crate__api__node__LinksyNode_start_input_impl(port, ptr, rust_vec_len, data_len)
         }
-        38 => wire__crate__api__node__LinksyNode_start_view_impl(port, ptr, rust_vec_len, data_len),
-        39 => wire__crate__api__node__LinksyNode_terminal_output_impl(
+        39 => wire__crate__api__node__LinksyNode_start_view_impl(port, ptr, rust_vec_len, data_len),
+        40 => wire__crate__api__node__LinksyNode_terminal_output_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        40 => wire__crate__api__node__LinksyNode_terminals_impl(port, ptr, rust_vec_len, data_len),
-        41 => wire__crate__api__node__LinksyNode_update_settings_impl(
+        41 => wire__crate__api__node__LinksyNode_terminals_impl(port, ptr, rust_vec_len, data_len),
+        42 => wire__crate__api__node__LinksyNode_update_settings_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        42 => wire__crate__api__node__LinksyNode_watch_clipboard_impl(
+        43 => wire__crate__api__node__LinksyNode_watch_clipboard_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        43 => {
+        44 => {
             wire__crate__api__node__LinksyNode_watch_media_impl(port, ptr, rust_vec_len, data_len)
         }
-        44 => wire__crate__api__node__init_app_impl(port, ptr, rust_vec_len, data_len),
-        45 => wire__crate__api__node__start_node_impl(port, ptr, rust_vec_len, data_len),
+        45 => {
+            wire__crate__api__node__LinksyNode_watch_volume_impl(port, ptr, rust_vec_len, data_len)
+        }
+        46 => wire__crate__api__node__init_app_impl(port, ptr, rust_vec_len, data_len),
+        47 => wire__crate__api__node__start_node_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -2897,8 +3038,8 @@ fn pde_ffi_dispatcher_sync_impl(
         22 => wire__crate__api__node__LinksyNode_respond_impl(ptr, rust_vec_len, data_len),
         23 => wire__crate__api__node__LinksyNode_respond_display_impl(ptr, rust_vec_len, data_len),
         33 => wire__crate__api__node__LinksyNode_set_away_all_impl(ptr, rust_vec_len, data_len),
-        34 => wire__crate__api__node__LinksyNode_settings_json_impl(ptr, rust_vec_len, data_len),
-        35 => wire__crate__api__node__LinksyNode_share_files_impl(ptr, rust_vec_len, data_len),
+        35 => wire__crate__api__node__LinksyNode_settings_json_impl(ptr, rust_vec_len, data_len),
+        36 => wire__crate__api__node__LinksyNode_share_files_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -3006,6 +3147,16 @@ impl SseEncode for Option<String> {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <String>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<bool> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <bool>::sse_encode(value, serializer);
         }
     }
 }

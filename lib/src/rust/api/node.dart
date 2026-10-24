@@ -163,6 +163,9 @@ abstract class LinksyNode implements RustOpaqueInterface {
   /// Everything allowed from away for this device (screens, camera, files…).
   void setAwayAll({required String id, required bool on_});
 
+  /// The computer's volume: `level` from 0 to 1, `muted`, or both.
+  Future<void> setVolume({required String id, double? level, bool? muted});
+
   String settingsJson();
 
   /// Lets paired computers browse the folder Android shares (or not).
@@ -195,4 +198,7 @@ abstract class LinksyNode implements RustOpaqueInterface {
 
   /// Ask the computer for its players (`media_state` events) while `on`.
   Future<void> watchMedia({required String id, required bool on_});
+
+  /// Ask the computer for its volume (`volume_state` events) while `on`.
+  Future<void> watchVolume({required String id, required bool on_});
 }
