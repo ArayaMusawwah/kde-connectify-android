@@ -102,6 +102,8 @@ class _RemoteScreenState extends State<RemoteScreen> {
     final s = Sig.of(context);
     final c = LinksyScope.of(context);
     final live = c.remotes.containsKey(_id);
+    // Read above the Scaffold, which takes the keyboard out of its body's.
+    final typing = MediaQuery.viewInsetsOf(context).bottom > 0;
     final name = widget.device.name;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayFor(Theme.of(context).brightness),
@@ -154,7 +156,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
                   Expanded(
                     child: _mode == _Mode.touchpad
                         ? _Touchpad(send: _send, onKey: _key)
-                        : _Slides(send: _send, onKey: _key),
+                        : _Slides(send: _send, onKey: _key, typing: typing),
                   ),
                 ],
               ],
@@ -557,16 +559,25 @@ class _PadButton extends StatelessWidget {
 /// with the phone in a pocket. The screen stays on meanwhile. A number pad
 /// jumps to a slide (its number, then Enter), and the keyboard types.
 class _Slides extends StatelessWidget {
-  const _Slides({required this.send, required this.onKey});
+  const _Slides({
+    required this.send,
+    required this.onKey,
+    required this.typing,
+  });
 
   final void Function(List<Map<String, Object>>) send;
   final void Function(int keysym) onKey;
+
+  /// Whether the phone's keyboard is up.
+  final bool typing;
 
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     final c = LinksyScope.of(context);
-    final numpad = c.slidesNumpad;
+    // The keyboard and the number pad don't both fit: the pad steps aside
+    // while the keyboard is up, and comes back when it goes.
+    final numpad = c.slidesNumpad && !typing;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -660,7 +671,14 @@ class _Slides extends StatelessWidget {
                 icon: Ph.numpad,
                 kind: numpad ? SigButtonKind.primary : SigButtonKind.secondary,
                 expand: true,
-                onTap: () => c.setSlidesNumpad(!numpad),
+                onTap: () {
+                  if (typing) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    c.setSlidesNumpad(true);
+                  } else {
+                    c.setSlidesNumpad(!numpad);
+                  }
+                },
               ),
             ),
             const SizedBox(width: 10),
@@ -669,7 +687,7 @@ class _Slides extends StatelessWidget {
             ),
           ],
         ),
-        if (!numpad) ...[
+        if (!numpad && !typing) ...[
           const SizedBox(height: 10),
           Text(
             context.l10n.remoteVolumeHint,
