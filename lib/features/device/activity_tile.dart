@@ -390,22 +390,27 @@ class TimelineEntry extends StatelessWidget {
     );
   }
 
-  static Future<void> _openFile(BuildContext context, String path) async {
-    final messenger = ScaffoldMessenger.of(context);
-    final l10n = context.l10n;
-    final name = path.split('/').last;
-    final result = await LinksyPlatform.openFile(path);
-    if (result == 'done') return;
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          result == 'missing'
-              ? l10n.activityFileMissing(name)
-              : l10n.activityNoAppForFile(name),
-        ),
+  static Future<void> _openFile(BuildContext context, String path) =>
+      openReceived(context, path);
+}
+
+/// Opens a received file (a path or a `content://` URI) in whatever app
+/// takes it; says so when it's gone or nothing does.
+Future<void> openReceived(BuildContext context, String path) async {
+  final messenger = ScaffoldMessenger.of(context);
+  final l10n = context.l10n;
+  final name = path.split('/').last;
+  final result = await LinksyPlatform.openFile(path);
+  if (result == 'done') return;
+  messenger.showSnackBar(
+    SnackBar(
+      content: Text(
+        result == 'missing'
+            ? l10n.activityFileMissing(name)
+            : l10n.activityNoAppForFile(name),
       ),
-    );
-  }
+    ),
+  );
 }
 
 /// The rail: a hairline through the day, a node for this entry.

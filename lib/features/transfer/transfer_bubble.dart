@@ -11,6 +11,7 @@ import '../../ui/components.dart';
 import '../../ui/format.dart';
 import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
+import '../device/activity_tile.dart' show openReceived;
 
 /// Files on their way, in or out, on every device: how many, and how far
 /// along all of them are.
@@ -342,7 +343,8 @@ class TransfersPeek extends StatelessWidget {
                 : _FileState.next,
             progress: _Transfer._fileProgress(a, i),
           ),
-        if (files.length > _most) more,
+        // Always while files move: the page has Cancel.
+        more,
       ],
     );
   }
@@ -925,72 +927,183 @@ class _File extends StatelessWidget {
   }
 }
 
-/// One transfer that ended: what, with whom, how big, when, and how.
-class _Recent extends StatelessWidget {
+/// One transfer that ended: what, with whom, how big, when, and how. A tap
+/// opens a single received file; a group opens up to list its files, each
+/// one opening on a tap when it came here.
+class _Recent extends StatefulWidget {
   const _Recent({required this.c, required this.activity});
 
   final LinksyController c;
   final Activity activity;
 
   @override
+  State<_Recent> createState() => _RecentState();
+}
+
+class _RecentState extends State<_Recent> {
+  bool _open = false;
+
+  /// Where file [i] landed here, when it did.
+  String? _saved(int i) {
+    final a = widget.activity;
+    return a.incoming && a.status == ActivityStatus.done && i < a.saved.length
+        ? a.saved[i]
+        : null;
+  }
+
+  void _tap() {
+    final a = widget.activity;
+    if (a.names.length > 1) {
+      setState(() => _open = !_open);
+    } else if (_saved(0) case final path?) {
+      openReceived(context, path);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final a = activity;
+    final a = widget.activity;
     final s = Sig.of(context);
     final l = context.l10n;
-    final name = c.device(a.deviceId)?.device.name ?? shortDeviceId(a.deviceId);
+    final name =
+        widget.c.device(a.deviceId)?.device.name ?? shortDeviceId(a.deviceId);
     final today = DateUtils.isSameDay(a.time, DateTime.now());
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      child: Row(
-        children: [
-          _Round(
-            a.names.length == 1
-                ? fileIcon(a.names.first)
-                : a.incoming
-                ? PhBold.arrowDownLeft
-                : PhBold.arrowUpRight,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  a.names.length == 1
-                      ? a.names.first
-                      : l.activityItems(a.names.length),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w500,
-                    color: s.ink,
+    final group = a.names.length > 1;
+    final row = Pressable(
+      onTap: _tap,
+      scale: 0.99,
+      semanticLabel: a.names.length == 1
+          ? a.names.first
+          : l.activityItems(a.names.length),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Row(
+          children: [
+            _Round(
+              group
+                  ? (a.incoming ? PhBold.arrowDownLeft : PhBold.arrowUpRight)
+                  : fileIcon(a.names.first),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    group ? l.activityItems(a.names.length) : a.names.first,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w500,
+                      color: s.ink,
+                    ),
+                  ),
+                  Text(
+                    [
+                      a.incoming ? l.transfersFrom(name) : l.transfersTo(name),
+                      if (a.total > 0) formatBytes(a.total),
+                      today ? formatClock(a.time) : formatDay(a.time),
+                    ].join(' · '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 12.5, color: s.faint),
+                  ),
+                ],
+              ),
+            ),
+            if (a.status != ActivityStatus.done) ...[
+              const SizedBox(width: 10),
+              Text(
+                a.status == ActivityStatus.declined
+                    ? l.activityDeclined
+                    : l.activityFailed,
+                style: TextStyle(fontSize: 12.5, color: s.red),
+              ),
+            ] else if (group) ...[
+              const SizedBox(width: 10),
+              AnimatedRotation(
+                turns: _open ? 0.5 : 0,
+                duration: const Duration(milliseconds: 260),
+                curve: Curves.easeOutCubic,
+                child: Icon(Ph.caretDown, size: 16, color: s.faint),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+    if (!group) return row;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        row,
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
+          alignment: Alignment.topCenter,
+          child: !_open
+              ? const SizedBox(width: double.infinity)
+              : Padding(
+                  padding: const EdgeInsets.fromLTRB(60, 2, 8, 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          [
+                            l.activityFiles(a.names.length),
+                            if (a.total > 0) formatBytes(a.total),
+                          ].join(' · ').toUpperCase(),
+                          style: _label(s),
+                        ),
+                      ),
+                      for (var i = 0; i < a.names.length; i++)
+                        Pressable(
+                          onTap: _saved(i) == null
+                              ? null
+                              : () => openReceived(context, _saved(i)!),
+                          scale: 0.99,
+                          semanticLabel: a.names[i],
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 7),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  fileIcon(a.names[i]),
+                                  size: 18,
+                                  color: s.faint,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    a.names[i],
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: s.ink,
+                                    ),
+                                  ),
+                                ),
+                                if (i < a.sizes.length)
+                                  Text(
+                                    formatBytes(a.sizes[i]),
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      color: s.faint,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-                Text(
-                  [
-                    a.incoming ? l.transfersFrom(name) : l.transfersTo(name),
-                    if (a.total > 0) formatBytes(a.total),
-                    today ? formatClock(a.time) : formatDay(a.time),
-                  ].join(' · '),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 12.5, color: s.faint),
-                ),
-              ],
-            ),
-          ),
-          if (a.status != ActivityStatus.done) ...[
-            const SizedBox(width: 10),
-            Text(
-              a.status == ActivityStatus.declined
-                  ? l.activityDeclined
-                  : l.activityFailed,
-              style: TextStyle(fontSize: 12.5, color: s.red),
-            ),
-          ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

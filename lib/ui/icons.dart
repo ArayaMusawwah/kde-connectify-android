@@ -15,6 +15,7 @@ abstract final class Ph {
   static const bellRinging = IconData(0xe5e8, fontFamily: 'PhosphorRegular');
   static const cameraSlash = IconData(0xe110, fontFamily: 'PhosphorRegular');
   static const caretRight = IconData(0xe13a, fontFamily: 'PhosphorRegular');
+  static const caretDown = IconData(0xe136, fontFamily: 'PhosphorRegular');
   static const clipboardText = IconData(0xe198, fontFamily: 'PhosphorRegular');
   static const clock = IconData(0xe19a, fontFamily: 'PhosphorRegular');
   static const arrowCircleUp = IconData(0xe030, fontFamily: 'PhosphorRegular');
