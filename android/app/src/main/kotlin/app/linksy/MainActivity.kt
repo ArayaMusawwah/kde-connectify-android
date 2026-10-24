@@ -108,6 +108,10 @@ class MainActivity : FlutterActivity() {
                         DirectHost.listening(call.argument<String>("device")!!, call.argument<String>("address")!!)
                         result.success(null)
                     }
+                    "directLinked" -> {
+                        DirectHost.linked(call.argument<String>("device")!!)
+                        result.success(null)
+                    }
                     "directEnded" -> {
                         DirectHost.ended(call.argument<String>("device")!!)
                         result.success(null)

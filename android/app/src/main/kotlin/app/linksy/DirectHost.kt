@@ -40,6 +40,9 @@ object DirectHost {
     private var connecting = false
     private var up = false
 
+    /// The core has the link (`DirectLinked`): from then on only `DirectEnded` ends it.
+    private var linked = false
+
     /// Whether this phone can host one: Wi-Fi Direct, and Android 10+ (`requestDeviceInfo`).
     fun supported(context: Context) =
         Build.VERSION.SDK_INT >= 29 && context.packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI_DIRECT)
@@ -47,10 +50,13 @@ object DirectHost {
     private fun permission() =
         if (Build.VERSION.SDK_INT >= 33) Manifest.permission.NEARBY_WIFI_DEVICES else Manifest.permission.ACCESS_FINE_LOCATION
 
-    /// `DirectWanted`: start over, then invite the computer with this phone's address.
+    /// `DirectWanted`: invite the computer with this phone's address and name.
     fun want(context: Context, id: String) = main.post {
         val app = context.applicationContext
-        if (device != null && device != id) {
+        // Under way or up with this computer already: never start over, which would drop
+        // the group a transfer is going through
+        if (device == id) return@post
+        if (device != null) {
             report(id, "end", "reason" to "already linked to another device")
             return@post
         }
@@ -80,7 +86,12 @@ object DirectHost {
         device = id
         val manager = context.getSystemService(WifiP2pManager::class.java)
             ?: return fail("no Wi-Fi Direct on this phone")
-        val channel = manager.initialize(context, Looper.getMainLooper()) { fail("Wi-Fi Direct stopped") }
+        // Only this link's own channel: an older one closing later must not end it
+        var made: WifiP2pManager.Channel? = null
+        val channel = manager.initialize(context, Looper.getMainLooper()) {
+            if (made != null && this.channel === made) fail("Wi-Fi Direct stopped")
+        }
+        made = channel
         this.manager = manager
         this.channel = channel
         listen(context)
@@ -191,10 +202,15 @@ object DirectHost {
             .firstOrNull { it is Inet4Address }?.hostAddress
     }.getOrNull()
 
+    /// `DirectLinked`: the computer is connected over it.
+    fun linked(id: String) = main.post { if (device == id) linked = true }
+
     /// `DirectEnded`: drop the group and everything else.
     fun ended(id: String) = main.post { if (device == id) stop() }
 
     private fun fail(reason: String) {
+        // A link that's up is the core's to end (it notices one that's gone)
+        if (linked) return
         val id = device ?: return
         stop()
         report(id, "end", "reason" to reason)
@@ -220,6 +236,7 @@ object DirectHost {
         target = null
         connecting = false
         up = false
+        linked = false
     }
 
     private fun report(id: String, type: String, vararg extra: Pair<String, String>) {

@@ -293,6 +293,8 @@ abstract final class LinksyPlatform {
       _call<void>('directWanted', {'device': device});
   static Future<void> directListening(String device, String address) =>
       _call<void>('directListening', {'device': device, 'address': address});
+  static Future<void> directLinked(String device) =>
+      _call<void>('directLinked', {'device': device});
   static Future<void> directEnded(String device) =>
       _call<void>('directEnded', {'device': device});
 

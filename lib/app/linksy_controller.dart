@@ -249,6 +249,16 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _directSub = LinksyPlatform.directSteps.listen((s) {
       final (id, step) = s;
       final out = step['type'] == 'up' ? {...step, 'port': node.port} : step;
+      // How far it got, for Transfers
+      final stage = switch (step['type']) {
+        'connecting' => DirectStage.connect,
+        'up' => DirectStage.link,
+        _ => null,
+      };
+      if (stage != null && direct[id] != null && direct[id] != DirectStage.up) {
+        direct[id] = stage;
+        notifyListeners();
+      }
       node.directSend(id, out).catchError((Object _) {});
     });
     unawaited(_loadPlatform());
@@ -673,9 +683,8 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
-  /// Direct links (docs/protocol.md §4.17) by device: true once up, false
-  /// while being set up.
-  final direct = <String, bool>{};
+  /// Direct links (docs/protocol.md §4.17) by device, as far as they got.
+  final direct = <String, DirectStage>{};
 
   /// What the transfer notification last showed, and when.
   String? _noticeKey;
@@ -1058,15 +1067,19 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         }
       // Direct links (docs/protocol.md §4.17): this phone hosts, Android
       // does the Wi-Fi part.
+      // Up already: nothing to set up (only DirectEnded ends it)
+      case DirectWanted(:final id) when direct[id] == DirectStage.up:
+        break;
       case DirectWanted(:final id):
-        direct[id] = false;
+        direct[id] = DirectStage.find;
         LinksyPlatform.directWanted(id);
         notifyListeners();
       case DirectStepReceived(:final from, :final step)
           when step['type'] == 'listening' && step['address'] is String:
         LinksyPlatform.directListening(from.id, step['address'] as String);
       case DirectLinked(:final id):
-        direct[id] = true;
+        direct[id] = DirectStage.up;
+        LinksyPlatform.directLinked(id);
         notifyListeners();
       case DirectEnded(:final id):
         direct.remove(id);
@@ -1679,3 +1692,7 @@ class UsbPairOffer extends UsbNews {
   const UsbPairOffer(this.address);
   final String address;
 }
+
+/// How far a direct link got: finding the computer, connecting to it, the
+/// link coming up over the new network, and up.
+enum DirectStage { find, connect, link, up }
