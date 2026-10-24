@@ -2,6 +2,15 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.2.6] - 2026-10-24
+
+### Added
+- **Your computer's volume**: a slider and a mute button under the computer's player, on its page. While that page is open, the phone's volume buttons turn the computer up or down. Needs Linksy 0.9.8 on the computer (not the Flatpak yet).
+- **Transfers, always a tap away**: the button at the bottom left of home and of each device's page stays there and opens Transfers any time. While files move, they flow from one device to the other at their real speed, and from 15 MB/s a line says what that speed means (a 1 GB movie every few seconds). Each file has an icon for its type and a ring for its progress; what came and went lately is listed under Recent.
+
+### Fixed
+- On the presenter remote, the number pad steps aside while the keyboard is up instead of squeezing the screen; Numbers brings it back.
+
 ## [0.2.5] - 2026-10-24
 
 ### Added
