@@ -151,14 +151,16 @@ void main() {
     await tester.tap(find.text('3'));
     await frames(tester);
     expect(find.text('Transfers'), findsOneWidget);
-    expect(find.text('To Studio Desktop'), findsOneWidget);
-    expect(find.textContaining('of 3 files'), findsOneWidget);
+    expect(find.textContaining('TO STUDIO DESKTOP'), findsOneWidget);
+    expect(find.textContaining('OF 3 FILES'), findsOneWidget);
     expect(find.text('a.jpg'), findsOneWidget);
     expect(find.text('c.jpg'), findsOneWidget);
-    // Done: the page says so, and the bubble checks then goes.
+    // Done: nothing on its way, the transfer under Recent, and the bubble
+    // checks, then shows no count.
     await tester.pump(const Duration(seconds: 4));
     await frames(tester);
-    expect(find.text('All done'), findsOneWidget);
+    expect(find.text('Nothing on its way'), findsOneWidget);
+    expect(find.text('3 items'), findsOneWidget);
     await tester.pageBack();
     await tester.pump(const Duration(seconds: 3));
     await frames(tester);
