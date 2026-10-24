@@ -564,5 +564,14 @@
   "updateFailedNetwork": "Загрузка не завершилась. Проверьте подключение и попробуйте снова.",
   "updateFailedCheck": "Файл не совпадает с контрольной суммой выпуска, поэтому он не установлен.",
   "updateAllow": "Разрешите Linksy устанавливать приложения, затем снова нажмите «Обновить сейчас».",
-  "updateFailedInstall": "Android не установил обновление: {message}"
+  "updateFailedInstall": "Android не установил обновление: {message}",
+  "settingsMediaNotice": "Музыка в уведомлениях",
+  "settingsMediaNoticeCaption": "То, что играет на ваших компьютерах, появляется в уведомлениях телефона, с кнопками.",
+  "settingsReverseScroll": "Обратная прокрутка",
+  "settingsReverseScrollCaption": "Прокрутка двумя пальцами на тачпаде идёт в другую сторону.",
+  "remoteNumbers": "Цифры",
+  "remoteBackspace": "Удалить",
+  "remoteEnter": "Ввод",
+  "deviceBack10": "Назад на 10 секунд",
+  "deviceForward10": "Вперёд на 10 секунд"
 }

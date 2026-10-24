@@ -2087,4 +2087,32 @@ class AppLocalizationsJa extends AppLocalizations {
   String updateFailedInstall(String message) {
     return 'Android はインストールしませんでした: $message';
   }
+
+  @override
+  String get settingsMediaNotice => '通知に音楽を表示';
+
+  @override
+  String get settingsMediaNoticeCaption =>
+      'コンピュータで再生中の音楽が、ボタン付きでスマホの通知に表示されます。';
+
+  @override
+  String get settingsReverseScroll => 'スクロールを逆にする';
+
+  @override
+  String get settingsReverseScrollCaption => 'タッチパッドの 2 本指スクロールが逆向きになります。';
+
+  @override
+  String get remoteNumbers => '数字';
+
+  @override
+  String get remoteBackspace => '削除';
+
+  @override
+  String get remoteEnter => 'Enter';
+
+  @override
+  String get deviceBack10 => '10 秒戻る';
+
+  @override
+  String get deviceForward10 => '10 秒進む';
 }

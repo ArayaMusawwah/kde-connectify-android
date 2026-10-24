@@ -3503,6 +3503,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Android didn’t install it: {message}'**
   String updateFailedInstall(String message);
+
+  /// Settings switch: a computer's music shows as a media notification on the phone
+  ///
+  /// In en, this message translates to:
+  /// **'Music in notifications'**
+  String get settingsMediaNotice;
+
+  /// Caption of the media notification switch
+  ///
+  /// In en, this message translates to:
+  /// **'What your computers play shows with the phone\'s notifications, with its buttons.'**
+  String get settingsMediaNoticeCaption;
+
+  /// Settings switch: two-finger scrolling on the remote touchpad goes the other way
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse scrolling'**
+  String get settingsReverseScroll;
+
+  /// Caption of the reverse scrolling switch
+  ///
+  /// In en, this message translates to:
+  /// **'Two fingers on the touchpad scroll the other way.'**
+  String get settingsReverseScrollCaption;
+
+  /// Presentation remote button: shows or hides a number pad
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers'**
+  String get remoteNumbers;
+
+  /// Number pad key that deletes (accessibility label)
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get remoteBackspace;
+
+  /// Number pad key Enter (accessibility label)
+  ///
+  /// In en, this message translates to:
+  /// **'Enter'**
+  String get remoteEnter;
+
+  /// Media control: 10 seconds back (tooltip)
+  ///
+  /// In en, this message translates to:
+  /// **'10 seconds back'**
+  String get deviceBack10;
+
+  /// Media control: 10 seconds forward (tooltip)
+  ///
+  /// In en, this message translates to:
+  /// **'10 seconds forward'**
+  String get deviceForward10;
 }
 
 class _AppLocalizationsDelegate

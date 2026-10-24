@@ -564,5 +564,14 @@
   "updateFailedNetwork": "下载未完成。请检查网络连接后重试。",
   "updateFailedCheck": "下载的文件与该版本的校验和不符，因此没有安装。",
   "updateAllow": "请允许 Linksy 安装应用，然后再点一次“立即更新”。",
-  "updateFailedInstall": "Android 未能安装：{message}"
+  "updateFailedInstall": "Android 未能安装：{message}",
+  "settingsMediaNotice": "在通知中显示音乐",
+  "settingsMediaNoticeCaption": "电脑正在播放的内容会显示在手机通知中，并带有按钮。",
+  "settingsReverseScroll": "反向滚动",
+  "settingsReverseScrollCaption": "触控板上的双指滚动方向相反。",
+  "remoteNumbers": "数字",
+  "remoteBackspace": "删除",
+  "remoteEnter": "回车",
+  "deviceBack10": "后退 10 秒",
+  "deviceForward10": "前进 10 秒"
 }

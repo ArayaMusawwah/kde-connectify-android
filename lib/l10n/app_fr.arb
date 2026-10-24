@@ -564,5 +564,14 @@
   "updateFailedNetwork": "Le téléchargement n’a pas abouti. Vérifiez la connexion et réessayez.",
   "updateFailedCheck": "Le fichier ne correspond pas à la somme de contrôle de la version, il n’a donc pas été installé.",
   "updateAllow": "Autorisez Linksy à installer des applis, puis touchez à nouveau Mettre à jour.",
-  "updateFailedInstall": "Android ne l’a pas installée : {message}"
+  "updateFailedInstall": "Android ne l’a pas installée : {message}",
+  "settingsMediaNotice": "Musique dans les notifications",
+  "settingsMediaNoticeCaption": "Ce que jouent vos ordinateurs s’affiche dans les notifications du téléphone, avec ses boutons.",
+  "settingsReverseScroll": "Défilement inversé",
+  "settingsReverseScrollCaption": "Deux doigts sur le pavé tactile font défiler dans l’autre sens.",
+  "remoteNumbers": "Chiffres",
+  "remoteBackspace": "Effacer",
+  "remoteEnter": "Entrée",
+  "deviceBack10": "10 secondes en arrière",
+  "deviceForward10": "10 secondes en avant"
 }

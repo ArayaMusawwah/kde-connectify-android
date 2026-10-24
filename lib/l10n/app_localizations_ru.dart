@@ -2164,4 +2164,33 @@ class AppLocalizationsRu extends AppLocalizations {
   String updateFailedInstall(String message) {
     return 'Android не установил обновление: $message';
   }
+
+  @override
+  String get settingsMediaNotice => 'Музыка в уведомлениях';
+
+  @override
+  String get settingsMediaNoticeCaption =>
+      'То, что играет на ваших компьютерах, появляется в уведомлениях телефона, с кнопками.';
+
+  @override
+  String get settingsReverseScroll => 'Обратная прокрутка';
+
+  @override
+  String get settingsReverseScrollCaption =>
+      'Прокрутка двумя пальцами на тачпаде идёт в другую сторону.';
+
+  @override
+  String get remoteNumbers => 'Цифры';
+
+  @override
+  String get remoteBackspace => 'Удалить';
+
+  @override
+  String get remoteEnter => 'Ввод';
+
+  @override
+  String get deviceBack10 => 'Назад на 10 секунд';
+
+  @override
+  String get deviceForward10 => 'Вперёд на 10 секунд';
 }

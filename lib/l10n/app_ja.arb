@@ -564,5 +564,14 @@
   "updateFailedNetwork": "ダウンロードが完了しませんでした。接続を確認して、もう一度お試しください。",
   "updateFailedCheck": "ダウンロードしたファイルがリリースのチェックサムと一致しないため、インストールしませんでした。",
   "updateAllow": "Linksy にアプリのインストールを許可してから、もう一度「今すぐ更新」をタップしてください。",
-  "updateFailedInstall": "Android はインストールしませんでした: {message}"
+  "updateFailedInstall": "Android はインストールしませんでした: {message}",
+  "settingsMediaNotice": "通知に音楽を表示",
+  "settingsMediaNoticeCaption": "コンピュータで再生中の音楽が、ボタン付きでスマホの通知に表示されます。",
+  "settingsReverseScroll": "スクロールを逆にする",
+  "settingsReverseScrollCaption": "タッチパッドの 2 本指スクロールが逆向きになります。",
+  "remoteNumbers": "数字",
+  "remoteBackspace": "削除",
+  "remoteEnter": "Enter",
+  "deviceBack10": "10 秒戻る",
+  "deviceForward10": "10 秒進む"
 }

@@ -2063,4 +2063,31 @@ class AppLocalizationsZh extends AppLocalizations {
   String updateFailedInstall(String message) {
     return 'Android 未能安装：$message';
   }
+
+  @override
+  String get settingsMediaNotice => '在通知中显示音乐';
+
+  @override
+  String get settingsMediaNoticeCaption => '电脑正在播放的内容会显示在手机通知中，并带有按钮。';
+
+  @override
+  String get settingsReverseScroll => '反向滚动';
+
+  @override
+  String get settingsReverseScrollCaption => '触控板上的双指滚动方向相反。';
+
+  @override
+  String get remoteNumbers => '数字';
+
+  @override
+  String get remoteBackspace => '删除';
+
+  @override
+  String get remoteEnter => '回车';
+
+  @override
+  String get deviceBack10 => '后退 10 秒';
+
+  @override
+  String get deviceForward10 => '前进 10 秒';
 }

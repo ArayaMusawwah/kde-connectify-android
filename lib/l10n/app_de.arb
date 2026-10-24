@@ -564,5 +564,14 @@
   "updateFailedNetwork": "Der Download wurde nicht abgeschlossen. Prüfe die Verbindung und versuche es erneut.",
   "updateFailedCheck": "Der Download passt nicht zur Prüfsumme der Version und wurde deshalb nicht installiert.",
   "updateAllow": "Erlaube Linksy, Apps zu installieren, und tippe dann erneut auf Jetzt aktualisieren.",
-  "updateFailedInstall": "Android hat es nicht installiert: {message}"
+  "updateFailedInstall": "Android hat es nicht installiert: {message}",
+  "settingsMediaNotice": "Musik in den Benachrichtigungen",
+  "settingsMediaNoticeCaption": "Was deine Computer abspielen, erscheint bei den Benachrichtigungen des Telefons, mit Tasten.",
+  "settingsReverseScroll": "Umgekehrt scrollen",
+  "settingsReverseScrollCaption": "Zwei Finger auf dem Touchpad scrollen in die andere Richtung.",
+  "remoteNumbers": "Zahlen",
+  "remoteBackspace": "Löschen",
+  "remoteEnter": "Eingabe",
+  "deviceBack10": "10 Sekunden zurück",
+  "deviceForward10": "10 Sekunden vor"
 }

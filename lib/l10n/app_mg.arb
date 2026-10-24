@@ -564,5 +564,14 @@
   "updateFailedNetwork": "Tsy vita ny fakana. Hamarino ny fifandraisana dia andramo indray.",
   "updateFailedCheck": "Tsy mifanaraka amin'ny checksum an'ilay famoahana ilay rakitra, ka tsy napetraka.",
   "updateAllow": "Avelao hametraka fampiharana ny Linksy, dia tsindrio indray ny Havaozy izao.",
-  "updateFailedInstall": "Tsy napetrak'i Android: {message}"
+  "updateFailedInstall": "Tsy napetrak'i Android: {message}",
+  "settingsMediaNotice": "Mozika ao amin'ny fampandrenesana",
+  "settingsMediaNoticeCaption": "Izay alefan'ny solosainao dia miseho ao amin'ny fampandrenesan'ny finday, miaraka amin'ny bokotra.",
+  "settingsReverseScroll": "Fikodiadiana mivadika",
+  "settingsReverseScrollCaption": "Rantsantanana roa eo amin'ny touchpad dia mikodiadia mifanohitra.",
+  "remoteNumbers": "Isa",
+  "remoteBackspace": "Fafao",
+  "remoteEnter": "Ekena",
+  "deviceBack10": "Miverina 10 segondra",
+  "deviceForward10": "Mandroso 10 segondra"
 }

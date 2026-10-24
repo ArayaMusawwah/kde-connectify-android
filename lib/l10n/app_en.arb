@@ -2921,5 +2921,41 @@
         "type": "String"
       }
     }
+  },
+  "settingsMediaNotice": "Music in notifications",
+  "@settingsMediaNotice": {
+    "description": "Settings switch: a computer's music shows as a media notification on the phone"
+  },
+  "settingsMediaNoticeCaption": "What your computers play shows with the phone's notifications, with its buttons.",
+  "@settingsMediaNoticeCaption": {
+    "description": "Caption of the media notification switch"
+  },
+  "settingsReverseScroll": "Reverse scrolling",
+  "@settingsReverseScroll": {
+    "description": "Settings switch: two-finger scrolling on the remote touchpad goes the other way"
+  },
+  "settingsReverseScrollCaption": "Two fingers on the touchpad scroll the other way.",
+  "@settingsReverseScrollCaption": {
+    "description": "Caption of the reverse scrolling switch"
+  },
+  "remoteNumbers": "Numbers",
+  "@remoteNumbers": {
+    "description": "Presentation remote button: shows or hides a number pad"
+  },
+  "remoteBackspace": "Delete",
+  "@remoteBackspace": {
+    "description": "Number pad key that deletes (accessibility label)"
+  },
+  "remoteEnter": "Enter",
+  "@remoteEnter": {
+    "description": "Number pad key Enter (accessibility label)"
+  },
+  "deviceBack10": "10 seconds back",
+  "@deviceBack10": {
+    "description": "Media control: 10 seconds back (tooltip)"
+  },
+  "deviceForward10": "10 seconds forward",
+  "@deviceForward10": {
+    "description": "Media control: 10 seconds forward (tooltip)"
   }
 }

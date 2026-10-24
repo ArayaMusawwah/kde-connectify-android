@@ -2140,4 +2140,33 @@ class AppLocalizationsMg extends AppLocalizations {
   String updateFailedInstall(String message) {
     return 'Tsy napetrak\'i Android: $message';
   }
+
+  @override
+  String get settingsMediaNotice => 'Mozika ao amin\'ny fampandrenesana';
+
+  @override
+  String get settingsMediaNoticeCaption =>
+      'Izay alefan\'ny solosainao dia miseho ao amin\'ny fampandrenesan\'ny finday, miaraka amin\'ny bokotra.';
+
+  @override
+  String get settingsReverseScroll => 'Fikodiadiana mivadika';
+
+  @override
+  String get settingsReverseScrollCaption =>
+      'Rantsantanana roa eo amin\'ny touchpad dia mikodiadia mifanohitra.';
+
+  @override
+  String get remoteNumbers => 'Isa';
+
+  @override
+  String get remoteBackspace => 'Fafao';
+
+  @override
+  String get remoteEnter => 'Ekena';
+
+  @override
+  String get deviceBack10 => 'Miverina 10 segondra';
+
+  @override
+  String get deviceForward10 => 'Mandroso 10 segondra';
 }

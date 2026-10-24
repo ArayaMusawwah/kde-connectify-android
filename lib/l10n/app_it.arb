@@ -564,5 +564,14 @@
   "updateFailedNetwork": "Il download non è terminato. Controlla la connessione e riprova.",
   "updateFailedCheck": "Il download non corrisponde al checksum della versione, quindi non è stato installato.",
   "updateAllow": "Consenti a Linksy di installare app, poi tocca di nuovo Aggiorna ora.",
-  "updateFailedInstall": "Android non l’ha installato: {message}"
+  "updateFailedInstall": "Android non l’ha installato: {message}",
+  "settingsMediaNotice": "Musica nelle notifiche",
+  "settingsMediaNoticeCaption": "Ciò che suonano i tuoi computer appare tra le notifiche del telefono, con i suoi pulsanti.",
+  "settingsReverseScroll": "Scorrimento invertito",
+  "settingsReverseScrollCaption": "Due dita sul touchpad scorrono nell’altro verso.",
+  "remoteNumbers": "Numeri",
+  "remoteBackspace": "Cancella",
+  "remoteEnter": "Invio",
+  "deviceBack10": "Indietro di 10 secondi",
+  "deviceForward10": "Avanti di 10 secondi"
 }
