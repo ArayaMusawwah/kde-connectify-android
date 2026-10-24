@@ -6,7 +6,7 @@ All notable changes to Linksy for Android. Format: [Keep a Changelog](https://ke
 
 ### Added
 - **Wi-Fi Direct for big transfers**: files of 256 MB or more go over a Wi-Fi network of the phone's own that the computer joins (as AirDrop and Quick Share do), straight between the two, instead of through the router. The first time, Android asks to let Linksy find nearby devices; without it, or if the link doesn't come up within 45 seconds, files go over the network as before. Needs Linksy 0.9.9 on a Linux computer whose Wi-Fi card does Wi-Fi Direct.
-- **Which way files go**: under the line between the two devices in Transfers, a label says Wi-Fi Direct (or Setting up Wi-Fi Direct), Same Wi-Fi, Away from home or USB cable.
+- **Which way files go**: under the line between the two devices in Transfers, a label says Same Wi-Fi, Away from home or USB cable. While a Wi-Fi Direct link comes up, the card says so with its steps (Find, Connect, Link); once it's up, a Wi-Fi Direct badge sits right of the speed.
 
 ## [0.2.7] - 2026-10-24
 
