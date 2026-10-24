@@ -590,5 +590,7 @@
   "transfersRecent": "Недавние",
   "transfersFastMovie": "Фильм на 1 ГБ каждые {seconds} с",
   "transfersFastPhotos": "Около {count} фото в секунду",
-  "transfersFastSongs": "{count} песен в секунду"
+  "transfersFastSongs": "{count} песен в секунду",
+  "news026TransfersTitle": "Передачи всегда под рукой",
+  "news026TransfersBody": "Кнопка слева внизу в любой момент открывает передачи: файлы бегут с реальной скоростью, видно продвижение каждого и что недавно пришло и ушло."
 }

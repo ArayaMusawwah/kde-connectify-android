@@ -3014,5 +3014,9 @@
   "transfersFastPhotos": "About {count} photos a second",
   "@transfersFastPhotos": { "description": "Transfers: the speed as photos (about 3 MB each)", "placeholders": { "count": { "type": "int" } } },
   "transfersFastSongs": "{count} songs a second",
-  "@transfersFastSongs": { "description": "Transfers: the speed as songs (about 5 MB each)", "placeholders": { "count": { "type": "int" } } }
+  "@transfersFastSongs": { "description": "Transfers: the speed as songs (about 5 MB each)", "placeholders": { "count": { "type": "int" } } },
+  "news026TransfersTitle": "Transfers, always a tap away",
+  "@news026TransfersTitle": { "description": "What's New 0.2.6: the transfers page (title)" },
+  "news026TransfersBody": "The button at the bottom left opens Transfers any time: files flowing at their real speed, each file's progress, and what came and went lately.",
+  "@news026TransfersBody": { "description": "What's New 0.2.6: the transfers page (body)" }
 }

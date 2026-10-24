@@ -590,5 +590,7 @@
   "transfersRecent": "Zuletzt",
   "transfersFastMovie": "Ein 1-GB-Film alle {seconds} s",
   "transfersFastPhotos": "Etwa {count} Fotos pro Sekunde",
-  "transfersFastSongs": "{count} Songs pro Sekunde"
+  "transfersFastSongs": "{count} Songs pro Sekunde",
+  "news026TransfersTitle": "Übertragungen, immer einen Tipp entfernt",
+  "news026TransfersBody": "Der Knopf unten links öffnet jederzeit die Übertragungen: Dateien in ihrer echten Geschwindigkeit, der Fortschritt jeder Datei und was zuletzt kam und ging."
 }

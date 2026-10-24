@@ -29,6 +29,21 @@ const _most = 5;
 /// Newest first.
 final List<(String, List<Highlight>)> _releases = [
   (
+    '0.2.6',
+    [
+      Highlight(
+        Ph.speakerHigh,
+        (l) => l.news026VolumeTitle,
+        (l) => l.news026VolumeBody,
+      ),
+      Highlight(
+        Ph.arrowsDownUp,
+        (l) => l.news026TransfersTitle,
+        (l) => l.news026TransfersBody,
+      ),
+    ],
+  ),
+  (
     '0.2.5',
     [
       Highlight(

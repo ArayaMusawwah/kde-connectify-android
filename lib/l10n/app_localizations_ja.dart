@@ -2177,4 +2177,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String transfersFastSongs(int count) {
     return '1 秒に $count 曲';
   }
+
+  @override
+  String get news026TransfersTitle => '転送画面にいつでも';
+
+  @override
+  String get news026TransfersBody =>
+      '左下のボタンでいつでも転送画面を開けます。実際の速度で流れるファイル、それぞれの進み具合、最近の送受信が見られます。';
 }

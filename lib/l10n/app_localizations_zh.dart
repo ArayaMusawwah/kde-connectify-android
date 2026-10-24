@@ -2150,4 +2150,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String transfersFastSongs(int count) {
     return '每秒 $count 首歌';
   }
+
+  @override
+  String get news026TransfersTitle => '传输随时一点即达';
+
+  @override
+  String get news026TransfersBody =>
+      '左下角的按钮随时打开传输页面：文件以真实速度流动，每个文件的进度，以及最近收发的内容。';
 }

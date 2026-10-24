@@ -590,5 +590,7 @@
   "transfersRecent": "最近",
   "transfersFastMovie": "每 {seconds} 秒一部 1 GB 的电影",
   "transfersFastPhotos": "每秒约 {count} 张照片",
-  "transfersFastSongs": "每秒 {count} 首歌"
+  "transfersFastSongs": "每秒 {count} 首歌",
+  "news026TransfersTitle": "传输随时一点即达",
+  "news026TransfersBody": "左下角的按钮随时打开传输页面：文件以真实速度流动，每个文件的进度，以及最近收发的内容。"
 }

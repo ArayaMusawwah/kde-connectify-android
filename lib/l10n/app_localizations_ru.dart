@@ -2257,4 +2257,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String transfersFastSongs(int count) {
     return '$count песен в секунду';
   }
+
+  @override
+  String get news026TransfersTitle => 'Передачи всегда под рукой';
+
+  @override
+  String get news026TransfersBody =>
+      'Кнопка слева внизу в любой момент открывает передачи: файлы бегут с реальной скоростью, видно продвижение каждого и что недавно пришло и ушло.';
 }

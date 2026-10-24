@@ -2236,4 +2236,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String transfersFastSongs(int count) {
     return '$count canzoni al secondo';
   }
+
+  @override
+  String get news026TransfersTitle => 'Trasferimenti, sempre a un tocco';
+
+  @override
+  String get news026TransfersBody =>
+      'Il pulsante in basso a sinistra apre i trasferimenti in ogni momento: i file che scorrono alla loro vera velocità, l\'avanzamento di ognuno e cosa è arrivato o partito di recente.';
 }

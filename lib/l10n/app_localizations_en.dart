@@ -2221,4 +2221,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String transfersFastSongs(int count) {
     return '$count songs a second';
   }
+
+  @override
+  String get news026TransfersTitle => 'Transfers, always a tap away';
+
+  @override
+  String get news026TransfersBody =>
+      'The button at the bottom left opens Transfers any time: files flowing at their real speed, each file\'s progress, and what came and went lately.';
 }

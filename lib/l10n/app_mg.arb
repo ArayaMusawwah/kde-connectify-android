@@ -590,5 +590,7 @@
   "transfersRecent": "Vao haingana",
   "transfersFastMovie": "Sarimihetsika 1 GB isaky ny {seconds} s",
   "transfersFastPhotos": "Sary eo amin'ny {count} isan-tsegondra",
-  "transfersFastSongs": "Hira {count} isan-tsegondra"
+  "transfersFastSongs": "Hira {count} isan-tsegondra",
+  "news026TransfersTitle": "Ny fandefasana, tsindry iray foana",
+  "news026TransfersBody": "Ny bokotra eo ambany ankavia dia manokatra ny fandefasana na oviana na oviana: rakitra mandeha amin'ny hafainganany marina, ny fandrosoan'ny tsirairay, ary izay tonga sy lasa vao haingana."
 }

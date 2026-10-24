@@ -3659,6 +3659,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} songs a second'**
   String transfersFastSongs(int count);
+
+  /// What's New 0.2.6: the transfers page (title)
+  ///
+  /// In en, this message translates to:
+  /// **'Transfers, always a tap away'**
+  String get news026TransfersTitle;
+
+  /// What's New 0.2.6: the transfers page (body)
+  ///
+  /// In en, this message translates to:
+  /// **'The button at the bottom left opens Transfers any time: files flowing at their real speed, each file\'s progress, and what came and went lately.'**
+  String get news026TransfersBody;
 }
 
 class _AppLocalizationsDelegate
