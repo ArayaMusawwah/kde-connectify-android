@@ -2245,4 +2245,7 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get news026TransfersBody =>
       'Le bouton en bas à gauche ouvre les transferts à tout moment : les fichiers qui défilent à leur vraie vitesse, la progression de chacun et ce qui est arrivé ou parti récemment.';
+
+  @override
+  String get islandSeeMore => 'Voir plus';
 }

@@ -150,13 +150,17 @@ void main() {
     await tester.pump(const Duration(milliseconds: 2400));
     await tester.tap(find.text('3'));
     await frames(tester);
+    // The island grows in place: the files still on their way.
+    expect(find.text('b.jpg'), findsOneWidget);
+    expect(find.text('c.jpg'), findsOneWidget);
+    // The whole page, with the transfer's header.
+    openTransfers(tester.element(find.text('c.jpg')));
+    await frames(tester);
     expect(find.text('Transfers'), findsOneWidget);
     expect(find.textContaining('TO STUDIO DESKTOP'), findsOneWidget);
     expect(find.textContaining('OF 3 FILES'), findsOneWidget);
-    expect(find.text('a.jpg'), findsOneWidget);
-    expect(find.text('c.jpg'), findsOneWidget);
-    // Done: nothing on its way, the transfer under Recent, and the bubble
-    // checks, then shows no count.
+    // Done: nothing on its way, the transfer under Recent, and the count
+    // goes from home.
     await tester.pump(const Duration(seconds: 4));
     await frames(tester);
     expect(find.text('Nothing on its way'), findsOneWidget);

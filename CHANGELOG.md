@@ -5,7 +5,7 @@ All notable changes to Linksy for Android. Format: [Keep a Changelog](https://ke
 ## [0.2.7] - 2026-10-24
 
 ### Changed
-- **One pill at the bottom of home**: Transfers on the left, Send files in the middle, Add a device on the right. Before your first device, Add a device takes the middle. Send files asks which device when you have several. While files move, the Transfers part widens to show its ring and percentage; the rest of the time nothing floats over your devices. On a device's page, the transfers circle only shows while files move.
+- **Home's island**: one pill at the bottom of home, with Transfers on the left, Send files in the middle and Add a device on the right (before your first device, Add a device takes the middle). Tapping a part grows the pill in place into a card instead of opening a sheet: Transfers shows what's moving with its speed and the next files, or your last transfers, with See more when there's more; Send files lists your devices; Add a device offers the QR code or an address. Tap outside or go back to shrink it. While files move, the Transfers part widens with its ring and percentage; on a device's page, the transfers circle only shows while files move.
 - Lighter shadow under the bottom buttons.
 
 ## [0.2.6] - 2026-10-24

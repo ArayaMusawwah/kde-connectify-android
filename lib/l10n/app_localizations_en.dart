@@ -2228,4 +2228,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get news026TransfersBody =>
       'The button at the bottom left opens Transfers any time: files flowing at their real speed, each file\'s progress, and what came and went lately.';
+
+  @override
+  String get islandSeeMore => 'See more';
 }

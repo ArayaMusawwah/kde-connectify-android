@@ -2157,4 +2157,7 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get news026TransfersBody =>
       '左下角的按钮随时打开传输页面：文件以真实速度流动，每个文件的进度，以及最近收发的内容。';
+
+  @override
+  String get islandSeeMore => '查看更多';
 }

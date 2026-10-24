@@ -80,9 +80,12 @@ class TransferBubble extends StatelessWidget {
 /// Home's way into Transfers, on the left of Add a device: the arrows when
 /// nothing moves, the count and its ring when files do.
 class TransfersButton extends StatelessWidget {
-  const TransfersButton({super.key, this.size = 52});
+  const TransfersButton({super.key, this.size = 52, this.onTap});
 
   final double size;
+
+  /// What a tap does; by default, open [TransfersScreen].
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) => _Live(
@@ -112,6 +115,7 @@ class TransfersButton extends StatelessWidget {
                 state: state,
                 size: size,
                 raised: false,
+                onTap: onTap,
               ),
               if (going)
                 Padding(
@@ -134,7 +138,8 @@ class TransfersButton extends StatelessWidget {
   );
 }
 
-void _open(BuildContext context) =>
+/// Opens [TransfersScreen].
+void openTransfers(BuildContext context) =>
     Navigator.of(context)
         .push(MaterialPageRoute<void>(builder: (_) => const TransfersScreen()));
 
@@ -196,6 +201,7 @@ class _Bubble extends StatelessWidget {
     required this.state,
     required this.size,
     required this.raised,
+    this.onTap,
   });
 
   final int files;
@@ -206,12 +212,14 @@ class _Bubble extends StatelessWidget {
   /// Floating, with a shadow; else sitting in the pill.
   final bool raised;
 
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
     final done = state == _BubbleState.done;
     return Pressable(
-      onTap: () => _open(context),
+      onTap: onTap ?? () => openTransfers(context),
       semanticLabel: state == _BubbleState.idle
           ? context.l10n.transfersTitle
           : context.l10n.transfersBubble(files),
@@ -273,6 +281,69 @@ class _Bubble extends StatelessWidget {
                 ),
         ),
       ),
+    );
+  }
+}
+
+/// Transfers in home's island: what's moving, with its speed and the next
+/// few files, or the last few that moved. "See more" when there's more.
+class TransfersPeek extends StatelessWidget {
+  const TransfersPeek({super.key, required this.onMore});
+
+  final VoidCallback onMore;
+
+  static const _most = 3;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = LinksyScope.of(context);
+    final s = Sig.of(context);
+    final l = context.l10n;
+    final batch = _Batch(c.liveTransfers);
+    final recent = c.recentTransfers;
+    final Widget more = Center(
+      child: TextButton(onPressed: onMore, child: Text(l.islandSeeMore)),
+    );
+    if (batch.transfers.isEmpty) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (recent.isEmpty)
+            const _Nothing()
+          else ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+              child: Text(l.transfersRecent.toUpperCase(), style: _label(s)),
+            ),
+            for (final a in recent.take(_most)) _Recent(c: c, activity: a),
+            if (recent.length > _most) more,
+          ],
+        ],
+      );
+    }
+    // The file on its way first, then the ones after it.
+    final files = [
+      for (final a in batch.transfers)
+        for (var i = _Batch._done(a); i < a.names.length; i++) (a, i),
+    ];
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _Speed(c: c, batch: batch, flat: true),
+        const SizedBox(height: 6),
+        for (final (a, i) in files.take(_most))
+          _File(
+            name: a.names[i],
+            size: i < a.sizes.length ? a.sizes[i] : null,
+            state: i == _Batch._done(a) && a.status == ActivityStatus.active
+                ? _FileState.going
+                : _FileState.next,
+            progress: _Transfer._fileProgress(a, i),
+          ),
+        if (files.length > _most) more,
+      ],
     );
   }
 }
@@ -376,10 +447,13 @@ class _Nothing extends StatelessWidget {
 /// The speed of everything together, with files flowing between the two
 /// devices as fast as they really go.
 class _Speed extends StatelessWidget {
-  const _Speed({required this.c, required this.batch});
+  const _Speed({required this.c, required this.batch, this.flat = false});
 
   final LinksyController c;
   final _Batch batch;
+
+  /// Inside something that's already a card: no card of its own.
+  final bool flat;
 
   @override
   Widget build(BuildContext context) {
@@ -391,60 +465,64 @@ class _Speed extends StatelessWidget {
     final computer = _End(kindIcon(other), Sig.incoming);
     const phone = _End(Ph.deviceMobile, Sig.outgoing);
     final speed = formatSpeed(batch.speed).split(' ');
-    return SigCard(
-      padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Expanded(
-                child: going
-                    ? Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(text: speed.first),
-                            TextSpan(
-                              text: ' ${speed.skip(1).join(' ')}',
-                              style: TextStyle(fontSize: 15, color: s.muted),
-                            ),
-                          ],
-                        ),
-                        style: sora(28, weight: FontWeight.w700, color: s.ink)
-                            .copyWith(
-                              fontFeatures: const [
-                                FontFeature.tabularFigures(),
-                              ],
-                            ),
-                      )
-                    : Text(l.transfersWaiting, style: sora(22, color: s.ink)),
-              ),
-              if (batch.progress != null)
-                Text(
-                  '${(batch.progress! * 100).round()}%',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: Sig.blue,
-                  ),
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Expanded(
+              child: going
+                  ? Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: speed.first),
+                          TextSpan(
+                            text: ' ${speed.skip(1).join(' ')}',
+                            style: TextStyle(fontSize: 15, color: s.muted),
+                          ),
+                        ],
+                      ),
+                      style: sora(28, weight: FontWeight.w700, color: s.ink)
+                          .copyWith(
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                    )
+                  : Text(l.transfersWaiting, style: sora(22, color: s.ink)),
+            ),
+            if (batch.progress != null)
+              Text(
+                '${(batch.progress! * 100).round()}%',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Sig.blue,
                 ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              if (first.incoming) computer else phone,
-              const SizedBox(width: 10),
-              Expanded(child: _Flow(speed: going ? batch.speed : 0)),
-              const SizedBox(width: 10),
-              if (first.incoming) phone else computer,
-            ],
-          ),
-        ],
-      ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            if (first.incoming) computer else phone,
+            const SizedBox(width: 10),
+            Expanded(child: _Flow(speed: going ? batch.speed : 0)),
+            const SizedBox(width: 10),
+            if (first.incoming) phone else computer,
+          ],
+        ),
+      ],
     );
+    return flat
+        ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: body,
+          )
+        : SigCard(
+            padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
+            child: body,
+          );
   }
 }
 

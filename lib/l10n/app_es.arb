@@ -592,5 +592,6 @@
   "transfersFastPhotos": "Unas {count} fotos por segundo",
   "transfersFastSongs": "{count} canciones por segundo",
   "news026TransfersTitle": "Transferencias, siempre a un toque",
-  "news026TransfersBody": "El botón de abajo a la izquierda abre Transferencias en cualquier momento: archivos fluyendo a su velocidad real, el progreso de cada uno y lo que llegó y salió hace poco."
+  "news026TransfersBody": "El botón de abajo a la izquierda abre Transferencias en cualquier momento: archivos fluyendo a su velocidad real, el progreso de cada uno y lo que llegó y salió hace poco.",
+  "islandSeeMore": "Ver más"
 }

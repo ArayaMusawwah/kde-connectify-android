@@ -2264,4 +2264,7 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get news026TransfersBody =>
       'Кнопка слева внизу в любой момент открывает передачи: файлы бегут с реальной скоростью, видно продвижение каждого и что недавно пришло и ушло.';
+
+  @override
+  String get islandSeeMore => 'Показать ещё';
 }

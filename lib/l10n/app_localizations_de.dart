@@ -2237,4 +2237,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get news026TransfersBody =>
       'Der Knopf unten links öffnet jederzeit die Übertragungen: Dateien in ihrer echten Geschwindigkeit, der Fortschritt jeder Datei und was zuletzt kam und ging.';
+
+  @override
+  String get islandSeeMore => 'Mehr anzeigen';
 }

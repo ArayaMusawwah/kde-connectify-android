@@ -3671,6 +3671,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The button at the bottom left opens Transfers any time: files flowing at their real speed, each file\'s progress, and what came and went lately.'**
   String get news026TransfersBody;
+
+  /// Home's bottom island: open the whole list (Transfers)
+  ///
+  /// In en, this message translates to:
+  /// **'See more'**
+  String get islandSeeMore;
 }
 
 class _AppLocalizationsDelegate

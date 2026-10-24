@@ -592,5 +592,6 @@
   "transfersFastPhotos": "1 秒に約 {count} 枚の写真",
   "transfersFastSongs": "1 秒に {count} 曲",
   "news026TransfersTitle": "転送画面にいつでも",
-  "news026TransfersBody": "左下のボタンでいつでも転送画面を開けます。実際の速度で流れるファイル、それぞれの進み具合、最近の送受信が見られます。"
+  "news026TransfersBody": "左下のボタンでいつでも転送画面を開けます。実際の速度で流れるファイル、それぞれの進み具合、最近の送受信が見られます。",
+  "islandSeeMore": "もっと見る"
 }

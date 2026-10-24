@@ -2241,4 +2241,7 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get news026TransfersBody =>
       'Ny bokotra eo ambany ankavia dia manokatra ny fandefasana na oviana na oviana: rakitra mandeha amin\'ny hafainganany marina, ny fandrosoan\'ny tsirairay, ary izay tonga sy lasa vao haingana.';
+
+  @override
+  String get islandSeeMore => 'Hijery bebe kokoa';
 }
