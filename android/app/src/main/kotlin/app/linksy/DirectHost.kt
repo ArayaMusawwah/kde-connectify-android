@@ -19,7 +19,7 @@ import java.net.NetworkInterface
 
 /// This phone's side of a direct link (docs/protocol.md §4.17): a Wi-Fi Direct group of
 /// its own that a computer joins for big transfers. The core relays the steps; this does
-/// the Wi-Fi part and reports each step through [step]: `invite` (with `address`),
+/// the Wi-Fi part and reports each step through [step]: `invite` (with `address` and `name`),
 /// `connecting`, `up` (with `ip`), or `end` (with `reason`). One link at a time.
 object DirectHost {
     /// Set by the app: (device id, step).
@@ -87,10 +87,15 @@ object DirectHost {
         // Anything left over from before goes first
         manager.removeGroup(channel, null)
         manager.requestDeviceInfo(channel) { info ->
+            // Android gives apps 02:00:00:00:00:00 for the address: the computer finds this
+            // phone by its name then
             val address = info?.deviceAddress
             if (address == null || device != id) return@requestDeviceInfo fail("this phone's Wi-Fi Direct address is unknown")
+            val name = info.deviceName?.takeIf { it.isNotBlank() }?.take(64)
             manager.discoverPeers(channel, object : WifiP2pManager.ActionListener {
-                override fun onSuccess() = report(id, "invite", "address" to address.lowercase())
+                override fun onSuccess() = report(
+                    id, "invite", "address" to address.lowercase(), *listOfNotNull(name?.let { "name" to it }).toTypedArray(),
+                )
                 override fun onFailure(reason: Int) = fail("couldn't look for the computer (${why(reason)})")
             })
         }
@@ -188,12 +193,16 @@ object DirectHost {
         report(id, "end", "reason" to reason)
     }
 
+    /// Everything the link held, so nothing keeps Wi-Fi busy after it (a GO negotiation
+    /// still pending slows the transfer that falls back to the router).
     private fun stop() {
         val (manager, channel) = manager to channel
         if (manager != null && channel != null) {
-            manager.stopPeerDiscovery(channel, null)
+            manager.cancelConnect(channel, null)
             manager.removeGroup(channel, null)
-            if (Build.VERSION.SDK_INT >= 27) channel.close()
+            manager.stopPeerDiscovery(channel, null)
+            // Once Android has had them; a new link gets a channel of its own
+            if (Build.VERSION.SDK_INT >= 27) main.postDelayed({ channel.close() }, 3000)
         }
         receiver?.let { r -> runCatching { registeredOn?.unregisterReceiver(r) } }
         receiver = null
