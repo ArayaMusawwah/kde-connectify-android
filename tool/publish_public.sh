@@ -3,8 +3,9 @@
 # LinkSy-mg/linksy-releases: the APKs and the release notes, never the
 # code or the symbols. The app repo stays private.
 # Asset names carry the version (linksy-0.2.1.apk, -arm64, -armv7), so a downloaded file
-# says which it is; the release is titled "Mobile release" (desktop ones say "Desktop
-# release"). The website always links the newest, whatever its version:
+# says which it is; the release is titled "Android X.Y.Z" (the computer's say
+# "Linux X.Y.Z"). SHA256SUMS lists every APK's checksum: Update Now in the app
+# checks its download against it. The website always links the newest:
 #
 #   https://linksy.diary.mg/download/android        (every phone)
 #   https://linksy.diary.mg/download/android-arm64  (64-bit, smaller)
@@ -27,19 +28,20 @@ done
 
 rm -rf "$OUT"; mkdir -p "$OUT"
 cp "$DIST/$NAME-$V.apk" "$DIST/$NAME-$V-arm64.apk" "$DIST/$NAME-$V-armv7.apk" "$OUT/"
+(cd "$OUT" && shasum -a 256 *.apk > SHA256SUMS)
 {
   cat "$DIST/notes.md"
   print '\n### SHA-256\n```'
-  (cd "$OUT" && shasum -a 256 *.apk)
+  cat "$OUT/SHA256SUMS"
   print '```'
 } > "$OUT/notes.md"
 
 echo "== $TAG: publishing to $REPO"
 if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
-  gh release upload "$TAG" --repo "$REPO" --clobber "$OUT"/*.apk
+  gh release upload "$TAG" --repo "$REPO" --clobber "$OUT"/*.apk "$OUT/SHA256SUMS"
   gh release edit "$TAG" --repo "$REPO" --notes-file "$OUT/notes.md"
 else
   gh release create "$TAG" --repo "$REPO" --target main --latest \
-    --title "Mobile release · Linksy $V for Android" --notes-file "$OUT/notes.md" "$OUT"/*.apk
+    --title "Android $V" --notes-file "$OUT/notes.md" "$OUT"/*.apk "$OUT/SHA256SUMS"
 fi
 gh release view "$TAG" --repo "$REPO" --json url --jq .url
