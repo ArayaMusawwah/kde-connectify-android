@@ -92,12 +92,19 @@ object DirectHost {
             val address = info?.deviceAddress
             if (address == null || device != id) return@requestDeviceInfo fail("this phone's Wi-Fi Direct address is unknown")
             val name = info.deviceName?.takeIf { it.isNotBlank() }?.take(64)
-            manager.discoverPeers(channel, object : WifiP2pManager.ActionListener {
+            val invite = object : WifiP2pManager.ActionListener {
                 override fun onSuccess() = report(
                     id, "invite", "address" to address.lowercase(), *listOfNotNull(name?.let { "name" to it }).toTypedArray(),
                 )
                 override fun onFailure(reason: Int) = fail("couldn't look for the computer (${why(reason)})")
-            })
+            }
+            // The social channels (1, 6, 11) only where Android can: the two find each
+            // other in seconds instead of after a full scan
+            if (Build.VERSION.SDK_INT >= 33 && manager.isChannelConstrainedDiscoverySupported) {
+                manager.discoverPeersOnSocialChannels(channel, invite)
+            } else {
+                manager.discoverPeers(channel, invite)
+            }
         }
     }
 
