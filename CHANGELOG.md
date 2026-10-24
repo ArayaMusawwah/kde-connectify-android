@@ -7,6 +7,10 @@ All notable changes to Linksy for Android. Format: [Keep a Changelog](https://ke
 ### Changed
 - **Home's island**: one pill at the bottom of home, with Transfers on the left, Send files in the middle and Add a device on the right (before your first device, Add a device takes the middle). Tapping a part grows the pill in place into a card instead of opening a sheet: Transfers shows what's moving with its speed and the next files, or your last transfers, with See more when there's more; Send files lists your devices; Add a device offers the QR code or an address. Tap outside or go back to shrink it. While files move, the Transfers part widens with its ring and percentage; on a device's page, the transfers circle only shows while files move.
 - Lighter shadow under the bottom buttons.
+- **Recent transfers open**: tap a received file to open it; tap a group ("18 items") to list its files, and tap one to open it.
+
+### Fixed
+- **Big files send**: picked files are sent straight from where they are instead of being copied first. A long video (several GB) no longer fails to start, and many files at once start right away instead of after a long wait. Needs nothing new on the receiving side.
 
 ## [0.2.6] - 2026-10-24
 
