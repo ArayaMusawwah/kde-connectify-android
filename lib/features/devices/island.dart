@@ -33,11 +33,12 @@ class _IslandState extends State<Island> {
   _Open? _open;
 
   static const _grow = Duration(milliseconds: 460);
-  static const _shrink = Duration(milliseconds: 340);
+  static const _shrink = Duration(milliseconds: 300);
 
-  // Out fast and settle softly; back in a touch quicker.
+  // Out fast and settle softly. Back in snappier still: it starts at full
+  // speed and lands with a small spring past the pill's size.
   static const _growCurve = Cubic(0.16, 1, 0.3, 1);
-  static const _shrinkCurve = Cubic(0.4, 0, 0.2, 1);
+  static const _shrinkCurve = Cubic(0.3, 1.3, 0.5, 1);
 
   void _show(_Open what) {
     HapticFeedback.lightImpact();
@@ -46,6 +47,7 @@ class _IslandState extends State<Island> {
   }
 
   void _close() {
+    HapticFeedback.selectionClick();
     if (_open == _Open.add) LinksyScope.read(context).node.pairingMode(false);
     setState(() => _open = null);
   }
@@ -88,8 +90,8 @@ class _IslandState extends State<Island> {
                 onTap: _close,
                 child: AnimatedOpacity(
                   opacity: open ? 1 : 0,
-                  duration: duration,
-                  curve: curve,
+                  duration: open ? duration : const Duration(milliseconds: 180),
+                  curve: open ? curve : Curves.easeOut,
                   child: ColoredBox(color: s.ink.withValues(alpha: 0.18)),
                 ),
               ),
@@ -128,20 +130,33 @@ class _IslandState extends State<Island> {
                   curve: curve,
                   alignment: Alignment.bottomCenter,
                   child: AnimatedSwitcher(
-                    duration: Duration(milliseconds: open ? 340 : 240),
+                    duration: Duration(milliseconds: open ? 340 : 220),
                     layoutBuilder: (current, previous) => Stack(
                       alignment: Alignment.bottomCenter,
                       children: [...previous, ?current],
                     ),
-                    // The old leaves in the first half, the new comes in the
-                    // second: they never show together.
+                    // The old leaves first, the new comes after: they never
+                    // show together. Closing, the card's content goes at once
+                    // and the pill pops back in.
                     transitionBuilder: (child, animation) => FadeTransition(
                       opacity: CurvedAnimation(
                         parent: animation,
-                        curve: const Interval(0.5, 1, curve: Curves.easeOut),
+                        curve: Interval(
+                          open ? 0.5 : 0.35,
+                          1,
+                          curve: Curves.easeOut,
+                        ),
                       ),
                       child: ScaleTransition(
-                        scale: Tween(begin: 0.96, end: 1.0).animate(animation),
+                        scale: Tween(begin: open ? 0.96 : 0.86, end: 1.0)
+                            .animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: open
+                                    ? Curves.linear
+                                    : Curves.easeOutBack,
+                              ),
+                            ),
                         alignment: Alignment.bottomCenter,
                         child: child,
                       ),
