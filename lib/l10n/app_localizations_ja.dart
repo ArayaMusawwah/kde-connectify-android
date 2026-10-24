@@ -2115,4 +2115,24 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get deviceForward10 => '10 秒進む';
+
+  @override
+  String get news025MediaTitle => 'コンピュータの音楽を通知に';
+
+  @override
+  String get news025MediaBody =>
+      '再生中の音楽が通知に表示されます。再生、スキップ、10 秒戻る・進む、シークバー付き。デバイスのページにも。';
+
+  @override
+  String get news025NumbersTitle => 'プレゼンリモコンに数字';
+
+  @override
+  String get news025NumbersBody => 'スライド番号を入力して Enter でそのスライドへ。キーボードも使えます。';
+
+  @override
+  String get news025RemoteTitle => 'より確かなリモコン';
+
+  @override
+  String get news025RemoteBody =>
+      '大文字を入力してもコンピュータの Shift が押されたままにならなくなりました。2 本指スクロールは逆向きにもできます（設定）。';
 }

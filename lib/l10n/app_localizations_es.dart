@@ -2170,4 +2170,26 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deviceForward10 => '10 segundos adelante';
+
+  @override
+  String get news025MediaTitle =>
+      'La música de tu ordenador, en las notificaciones';
+
+  @override
+  String get news025MediaBody =>
+      'Lo que suena aparece en las notificaciones: reproducir, saltar, 10 segundos atrás o adelante y una barra de progreso. También en su página.';
+
+  @override
+  String get news025NumbersTitle => 'Números en el mando de presentaciones';
+
+  @override
+  String get news025NumbersBody =>
+      'Escribe el número de una diapositiva y luego Intro para ir a ella. El teclado también funciona ahí.';
+
+  @override
+  String get news025RemoteTitle => 'Un mando más fiable';
+
+  @override
+  String get news025RemoteBody =>
+      'Las mayúsculas ya no dejan Mayús pulsada en el ordenador, y el desplazamiento con dos dedos puede invertirse (Ajustes).';
 }

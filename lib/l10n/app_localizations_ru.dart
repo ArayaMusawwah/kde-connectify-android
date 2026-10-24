@@ -2193,4 +2193,25 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get deviceForward10 => 'Вперёд на 10 секунд';
+
+  @override
+  String get news025MediaTitle => 'Музыка компьютера в уведомлениях';
+
+  @override
+  String get news025MediaBody =>
+      'То, что он играет, видно в уведомлениях: воспроизведение, переключение, 10 секунд назад или вперёд и полоса перемотки. И на его странице.';
+
+  @override
+  String get news025NumbersTitle => 'Цифры на пульте для презентаций';
+
+  @override
+  String get news025NumbersBody =>
+      'Введите номер слайда и нажмите Ввод, чтобы перейти к нему. Клавиатура там тоже работает.';
+
+  @override
+  String get news025RemoteTitle => 'Надёжнее пульт';
+
+  @override
+  String get news025RemoteBody =>
+      'Заглавные буквы больше не оставляют Shift зажатым на компьютере, а прокрутку двумя пальцами можно развернуть (Настройки).';
 }

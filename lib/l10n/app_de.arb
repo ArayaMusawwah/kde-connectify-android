@@ -573,5 +573,11 @@
   "remoteBackspace": "Löschen",
   "remoteEnter": "Eingabe",
   "deviceBack10": "10 Sekunden zurück",
-  "deviceForward10": "10 Sekunden vor"
+  "deviceForward10": "10 Sekunden vor",
+  "news025MediaTitle": "Die Musik deines Computers in den Benachrichtigungen",
+  "news025MediaBody": "Was er abspielt, erscheint bei den Benachrichtigungen: Abspielen, Überspringen, 10 Sekunden zurück oder vor und ein Fortschrittsbalken. Auch auf seiner Seite.",
+  "news025NumbersTitle": "Zahlen auf der Präsentationsfernbedienung",
+  "news025NumbersBody": "Gib die Nummer einer Folie ein, dann Eingabe, um dorthin zu springen. Die Tastatur geht dort auch.",
+  "news025RemoteTitle": "Zuverlässigere Fernbedienung",
+  "news025RemoteBody": "Großbuchstaben lassen Shift auf dem Computer nicht mehr hängen, und das Scrollen mit zwei Fingern lässt sich umkehren (Einstellungen)."
 }

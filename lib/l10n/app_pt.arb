@@ -573,5 +573,11 @@
   "remoteBackspace": "Apagar",
   "remoteEnter": "Enter",
   "deviceBack10": "10 segundos para trás",
-  "deviceForward10": "10 segundos para a frente"
+  "deviceForward10": "10 segundos para a frente",
+  "news025MediaTitle": "A música do seu computador nas notificações",
+  "news025MediaBody": "O que ele toca aparece nas notificações: tocar, pular, 10 segundos para trás ou para a frente e uma barra de progresso. Também na página dele.",
+  "news025NumbersTitle": "Números no controle de apresentação",
+  "news025NumbersBody": "Digite o número de um slide e depois Enter para ir até ele. O teclado também funciona ali.",
+  "news025RemoteTitle": "Controle mais confiável",
+  "news025RemoteBody": "Maiúsculas não deixam mais o Shift preso no computador, e a rolagem com dois dedos pode ser invertida (Configurações)."
 }

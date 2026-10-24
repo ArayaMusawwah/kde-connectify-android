@@ -573,5 +573,11 @@
   "remoteBackspace": "削除",
   "remoteEnter": "Enter",
   "deviceBack10": "10 秒戻る",
-  "deviceForward10": "10 秒進む"
+  "deviceForward10": "10 秒進む",
+  "news025MediaTitle": "コンピュータの音楽を通知に",
+  "news025MediaBody": "再生中の音楽が通知に表示されます。再生、スキップ、10 秒戻る・進む、シークバー付き。デバイスのページにも。",
+  "news025NumbersTitle": "プレゼンリモコンに数字",
+  "news025NumbersBody": "スライド番号を入力して Enter でそのスライドへ。キーボードも使えます。",
+  "news025RemoteTitle": "より確かなリモコン",
+  "news025RemoteBody": "大文字を入力してもコンピュータの Shift が押されたままにならなくなりました。2 本指スクロールは逆向きにもできます（設定）。"
 }

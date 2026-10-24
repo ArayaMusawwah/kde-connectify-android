@@ -2157,4 +2157,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deviceForward10 => '10 seconds forward';
+
+  @override
+  String get news025MediaTitle => 'Your computer\'s music, in notifications';
+
+  @override
+  String get news025MediaBody =>
+      'What it plays shows with the phone\'s notifications: play, skip, 10 seconds back or forward, and a seek bar. Also on its page.';
+
+  @override
+  String get news025NumbersTitle => 'Numbers on the presenter remote';
+
+  @override
+  String get news025NumbersBody =>
+      'Type a slide\'s number, then Enter, to jump to it. The keyboard works there too.';
+
+  @override
+  String get news025RemoteTitle => 'Smoother remote';
+
+  @override
+  String get news025RemoteBody =>
+      'Capitals no longer leave Shift stuck on the computer, and two-finger scrolling can go the other way (Settings).';
 }

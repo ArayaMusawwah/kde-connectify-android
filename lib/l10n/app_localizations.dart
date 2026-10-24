@@ -3557,6 +3557,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'10 seconds forward'**
   String get deviceForward10;
+
+  /// What's New in 0.2.5
+  ///
+  /// In en, this message translates to:
+  /// **'Your computer\'s music, in notifications'**
+  String get news025MediaTitle;
+
+  /// What's New in 0.2.5
+  ///
+  /// In en, this message translates to:
+  /// **'What it plays shows with the phone\'s notifications: play, skip, 10 seconds back or forward, and a seek bar. Also on its page.'**
+  String get news025MediaBody;
+
+  /// What's New in 0.2.5
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers on the presenter remote'**
+  String get news025NumbersTitle;
+
+  /// What's New in 0.2.5
+  ///
+  /// In en, this message translates to:
+  /// **'Type a slide\'s number, then Enter, to jump to it. The keyboard works there too.'**
+  String get news025NumbersBody;
+
+  /// What's New in 0.2.5
+  ///
+  /// In en, this message translates to:
+  /// **'Smoother remote'**
+  String get news025RemoteTitle;
+
+  /// What's New in 0.2.5
+  ///
+  /// In en, this message translates to:
+  /// **'Capitals no longer leave Shift stuck on the computer, and two-finger scrolling can go the other way (Settings).'**
+  String get news025RemoteBody;
 }
 
 class _AppLocalizationsDelegate

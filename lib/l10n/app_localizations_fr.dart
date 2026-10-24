@@ -2172,4 +2172,27 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deviceForward10 => '10 secondes en avant';
+
+  @override
+  String get news025MediaTitle =>
+      'La musique de votre ordinateur dans les notifications';
+
+  @override
+  String get news025MediaBody =>
+      'Ce qu’il joue s’affiche dans les notifications du téléphone : lecture, piste suivante, 10 secondes en arrière ou en avant, et une barre de lecture. Aussi sur sa page.';
+
+  @override
+  String get news025NumbersTitle =>
+      'Des chiffres sur la télécommande de présentation';
+
+  @override
+  String get news025NumbersBody =>
+      'Tapez le numéro d’une diapositive, puis Entrée, pour y aller. Le clavier y marche aussi.';
+
+  @override
+  String get news025RemoteTitle => 'Une télécommande plus fiable';
+
+  @override
+  String get news025RemoteBody =>
+      'Les majuscules ne bloquent plus Maj sur l’ordinateur, et le défilement à deux doigts peut s’inverser (Réglages).';
 }

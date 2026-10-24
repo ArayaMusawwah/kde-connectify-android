@@ -2164,4 +2164,26 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deviceForward10 => '10 Sekunden vor';
+
+  @override
+  String get news025MediaTitle =>
+      'Die Musik deines Computers in den Benachrichtigungen';
+
+  @override
+  String get news025MediaBody =>
+      'Was er abspielt, erscheint bei den Benachrichtigungen: Abspielen, Überspringen, 10 Sekunden zurück oder vor und ein Fortschrittsbalken. Auch auf seiner Seite.';
+
+  @override
+  String get news025NumbersTitle => 'Zahlen auf der Präsentationsfernbedienung';
+
+  @override
+  String get news025NumbersBody =>
+      'Gib die Nummer einer Folie ein, dann Eingabe, um dorthin zu springen. Die Tastatur geht dort auch.';
+
+  @override
+  String get news025RemoteTitle => 'Zuverlässigere Fernbedienung';
+
+  @override
+  String get news025RemoteBody =>
+      'Großbuchstaben lassen Shift auf dem Computer nicht mehr hängen, und das Scrollen mit zwei Fingern lässt sich umkehren (Einstellungen).';
 }

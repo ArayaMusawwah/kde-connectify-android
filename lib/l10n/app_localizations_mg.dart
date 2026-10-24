@@ -2169,4 +2169,26 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get deviceForward10 => 'Mandroso 10 segondra';
+
+  @override
+  String get news025MediaTitle =>
+      'Ny mozikan\'ny solosainao ao amin\'ny fampandrenesana';
+
+  @override
+  String get news025MediaBody =>
+      'Izay alefany dia miseho ao amin\'ny fampandrenesana: alefa, mandingana, miverina na mandroso 10 segondra, ary tsipika fandehanana. Ao amin\'ny pejiny koa.';
+
+  @override
+  String get news025NumbersTitle => 'Isa amin\'ny fanaraha-mpanehoana';
+
+  @override
+  String get news025NumbersBody =>
+      'Soraty ny laharan\'ny slide, avy eo Ekena, dia mankany aminy. Mandeha ao koa ny fitendry.';
+
+  @override
+  String get news025RemoteTitle => 'Fanaraha-davitra azo antoka kokoa';
+
+  @override
+  String get news025RemoteBody =>
+      'Tsy mamikitra intsony ny Shift ao amin\'ny solosaina rehefa manoratra litera lehibe, ary azo avadika ny fikodiadiana amin\'ny rantsantanana roa (Fikirana).';
 }

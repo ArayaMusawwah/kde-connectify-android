@@ -2090,4 +2090,23 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get deviceForward10 => '前进 10 秒';
+
+  @override
+  String get news025MediaTitle => '电脑的音乐显示在通知中';
+
+  @override
+  String get news025MediaBody =>
+      '正在播放的内容会显示在通知里：播放、切换、后退或前进 10 秒，以及进度条。设备页面上也有。';
+
+  @override
+  String get news025NumbersTitle => '演示遥控器上的数字';
+
+  @override
+  String get news025NumbersBody => '输入幻灯片编号再按回车即可跳转。那里也可以用键盘。';
+
+  @override
+  String get news025RemoteTitle => '更可靠的遥控';
+
+  @override
+  String get news025RemoteBody => '输入大写字母后电脑上的 Shift 不会再卡住，双指滚动也可以反向（设置）。';
 }

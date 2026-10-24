@@ -2165,4 +2165,25 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get deviceForward10 => '10 segundos para a frente';
+
+  @override
+  String get news025MediaTitle => 'A música do seu computador nas notificações';
+
+  @override
+  String get news025MediaBody =>
+      'O que ele toca aparece nas notificações: tocar, pular, 10 segundos para trás ou para a frente e uma barra de progresso. Também na página dele.';
+
+  @override
+  String get news025NumbersTitle => 'Números no controle de apresentação';
+
+  @override
+  String get news025NumbersBody =>
+      'Digite o número de um slide e depois Enter para ir até ele. O teclado também funciona ali.';
+
+  @override
+  String get news025RemoteTitle => 'Controle mais confiável';
+
+  @override
+  String get news025RemoteBody =>
+      'Maiúsculas não deixam mais o Shift preso no computador, e a rolagem com dois dedos pode ser invertida (Configurações).';
 }

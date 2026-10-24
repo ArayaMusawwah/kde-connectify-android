@@ -68,6 +68,8 @@ void main() {
   test('What\'s New: since the last version seen, up to this one', () {
     expect(highlights('0.2.4', since: '0.2.3'), hasLength(3));
     expect(highlights('0.2.4', since: '0.2.4'), isEmpty);
+    expect(highlights('0.2.5', since: '0.2.4'), hasLength(3));
+    expect(highlights('0.2.5', since: '0.2.3'), hasLength(5));
     expect(highlights('0.2.3'), isEmpty);
   });
 }

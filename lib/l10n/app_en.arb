@@ -2957,5 +2957,29 @@
   "deviceForward10": "10 seconds forward",
   "@deviceForward10": {
     "description": "Media control: 10 seconds forward (tooltip)"
+  },
+  "news025MediaTitle": "Your computer's music, in notifications",
+  "@news025MediaTitle": {
+    "description": "What's New in 0.2.5"
+  },
+  "news025MediaBody": "What it plays shows with the phone's notifications: play, skip, 10 seconds back or forward, and a seek bar. Also on its page.",
+  "@news025MediaBody": {
+    "description": "What's New in 0.2.5"
+  },
+  "news025NumbersTitle": "Numbers on the presenter remote",
+  "@news025NumbersTitle": {
+    "description": "What's New in 0.2.5"
+  },
+  "news025NumbersBody": "Type a slide's number, then Enter, to jump to it. The keyboard works there too.",
+  "@news025NumbersBody": {
+    "description": "What's New in 0.2.5"
+  },
+  "news025RemoteTitle": "Smoother remote",
+  "@news025RemoteTitle": {
+    "description": "What's New in 0.2.5"
+  },
+  "news025RemoteBody": "Capitals no longer leave Shift stuck on the computer, and two-finger scrolling can go the other way (Settings).",
+  "@news025RemoteBody": {
+    "description": "What's New in 0.2.5"
   }
 }

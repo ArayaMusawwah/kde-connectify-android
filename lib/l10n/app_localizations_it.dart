@@ -2172,4 +2172,25 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get deviceForward10 => 'Avanti di 10 secondi';
+
+  @override
+  String get news025MediaTitle => 'La musica del computer nelle notifiche';
+
+  @override
+  String get news025MediaBody =>
+      'Ciò che suona appare tra le notifiche: riproduci, salta, 10 secondi indietro o avanti e una barra di avanzamento. Anche nella sua pagina.';
+
+  @override
+  String get news025NumbersTitle => 'Numeri sul telecomando per presentazioni';
+
+  @override
+  String get news025NumbersBody =>
+      'Digita il numero di una diapositiva, poi Invio, per andarci. Lì funziona anche la tastiera.';
+
+  @override
+  String get news025RemoteTitle => 'Telecomando più affidabile';
+
+  @override
+  String get news025RemoteBody =>
+      'Le maiuscole non lasciano più Maiusc premuto sul computer, e lo scorrimento a due dita può invertirsi (Impostazioni).';
 }
