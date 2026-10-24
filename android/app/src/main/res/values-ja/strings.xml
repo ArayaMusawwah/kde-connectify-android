@@ -12,6 +12,7 @@
     <string name="locate_open_app">電話で Linksy を開くと現在地を共有できます</string>
     <string name="channel_news">Linksy からのお知らせ</string>
     <string name="channel_staying">接続を維持中</string>
+    <string name="channel_transfers">ファイル転送</string>
     <string name="camera_didnt_start">カメラが起動しませんでした。</string>
     <string name="camera_unavailable">カメラを使用できません。</string>
     <string name="sharing_screen">%1$s と画面を共有中</string>

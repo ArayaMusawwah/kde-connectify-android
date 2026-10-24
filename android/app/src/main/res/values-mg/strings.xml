@@ -12,6 +12,7 @@
     <string name="locate_open_app">Sokafy i Linksy amin\'ny finday hizarana ny toerana misy azy</string>
     <string name="channel_news">Vaovao avy amin\'i Linksy</string>
     <string name="channel_staying">Mitoetra mifandray</string>
+    <string name="channel_transfers">Fandefasana rakitra</string>
     <string name="camera_didnt_start">Tsy nandeha ny fakantsary.</string>
     <string name="camera_unavailable">Tsy misy ny fakantsary.</string>
     <string name="sharing_screen">Mizara ny efijerinao amin\'i %1$s</string>

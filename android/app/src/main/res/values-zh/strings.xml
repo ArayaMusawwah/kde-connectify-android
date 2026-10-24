@@ -12,6 +12,7 @@
     <string name="locate_open_app">在手机上打开 Linksy 才能共享它的位置</string>
     <string name="channel_news">Linksy 动态</string>
     <string name="channel_staying">保持连接</string>
+    <string name="channel_transfers">文件传输</string>
     <string name="camera_didnt_start">相机未能启动。</string>
     <string name="camera_unavailable">相机不可用。</string>
     <string name="sharing_screen">正在与 %1$s 共享屏幕</string>

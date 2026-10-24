@@ -193,12 +193,22 @@ abstract final class LinksyPlatform {
       _call<void>('shareFiles', {'on': on});
 
   /// Keeps Linksy running with the screen off, with a quiet notification
-  /// saying [text]; [awake] keeps the CPU on too (heartbeats).
+  /// saying [text]; [awake] keeps the CPU on too (heartbeats). With
+  /// [progress] (a percentage, or -1 not started yet), it's files on their
+  /// way: shown in the status bar under [title], with Wi-Fi kept on too.
   static Future<void> keepAlive({
     required bool on,
     String text = '',
     bool awake = false,
-  }) => _call<void>('keepAlive', {'on': on, 'text': text, 'awake': awake});
+    String? title,
+    int? progress,
+  }) => _call<void>('keepAlive', {
+    'on': on,
+    'text': text,
+    'awake': awake,
+    'title': title,
+    'progress': progress,
+  });
 
   /// Reports calls (`ringing`, `active`, `idle`) on [callStates] while on.
   static Future<void> watchCalls(bool on) =>

@@ -98,7 +98,13 @@ class MainActivity : FlutterActivity() {
                     }
                     "keepAlive" -> {
                         if (call.argument<Boolean>("on") == true) {
-                            KeepAlive.start(this@MainActivity, call.argument<String>("text") ?: Lang.str(this@MainActivity, R.string.keep_alive_default), call.argument<Boolean>("awake") == true)
+                            KeepAlive.start(
+                                this@MainActivity,
+                                call.argument<String>("text") ?: Lang.str(this@MainActivity, R.string.keep_alive_default),
+                                call.argument<Boolean>("awake") == true,
+                                call.argument<String>("title"),
+                                call.argument<Int>("progress"),
+                            )
                         } else {
                             KeepAlive.stop(this@MainActivity)
                         }

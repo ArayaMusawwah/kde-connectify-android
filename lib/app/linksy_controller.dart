@@ -625,6 +625,34 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   /// wants Linksy to keep running in the background.
   void _updateKeepAlive() {
     final lockers = [for (final id in lockWatchers.keys) _name(id)];
+    final moving = liveTransfers;
+    if (moving.isNotEmpty) {
+      // Files on their way, with their progress, and the CPU and Wi-Fi kept
+      // on so nothing drops with the screen off.
+      final total = moving.fold(0, (n, a) => n + a.total);
+      final bytes = moving.fold(0, (n, a) => n + a.bytes);
+      final waiting = moving.every((a) => a.status == ActivityStatus.waiting);
+      final percent = waiting || total == 0 ? -1 : bytes * 100 ~/ total;
+      final files = moving.fold(0, (n, a) => n + a.names.length);
+      final key = '$files/$percent';
+      final now = DateTime.now();
+      if (key == _noticeKey ||
+          _noticeKey != null &&
+              now.difference(_noticeAt) < const Duration(seconds: 1)) {
+        return;
+      }
+      _noticeKey = key;
+      _noticeAt = now;
+      LinksyPlatform.keepAlive(
+        on: true,
+        awake: true,
+        title: tr.transfersBubble(files),
+        text: percent < 0 ? tr.transfersWaiting : '$percent%',
+        progress: percent,
+      );
+      return;
+    }
+    _noticeKey = null;
     if (lockers.isNotEmpty) {
       LinksyPlatform.keepAlive(
         on: true,
@@ -637,6 +665,10 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       LinksyPlatform.keepAlive(on: false);
     }
   }
+
+  /// What the transfer notification last showed, and when.
+  String? _noticeKey;
+  DateTime _noticeAt = DateTime(0);
 
   Future<void> setStayRunning(bool on) async {
     await _setPref('stay_running', on ? 'on' : null);
@@ -1300,6 +1332,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _activity.insert(0, a);
     if (_activity.length > ActivityStore.maxEntries) _activity.removeLast();
     _changed();
+    if (a.kind == ActivityKind.files) _updateKeepAlive();
   }
 
   void _addLocal(
@@ -1327,8 +1360,10 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   void _update(String id, void Function(Activity) change, {bool save = true}) {
     final a = _activity.where((a) => a.id == id).firstOrNull;
     if (a == null) return;
+    final live = a.isLive;
     change(a);
     save ? _changed() : notifyListeners();
+    if (a.kind == ActivityKind.files && (live || a.isLive)) _updateKeepAlive();
   }
 
   void _changed() {

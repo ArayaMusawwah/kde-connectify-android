@@ -12,6 +12,7 @@
     <string name="locate_open_app">Abre Linksy en el teléfono para compartir dónde está</string>
     <string name="channel_news">Novedades de Linksy</string>
     <string name="channel_staying">Manteniendo la conexión</string>
+    <string name="channel_transfers">Transferencias de archivos</string>
     <string name="camera_didnt_start">La cámara no se inició.</string>
     <string name="camera_unavailable">La cámara no está disponible.</string>
     <string name="sharing_screen">Compartiendo tu pantalla con %1$s</string>

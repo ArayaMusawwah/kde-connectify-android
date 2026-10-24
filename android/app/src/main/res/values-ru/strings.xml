@@ -12,6 +12,7 @@
     <string name="locate_open_app">Откройте Linksy на телефоне, чтобы поделиться его местоположением</string>
     <string name="channel_news">Новости Linksy</string>
     <string name="channel_staying">Соединение активно</string>
+    <string name="channel_transfers">Передача файлов</string>
     <string name="camera_didnt_start">Камера не запустилась.</string>
     <string name="camera_unavailable">Камера недоступна.</string>
     <string name="sharing_screen">Трансляция экрана для %1$s</string>
