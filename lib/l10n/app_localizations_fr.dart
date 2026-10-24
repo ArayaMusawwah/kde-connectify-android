@@ -2248,4 +2248,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get islandSeeMore => 'Voir plus';
+
+  @override
+  String get transfersRouteDirect => 'Wi-Fi Direct';
+
+  @override
+  String get transfersRouteDirectSetup => 'Wi-Fi Direct en préparation';
 }

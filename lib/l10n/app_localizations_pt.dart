@@ -2239,4 +2239,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get islandSeeMore => 'Ver mais';
+
+  @override
+  String get transfersRouteDirect => 'Wi-Fi Direct';
+
+  @override
+  String get transfersRouteDirectSetup => 'Preparando o Wi-Fi Direct';
 }

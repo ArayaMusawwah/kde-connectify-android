@@ -2187,4 +2187,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get islandSeeMore => 'もっと見る';
+
+  @override
+  String get transfersRouteDirect => 'Wi-Fi Direct';
+
+  @override
+  String get transfersRouteDirectSetup => 'Wi-Fi Direct を準備中';
 }

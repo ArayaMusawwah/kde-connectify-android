@@ -124,6 +124,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   Timer? _importTimer;
   StreamSubscription<String>? _callSub;
   StreamSubscription<(String, bool)>? _answerSub;
+  StreamSubscription<(String, Map<String, Object?>)>? _directSub;
   StreamSubscription<(String, int?)>? _mediaActionSub;
 
   bool get pauseOnCalls => prefs['pause_calls'] != 'off';
@@ -244,6 +245,12 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _answerSub = LinksyPlatform.transferAnswers.listen(
       (a) => respond(a.$1, accept: a.$2),
     );
+    // The Wi-Fi part of a direct link did a step: the computer hears it.
+    _directSub = LinksyPlatform.directSteps.listen((s) {
+      final (id, step) = s;
+      final out = step['type'] == 'up' ? {...step, 'port': node.port} : step;
+      node.directSend(id, out).catchError((Object _) {});
+    });
     unawaited(_loadPlatform());
     unawaited(_loadPeerPictures());
     serviceInfo = service?.cached();
@@ -666,6 +673,10 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
+  /// Direct links (docs/protocol.md §4.17) by device: true once up, false
+  /// while being set up.
+  final direct = <String, bool>{};
+
   /// What the transfer notification last showed, and when.
   String? _noticeKey;
   DateTime _noticeAt = DateTime(0);
@@ -1045,6 +1056,24 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           volume[from.id] = state;
           notifyListeners();
         }
+      // Direct links (docs/protocol.md §4.17): this phone hosts, Android
+      // does the Wi-Fi part.
+      case DirectWanted(:final id):
+        direct[id] = false;
+        LinksyPlatform.directWanted(id);
+        notifyListeners();
+      case DirectStepReceived(:final from, :final step)
+          when step['type'] == 'listening' && step['address'] is String:
+        LinksyPlatform.directListening(from.id, step['address'] as String);
+      case DirectLinked(:final id):
+        direct[id] = true;
+        notifyListeners();
+      case DirectEnded(:final id):
+        direct.remove(id);
+        LinksyPlatform.directEnded(id);
+        notifyListeners();
+      case DirectStepReceived():
+        break;
       case HeartbeatWatchChanged(:final from, :final on):
         if (on) {
           lockWatchers[from.id] = e.everyS;
@@ -1616,6 +1645,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _batterySub?.cancel();
     _callSub?.cancel();
     _answerSub?.cancel();
+    _directSub?.cancel();
     _mediaActionSub?.cancel();
     LinksyPlatform.mediaNotice(null);
     _usbSub?.cancel();

@@ -593,5 +593,7 @@
   "transfersFastSongs": "每秒 {count} 首歌",
   "news026TransfersTitle": "传输随时一点即达",
   "news026TransfersBody": "左下角的按钮随时打开传输页面：文件以真实速度流动，每个文件的进度，以及最近收发的内容。",
-  "islandSeeMore": "查看更多"
+  "islandSeeMore": "查看更多",
+  "transfersRouteDirect": "Wi-Fi Direct",
+  "transfersRouteDirectSetup": "正在建立 Wi-Fi Direct"
 }

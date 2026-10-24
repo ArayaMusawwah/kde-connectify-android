@@ -593,5 +593,7 @@
   "transfersFastSongs": "{count} песен в секунду",
   "news026TransfersTitle": "Передачи всегда под рукой",
   "news026TransfersBody": "Кнопка слева внизу в любой момент открывает передачи: файлы бегут с реальной скоростью, видно продвижение каждого и что недавно пришло и ушло.",
-  "islandSeeMore": "Показать ещё"
+  "islandSeeMore": "Показать ещё",
+  "transfersRouteDirect": "Wi-Fi Direct",
+  "transfersRouteDirectSetup": "Подключение Wi-Fi Direct"
 }

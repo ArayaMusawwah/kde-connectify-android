@@ -3677,6 +3677,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See more'**
   String get islandSeeMore;
+
+  /// A transfer goes over a Wi-Fi Direct link between the two devices (brand name, usually kept).
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi Direct'**
+  String get transfersRouteDirect;
+
+  /// A Wi-Fi Direct link is being set up before a big transfer starts.
+  ///
+  /// In en, this message translates to:
+  /// **'Setting up Wi-Fi Direct'**
+  String get transfersRouteDirectSetup;
 }
 
 class _AppLocalizationsDelegate

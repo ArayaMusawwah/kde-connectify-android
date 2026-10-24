@@ -514,6 +514,11 @@ class _Speed extends StatelessWidget {
             if (first.incoming) phone else computer,
           ],
         ),
+        // The way it goes, under the lane
+        const SizedBox(height: 10),
+        Center(
+          child: _Route(c: c, deviceId: first.deviceId),
+        ),
       ],
     );
     return flat
@@ -793,6 +798,61 @@ class _Transfer extends StatelessWidget {
 }
 
 /// The small caps above a list.
+/// Which way a transfer goes: Wi-Fi Direct (or being set up), the cable,
+/// the internet, or the Wi-Fi network.
+class _Route extends StatelessWidget {
+  const _Route({required this.c, required this.deviceId});
+
+  final LinksyController c;
+  final String deviceId;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final l = context.l10n;
+    final v = c.device(deviceId);
+    final (icon, words, direct) = switch (c.direct[deviceId]) {
+      true => (PhFill.lightning, l.transfersRouteDirect, true),
+      false => (Ph.lightning, l.transfersRouteDirectSetup, false),
+      null when v == null => (null, '', false),
+      null => (
+        v!.usb
+            ? Ph.usb
+            : v.away
+            ? Ph.globe
+            : Ph.wifiHigh,
+        linkWords(v),
+        false,
+      ),
+    };
+    if (icon == null) return const SizedBox.shrink();
+    final color = direct ? Sig.blue : s.muted;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 240),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: direct ? Sig.blue.withValues(alpha: 0.08) : s.line,
+        borderRadius: BorderRadius.circular(99),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 4),
+          Text(
+            words,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 TextStyle _label(Sig s) => TextStyle(
   fontSize: 12,
   fontWeight: FontWeight.w600,

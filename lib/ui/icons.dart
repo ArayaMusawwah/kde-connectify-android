@@ -55,6 +55,7 @@ abstract final class Ph {
   static const shieldCheck = IconData(0xe40c, fontFamily: 'PhosphorRegular');
   static const warningCircle = IconData(0xe4e2, fontFamily: 'PhosphorRegular');
   static const wifiSlash = IconData(0xe4f2, fontFamily: 'PhosphorRegular');
+  static const wifiHigh = IconData(0xe4ea, fontFamily: 'PhosphorRegular');
   static const x = IconData(0xe4f6, fontFamily: 'PhosphorRegular');
   static const screencast = IconData(0xe404, fontFamily: 'PhosphorRegular');
   static const videoCamera = IconData(0xe4da, fontFamily: 'PhosphorRegular');

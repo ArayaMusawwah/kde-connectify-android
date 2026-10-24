@@ -593,5 +593,7 @@
   "transfersFastSongs": "{count} Songs pro Sekunde",
   "news026TransfersTitle": "Übertragungen, immer einen Tipp entfernt",
   "news026TransfersBody": "Der Knopf unten links öffnet jederzeit die Übertragungen: Dateien in ihrer echten Geschwindigkeit, der Fortschritt jeder Datei und was zuletzt kam und ging.",
-  "islandSeeMore": "Mehr anzeigen"
+  "islandSeeMore": "Mehr anzeigen",
+  "transfersRouteDirect": "Wi-Fi Direct",
+  "transfersRouteDirectSetup": "Wi-Fi Direct wird eingerichtet"
 }

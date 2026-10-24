@@ -2244,4 +2244,10 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get islandSeeMore => 'Hijery bebe kokoa';
+
+  @override
+  String get transfersRouteDirect => 'Wi-Fi Direct';
+
+  @override
+  String get transfersRouteDirectSetup => 'Manomana Wi-Fi Direct';
 }

@@ -2160,4 +2160,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get islandSeeMore => '查看更多';
+
+  @override
+  String get transfersRouteDirect => 'Wi-Fi Direct';
+
+  @override
+  String get transfersRouteDirectSetup => '正在建立 Wi-Fi Direct';
 }
