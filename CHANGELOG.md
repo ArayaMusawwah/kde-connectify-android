@@ -2,7 +2,7 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
-## [0.2.4] - unreleased
+## [0.2.4] - 2026-10-24
 
 ### Added
 - **Private on every network** (`docs/protocol.md` §4.16, core `6282520`): on a café's or an office's Wi-Fi, strangers no longer see this phone's id, name or system. Paired devices recognise it by a tag that changes every 15 minutes. While Add Device, the scanner or Pair by address is open, a computer that isn't paired can still find it. Computers that don't speak this yet keep finding it as before.
