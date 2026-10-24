@@ -4,13 +4,16 @@ All notable changes to Linksy for Android. Format: [Keep a Changelog](https://ke
 
 ## [0.2.7] - 2026-10-24
 
+### Added
+- **Transfers in the background**: while files are on their way, a notification shows how many and how far along, with a progress bar. Linksy keeps running, and the phone keeps the CPU and Wi-Fi on, until they're done, so a transfer doesn't drop when you switch apps or the screen turns off.
+
 ### Changed
 - **Home's island**: one pill at the bottom of home, with Transfers on the left, Send files in the middle and Add a device on the right (before your first device, Add a device takes the middle). Tapping a part grows the pill in place into a card instead of opening a sheet: Transfers shows what's moving with its speed and the next files, or your last transfers, with See more when there's more; Send files lists your devices; Add a device offers the QR code or an address. Tap outside or go back to shrink it. While files move, the Transfers part widens with its ring and percentage; on a device's page, the transfers circle only shows while files move.
 - Lighter shadow under the bottom buttons.
 - **Recent transfers open**: tap a received file to open it; tap a group ("18 items") to list its files, and tap one to open it.
 
 ### Fixed
-- **Big files send**: picked files are sent straight from where they are instead of being copied first. A long video (several GB) no longer fails to start, and many files at once start right away instead of after a long wait. Needs nothing new on the receiving side.
+- **Big files send**: picked files are sent straight from where they are instead of being copied first. A long video (several GB) no longer fails to start, and many files at once start right away instead of after a long wait. Needs nothing new on the receiving side. Each file is read without disturbing anything else reading it (the same file sent to two devices at once), and only while it's still the file you picked.
 
 ## [0.2.6] - 2026-10-24
 
