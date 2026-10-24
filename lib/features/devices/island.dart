@@ -9,6 +9,7 @@ import '../../ui/sig.dart';
 import '../device/device_screen.dart';
 import '../pairing/pairing_flows.dart';
 import '../transfer/transfer_bubble.dart';
+import 'phased_size.dart';
 
 /// What the island shows when it's open.
 enum _Open { transfers, send, add }
@@ -29,15 +30,20 @@ class Island extends StatefulWidget {
   State<Island> createState() => _IslandState();
 }
 
-class _IslandState extends State<Island> {
+class _IslandState extends State<Island> with SingleTickerProviderStateMixin {
   _Open? _open;
 
   static const _grow = Duration(milliseconds: 460);
-  static const _shrink = _grow;
+  static const _shrink = Duration(milliseconds: 560);
 
-  // Out fast and settle softly; back in, the same played backwards.
+  // Out fast and settle softly, both ways at once.
   static const _growCurve = Cubic(0.16, 1, 0.3, 1);
-  static const _shrinkCurve = Cubic(0.7, 0, 0.84, 0);
+
+  // Back in two steps: down to the pill's height first; when that's about
+  // nine tenths done, in to its width, with a small bounce at the end.
+  static const _shrinkHeight = Interval(0, 0.5, curve: Cubic(0.3, 0, 0.2, 1));
+  static const _shrinkWidth = Interval(0.42, 1, curve: Curves.easeOutBack);
+  static const _shrinkCurve = Interval(0, 0.5, curve: Curves.easeOut);
 
   void _show(_Open what) {
     HapticFeedback.lightImpact();
@@ -124,15 +130,32 @@ class _IslandState extends State<Island> {
                   ],
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: AnimatedSize(
-                  duration: duration,
-                  curve: curve,
-                  alignment: Alignment.bottomCenter,
+                child: PhasedSize(
+                  vsync: this,
+                  grow: _grow,
+                  growCurve: _growCurve,
+                  shrink: _shrink,
+                  shrinkWidth: _shrinkWidth,
+                  shrinkHeight: _shrinkHeight,
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 340),
+                    // Only what's coming sets the size, so the island starts
+                    // moving at once; what's leaving keeps its own size,
+                    // clipped, while it fades.
                     layoutBuilder: (current, previous) => Stack(
                       alignment: Alignment.bottomCenter,
-                      children: [...previous, ?current],
+                      children: [
+                        for (final p in previous)
+                          Positioned.fill(
+                            child: OverflowBox(
+                              alignment: Alignment.bottomCenter,
+                              maxWidth: double.infinity,
+                              maxHeight: double.infinity,
+                              child: p,
+                            ),
+                          ),
+                        ?current,
+                      ],
                     ),
                     // The old leaves in the first half, the new comes in the
                     // second: they never show together.
