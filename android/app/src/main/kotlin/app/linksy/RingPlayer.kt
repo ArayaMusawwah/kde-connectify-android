@@ -11,7 +11,7 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import android.util.Log
 
-/// "Ring my phone" (docs/protocol.md §4.5, `ring`): the alarm sound, looping, at full
+/// "Ring my phone" (docs/protocol.md §4.5, `ring`): an alarm sound, looping, at full
 /// alarm volume, which plays on silent too. The volume goes back to what it
 /// was on stop. No permission needed beyond vibrating.
 class RingPlayer(private val context: Context) {
@@ -35,22 +35,31 @@ class RingPlayer(private val context: Context) {
             savedVolume = audio.getStreamVolume(AudioManager.STREAM_ALARM)
             audio.setStreamVolume(AudioManager.STREAM_ALARM, audio.getStreamMaxVolume(AudioManager.STREAM_ALARM), 0)
         }
-        val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-        player = runCatching {
-            MediaPlayer().apply {
-                setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_ALARM)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build(),
-                )
-                setDataSource(context, sound)
-                isLooping = true
-                prepare()
-                start()
-            }
-        }.onFailure { Log.w("linksy", "couldn't play the ring sound", it) }.getOrNull()
+        // The phone's alarm sound, else its ringtone, else Linksy's own: some
+        // phones (Xiaomi's) don't let other apps read their sounds.
+        fun actual(type: Int) = runCatching { RingtoneManager.getActualDefaultRingtoneUri(context, type) }.getOrNull()
+        val sounds = listOfNotNull(
+            actual(RingtoneManager.TYPE_ALARM),
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
+            actual(RingtoneManager.TYPE_RINGTONE),
+            android.net.Uri.parse("android.resource://${context.packageName}/${R.raw.ring}"),
+        )
+        player = sounds.firstNotNullOfOrNull { sound ->
+            runCatching {
+                MediaPlayer().apply {
+                    setAudioAttributes(
+                        AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_ALARM)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .build(),
+                    )
+                    runCatching { setDataSource(context, sound); prepare() }.onFailure { release(); throw it }
+                    isLooping = true
+                    start()
+                }
+            }.onFailure { Log.w("linksy", "couldn't play $sound", it) }.getOrNull()
+        }
+        if (player == null) Log.w("linksy", "no ring sound played")
         runCatching {
             vibrator.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 600, 400), 0))
         }
