@@ -98,6 +98,11 @@ abstract class LinksyNode implements RustOpaqueInterface {
   /// A scanned `linksy://pair?…` link.
   Future<void> pairWithInvite({required String uri});
 
+  /// While Add Device is open, also announce this phone to strangers, for at most
+  /// 5 minutes (docs/protocol.md §4.16, pairing mode). The core's pairing mode is
+  /// its invite, as on the computer.
+  void pairingMode({required bool on_});
+
   /// The port this node listens on, for "pair by address" from elsewhere.
   int port();
 

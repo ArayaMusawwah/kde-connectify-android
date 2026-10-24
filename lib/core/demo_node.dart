@@ -371,6 +371,9 @@ class DemoNode implements LinksyNode {
   }
 
   @override
+  void pairingMode(bool on) {}
+
+  @override
   Future<void> forget(String id) async {
     final v = _devices[id];
     if (v == null) return;

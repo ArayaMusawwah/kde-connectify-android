@@ -405,6 +405,19 @@ impl LinksyNode {
         run(async move { node.connect(addr).await.map(|_| ()) }).await
     }
 
+    /// While Add Device is open, also announce this phone to strangers, for at most
+    /// 5 minutes (docs/protocol.md §4.16, pairing mode). The core's pairing mode is
+    /// its invite, as on the computer.
+    #[frb(sync)]
+    pub fn pairing_mode(&self, on: bool) {
+        if !on {
+            return self.node.cancel_invite();
+        }
+        if let Err(e) = self.node.create_invite() {
+            tracing::warn!("no pairing mode: {e}");
+        }
+    }
+
     #[frb(sync)]
     pub fn forget(&self, id: String) -> Result<(), String> {
         let id = fingerprint(&id)?;

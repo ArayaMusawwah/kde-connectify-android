@@ -333,6 +333,9 @@ class RustNode implements LinksyNode {
       _guard(() async => _node.forget(id: id), name: _nameOf(id));
 
   @override
+  void pairingMode(bool on) => _node.pairingMode(on_: on);
+
+  @override
   Future<void> declineUnsupported(String request) async =>
       _node.declineUnsupported(request: request);
 

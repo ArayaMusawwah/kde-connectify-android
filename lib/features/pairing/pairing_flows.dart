@@ -13,56 +13,85 @@ import '../../ui/sig.dart';
 import 'scan_screen.dart';
 
 /// "Add a device": the QR scanner first, pairing by address as the fallback.
-Future<void> showAddDevice(BuildContext context) => showModalBottomSheet<void>(
-  context: context,
-  builder: (sheet) {
-    final s = Sig.of(sheet);
-    final l10n = sheet.l10n;
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.pairingAddDevice, style: sora(24, color: s.ink)),
-            const SizedBox(height: 6),
-            Text(
-              l10n.pairingAddDeviceHint,
-              style: TextStyle(color: s.muted, fontSize: 14.5, height: 1.4),
+/// While it's open, computers that aren't paired can see this phone
+/// (pairing mode, docs/protocol.md §4.16).
+Future<void> showAddDevice(BuildContext context) =>
+    _findable(context, () async {
+      final choice = await _addDeviceSheet(context);
+      if (!context.mounted) return;
+      switch (choice) {
+        case _Add.scan:
+          await _scanAndPair(context);
+        case _Add.address:
+          await _pairByAddress(context);
+        case null:
+      }
+    });
+
+/// Runs [flow] in pairing mode.
+Future<void> _findable(
+  BuildContext context,
+  Future<void> Function() flow,
+) async {
+  final node = LinksyScope.read(context).node;
+  node.pairingMode(true);
+  try {
+    await flow();
+  } finally {
+    node.pairingMode(false);
+  }
+}
+
+enum _Add { scan, address }
+
+Future<_Add?> _addDeviceSheet(BuildContext context) =>
+    showModalBottomSheet<_Add>(
+      context: context,
+      builder: (sheet) {
+        final s = Sig.of(sheet);
+        final l10n = sheet.l10n;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(l10n.pairingAddDevice, style: sora(24, color: s.ink)),
+                const SizedBox(height: 6),
+                Text(
+                  l10n.pairingAddDeviceHint,
+                  style: TextStyle(color: s.muted, fontSize: 14.5, height: 1.4),
+                ),
+                const SizedBox(height: 22),
+                SheetOption(
+                  icon: PhBold.scan,
+                  title: l10n.pairingScanQr,
+                  caption: l10n.pairingScanQrCaption,
+                  primary: true,
+                  onTap: () => Navigator.of(sheet).pop(_Add.scan),
+                ),
+                const SizedBox(height: 10),
+                SheetOption(
+                  icon: Ph.network,
+                  title: l10n.pairingByAddress,
+                  caption: l10n.pairingByAddressCaption,
+                  onTap: () => Navigator.of(sheet).pop(_Add.address),
+                ),
+              ],
             ),
-            const SizedBox(height: 22),
-            SheetOption(
-              icon: PhBold.scan,
-              title: l10n.pairingScanQr,
-              caption: l10n.pairingScanQrCaption,
-              primary: true,
-              onTap: () {
-                Navigator.of(sheet).pop();
-                scanAndPair(context);
-              },
-            ),
-            const SizedBox(height: 10),
-            SheetOption(
-              icon: Ph.network,
-              title: l10n.pairingByAddress,
-              caption: l10n.pairingByAddressCaption,
-              onTap: () {
-                Navigator.of(sheet).pop();
-                pairByAddress(context);
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
-  },
-);
 
 /// Scanning is the user's consent: no code is shown unless the desktop falls
 /// back to the code flow (expired or reused token), which arrives as a normal
 /// pairing request.
-Future<void> scanAndPair(BuildContext context) async {
+Future<void> scanAndPair(BuildContext context) =>
+    _findable(context, () => _scanAndPair(context));
+
+Future<void> _scanAndPair(BuildContext context) async {
   final c = LinksyScope.read(context);
   final uri = await Navigator.of(context).push<String>(
     MaterialPageRoute(
@@ -77,7 +106,10 @@ Future<void> scanAndPair(BuildContext context) async {
   await report(context, c.pairWithInvite(uri!));
 }
 
-Future<void> pairByAddress(BuildContext context) async {
+Future<void> pairByAddress(BuildContext context) =>
+    _findable(context, () => _pairByAddress(context));
+
+Future<void> _pairByAddress(BuildContext context) async {
   final c = LinksyScope.read(context);
   final address = await showDialog<String>(
     context: context,

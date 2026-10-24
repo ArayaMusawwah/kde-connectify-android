@@ -128,6 +128,10 @@ abstract interface class LinksyNode {
 
   Future<void> forget(String id);
 
+  /// Findable by devices that aren't paired, while Add Device is open
+  /// (docs/protocol.md §4.16). Ends by itself after 5 minutes.
+  void pairingMode(bool on);
+
   /// Turns down a session this phone can't do at all, so the other device
   /// says "can't" instead of "didn't allow it".
   Future<void> declineUnsupported(String request);
