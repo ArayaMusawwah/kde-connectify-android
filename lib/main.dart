@@ -62,6 +62,11 @@ Future<void> main() async {
 
   final service = ServiceInfoStore(File('${support.path}/service.json'));
 
+  final prefs = await LinksyPlatform.prefs();
+  // Direct links (§4.17), unless turned off in Settings: a Wi-Fi Direct
+  // group of its own for big transfers, or another phone's to join
+  final direct = prefs['direct'] != 'off' && await LinksyPlatform.directHost();
+
   final LinksyNode node;
   if (_demo) {
     node = DemoNode(name: name, downloadDir: received.path);
@@ -74,8 +79,7 @@ Future<void> main() async {
         name: name,
         features: [
           ..._features,
-          // A Wi-Fi Direct group of its own for big transfers (§4.17)
-          if (await LinksyPlatform.directHost()) 'direct_host',
+          if (direct) ...['direct_host', 'direct_join', 'direct_group'],
         ],
         away: true,
         relay: service.cached()?.relay ?? defaultRelay,
@@ -101,7 +105,7 @@ Future<void> main() async {
           ),
   );
   // The language and whether setup was done, before the first frame.
-  controller.prefs = await LinksyPlatform.prefs();
+  controller.prefs = prefs;
   controller.locale.value = resolveLocale(controller.languageCode);
   useLocale(controller.locale.value);
   controller.themeMode.value = LinksyController.themeFrom(

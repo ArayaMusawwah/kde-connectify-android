@@ -192,7 +192,10 @@ LinksyEvent? eventFromJson(Json j) {
       image: j['image'] as String? ?? '',
     ),
     'locate_request' => LocateRequested(device('from')),
-    'direct_wanted' => DirectWanted(j['id'] as String),
+    'direct_wanted' => DirectWanted(
+      j['id'] as String,
+      group: (j['group'] as Map?)?.cast<String, Object?>(),
+    ),
     'direct' => DirectStepReceived(
       from: device('from'),
       step: (j['step'] as Map).cast<String, Object?>(),

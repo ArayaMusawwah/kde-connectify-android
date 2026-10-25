@@ -489,14 +489,16 @@ class HeartbeatWatchChanged extends LinksyEvent {
 }
 
 /// A big transfer wants a direct link (docs/protocol.md §4.17) with [id],
-/// which this phone hosts: its Wi-Fi Direct part starts.
+/// which this phone hosts: its Wi-Fi Direct part starts. [group] (`ssid`,
+/// `passphrase`) when [id] is another phone: make a group with it.
 class DirectWanted extends LinksyEvent {
-  const DirectWanted(this.id);
+  const DirectWanted(this.id, {this.group});
   final String id;
+  final Map<String, Object?>? group;
 }
 
-/// A step of a direct link from the computer joining it (`listening`, ...),
-/// as its JSON.
+/// A step of a direct link from the other device (`listening`, `invite`,
+/// `up`...), as its JSON.
 class DirectStepReceived extends LinksyEvent {
   const DirectStepReceived({required this.from, required this.step});
   final DeviceInfo from;

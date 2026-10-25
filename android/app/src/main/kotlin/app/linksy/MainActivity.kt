@@ -13,6 +13,7 @@ import android.os.Build
 import android.provider.Settings
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import app.linksy.files.FileServer
 import app.linksy.files.NativeFiles
@@ -101,7 +102,12 @@ class MainActivity : FlutterActivity() {
                     }
                     "directHost" -> result.success(DirectHost.supported(this@MainActivity))
                     "directWanted" -> {
-                        DirectHost.want(this@MainActivity, call.argument<String>("device")!!)
+                        DirectHost.want(this@MainActivity, call.argument<String>("device")!!, directGroup(call))
+                        result.success(null)
+                    }
+                    "directJoin" -> {
+                        val group = directGroup(call)
+                        if (group != null) DirectHost.join(this@MainActivity, call.argument<String>("device")!!, group)
                         result.success(null)
                     }
                     "directListening" -> {
@@ -246,6 +252,7 @@ class MainActivity : FlutterActivity() {
                         "camera" -> requestPermission(Manifest.permission.CAMERA, REQUEST_CAMERA, result)
                         "microphone" -> requestPermission(Manifest.permission.RECORD_AUDIO, REQUEST_MICROPHONE, result)
                         "location" -> requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_LOCATION, result)
+                        "nearby" -> requestPermission(DirectHost.permission(), REQUEST_NEARBY, result)
                         "notifications" -> if (Build.VERSION.SDK_INT >= 33) {
                             requestPermission(Manifest.permission.POST_NOTIFICATIONS, REQUEST_NOTIFICATIONS, result)
                         } else {
@@ -690,6 +697,13 @@ class MainActivity : FlutterActivity() {
         startActivityForResult(intent, REQUEST_CAPTURE)
     }
 
+    /// A direct link's group (phone to phone) from a call's `ssid`, `passphrase`, `frequency`.
+    private fun directGroup(call: MethodCall): DirectHost.Group? {
+        val ssid = call.argument<String>("ssid") ?: return null
+        val passphrase = call.argument<String>("passphrase") ?: return null
+        return DirectHost.Group(ssid, passphrase, call.argument<Int>("frequency"))
+    }
+
     private fun granted(permission: String) =
         checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
 
@@ -907,6 +921,7 @@ class MainActivity : FlutterActivity() {
         const val REQUEST_MICROPHONE = 48
         const val REQUEST_LOCATION = 49
         const val REQUEST_DIRECT = 50
+        const val REQUEST_NEARBY = 51
         const val REQUEST_PICK = 44
         const val REQUEST_FOLDER = 45
         const val REQUEST_PICTURE = 46

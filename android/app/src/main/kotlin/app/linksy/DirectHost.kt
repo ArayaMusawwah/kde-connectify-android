@@ -18,10 +18,16 @@ import java.net.Inet4Address
 import java.net.NetworkInterface
 
 /// This phone's side of a direct link (docs/protocol.md §4.17): a Wi-Fi Direct group of
-/// its own that a computer joins for big transfers. The core relays the steps; this does
-/// the Wi-Fi part and reports each step through [step]: `invite` (with `address` and `name`),
-/// `connecting`, `up` (with `ip`), or `end` (with `reason`). One link at a time.
+/// its own that a computer or another phone joins for big transfers, or another phone's
+/// group that this one joins. The core relays the steps; this does the Wi-Fi part and
+/// reports each step through [step]: `invite` (with `address`, `name`, and for a phone
+/// `ssid`, `passphrase`, `frequency`), `connecting`, `up` (with `ip`), or `end` (with
+/// `reason`). Joining, only for the app: `joining`, then `joined` once in the group.
+/// One link at a time.
 object DirectHost {
+    /// A group made with a name and a passphrase (phone to phone). Never logged.
+    class Group(val ssid: String, val passphrase: String, val frequency: Int?)
+
     /// Set by the app: (device id, step).
     @Volatile var step: ((String, Map<String, String>) -> Unit)? = null
 
@@ -43,15 +49,26 @@ object DirectHost {
     /// The core has the link (`DirectLinked`): from then on only `DirectEnded` ends it.
     private var linked = false
 
+    /// The group this phone makes (hosting a phone), or joins (`joining`).
+    private var group: Group? = null
+    private var joining = false
+
     /// Whether this phone can host one: Wi-Fi Direct, and Android 10+ (`requestDeviceInfo`).
     fun supported(context: Context) =
         Build.VERSION.SDK_INT >= 29 && context.packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI_DIRECT)
 
-    private fun permission() =
+    fun permission() =
         if (Build.VERSION.SDK_INT >= 33) Manifest.permission.NEARBY_WIFI_DEVICES else Manifest.permission.ACCESS_FINE_LOCATION
 
-    /// `DirectWanted`: invite the computer with this phone's address and name.
-    fun want(context: Context, id: String) = main.post {
+    /// `DirectWanted`: invite the computer with this phone's address and name, or with
+    /// [group] (another phone), make that group first.
+    fun want(context: Context, id: String, group: Group?) = prepare(context, id) { app -> begin(app, id, group) }
+
+    /// An `invite` with a group, from the phone that hosts: join it.
+    fun join(context: Context, id: String, group: Group) = prepare(context, id) { app -> joinGroup(app, id, group) }
+
+    /// The checks both sides make, then [go].
+    private fun prepare(context: Context, id: String, go: (Context) -> Unit) = main.post {
         val app = context.applicationContext
         // Under way or up with this computer already: never start over, which would drop
         // the group a transfer is going through
@@ -65,7 +82,7 @@ object DirectHost {
         if (!wifi.isWifiEnabled) return@post report(id, "end", "reason" to "Wi-Fi is off")
         val permission = permission()
         if (app.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
-            begin(app, id)
+            go(app)
             return@post
         }
         // Asked once, in front only: a refusal stays a refusal, the transfer goes the usual way
@@ -76,16 +93,15 @@ object DirectHost {
         }
         prefs.edit().putBoolean(permission, true).apply()
         asking(permission) { granted ->
-            main.post { if (granted) begin(app, id) else report(id, "end", "reason" to "no Wi-Fi Direct permission") }
+            main.post { if (granted) go(app) else report(id, "end", "reason" to "no Wi-Fi Direct permission") }
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun begin(context: Context, id: String) {
+    /// A fresh channel for the link with [id], and the receiver: null if there's no Wi-Fi Direct.
+    private fun open(context: Context, id: String): Pair<WifiP2pManager, WifiP2pManager.Channel>? {
         stop()
         device = id
-        val manager = context.getSystemService(WifiP2pManager::class.java)
-            ?: return fail("no Wi-Fi Direct on this phone")
+        val manager = context.getSystemService(WifiP2pManager::class.java) ?: return null
         // Only this link's own channel: an older one closing later must not end it
         var made: WifiP2pManager.Channel? = null
         val channel = manager.initialize(context, Looper.getMainLooper()) {
@@ -95,6 +111,13 @@ object DirectHost {
         this.manager = manager
         this.channel = channel
         listen(context)
+        return manager to channel
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun begin(context: Context, id: String, group: Group?) {
+        val (manager, channel) = open(context, id) ?: return fail("no Wi-Fi Direct on this phone")
+        if (group != null) return makeGroup(context, manager, channel, id, group)
         // Anything left over from before goes first
         manager.removeGroup(channel, null)
         manager.requestDeviceInfo(channel) { info ->
@@ -117,6 +140,54 @@ object DirectHost {
                 manager.discoverPeers(channel, invite)
             }
         }
+    }
+
+    /// Phone to phone, hosting: a group with the core's name and passphrase, on 5 GHz where
+    /// the phone can. The invite (with its frequency) and `up` go out once it's made.
+    @SuppressLint("MissingPermission")
+    private fun makeGroup(context: Context, manager: WifiP2pManager, channel: WifiP2pManager.Channel, id: String, group: Group) {
+        this.group = group
+        val wifi = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val config = WifiP2pConfig.Builder()
+            .setNetworkName(group.ssid)
+            .setPassphrase(group.passphrase)
+            .setGroupOperatingBand(
+                if (wifi.is5GHzBandSupported) WifiP2pConfig.GROUP_OWNER_BAND_5GHZ else WifiP2pConfig.GROUP_OWNER_BAND_AUTO,
+            )
+            .enablePersistentMode(false)
+            .build()
+        val create = {
+            if (device == id) {
+                manager.createGroup(channel, config, object : WifiP2pManager.ActionListener {
+                    override fun onSuccess() = checkGroup()
+                    override fun onFailure(reason: Int) = fail("couldn't make the group (${why(reason)})")
+                })
+            }
+        }
+        // Anything left over from before goes first, then the group
+        manager.removeGroup(channel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() = create()
+            override fun onFailure(reason: Int) = create()
+        })
+    }
+
+    /// Phone to phone, joining: the host's group by its name and passphrase, on its
+    /// frequency when it said. Android 10+ joins without any prompt.
+    @SuppressLint("MissingPermission")
+    private fun joinGroup(context: Context, id: String, group: Group) {
+        val (manager, channel) = open(context, id) ?: return fail("no Wi-Fi Direct on this phone")
+        this.group = group
+        joining = true
+        // A band or a frequency, never both
+        val config = WifiP2pConfig.Builder()
+            .setNetworkName(group.ssid)
+            .setPassphrase(group.passphrase)
+            .apply { group.frequency?.let { setGroupOperatingFrequency(it) } }
+            .build()
+        manager.removeGroup(channel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() = connect(manager, channel, config, tries = 3)
+            override fun onFailure(reason: Int) = connect(manager, channel, config, tries = 3)
+        })
     }
 
     /// `listening`: connect once the computer shows up among the peers.
@@ -147,13 +218,13 @@ object DirectHost {
     private fun connect(manager: WifiP2pManager, channel: WifiP2pManager.Channel, config: WifiP2pConfig, tries: Int) {
         val id = device ?: return
         manager.connect(channel, config, object : WifiP2pManager.ActionListener {
-            override fun onSuccess() = report(id, "connecting")
+            override fun onSuccess() = report(id, if (joining) "joining" else "connecting")
             override fun onFailure(reason: Int) {
                 // Busy for a moment (still discovering): again shortly
                 if (tries > 1 && device == id) {
                     main.postDelayed({ connect(manager, channel, config, tries - 1) }, 1000)
                 } else {
-                    fail("couldn't connect to the computer (${why(reason)})")
+                    fail(if (joining) "couldn't join the group (${why(reason)})" else "couldn't connect to the computer (${why(reason)})")
                 }
             }
         })
@@ -183,14 +254,46 @@ object DirectHost {
         registeredOn = context
     }
 
+    @SuppressLint("MissingPermission")
     private fun checkGroup() {
         val (manager, channel, id) = Triple(manager ?: return, channel ?: return, device ?: return)
         manager.requestConnectionInfo(channel) { info ->
             if (up || device != id || info == null || !info.groupFormed) return@requestConnectionInfo
-            val ip = if (info.isGroupOwner) info.groupOwnerAddress?.hostAddress else p2pAddress()
-            if (ip == null) return@requestConnectionInfo fail("no address on the direct link")
-            up = true
-            report(id, "up", "ip" to ip)
+            val group = group
+            when {
+                // In the other phone's group: the app dials once `up` says where it is
+                joining -> if (!info.isGroupOwner) {
+                    up = true
+                    report(id, "joined")
+                }
+                // This phone's group, made for the other phone: the invite carries the
+                // credentials and the frequency, `up` follows right away
+                group != null -> if (info.isGroupOwner) {
+                    up = true
+                    val ip = info.groupOwnerAddress?.hostAddress ?: "192.168.49.1"
+                    manager.requestGroupInfo(channel) { made ->
+                        manager.requestDeviceInfo(channel) { me ->
+                            if (device != id) return@requestDeviceInfo
+                            val frequency = made?.frequency?.takeIf { it in 2400..7125 }
+                            val name = me?.deviceName?.takeIf { it.isNotBlank() }?.take(64)
+                            report(
+                                id, "invite",
+                                "address" to (me?.deviceAddress ?: "02:00:00:00:00:00").lowercase(),
+                                "ssid" to group.ssid,
+                                "passphrase" to group.passphrase,
+                                *listOfNotNull(name?.let { "name" to it }, frequency?.let { "frequency" to "$it" }).toTypedArray(),
+                            )
+                            report(id, "up", "ip" to ip)
+                        }
+                    }
+                }
+                else -> {
+                    val ip = if (info.isGroupOwner) info.groupOwnerAddress?.hostAddress else p2pAddress()
+                    if (ip == null) return@requestConnectionInfo fail("no address on the direct link")
+                    up = true
+                    report(id, "up", "ip" to ip)
+                }
+            }
         }
     }
 
@@ -237,6 +340,8 @@ object DirectHost {
         connecting = false
         up = false
         linked = false
+        group = null
+        joining = false
     }
 
     private fun report(id: String, type: String, vararg extra: Pair<String, String>) {

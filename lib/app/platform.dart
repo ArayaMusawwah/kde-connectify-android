@@ -289,8 +289,16 @@ abstract final class LinksyPlatform {
   /// A direct link's Wi-Fi part (docs/protocol.md §4.17): start it for
   /// [device], connect once the computer listens at [address], drop it. Each
   /// step it takes comes back on [directSteps].
-  static Future<void> directWanted(String device) =>
-      _call<void>('directWanted', {'device': device});
+  /// [group] (`ssid`, `passphrase`, `frequency`): another phone, which joins
+  /// the group this one makes with it.
+  static Future<void> directWanted(
+    String device, {
+    Map<String, Object?>? group,
+  }) => _call<void>('directWanted', {'device': device, ...?group});
+
+  /// Join the [group] another phone made (phone to phone).
+  static Future<void> directJoin(String device, Map<String, Object?> group) =>
+      _call<void>('directJoin', {'device': device, ...group});
   static Future<void> directListening(String device, String address) =>
       _call<void>('directListening', {'device': device, 'address': address});
   static Future<void> directLinked(String device) =>
@@ -531,7 +539,7 @@ abstract final class LinksyPlatform {
       await _call<bool>('firstPermissionsVisit') ?? false;
 
   /// Android's own permission dialog for `camera`, `notifications`,
-  /// `microphone` or `location` (or
+  /// `microphone`, `location` or `nearby` (Wi-Fi Direct) (or
   /// Linksy's app settings once Android stops showing it). True if granted.
   static Future<bool> requestPermission(String name) async =>
       await _call<bool>('requestPermission', {'name': name}) ?? false;

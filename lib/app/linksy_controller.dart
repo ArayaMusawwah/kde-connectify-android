@@ -245,21 +245,43 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _answerSub = LinksyPlatform.transferAnswers.listen(
       (a) => respond(a.$1, accept: a.$2),
     );
-    // The Wi-Fi part of a direct link did a step: the computer hears it.
+    // The Wi-Fi part of a direct link did a step: the other device hears it,
+    // except a joiner's own (`joining`, `joined`).
     _directSub = LinksyPlatform.directSteps.listen((s) {
       final (id, step) = s;
-      final out = step['type'] == 'up' ? {...step, 'port': node.port} : step;
+      final type = step['type'];
       // How far it got, for Transfers
-      final stage = switch (step['type']) {
-        'connecting' => DirectStage.connect,
-        'up' => DirectStage.link,
+      final stage = switch (type) {
+        'connecting' || 'joining' => DirectStage.connect,
+        'up' || 'joined' => DirectStage.link,
         _ => null,
       };
       if (stage != null && direct[id] != null && direct[id] != DirectStage.up) {
         direct[id] = stage;
         notifyListeners();
       }
-      node.directSend(id, out).catchError((Object _) {});
+      if (type == 'joining') return;
+      if (type == 'joined') {
+        _directJoined.add(id);
+        _directDial(id);
+        return;
+      }
+      _directSend(id, switch (type) {
+        'up' => {...step, 'port': node.port},
+        // Phone to phone: the group's credentials go along, nested
+        'invite' when step['ssid'] != null => {
+          'type': 'invite',
+          'address': step['address'],
+          'name': ?step['name'],
+          'group': {
+            'ssid': step['ssid'],
+            'passphrase': step['passphrase'],
+            if (step['frequency'] case final String f)
+              'frequency': int.parse(f),
+          },
+        },
+        _ => step,
+      });
     });
     unawaited(_loadPlatform());
     unawaited(_loadPeerPictures());
@@ -686,6 +708,43 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   /// Direct links (docs/protocol.md §4.17) by device, as far as they got.
   final direct = <String, DirectStage>{};
 
+  /// Wi-Fi Direct for big transfers. On unless turned off; off, the phone
+  /// says no to every link (and doesn't offer them from the next start).
+  bool get directOn => prefs['direct'] != 'off';
+
+  /// Turning it on asks for the Nearby devices permission right away.
+  Future<void> setDirectOn(bool on) async {
+    await _setPref('direct', on ? null : 'off');
+    if (on) {
+      await LinksyPlatform.requestPermission('nearby');
+    } else {
+      for (final id in [...direct.keys]) {
+        _directSend(id, {'type': 'end', 'reason': 'turned off on the phone'});
+      }
+    }
+  }
+
+  /// Phone to phone, joining: in the group, and where the host said it is.
+  final _directJoined = <String>{};
+  final _directUp = <String, String>{};
+
+  /// Steps go out one after the other: the invite before `up`.
+  Future<void> _directSent = Future.value();
+  void _directSend(String id, Map<String, Object?> step) {
+    _directSent = _directSent.then(
+      (_) => node.directSend(id, step).catchError((Object _) {}),
+    );
+  }
+
+  void _directDial(String id) {
+    final address = _directUp[id];
+    if (address == null || !_directJoined.contains(id)) return;
+    _directUp.remove(id);
+    node.directDial(id, address).catchError((Object e) {
+      _directSend(id, {'type': 'end', 'reason': "couldn't connect over it"});
+    });
+  }
+
   /// What the transfer notification last showed, and when.
   String? _noticeKey;
   DateTime _noticeAt = DateTime(0);
@@ -1065,24 +1124,50 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           volume[from.id] = state;
           notifyListeners();
         }
-      // Direct links (docs/protocol.md §4.17): this phone hosts, Android
-      // does the Wi-Fi part.
+      // Direct links (docs/protocol.md §4.17): this phone hosts (or joins
+      // another phone's group), Android does the Wi-Fi part.
       // Up already: nothing to set up (only DirectEnded ends it)
       case DirectWanted(:final id) when direct[id] == DirectStage.up:
         break;
-      case DirectWanted(:final id):
+      case DirectWanted(:final id) when !directOn:
+        _directSend(id, {'type': 'end', 'reason': 'turned off on the phone'});
+      case DirectWanted(:final id, :final group):
         direct[id] = DirectStage.find;
-        LinksyPlatform.directWanted(id);
+        LinksyPlatform.directWanted(id, group: group);
         notifyListeners();
       case DirectStepReceived(:final from, :final step)
           when step['type'] == 'listening' && step['address'] is String:
         LinksyPlatform.directListening(from.id, step['address'] as String);
+      case DirectStepReceived(:final from, :final step)
+          when step['type'] == 'invite':
+        final group = step['group'];
+        if (!directOn || group is! Map) {
+          // This phone joins groups only (a phone's); an older app's invite
+          // without one goes the usual way
+          _directSend(from.id, {
+            'type': 'end',
+            'reason': directOn
+                ? 'this phone joins groups only'
+                : 'turned off on the phone',
+          });
+        } else if (direct[from.id] == null) {
+          direct[from.id] = DirectStage.find;
+          LinksyPlatform.directJoin(from.id, group.cast<String, Object?>());
+          notifyListeners();
+        }
+      case DirectStepReceived(:final from, :final step)
+          when step['type'] == 'up' && direct[from.id] != null:
+        final ip = step['ip'];
+        _directUp[from.id] = '$ip:${step['port']}';
+        _directDial(from.id);
       case DirectLinked(:final id):
         direct[id] = DirectStage.up;
         LinksyPlatform.directLinked(id);
         notifyListeners();
       case DirectEnded(:final id):
         direct.remove(id);
+        _directJoined.remove(id);
+        _directUp.remove(id);
         LinksyPlatform.directEnded(id);
         notifyListeners();
       case DirectStepReceived():
