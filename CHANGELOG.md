@@ -2,6 +2,17 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.2.9] - 2026-10-25
+
+### Added
+- **Wi-Fi Direct between phones**: big files (256 MB or more) between two phones go straight from one to the other over a Wi-Fi Direct group, without the router. One phone makes the group, the other joins it, with no prompt. Both need Linksy 0.2.9 and Android 10 or later; if the link doesn't come up within 45 seconds, files go over the network as before.
+- **Wi-Fi Direct switch**: Settings › Connection › Wi-Fi Direct for big files, on by default. Off, files always go through your Wi-Fi. Turning it on asks to let Linksy find nearby devices.
+- **Logs**: Settings › Logs shows this phone (model, Android, Wi-Fi band and speed, Wi-Fi Direct support, permissions) and what happened lately (connections, transfers with their speed, each Wi-Fi Direct step with its timing), each with a Copy button for a bug report. Logs stay on the phone; nothing is sent anywhere.
+- What's New for this version.
+
+### Fixed
+- Wi-Fi Direct: a group left over from an earlier link no longer counts for a new one.
+
 ## [0.2.8] - 2026-10-25
 
 ### Added
