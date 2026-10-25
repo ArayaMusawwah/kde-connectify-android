@@ -1878,6 +1878,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _callSub?.cancel();
     _answerSub?.cancel();
     _directSub?.cancel();
+    log.dispose();
     _mediaActionSub?.cancel();
     LinksyPlatform.mediaNotice(null);
     _usbSub?.cancel();

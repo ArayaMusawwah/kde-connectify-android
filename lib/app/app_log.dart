@@ -38,6 +38,7 @@ class AppLog extends ChangeNotifier {
     if (lines.length > keep) lines.removeRange(0, lines.length - keep);
     notifyListeners();
     // A few writes a second during a transfer: once they settle
+    if (_file == null) return;
     _save?.cancel();
     _save = Timer(const Duration(seconds: 2), _write);
   }
