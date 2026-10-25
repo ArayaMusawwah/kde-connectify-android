@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 
 import '../core/linksy_node.dart';
+import 'app_log.dart';
 import '../core/models.dart';
 import '../core/service_info.dart';
 import 'app_update.dart';
@@ -31,10 +32,14 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   }) : updates = updates ?? AppUpdate(null, null),
        _peerPictures = dir == null
            ? null
-           : Directory('${dir.path}/peer_pictures');
+           : Directory('${dir.path}/peer_pictures'),
+       log = AppLog(dir == null ? null : File('${dir.path}/logs.txt'));
 
   final LinksyNode node;
   final ActivityStore _store;
+
+  /// Settings › Logs: what happened lately, on this phone only.
+  final AppLog log;
 
   /// Terminals on computers (§4.15), by device, kept while the app runs.
   late final terminals = Terminals(node);
@@ -250,6 +255,18 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _directSub = LinksyPlatform.directSteps.listen((s) {
       final (id, step) = s;
       final type = step['type'];
+      _logDirect(id, switch (type) {
+        'invite' when step['ssid'] != null =>
+          'group made${step['frequency'] != null ? ', ${step['frequency']} MHz' : ''}, inviting',
+        'invite' =>
+          'inviting${step['name'] != null ? ' as ${step['name']}' : ''}',
+        'connecting' => 'connecting to it',
+        'up' => 'link up, this phone at ${step['ip']}',
+        'joining' => 'joining its group',
+        'joined' => 'in its group, this phone at ${step['ip']}',
+        'end' => 'gave up: ${step['reason']}',
+        _ => '$type',
+      });
       // How far it got, for Transfers
       final stage = switch (type) {
         'connecting' || 'joining' => DirectStage.connect,
@@ -283,6 +300,11 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         _ => step,
       });
     });
+    unawaited(
+      log.load().then((_) async {
+        log.add('Linksy ${await LinksyPlatform.appVersion() ?? ''} started');
+      }),
+    );
     unawaited(_loadPlatform());
     unawaited(_loadPeerPictures());
     serviceInfo = service?.cached();
@@ -740,9 +762,119 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     final address = _directUp[id];
     if (address == null || !_directJoined.contains(id)) return;
     _directUp.remove(id);
-    node.directDial(id, address).catchError((Object e) {
-      _directSend(id, {'type': 'end', 'reason': "couldn't connect over it"});
-    });
+    final t = DateTime.now();
+    _logDirect(id, 'connecting to Linksy at $address');
+    node
+        .directDial(id, address)
+        .then((_) {
+          final ms = DateTime.now().difference(t).inMilliseconds;
+          _logDirect(id, 'connected over it in $ms ms');
+        })
+        .catchError((Object e) {
+          _logDirect(id, "couldn't connect over it: $e");
+          _directSend(id, {
+            'type': 'end',
+            'reason': "couldn't connect over it",
+          });
+        });
+  }
+
+  /// Direct links: when each started, for the timings in the log.
+  final _directSince = <String, DateTime>{};
+
+  void _logDirect(String id, String what) {
+    final since = _directSince[id];
+    final t = since == null
+        ? ''
+        : ' (+${(DateTime.now().difference(since).inMilliseconds / 1000).toStringAsFixed(1)} s)';
+    log.add('Wi-Fi Direct, ${_who(id)}: $what$t');
+  }
+
+  String _who(String id) => device(id)?.device.name ?? id.substring(0, 8);
+
+  /// Transfers in the log: who with, how big, since when.
+  final _logged = <String, (String, int, DateTime)>{};
+
+  void _logEvent(LinksyEvent e) {
+    switch (e) {
+      case Connected(:final id):
+        final v = device(id);
+        log.add(
+          'Connected to ${_who(id)}'
+          '${v == null
+              ? ''
+              : v.usb
+              ? ' (USB)'
+              : v.away
+              ? ' (over the internet)'
+              : ' (same Wi-Fi)'}',
+        );
+      case Disconnected(:final id):
+        log.add('Disconnected from ${_who(id)}');
+      case Paired(:final device):
+        log.add('Paired with ${device.name}');
+      case PairingFailed(:final device, :final reason):
+        log.add('Pairing ${device?.name ?? ''} failed: $reason');
+      case TransferRequest(:final from, :final files, :final total):
+        log.add(
+          '${from.name} offers ${files.length} file(s), ${formatBytes(total)}',
+        );
+      case TransferStarted(:final transfer, :final peer, :final incoming):
+        final a = _activity.where((a) => a.id == transfer).firstOrNull;
+        final name = peer?.name ?? (a == null ? '?' : _who(a.deviceId));
+        final total = e.total > 0
+            ? e.total
+            : (a?.sizes.fold(0, (x, y) => x + y) ?? 0);
+        _logged[transfer] = (name, total, DateTime.now());
+        log.add(
+          '${incoming ? 'Receiving from' : 'Sending to'} $name, ${formatBytes(total)}',
+        );
+      case TransferComplete(:final transfer):
+        final (name, total, since) =
+            _logged.remove(transfer) ?? ('?', 0, DateTime.now());
+        final s = DateTime.now().difference(since).inMilliseconds / 1000;
+        final speed = s > 0 && total > 0
+            ? ', ${formatBytes(total ~/ s)}/s'
+            : '';
+        log.add('Transfer with $name done in ${s.toStringAsFixed(1)} s$speed');
+      case TransferFailed(:final transfer, :final reason):
+        final name = _logged.remove(transfer)?.$1 ?? '?';
+        log.add('Transfer with $name failed: $reason');
+      case DirectWanted(:final id, :final group):
+        _directSince[id] = DateTime.now();
+        _logDirect(
+          id,
+          !directOn
+              ? 'asked, but turned off here'
+              : group != null
+              ? 'hosting a group for it (phone to phone)'
+              : 'hosting, it joins (computer)',
+        );
+      case DirectStepReceived(:final from, :final step)
+          when step['type'] == 'invite':
+        _directSince[from.id] = DateTime.now();
+        final group = step['group'];
+        _logDirect(
+          from.id,
+          group is Map
+              ? 'invited to its group'
+                    '${group['frequency'] != null ? ', ${group['frequency']} MHz' : ''}'
+              : 'invited, but this phone joins groups only',
+        );
+      case DirectStepReceived(:final from, :final step)
+          when step['type'] == 'up':
+        _logDirect(from.id, 'its Linksy is at ${step['ip']}:${step['port']}');
+      case DirectStepReceived(:final from, :final step)
+          when step['type'] == 'listening':
+        _logDirect(from.id, 'it listens at ${step['address']}');
+      case DirectLinked(:final id):
+        _logDirect(id, 'linked, transfers go over it');
+      case DirectEnded(:final id, :final reason):
+        _logDirect(id, 'ended${reason == null ? '' : ': $reason'}');
+        _directSince.remove(id);
+      default:
+        break;
+    }
   }
 
   /// What the transfer notification last showed, and when.
@@ -1081,6 +1213,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   void _onEvent(LinksyEvent e) {
+    _logEvent(e);
     switch (e) {
       case Connected(:final id):
         refresh().then((_) => _onConnected(id));
