@@ -147,9 +147,16 @@ class _DisplayScreenState extends State<DisplayScreen> {
       final now = _centroid();
       final delta = now - _scrollFrom!;
       _scrollFrom = now;
-      // Content follows the fingers: dragging up scrolls down.
+      // The content follows the fingers, unless turned the other way
+      // (Settings, as on the touchpad).
+      final sign = LinksyScope.read(context).scrollReversed ? 1 : -1;
       _send([
-        {'type': 'scroll', 'dx': -delta.dx, 'dy': -delta.dy, 'discrete': false},
+        {
+          'type': 'scroll',
+          'dx': sign * delta.dx,
+          'dy': sign * delta.dy,
+          'discrete': false,
+        },
       ]);
     }
   }

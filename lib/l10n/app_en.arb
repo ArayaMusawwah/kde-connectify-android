@@ -2934,7 +2934,7 @@
   "@settingsReverseScroll": {
     "description": "Settings switch: two-finger scrolling on the remote touchpad goes the other way"
   },
-  "settingsReverseScrollCaption": "Two fingers on the touchpad scroll the other way.",
+  "settingsReverseScrollCaption": "Two fingers scroll the other way, on the touchpad and on a computer's screen.",
   "@settingsReverseScrollCaption": {
     "description": "Caption of the reverse scrolling switch"
   },

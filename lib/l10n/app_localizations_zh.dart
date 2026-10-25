@@ -2074,7 +2074,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsReverseScroll => '反向滚动';
 
   @override
-  String get settingsReverseScrollCaption => '触控板上的双指滚动方向相反。';
+  String get settingsReverseScrollCaption => '双指反向滚动，适用于触控板和电脑屏幕。';
 
   @override
   String get remoteNumbers => '数字';

@@ -2149,7 +2149,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsReverseScrollCaption =>
-      'Dois dedos no touchpad rolam no sentido contrário.';
+      'Dois dedos rolam ao contrário, no touchpad e na tela de um computador.';
 
   @override
   String get remoteNumbers => 'Números';

@@ -568,7 +568,7 @@
   "settingsMediaNotice": "通知に音楽を表示",
   "settingsMediaNoticeCaption": "コンピュータで再生中の音楽が、ボタン付きでスマホの通知に表示されます。",
   "settingsReverseScroll": "スクロールを逆にする",
-  "settingsReverseScrollCaption": "タッチパッドの 2 本指スクロールが逆向きになります。",
+  "settingsReverseScrollCaption": "2 本指のスクロールを逆にします（タッチパッドとパソコンの画面）。",
   "remoteNumbers": "数字",
   "remoteBackspace": "削除",
   "remoteEnter": "Enter",

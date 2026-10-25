@@ -3525,7 +3525,7 @@ abstract class AppLocalizations {
   /// Caption of the reverse scrolling switch
   ///
   /// In en, this message translates to:
-  /// **'Two fingers on the touchpad scroll the other way.'**
+  /// **'Two fingers scroll the other way, on the touchpad and on a computer\'s screen.'**
   String get settingsReverseScrollCaption;
 
   /// Presentation remote button: shows or hides a number pad

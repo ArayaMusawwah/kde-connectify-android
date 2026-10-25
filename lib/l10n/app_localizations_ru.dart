@@ -2177,7 +2177,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsReverseScrollCaption =>
-      'Прокрутка двумя пальцами на тачпаде идёт в другую сторону.';
+      'Прокрутка двумя пальцами в другую сторону — на тачпаде и на экране компьютера.';
 
   @override
   String get remoteNumbers => 'Цифры';

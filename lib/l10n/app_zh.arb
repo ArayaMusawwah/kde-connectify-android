@@ -568,7 +568,7 @@
   "settingsMediaNotice": "在通知中显示音乐",
   "settingsMediaNoticeCaption": "电脑正在播放的内容会显示在手机通知中，并带有按钮。",
   "settingsReverseScroll": "反向滚动",
-  "settingsReverseScrollCaption": "触控板上的双指滚动方向相反。",
+  "settingsReverseScrollCaption": "双指反向滚动，适用于触控板和电脑屏幕。",
   "remoteNumbers": "数字",
   "remoteBackspace": "删除",
   "remoteEnter": "回车",

@@ -2153,7 +2153,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get settingsReverseScrollCaption =>
-      'Rantsantanana roa eo amin\'ny touchpad dia mikodiadia mifanohitra.';
+      'Mivadika ny fanodinana amin\'ny rantsantanana roa, amin\'ny touchpad sy amin\'ny efijery solosaina.';
 
   @override
   String get remoteNumbers => 'Isa';

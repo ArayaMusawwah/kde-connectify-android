@@ -2148,7 +2148,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsReverseScrollCaption =>
-      'Zwei Finger auf dem Touchpad scrollen in die andere Richtung.';
+      'Zwei Finger scrollen andersherum, auf dem Touchpad und auf dem Bildschirm eines Computers.';
 
   @override
   String get remoteNumbers => 'Zahlen';

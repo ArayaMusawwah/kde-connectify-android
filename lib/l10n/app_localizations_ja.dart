@@ -2099,7 +2099,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsReverseScroll => 'スクロールを逆にする';
 
   @override
-  String get settingsReverseScrollCaption => 'タッチパッドの 2 本指スクロールが逆向きになります。';
+  String get settingsReverseScrollCaption =>
+      '2 本指のスクロールを逆にします（タッチパッドとパソコンの画面）。';
 
   @override
   String get remoteNumbers => '数字';

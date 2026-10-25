@@ -2156,7 +2156,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsReverseScrollCaption =>
-      'Deux doigts sur le pavé tactile font défiler dans l’autre sens.';
+      'Deux doigts font défiler dans l\'autre sens, sur le pavé tactile et sur l\'écran d\'un ordinateur.';
 
   @override
   String get remoteNumbers => 'Chiffres';
