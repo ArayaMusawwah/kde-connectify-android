@@ -1155,8 +1155,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           LinksyPlatform.directJoin(from.id, group.cast<String, Object?>());
           notifyListeners();
         }
+      // Each step comes on a stream of its own: `up` may overtake the invite
       case DirectStepReceived(:final from, :final step)
-          when step['type'] == 'up' && direct[from.id] != null:
+          when step['type'] == 'up':
         final ip = step['ip'];
         _directUp[from.id] = '$ip:${step['port']}';
         _directDial(from.id);
