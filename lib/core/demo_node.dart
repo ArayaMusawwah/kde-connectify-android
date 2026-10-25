@@ -366,6 +366,9 @@ class DemoNode implements LinksyNode {
   Future<void> directSend(String id, Map<String, Object?> step) async {}
 
   @override
+  Future<void> directDial(String id, String address) async {}
+
+  @override
   Future<void> directLink(String id) async {}
 
   @override

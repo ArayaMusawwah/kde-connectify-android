@@ -321,7 +321,7 @@ impl LinksyNode {
         run(async move { node.set_volume(&id, level, muted).await }).await
     }
 
-    /// A step of a direct link this phone hosts (docs/protocol.md §4.17), as JSON:
+    /// A step of a direct link (docs/protocol.md §4.17), as JSON:
     /// `{"type":"invite","address":…}`, `{"type":"connecting"}`, `{"type":"up","ip":…,"port":…}`
     /// or `{"type":"end","reason":…}`.
     pub async fn direct_send(&self, id: String, step: String) -> Result<(), String> {
@@ -329,6 +329,15 @@ impl LinksyNode {
         let step: linksy_core::DirectStep = serde_json::from_str(&step).map_err(|e| format!("other:{e}"))?;
         let node = self.node.clone();
         run(async move { node.direct_send(&id, step).await }).await
+    }
+
+    /// The joiner's last step, phone to phone: this phone joined the other's group and it
+    /// said where it is (`up`), so connect to `addr` (`ip:port`) over it.
+    pub async fn direct_dial(&self, id: String, addr: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let addr: SocketAddr = addr.parse().map_err(|e| format!("other:{e}"))?;
+        let node = self.node.clone();
+        run(async move { node.direct_dial(&id, addr).await }).await
     }
 
     /// Set up a direct link with a device now and wait for it (testing; big transfers do
