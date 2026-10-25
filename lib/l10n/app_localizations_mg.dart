@@ -2309,4 +2309,18 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get logsEmpty =>
       'Tsy mbola misy. Hiseho eto ny fifandraisana, ny famindrana ary ny dingana Wi-Fi Direct.';
+
+  @override
+  String get news029PhonesTitle => 'Wi-Fi Direct eo amin\'ny finday';
+
+  @override
+  String get news029PhonesBody =>
+      'Mandeha mivantana avy amin\'ny finday iray mankany amin\'ny iray hafa ny rakitra lehibe, tsy mila router. Samy mila Linksy 0.2.9 izy roa. Azonao vonoina ao amin\'ny Fikirakirana.';
+
+  @override
+  String get news029LogsTitle => 'Tatitra';
+
+  @override
+  String get news029LogsBody =>
+      'Fikirakirana › Tatitra mampiseho ity finday ity sy ny zava-nitranga farany, azo adika ho tatitra olana. Mijanona amin\'ity finday ity izy ireo.';
 }

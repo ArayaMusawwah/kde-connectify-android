@@ -2220,4 +2220,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get logsEmpty => '暂无内容。连接、传输和 Wi-Fi Direct 步骤会显示在这里。';
+
+  @override
+  String get news029PhonesTitle => '手机之间的 Wi-Fi Direct';
+
+  @override
+  String get news029PhonesBody =>
+      '两台手机之间的大文件现在直接传输，不经过路由器。两台都需要 Linksy 0.2.9。可以在设置中关闭。';
+
+  @override
+  String get news029LogsTitle => '日志';
+
+  @override
+  String get news029LogsBody =>
+      '设置 › 日志显示这台手机的信息和最近发生的事，可复制到问题报告中。日志只保存在这台手机上。';
 }

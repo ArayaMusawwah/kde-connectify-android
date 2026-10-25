@@ -3791,6 +3791,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nothing yet. Connections, transfers and Wi-Fi Direct steps show up here.'**
   String get logsEmpty;
+
+  /// No description provided for @news029PhonesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi Direct between phones'**
+  String get news029PhonesTitle;
+
+  /// No description provided for @news029PhonesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Big files between two phones now go straight from one to the other, without the router. Both need Linksy 0.2.9. You can turn it off in Settings.'**
+  String get news029PhonesBody;
+
+  /// No description provided for @news029LogsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs'**
+  String get news029LogsTitle;
+
+  /// No description provided for @news029LogsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings › Logs shows this phone and what happened lately, to copy into a bug report. They stay on this phone.'**
+  String get news029LogsBody;
 }
 
 class _AppLocalizationsDelegate

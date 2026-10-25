@@ -2295,4 +2295,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get logsEmpty =>
       'Nothing yet. Connections, transfers and Wi-Fi Direct steps show up here.';
+
+  @override
+  String get news029PhonesTitle => 'Wi-Fi Direct between phones';
+
+  @override
+  String get news029PhonesBody =>
+      'Big files between two phones now go straight from one to the other, without the router. Both need Linksy 0.2.9. You can turn it off in Settings.';
+
+  @override
+  String get news029LogsTitle => 'Logs';
+
+  @override
+  String get news029LogsBody =>
+      'Settings › Logs shows this phone and what happened lately, to copy into a bug report. They stay on this phone.';
 }

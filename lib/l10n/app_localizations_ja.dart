@@ -2249,4 +2249,18 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get logsEmpty => 'まだありません。接続、転送、Wi-Fi Direct の手順がここに表示されます。';
+
+  @override
+  String get news029PhonesTitle => 'スマホ同士で Wi-Fi Direct';
+
+  @override
+  String get news029PhonesBody =>
+      '2 台のスマホ間の大きなファイルが、ルーターを通さず直接届くようになりました。両方に Linksy 0.2.9 が必要です。設定でオフにできます。';
+
+  @override
+  String get news029LogsTitle => 'ログ';
+
+  @override
+  String get news029LogsBody =>
+      '設定 › ログで、この端末の情報と最近の出来事を確認し、不具合報告にコピーできます。ログはこの端末にだけ保存されます。';
 }

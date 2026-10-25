@@ -2313,4 +2313,18 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get logsEmpty =>
       'Rien pour l’instant. Les connexions, transferts et étapes Wi-Fi Direct apparaissent ici.';
+
+  @override
+  String get news029PhonesTitle => 'Wi-Fi Direct entre téléphones';
+
+  @override
+  String get news029PhonesBody =>
+      'Les gros fichiers entre deux téléphones vont maintenant directement de l\'un à l\'autre, sans le routeur. Les deux ont besoin de Linksy 0.2.9. Tu peux le désactiver dans les Réglages.';
+
+  @override
+  String get news029LogsTitle => 'Journaux';
+
+  @override
+  String get news029LogsBody =>
+      'Réglages › Journaux montre ce téléphone et ce qui s\'est passé récemment, à copier dans un rapport de bug. Ils restent sur ce téléphone.';
 }

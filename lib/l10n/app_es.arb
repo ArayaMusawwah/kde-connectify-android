@@ -612,5 +612,9 @@
   "logsEvents": "Lo que pasó",
   "logsCopy": "Copiar",
   "logsCopied": "Copiado",
-  "logsEmpty": "Nada aún. Aquí aparecen conexiones, transferencias y pasos de Wi-Fi Direct."
+  "logsEmpty": "Nada aún. Aquí aparecen conexiones, transferencias y pasos de Wi-Fi Direct.",
+  "news029PhonesTitle": "Wi-Fi Direct entre teléfonos",
+  "news029PhonesBody": "Los archivos grandes entre dos teléfonos ahora van directos de uno a otro, sin el router. Ambos necesitan Linksy 0.2.9. Puedes desactivarlo en Ajustes.",
+  "news029LogsTitle": "Registros",
+  "news029LogsBody": "Ajustes › Registros muestra este teléfono y lo que pasó hace poco, para copiarlo en un informe de error. Se quedan en este teléfono."
 }

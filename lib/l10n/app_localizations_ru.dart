@@ -2332,4 +2332,18 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get logsEmpty =>
       'Пока пусто. Здесь появятся подключения, передачи и шаги Wi-Fi Direct.';
+
+  @override
+  String get news029PhonesTitle => 'Wi-Fi Direct между телефонами';
+
+  @override
+  String get news029PhonesBody =>
+      'Большие файлы между двумя телефонами теперь идут напрямую, без роутера. На обоих нужен Linksy 0.2.9. Это можно выключить в настройках.';
+
+  @override
+  String get news029LogsTitle => 'Журнал';
+
+  @override
+  String get news029LogsBody =>
+      'Настройки › Журнал показывает этот телефон и что происходило недавно, чтобы скопировать в отчёт об ошибке. Журнал хранится только на этом телефоне.';
 }

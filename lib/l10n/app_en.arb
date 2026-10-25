@@ -3102,5 +3102,9 @@
   "logsEvents": "What happened",
   "logsCopy": "Copy",
   "logsCopied": "Copied",
-  "logsEmpty": "Nothing yet. Connections, transfers and Wi-Fi Direct steps show up here."
+  "logsEmpty": "Nothing yet. Connections, transfers and Wi-Fi Direct steps show up here.",
+  "news029PhonesTitle": "Wi-Fi Direct between phones",
+  "news029PhonesBody": "Big files between two phones now go straight from one to the other, without the router. Both need Linksy 0.2.9. You can turn it off in Settings.",
+  "news029LogsTitle": "Logs",
+  "news029LogsBody": "Settings › Logs shows this phone and what happened lately, to copy into a bug report. They stay on this phone."
 }
