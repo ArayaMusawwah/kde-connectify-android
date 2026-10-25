@@ -262,16 +262,22 @@ object DirectHost {
             val group = group
             when {
                 // In the other phone's group: the app dials once `up` says where it is
+                // (that group, not one left over from before)
                 joining -> if (!info.isGroupOwner) {
-                    up = true
-                    report(id, "joined")
+                    manager.requestGroupInfo(channel) { joined ->
+                        if (up || device != id || joined?.networkName != group?.ssid) return@requestGroupInfo
+                        up = true
+                        report(id, "joined")
+                    }
                 }
                 // This phone's group, made for the other phone: the invite carries the
                 // credentials and the frequency, `up` follows right away
                 group != null -> if (info.isGroupOwner) {
-                    up = true
                     val ip = info.groupOwnerAddress?.hostAddress ?: "192.168.49.1"
                     manager.requestGroupInfo(channel) { made ->
+                        // The group made for it, not one left over from before
+                        if (up || device != id || made?.networkName != group.ssid) return@requestGroupInfo
+                        up = true
                         manager.requestDeviceInfo(channel) { me ->
                             if (device != id) return@requestDeviceInfo
                             val frequency = made?.frequency?.takeIf { it in 2400..7125 }
