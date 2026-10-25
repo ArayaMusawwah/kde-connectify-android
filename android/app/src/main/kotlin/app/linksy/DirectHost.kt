@@ -267,7 +267,7 @@ object DirectHost {
                     manager.requestGroupInfo(channel) { joined ->
                         if (up || device != id || joined?.networkName != group?.ssid) return@requestGroupInfo
                         up = true
-                        report(id, "joined")
+                        whenAddressed(id, tries = 50)
                     }
                 }
                 // This phone's group, made for the other phone: the invite carries the
@@ -300,6 +300,18 @@ object DirectHost {
                     report(id, "up", "ip" to ip)
                 }
             }
+        }
+    }
+
+    /// In the group, but the owner hands out addresses (DHCP) a moment later: `joined`
+    /// once this phone has one, so the first packets don't go nowhere.
+    private fun whenAddressed(id: String, tries: Int) {
+        if (device != id) return
+        val ip = p2pAddress()
+        when {
+            ip != null -> report(id, "joined", "ip" to ip)
+            tries > 1 -> main.postDelayed({ whenAddressed(id, tries - 1) }, 200)
+            else -> fail("no address in the group")
         }
     }
 
