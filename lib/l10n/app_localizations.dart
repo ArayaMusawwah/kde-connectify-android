@@ -3731,6 +3731,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Long videos start sending right away, and transfers keep going with the screen off, their progress in the notification bar.'**
   String get news028BackgroundBody;
+
+  /// No description provided for @settingsDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi Direct for big files'**
+  String get settingsDirect;
+
+  /// No description provided for @settingsDirectCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Faster, straight to the other device. Off: always through your Wi-Fi.'**
+  String get settingsDirectCaption;
 }
 
 class _AppLocalizationsDelegate

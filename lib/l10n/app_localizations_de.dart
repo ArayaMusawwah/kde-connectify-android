@@ -2271,4 +2271,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get news028BackgroundBody =>
       'Lange Videos werden sofort gesendet, und Übertragungen laufen bei ausgeschaltetem Bildschirm weiter, mit Fortschritt in der Benachrichtigungsleiste.';
+
+  @override
+  String get settingsDirect => 'Wi-Fi Direct für große Dateien';
+
+  @override
+  String get settingsDirectCaption =>
+      'Schneller, direkt zum anderen Gerät. Aus: immer über dein WLAN.';
 }

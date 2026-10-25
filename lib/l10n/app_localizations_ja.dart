@@ -2218,4 +2218,10 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get news028BackgroundBody =>
       '長い動画もすぐに送信が始まり、画面がオフでも転送は続きます。進行状況は通知バーに表示されます。';
+
+  @override
+  String get settingsDirect => '大きなファイルに Wi-Fi Direct';
+
+  @override
+  String get settingsDirectCaption => 'より速く、相手のデバイスへ直接。オフ：常に Wi-Fi 経由。';
 }

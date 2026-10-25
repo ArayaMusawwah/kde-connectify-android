@@ -602,5 +602,7 @@
   "news028DirectTitle": "Wi-Fi Direct pour les gros fichiers",
   "news028DirectBody": "Les fichiers de 256 Mo ou plus vont directement à votre ordinateur par un lien Wi-Fi à eux, bien plus vite qu'en passant par la box. Nécessite Linksy 0.9.9 sur l'ordinateur.",
   "news028BackgroundTitle": "Gros fichiers, en arrière-plan",
-  "news028BackgroundBody": "Les longues vidéos partent tout de suite, et les transferts continuent écran éteint, leur progression dans la barre de notifications."
+  "news028BackgroundBody": "Les longues vidéos partent tout de suite, et les transferts continuent écran éteint, leur progression dans la barre de notifications.",
+  "settingsDirect": "Wi-Fi Direct pour les gros fichiers",
+  "settingsDirectCaption": "Plus rapide, directement vers l'autre appareil. Désactivé : toujours via ton Wi-Fi."
 }

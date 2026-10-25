@@ -2276,4 +2276,11 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get news028BackgroundBody =>
       'Los videos largos empiezan a enviarse al instante y las transferencias siguen con la pantalla apagada, con su progreso en la barra de notificaciones.';
+
+  @override
+  String get settingsDirect => 'Wi-Fi Direct para archivos grandes';
+
+  @override
+  String get settingsDirectCaption =>
+      'Más rápido, directo al otro dispositivo. Desactivado: siempre por tu Wi-Fi.';
 }

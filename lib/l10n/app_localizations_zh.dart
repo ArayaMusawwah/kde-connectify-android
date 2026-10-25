@@ -2190,4 +2190,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get news028BackgroundBody => '长视频立即开始发送，熄屏时传输也会继续，进度显示在通知栏中。';
+
+  @override
+  String get settingsDirect => '大文件使用 Wi-Fi Direct';
+
+  @override
+  String get settingsDirectCaption => '更快，直接传到另一台设备。关闭：始终通过你的 Wi-Fi。';
 }

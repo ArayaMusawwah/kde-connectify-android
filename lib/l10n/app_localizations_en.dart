@@ -2262,4 +2262,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get news028BackgroundBody =>
       'Long videos start sending right away, and transfers keep going with the screen off, their progress in the notification bar.';
+
+  @override
+  String get settingsDirect => 'Wi-Fi Direct for big files';
+
+  @override
+  String get settingsDirectCaption =>
+      'Faster, straight to the other device. Off: always through your Wi-Fi.';
 }

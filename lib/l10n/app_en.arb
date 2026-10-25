@@ -3078,11 +3078,21 @@
   "transfersDirectConnecting": "Connecting",
   "transfersDirectLinking": "Linking up",
   "news028DirectTitle": "Wi-Fi Direct for big files",
-  "@news028DirectTitle": {"description": "What's New 0.2.8: Wi-Fi Direct (title)"},
+  "@news028DirectTitle": {
+    "description": "What's New 0.2.8: Wi-Fi Direct (title)"
+  },
   "news028DirectBody": "Files of 256 MB or more go straight to your computer over a Wi-Fi link of their own, much faster than through the router. Needs Linksy 0.9.9 on the computer.",
-  "@news028DirectBody": {"description": "What's New 0.2.8: Wi-Fi Direct (body)"},
+  "@news028DirectBody": {
+    "description": "What's New 0.2.8: Wi-Fi Direct (body)"
+  },
   "news028BackgroundTitle": "Big files, in the background",
-  "@news028BackgroundTitle": {"description": "What's New 0.2.8: big files and background transfers (title)"},
+  "@news028BackgroundTitle": {
+    "description": "What's New 0.2.8: big files and background transfers (title)"
+  },
   "news028BackgroundBody": "Long videos start sending right away, and transfers keep going with the screen off, their progress in the notification bar.",
-  "@news028BackgroundBody": {"description": "What's New 0.2.8: big files and background transfers (body)"}
+  "@news028BackgroundBody": {
+    "description": "What's New 0.2.8: big files and background transfers (body)"
+  },
+  "settingsDirect": "Wi-Fi Direct for big files",
+  "settingsDirectCaption": "Faster, straight to the other device. Off: always through your Wi-Fi."
 }

@@ -602,5 +602,7 @@
   "news028DirectTitle": "Wi-Fi Direct para archivos grandes",
   "news028DirectBody": "Los archivos de 256 MB o más van directos a tu computadora por una conexión Wi-Fi propia, mucho más rápido que a través del router. Requiere Linksy 0.9.9 en la computadora.",
   "news028BackgroundTitle": "Archivos grandes, en segundo plano",
-  "news028BackgroundBody": "Los videos largos empiezan a enviarse al instante y las transferencias siguen con la pantalla apagada, con su progreso en la barra de notificaciones."
+  "news028BackgroundBody": "Los videos largos empiezan a enviarse al instante y las transferencias siguen con la pantalla apagada, con su progreso en la barra de notificaciones.",
+  "settingsDirect": "Wi-Fi Direct para archivos grandes",
+  "settingsDirectCaption": "Más rápido, directo al otro dispositivo. Desactivado: siempre por tu Wi-Fi."
 }

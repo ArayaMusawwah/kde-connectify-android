@@ -2275,4 +2275,11 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get news028BackgroundBody =>
       'Mandeha avy hatrany ny horonan-tsary lava, ary mitohy ny fandefasana na maty aza ny efijery, miseho ao amin\'ny fampandrenesana ny fandrosoany.';
+
+  @override
+  String get settingsDirect => 'Wi-Fi Direct ho an\'ny rakitra lehibe';
+
+  @override
+  String get settingsDirectCaption =>
+      'Haingana kokoa, mivantana any amin\'ilay fitaovana. Maty: amin\'ny Wi-Fi-nao foana.';
 }

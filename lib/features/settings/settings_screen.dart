@@ -117,6 +117,16 @@ class SettingsScreen extends StatelessWidget {
                           onChanged: (v) => update(st.copyWith(away: v)),
                         ),
                       ),
+                      // Direct links (§4.17) for big transfers
+                      _Row(
+                        icon: Ph.arrowsLeftRight,
+                        title: context.l10n.settingsDirect,
+                        caption: context.l10n.settingsDirectCaption,
+                        trailing: Switch(
+                          value: c.directOn,
+                          onChanged: c.setDirectOn,
+                        ),
+                      ),
                       // Self-hosting: a relay of the user's own (linksy-server).
                       _Row(
                         icon: Ph.network,

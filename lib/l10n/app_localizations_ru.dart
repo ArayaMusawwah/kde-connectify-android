@@ -2298,4 +2298,11 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get news028BackgroundBody =>
       'Длинные видео начинают отправляться сразу, а передача продолжается при выключенном экране, с прогрессом в панели уведомлений.';
+
+  @override
+  String get settingsDirect => 'Wi-Fi Direct для больших файлов';
+
+  @override
+  String get settingsDirectCaption =>
+      'Быстрее, напрямую на другое устройство. Выкл.: всегда через ваш Wi-Fi.';
 }

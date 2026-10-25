@@ -2279,4 +2279,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get news028BackgroundBody =>
       'Les longues vidéos partent tout de suite, et les transferts continuent écran éteint, leur progression dans la barre de notifications.';
+
+  @override
+  String get settingsDirect => 'Wi-Fi Direct pour les gros fichiers';
+
+  @override
+  String get settingsDirectCaption =>
+      'Plus rapide, directement vers l\'autre appareil. Désactivé : toujours via ton Wi-Fi.';
 }

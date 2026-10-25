@@ -602,5 +602,7 @@
   "news028DirectTitle": "大きなファイルに Wi-Fi Direct",
   "news028DirectBody": "256 MB 以上のファイルは専用の Wi-Fi 接続でパソコンに直接届き、ルーター経由よりずっと速くなります。パソコンに Linksy 0.9.9 が必要です。",
   "news028BackgroundTitle": "大きなファイルもバックグラウンドで",
-  "news028BackgroundBody": "長い動画もすぐに送信が始まり、画面がオフでも転送は続きます。進行状況は通知バーに表示されます。"
+  "news028BackgroundBody": "長い動画もすぐに送信が始まり、画面がオフでも転送は続きます。進行状況は通知バーに表示されます。",
+  "settingsDirect": "大きなファイルに Wi-Fi Direct",
+  "settingsDirectCaption": "より速く、相手のデバイスへ直接。オフ：常に Wi-Fi 経由。"
 }

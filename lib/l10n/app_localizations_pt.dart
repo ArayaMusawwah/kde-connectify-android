@@ -2270,4 +2270,11 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get news028BackgroundBody =>
       'Vídeos longos começam a ser enviados na hora, e as transferências continuam com a tela desligada, com o progresso na barra de notificações.';
+
+  @override
+  String get settingsDirect => 'Wi-Fi Direct para arquivos grandes';
+
+  @override
+  String get settingsDirectCaption =>
+      'Mais rápido, direto para o outro aparelho. Desligado: sempre pelo seu Wi-Fi.';
 }
