@@ -18,6 +18,15 @@ class DisplayReceiver(
     @Volatile private var running = true
     private val input: Thread
     private val output: Thread
+    private val idle: Thread
+
+    /// The stream, cut into pictures; [lock] guards both, read from two threads.
+    private val lock = Any()
+    private val nals = AnnexB()
+    private val units = AccessUnits(::queue)
+
+    /// When bytes last came, in nanoseconds; 0 once what they held is queued.
+    @Volatile private var lastData = 0L
 
     init {
         // The desktop sends 1920×1080 today; the decoder adapts to the stream.
@@ -31,25 +40,53 @@ class DisplayReceiver(
         val format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, 1920, 1080).apply {
             // A keyframe of a busy desktop is big; make sure one always fits.
             setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 2 * 1024 * 1024)
+            // Out as soon as decoded, not held for the next frame (where the decoder can)
+            if (android.os.Build.VERSION.SDK_INT >= 30) setInteger(MediaFormat.KEY_LOW_LATENCY, 1)
+            setInteger(MediaFormat.KEY_PRIORITY, 0)
         }
         decoder.configure(format, producer.surface, null, 0)
         decoder.start()
         input = Thread(::readLoop, "linksy-display-in").apply { start() }
         output = Thread(::renderLoop, "linksy-display-out").apply { start() }
+        idle = Thread(::idleLoop, "linksy-display-idle").apply { start() }
     }
 
     private fun readLoop() {
-        val nals = AnnexB()
-        val units = AccessUnits(::queue)
         try {
             while (running) {
                 val chunk = NativeSession.read(session) ?: break
-                nals.push(chunk, units::push)
+                synchronized(lock) {
+                    nals.push(chunk, units::push)
+                    lastData = System.nanoTime()
+                }
             }
         } catch (e: Exception) {
             if (running) Log.w("linksy", "display stream stopped", e)
         }
         if (running) onEnded()
+    }
+
+    /// A picture only ends where the next one starts (its delimiter), so the last
+    /// one would wait for the next: fine while things move, but after a tap the
+    /// computer may send one frame and nothing more. Once the stream has been quiet
+    /// for [QUIET_NS], what's buffered goes to the decoder as it is. The desktop
+    /// writes whole frames, so by then it's a whole one.
+    private fun idleLoop() {
+        while (running) {
+            try {
+                Thread.sleep(4)
+            } catch (_: InterruptedException) {
+                return
+            }
+            val last = lastData
+            if (last == 0L || System.nanoTime() - last < QUIET_NS) continue
+            synchronized(lock) {
+                if (lastData != last) return@synchronized
+                nals.end(units::push)
+                units.end()
+                lastData = 0L
+            }
+        }
     }
 
     /// One whole picture (or SPS+PPS, as codec config) per input buffer, with
@@ -97,11 +134,19 @@ class DisplayReceiver(
     fun stop() {
         running = false
         NativeSession.finish(session)
+        idle.interrupt()
         input.join(300)
         output.join(300)
+        idle.join(300)
         runCatching { decoder.stop() }
         runCatching { decoder.release() }
         producer.release()
+    }
+
+    private companion object {
+        /// Quiet this long, the frame so far is whole: about a frame at 50 fps,
+        /// and longer than the gaps inside one frame on Wi-Fi.
+        const val QUIET_NS = 20_000_000L
     }
 
     /// Groups NAL units into access units (docs/protocol.md §7): a new picture starts
@@ -149,6 +194,9 @@ class DisplayReceiver(
             }
         }
 
+        /// The stream paused: the picture so far is whole.
+        fun end() = flush()
+
         private fun flush() {
             // Before the first slice, keep what leads the picture (AUD, SEI).
             if (!hasPicture) return
@@ -172,6 +220,12 @@ class DisplayReceiver(
                 start = end
             }
             buf = buf.copyOfRange(start, buf.size)
+        }
+
+        /// The stream paused: what's left is a whole NAL unit.
+        fun end(emit: (ByteArray) -> Unit) {
+            if (next(0) == 0 && buf.size > 4) emit(buf)
+            buf = ByteArray(0)
         }
 
         /// Index of the next start code (00 00 01, or 00 00 00 01) from [from].
