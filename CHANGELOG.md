@@ -2,6 +2,15 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.2.10] - 2026-10-25
+
+### Changed
+- **Scroll direction everywhere**: the reverse scroll setting now also applies to two-finger scrolling on a computer's screen (extended screen and control screen), not only the touchpad ([#14](https://github.com/LinkSy-mg/linksy-mobile/issues/14)).
+
+### Fixed
+- **Extended and control screens react faster**: after a tap, the computer's screen on the phone updated noticeably later than while swiping, because the last frame waited for the next one. It now shows as soon as the stream pauses ([desktop#42](https://github.com/LinkSy-mg/linksy-desktop/issues/42)).
+- **Computers stay nearby**: the phone looks again a few seconds after paired devices change their private name (every 15 minutes) and right after one goes, so a computer no longer stays "not nearby" while it's right there ([desktop#50](https://github.com/LinkSy-mg/linksy-desktop/issues/50)).
+
 ## [0.2.9] - 2026-10-25
 
 ### Added
