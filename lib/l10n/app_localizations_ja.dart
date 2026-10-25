@@ -2224,4 +2224,29 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsDirectCaption => 'より速く、相手のデバイスへ直接。オフ：常に Wi-Fi 経由。';
+
+  @override
+  String get settingsLogs => 'ログ';
+
+  @override
+  String get settingsLogsCaption => '最近の出来事（不具合の報告用）';
+
+  @override
+  String get logsPrivacy =>
+      'ログはこの端末にだけ保存され、どこにも送信されません。問題を報告するときに自分でコピーしてください。';
+
+  @override
+  String get logsThisPhone => 'この端末';
+
+  @override
+  String get logsEvents => '出来事';
+
+  @override
+  String get logsCopy => 'コピー';
+
+  @override
+  String get logsCopied => 'コピーしました';
+
+  @override
+  String get logsEmpty => 'まだありません。接続、転送、Wi-Fi Direct の手順がここに表示されます。';
 }

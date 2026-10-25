@@ -2305,4 +2305,31 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get settingsDirectCaption =>
       'Быстрее, напрямую на другое устройство. Выкл.: всегда через ваш Wi-Fi.';
+
+  @override
+  String get settingsLogs => 'Журнал';
+
+  @override
+  String get settingsLogsCaption =>
+      'Что происходило недавно, для отчёта об ошибке';
+
+  @override
+  String get logsPrivacy =>
+      'Журнал хранится только на этом телефоне и никуда не отправляется: скопируйте его сами, когда сообщаете о проблеме.';
+
+  @override
+  String get logsThisPhone => 'Этот телефон';
+
+  @override
+  String get logsEvents => 'Что происходило';
+
+  @override
+  String get logsCopy => 'Копировать';
+
+  @override
+  String get logsCopied => 'Скопировано';
+
+  @override
+  String get logsEmpty =>
+      'Пока пусто. Здесь появятся подключения, передачи и шаги Wi-Fi Direct.';
 }

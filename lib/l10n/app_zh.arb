@@ -604,5 +604,13 @@
   "news028BackgroundTitle": "大文件，后台传输",
   "news028BackgroundBody": "长视频立即开始发送，熄屏时传输也会继续，进度显示在通知栏中。",
   "settingsDirect": "大文件使用 Wi-Fi Direct",
-  "settingsDirectCaption": "更快，直接传到另一台设备。关闭：始终通过你的 Wi-Fi。"
+  "settingsDirectCaption": "更快，直接传到另一台设备。关闭：始终通过你的 Wi-Fi。",
+  "settingsLogs": "日志",
+  "settingsLogsCaption": "最近发生的事，用于报告问题",
+  "logsPrivacy": "日志只保存在这台手机上，不会发送到任何地方：报告问题时请自行复制。",
+  "logsThisPhone": "这台手机",
+  "logsEvents": "发生了什么",
+  "logsCopy": "复制",
+  "logsCopied": "已复制",
+  "logsEmpty": "暂无内容。连接、传输和 Wi-Fi Direct 步骤会显示在这里。"
 }

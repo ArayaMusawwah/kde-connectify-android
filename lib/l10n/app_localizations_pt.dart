@@ -2277,4 +2277,31 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get settingsDirectCaption =>
       'Mais rápido, direto para o outro aparelho. Desligado: sempre pelo seu Wi-Fi.';
+
+  @override
+  String get settingsLogs => 'Registros';
+
+  @override
+  String get settingsLogsCaption =>
+      'O que aconteceu há pouco, para relatar um erro';
+
+  @override
+  String get logsPrivacy =>
+      'Os registros ficam neste telefone. Nada é enviado: copie-os você mesmo ao relatar um problema.';
+
+  @override
+  String get logsThisPhone => 'Este telefone';
+
+  @override
+  String get logsEvents => 'O que aconteceu';
+
+  @override
+  String get logsCopy => 'Copiar';
+
+  @override
+  String get logsCopied => 'Copiado';
+
+  @override
+  String get logsEmpty =>
+      'Nada ainda. Conexões, transferências e etapas do Wi-Fi Direct aparecem aqui.';
 }

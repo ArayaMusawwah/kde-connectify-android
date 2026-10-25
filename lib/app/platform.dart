@@ -283,6 +283,9 @@ abstract final class LinksyPlatform {
       _call<void>('cancelNotice', {'transfer': transfer});
 
   /// Whether this phone can host a direct link (Wi-Fi Direct, Android 10+).
+  static Future<Map<String, String>> deviceReport() async =>
+      (await _call<Map>('deviceReport'))?.cast<String, String>() ?? {};
+
   static Future<bool> directHost() async =>
       await _call<bool>('directHost') ?? false;
 

@@ -604,5 +604,13 @@
   "news028BackgroundTitle": "Gros fichiers, en arrière-plan",
   "news028BackgroundBody": "Les longues vidéos partent tout de suite, et les transferts continuent écran éteint, leur progression dans la barre de notifications.",
   "settingsDirect": "Wi-Fi Direct pour les gros fichiers",
-  "settingsDirectCaption": "Plus rapide, directement vers l'autre appareil. Désactivé : toujours via ton Wi-Fi."
+  "settingsDirectCaption": "Plus rapide, directement vers l'autre appareil. Désactivé : toujours via ton Wi-Fi.",
+  "settingsLogs": "Journaux",
+  "settingsLogsCaption": "Ce qui s'est passé récemment, pour signaler un bug",
+  "logsPrivacy": "Les journaux restent sur ce téléphone. Rien n'est envoyé : copie-les toi-même quand tu signales un problème.",
+  "logsThisPhone": "Ce téléphone",
+  "logsEvents": "Ce qui s'est passé",
+  "logsCopy": "Copier",
+  "logsCopied": "Copié",
+  "logsEmpty": "Rien pour l’instant. Les connexions, transferts et étapes Wi-Fi Direct apparaissent ici."
 }

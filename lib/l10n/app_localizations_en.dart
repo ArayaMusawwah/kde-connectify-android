@@ -2269,4 +2269,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsDirectCaption =>
       'Faster, straight to the other device. Off: always through your Wi-Fi.';
+
+  @override
+  String get settingsLogs => 'Logs';
+
+  @override
+  String get settingsLogsCaption => 'What happened lately, for a bug report';
+
+  @override
+  String get logsPrivacy =>
+      'Logs stay on this phone. Nothing is sent anywhere: copy them yourself when you report a problem.';
+
+  @override
+  String get logsThisPhone => 'This phone';
+
+  @override
+  String get logsEvents => 'What happened';
+
+  @override
+  String get logsCopy => 'Copy';
+
+  @override
+  String get logsCopied => 'Copied';
+
+  @override
+  String get logsEmpty =>
+      'Nothing yet. Connections, transfers and Wi-Fi Direct steps show up here.';
 }

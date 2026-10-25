@@ -2196,4 +2196,28 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsDirectCaption => '更快，直接传到另一台设备。关闭：始终通过你的 Wi-Fi。';
+
+  @override
+  String get settingsLogs => '日志';
+
+  @override
+  String get settingsLogsCaption => '最近发生的事，用于报告问题';
+
+  @override
+  String get logsPrivacy => '日志只保存在这台手机上，不会发送到任何地方：报告问题时请自行复制。';
+
+  @override
+  String get logsThisPhone => '这台手机';
+
+  @override
+  String get logsEvents => '发生了什么';
+
+  @override
+  String get logsCopy => '复制';
+
+  @override
+  String get logsCopied => '已复制';
+
+  @override
+  String get logsEmpty => '暂无内容。连接、传输和 Wi-Fi Direct 步骤会显示在这里。';
 }

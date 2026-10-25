@@ -2282,4 +2282,31 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get settingsDirectCaption =>
       'Haingana kokoa, mivantana any amin\'ilay fitaovana. Maty: amin\'ny Wi-Fi-nao foana.';
+
+  @override
+  String get settingsLogs => 'Tatitra';
+
+  @override
+  String get settingsLogsCaption =>
+      'Ny zava-nitranga farany, ho an\'ny tatitra olana';
+
+  @override
+  String get logsPrivacy =>
+      'Mijanona amin\'ity finday ity ny tatitra. Tsy misy alefa na aiza na aiza: adikao ihany rehefa mitatitra olana ianao.';
+
+  @override
+  String get logsThisPhone => 'Ity finday ity';
+
+  @override
+  String get logsEvents => 'Ny zava-nitranga';
+
+  @override
+  String get logsCopy => 'Adikao';
+
+  @override
+  String get logsCopied => 'Voadika';
+
+  @override
+  String get logsEmpty =>
+      'Tsy mbola misy. Hiseho eto ny fifandraisana, ny famindrana ary ny dingana Wi-Fi Direct.';
 }

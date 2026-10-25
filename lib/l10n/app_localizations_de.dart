@@ -2278,4 +2278,31 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get settingsDirectCaption =>
       'Schneller, direkt zum anderen Gerät. Aus: immer über dein WLAN.';
+
+  @override
+  String get settingsLogs => 'Protokolle';
+
+  @override
+  String get settingsLogsCaption =>
+      'Was zuletzt passiert ist, für einen Fehlerbericht';
+
+  @override
+  String get logsPrivacy =>
+      'Protokolle bleiben auf diesem Telefon. Nichts wird gesendet: Kopiere sie selbst, wenn du ein Problem meldest.';
+
+  @override
+  String get logsThisPhone => 'Dieses Telefon';
+
+  @override
+  String get logsEvents => 'Was passiert ist';
+
+  @override
+  String get logsCopy => 'Kopieren';
+
+  @override
+  String get logsCopied => 'Kopiert';
+
+  @override
+  String get logsEmpty =>
+      'Noch nichts. Verbindungen, Übertragungen und Wi-Fi-Direct-Schritte erscheinen hier.';
 }

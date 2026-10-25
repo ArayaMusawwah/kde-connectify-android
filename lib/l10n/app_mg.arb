@@ -604,5 +604,13 @@
   "news028BackgroundTitle": "Rakitra lehibe, ao ambadika",
   "news028BackgroundBody": "Mandeha avy hatrany ny horonan-tsary lava, ary mitohy ny fandefasana na maty aza ny efijery, miseho ao amin'ny fampandrenesana ny fandrosoany.",
   "settingsDirect": "Wi-Fi Direct ho an'ny rakitra lehibe",
-  "settingsDirectCaption": "Haingana kokoa, mivantana any amin'ilay fitaovana. Maty: amin'ny Wi-Fi-nao foana."
+  "settingsDirectCaption": "Haingana kokoa, mivantana any amin'ilay fitaovana. Maty: amin'ny Wi-Fi-nao foana.",
+  "settingsLogs": "Tatitra",
+  "settingsLogsCaption": "Ny zava-nitranga farany, ho an'ny tatitra olana",
+  "logsPrivacy": "Mijanona amin'ity finday ity ny tatitra. Tsy misy alefa na aiza na aiza: adikao ihany rehefa mitatitra olana ianao.",
+  "logsThisPhone": "Ity finday ity",
+  "logsEvents": "Ny zava-nitranga",
+  "logsCopy": "Adikao",
+  "logsCopied": "Voadika",
+  "logsEmpty": "Tsy mbola misy. Hiseho eto ny fifandraisana, ny famindrana ary ny dingana Wi-Fi Direct."
 }

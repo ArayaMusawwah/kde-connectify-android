@@ -11,6 +11,7 @@ import '../../core/demo_node.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../news/whats_new.dart';
+import 'logs_screen.dart';
 import '../permissions/permissions_sheet.dart';
 import '../update/update_sheet.dart';
 import '../../ui/sig.dart';
@@ -259,6 +260,16 @@ class SettingsScreen extends StatelessWidget {
                         },
                       ),
                       const _CheckUpdates(),
+                      _Row(
+                        icon: Ph.fileText,
+                        title: context.l10n.settingsLogs,
+                        caption: context.l10n.settingsLogsCaption,
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const LogsScreen(),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   SectionLabel(context.l10n.settingsPermissions),

@@ -101,6 +101,7 @@ class MainActivity : FlutterActivity() {
                         result.success(null)
                     }
                     "directHost" -> result.success(DirectHost.supported(this@MainActivity))
+                    "deviceReport" -> result.success(deviceReport())
                     "directWanted" -> {
                         DirectHost.want(this@MainActivity, call.argument<String>("device")!!, directGroup(call))
                         result.success(null)
@@ -695,6 +696,32 @@ class MainActivity : FlutterActivity() {
         }
         @Suppress("DEPRECATION")
         startActivityForResult(intent, REQUEST_CAPTURE)
+    }
+
+    /// Settings › Logs: what this phone is and what its Wi-Fi can do, as label → value.
+    /// Nothing that identifies the user (no network name, no addresses).
+    private fun deviceReport(): Map<String, String> {
+        val wifi = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val power = getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+        val p2p = getSystemService(android.net.wifi.p2p.WifiP2pManager::class.java)
+        @Suppress("DEPRECATION")
+        val link = wifi.connectionInfo
+        val yes = { b: Boolean -> if (b) "yes" else "no" }
+        return linkedMapOf(
+            "Device" to "${Build.MANUFACTURER} ${Build.MODEL}",
+            "Android" to "${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})",
+            "CPU" to (Build.SUPPORTED_ABIS.firstOrNull() ?: "?"),
+            "Wi-Fi" to if (!wifi.isWifiEnabled) "off"
+                // The network's id is hidden from apps now; a frequency means connected
+                else if (link == null || link.frequency <= 0) "on, not connected"
+                else "${link.frequency} MHz, ${link.linkSpeed} Mbps",
+            "5 GHz" to yes(wifi.is5GHzBandSupported),
+            "6 GHz" to if (Build.VERSION.SDK_INT >= 30) yes(wifi.is6GHzBandSupported) else "?",
+            "Wi-Fi Direct" to yes(DirectHost.supported(this)),
+            "Fast search" to if (Build.VERSION.SDK_INT >= 33 && p2p != null) yes(p2p.isChannelConstrainedDiscoverySupported) else "no",
+            "Nearby devices" to if (granted(DirectHost.permission())) "allowed" else "not allowed",
+            "Battery limits" to if (power.isIgnoringBatteryOptimizations(packageName)) "off" else "on",
+        )
     }
 
     /// A direct link's group (phone to phone) from a call's `ssid`, `passphrase`, `frequency`.

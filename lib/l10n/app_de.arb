@@ -604,5 +604,13 @@
   "news028BackgroundTitle": "Große Dateien, im Hintergrund",
   "news028BackgroundBody": "Lange Videos werden sofort gesendet, und Übertragungen laufen bei ausgeschaltetem Bildschirm weiter, mit Fortschritt in der Benachrichtigungsleiste.",
   "settingsDirect": "Wi-Fi Direct für große Dateien",
-  "settingsDirectCaption": "Schneller, direkt zum anderen Gerät. Aus: immer über dein WLAN."
+  "settingsDirectCaption": "Schneller, direkt zum anderen Gerät. Aus: immer über dein WLAN.",
+  "settingsLogs": "Protokolle",
+  "settingsLogsCaption": "Was zuletzt passiert ist, für einen Fehlerbericht",
+  "logsPrivacy": "Protokolle bleiben auf diesem Telefon. Nichts wird gesendet: Kopiere sie selbst, wenn du ein Problem meldest.",
+  "logsThisPhone": "Dieses Telefon",
+  "logsEvents": "Was passiert ist",
+  "logsCopy": "Kopieren",
+  "logsCopied": "Kopiert",
+  "logsEmpty": "Noch nichts. Verbindungen, Übertragungen und Wi-Fi-Direct-Schritte erscheinen hier."
 }

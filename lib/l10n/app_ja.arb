@@ -604,5 +604,13 @@
   "news028BackgroundTitle": "大きなファイルもバックグラウンドで",
   "news028BackgroundBody": "長い動画もすぐに送信が始まり、画面がオフでも転送は続きます。進行状況は通知バーに表示されます。",
   "settingsDirect": "大きなファイルに Wi-Fi Direct",
-  "settingsDirectCaption": "より速く、相手のデバイスへ直接。オフ：常に Wi-Fi 経由。"
+  "settingsDirectCaption": "より速く、相手のデバイスへ直接。オフ：常に Wi-Fi 経由。",
+  "settingsLogs": "ログ",
+  "settingsLogsCaption": "最近の出来事（不具合の報告用）",
+  "logsPrivacy": "ログはこの端末にだけ保存され、どこにも送信されません。問題を報告するときに自分でコピーしてください。",
+  "logsThisPhone": "この端末",
+  "logsEvents": "出来事",
+  "logsCopy": "コピー",
+  "logsCopied": "コピーしました",
+  "logsEmpty": "まだありません。接続、転送、Wi-Fi Direct の手順がここに表示されます。"
 }

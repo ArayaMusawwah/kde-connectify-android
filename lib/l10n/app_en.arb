@@ -3094,5 +3094,13 @@
     "description": "What's New 0.2.8: big files and background transfers (body)"
   },
   "settingsDirect": "Wi-Fi Direct for big files",
-  "settingsDirectCaption": "Faster, straight to the other device. Off: always through your Wi-Fi."
+  "settingsDirectCaption": "Faster, straight to the other device. Off: always through your Wi-Fi.",
+  "settingsLogs": "Logs",
+  "settingsLogsCaption": "What happened lately, for a bug report",
+  "logsPrivacy": "Logs stay on this phone. Nothing is sent anywhere: copy them yourself when you report a problem.",
+  "logsThisPhone": "This phone",
+  "logsEvents": "What happened",
+  "logsCopy": "Copy",
+  "logsCopied": "Copied",
+  "logsEmpty": "Nothing yet. Connections, transfers and Wi-Fi Direct steps show up here."
 }

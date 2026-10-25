@@ -3743,6 +3743,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Faster, straight to the other device. Off: always through your Wi-Fi.'**
   String get settingsDirectCaption;
+
+  /// No description provided for @settingsLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs'**
+  String get settingsLogs;
+
+  /// No description provided for @settingsLogsCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened lately, for a bug report'**
+  String get settingsLogsCaption;
+
+  /// No description provided for @logsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs stay on this phone. Nothing is sent anywhere: copy them yourself when you report a problem.'**
+  String get logsPrivacy;
+
+  /// No description provided for @logsThisPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone'**
+  String get logsThisPhone;
+
+  /// No description provided for @logsEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened'**
+  String get logsEvents;
+
+  /// No description provided for @logsCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get logsCopy;
+
+  /// No description provided for @logsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get logsCopied;
+
+  /// No description provided for @logsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing yet. Connections, transfers and Wi-Fi Direct steps show up here.'**
+  String get logsEmpty;
 }
 
 class _AppLocalizationsDelegate

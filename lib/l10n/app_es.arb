@@ -604,5 +604,13 @@
   "news028BackgroundTitle": "Archivos grandes, en segundo plano",
   "news028BackgroundBody": "Los videos largos empiezan a enviarse al instante y las transferencias siguen con la pantalla apagada, con su progreso en la barra de notificaciones.",
   "settingsDirect": "Wi-Fi Direct para archivos grandes",
-  "settingsDirectCaption": "Más rápido, directo al otro dispositivo. Desactivado: siempre por tu Wi-Fi."
+  "settingsDirectCaption": "Más rápido, directo al otro dispositivo. Desactivado: siempre por tu Wi-Fi.",
+  "settingsLogs": "Registros",
+  "settingsLogsCaption": "Lo que pasó hace poco, para un informe de error",
+  "logsPrivacy": "Los registros se quedan en este teléfono. No se envía nada: cópialos tú cuando informes de un problema.",
+  "logsThisPhone": "Este teléfono",
+  "logsEvents": "Lo que pasó",
+  "logsCopy": "Copiar",
+  "logsCopied": "Copiado",
+  "logsEmpty": "Nada aún. Aquí aparecen conexiones, transferencias y pasos de Wi-Fi Direct."
 }

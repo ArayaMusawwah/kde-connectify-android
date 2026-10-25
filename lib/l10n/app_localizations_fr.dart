@@ -2286,4 +2286,31 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get settingsDirectCaption =>
       'Plus rapide, directement vers l\'autre appareil. Désactivé : toujours via ton Wi-Fi.';
+
+  @override
+  String get settingsLogs => 'Journaux';
+
+  @override
+  String get settingsLogsCaption =>
+      'Ce qui s\'est passé récemment, pour signaler un bug';
+
+  @override
+  String get logsPrivacy =>
+      'Les journaux restent sur ce téléphone. Rien n\'est envoyé : copie-les toi-même quand tu signales un problème.';
+
+  @override
+  String get logsThisPhone => 'Ce téléphone';
+
+  @override
+  String get logsEvents => 'Ce qui s\'est passé';
+
+  @override
+  String get logsCopy => 'Copier';
+
+  @override
+  String get logsCopied => 'Copié';
+
+  @override
+  String get logsEmpty =>
+      'Rien pour l’instant. Les connexions, transferts et étapes Wi-Fi Direct apparaissent ici.';
 }
