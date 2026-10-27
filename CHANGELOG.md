@@ -2,6 +2,15 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [0.2.11] - 2026-10-27
+
+### Added
+- **Safer pairing codes**: pairing now commits to its code before revealing it, so the six digits are even harder to fake (linksy-core, protocol §4.3 and §4.4). When the other device has an older Linksy, a small line under the code suggests updating it; pairing works as before.
+
+### Fixed
+- **Switching networks**: when the phone moves between Wi-Fi and mobile data, or gets a new address, Linksy checks its links at once, closes the ones that no longer answer, and reconnects, instead of waiting up to 30 seconds. Away from home connects alongside Wi-Fi when the computer isn't seen on the network.
+- **Logs**: lines from an earlier day show their date.
+
 ## [0.2.10] - 2026-10-25
 
 ### Changed
