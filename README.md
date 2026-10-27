@@ -1,21 +1,27 @@
-# Linksy for Android
+# KDE Connectify for Android 📱
 
-Your devices, connected. The phone app for [Linksy](https://github.com/LinkSy-mg/linksy-desktop):
-share files, clipboard text and pings with your own devices directly over the local
-network, with no account, cloud or server.
+Your devices, connected. The companion Android mobile app for [KDE Connectify Desktop](https://github.com/ArayaMusawwah/kde-connectify):
+share files, clipboard text, pings, camera webcam, second display (sidecar), and microphone directly over the local network or USB cable, with no account, cloud or server.
 
-The product, the wire protocol and the feature status are in
-[`docs/protocol.md`](https://github.com/LinkSy-mg/linksy-desktop/blob/main/docs/protocol.md) in
-linksy-desktop. Read it before changing anything that talks to other devices.
+---
 
-## Status
+## 🌟 Key Features
 
-The app runs on **linksy-core itself** (Rust, from linksy-desktop) through
-flutter_rust_bridge, so it speaks the desktop's exact protocol. Tested against a node on
-the same network: pairing by invite link and by 6-digit code, files both ways (resume
-and BLAKE3 checks are the core's), clipboard and pings both ways, and screen, camera,
-remote control and second-display sessions (streams checked for profile, SPS/PPS before
-keyframes, size, frame rate and rotation; input checked both ways).
+- **Virtual Webcam**: Stream phone camera (1080p, 60fps, front/back switch, zoom) into PC PipeWire apps.
+- **Second Display (Sidecar)**: Use phone or tablet as a low-latency touch-enabled monitor for Linux.
+- **Virtual Microphone**: Low-latency PCM 48kHz audio directly into PC PipeWire.
+- **Screen Mirror & Remote Desktop**: Real-time display mirroring and mouse/keyboard control.
+- **USB Cable Mode (AOA)**: Zero Wi-Fi latency connection via plain USB cable (no developer options / ADB required).
+- **Away from Home**: Reach paired computers securely over the internet via `iroh` P2P relay.
+- **Wi-Fi Direct**: Ad-hoc 5GHz P2P group transfer for files $\ge 256$ MB (~80 MB/s).
+- **Remote Terminal**: Interactive shell on your computer with PIN authorization.
+- **Shared Clipboard, Files & Notifications**: Fast local-first transfers with BLAKE3 checksums and resume support.
+
+---
+
+## 🏗️ Architecture
+
+The app runs on **linksy-core itself** (Rust, from linksy-desktop) through `flutter_rust_bridge`, providing 100% protocol fidelity with KDE Connectify Desktop.
 
 Up to date with desktop 0.6.0 (core `1c8ebe4`). Done on the phone:
 

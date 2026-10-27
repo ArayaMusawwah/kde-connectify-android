@@ -39,7 +39,7 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
-        android:label="Linksy"
+        android:label="KDE Connectify"
         android:enableOnBackInvokedCallback="true"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
@@ -88,7 +88,7 @@
         <activity
             android:name=".ShareTarget"
             android:exported="true"
-            android:label="Linksy"
+            android:label="KDE Connectify"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
