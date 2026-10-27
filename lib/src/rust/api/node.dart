@@ -82,6 +82,11 @@ abstract class LinksyNode implements RustOpaqueInterface {
     required String commandJson,
   });
 
+  /// This phone's networks changed (Android's network callback): links that no
+  /// longer answer close at once, devices that stay connected are dialed again,
+  /// and iroh looks for its paths again (docs/protocol.md §4.13).
+  Future<void> networkChanged();
+
   Future<void> notify({
     required String id,
     required String title,

@@ -156,6 +156,14 @@ impl LinksyNode {
         self.node.local_addr().map(|a| a.port()).unwrap_or(0)
     }
 
+    /// This phone's networks changed (Android's network callback): links that no
+    /// longer answer close at once, devices that stay connected are dialed again,
+    /// and iroh looks for its paths again (docs/protocol.md §4.13).
+    pub fn network_changed(&self) {
+        let _rt = rt().enter();
+        self.node.network_changed();
+    }
+
     /// Every core event as JSON (`{"type": "...", ...}`), until the app stops
     /// listening.
     pub fn events(&self, sink: StreamSink<String>) {

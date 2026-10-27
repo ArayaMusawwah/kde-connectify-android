@@ -86,6 +86,10 @@ abstract interface class LinksyNode {
   /// `ip` and `port`, or `end` with a `reason`.
   Future<void> directSend(String id, Map<String, Object?> step);
 
+  /// This phone's networks changed: check the links, dial again, tell iroh
+  /// (docs/protocol.md §4.13).
+  void networkChanged();
+
   /// Phone to phone: this phone joined [id]'s group, and [address]
   /// (`ip:port`) is where its Linksy is on it.
   Future<void> directDial(String id, String address);

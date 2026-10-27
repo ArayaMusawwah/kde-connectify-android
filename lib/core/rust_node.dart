@@ -276,6 +276,9 @@ class RustNode implements LinksyNode {
   );
 
   @override
+  void networkChanged() => _node.networkChanged();
+
+  @override
   Future<void> directDial(String id, String address) => _guard(
     () => _node.directDial(id: id, addr: address),
     name: _nameOf(id),
