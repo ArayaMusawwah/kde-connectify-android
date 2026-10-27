@@ -2327,4 +2327,9 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get news029LogsBody =>
       'Réglages › Journaux montre ce téléphone et ce qui s\'est passé récemment, à copier dans un rapport de bug. Ils restent sur ce téléphone.';
+
+  @override
+  String pairingUpdateOlder(String name) {
+    return 'Mettre à jour Linksy sur $name rend l\'association encore plus sûre.';
+  }
 }

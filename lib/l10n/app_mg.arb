@@ -616,5 +616,6 @@
   "news029PhonesTitle": "Wi-Fi Direct eo amin'ny finday",
   "news029PhonesBody": "Mandeha mivantana avy amin'ny finday iray mankany amin'ny iray hafa ny rakitra lehibe, tsy mila router. Samy mila Linksy 0.2.9 izy roa. Azonao vonoina ao amin'ny Fikirakirana.",
   "news029LogsTitle": "Tatitra",
-  "news029LogsBody": "Fikirakirana › Tatitra mampiseho ity finday ity sy ny zava-nitranga farany, azo adika ho tatitra olana. Mijanona amin'ity finday ity izy ireo."
+  "news029LogsBody": "Fikirakirana › Tatitra mampiseho ity finday ity sy ny zava-nitranga farany, azo adika ho tatitra olana. Mijanona amin'ity finday ity izy ireo.",
+  "pairingUpdateOlder": "Rehefa havaozina ny Linksy ao amin'ny {name}, vao mainka azo antoka ny fampifandraisana."
 }

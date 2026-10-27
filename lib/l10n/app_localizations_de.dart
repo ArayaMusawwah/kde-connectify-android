@@ -2319,4 +2319,9 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get news029LogsBody =>
       'Einstellungen › Protokolle zeigt dieses Telefon und was zuletzt passiert ist, zum Kopieren in einen Fehlerbericht. Sie bleiben auf diesem Telefon.';
+
+  @override
+  String pairingUpdateOlder(String name) {
+    return 'Ein Update von Linksy auf $name macht das Koppeln noch sicherer.';
+  }
 }

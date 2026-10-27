@@ -103,6 +103,7 @@ LinksyEvent? eventFromJson(Json j) {
       device: device(),
       code: j['code'] as String,
       incoming: j['incoming'] as bool? ?? false,
+      older: j['older'] as bool? ?? false,
     ),
     'paired' => Paired(device()),
     'pairing_failed' => PairingFailed(

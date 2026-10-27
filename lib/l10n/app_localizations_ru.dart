@@ -2346,4 +2346,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get news029LogsBody =>
       'Настройки › Журнал показывает этот телефон и что происходило недавно, чтобы скопировать в отчёт об ошибке. Журнал хранится только на этом телефоне.';
+
+  @override
+  String pairingUpdateOlder(String name) {
+    return 'Обновите Linksy на $name, и сопряжение станет ещё безопаснее.';
+  }
 }

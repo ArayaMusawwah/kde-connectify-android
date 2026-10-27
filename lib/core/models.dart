@@ -225,6 +225,7 @@ class PairingRequest extends LinksyEvent {
     required this.device,
     required this.code,
     required this.incoming,
+    this.older = false,
   });
 
   final String request;
@@ -233,6 +234,10 @@ class PairingRequest extends LinksyEvent {
   /// Six digits, from the TLS exporter (§4.3).
   final String code;
   final bool incoming;
+
+  /// The other device predates commit and reveal (§4.3, §4.4): pairing works,
+  /// but updating it makes the code even safer.
+  final bool older;
 }
 
 class Paired extends LinksyEvent {

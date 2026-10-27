@@ -616,5 +616,6 @@
   "news029PhonesTitle": "Wi-Fi Direct entre téléphones",
   "news029PhonesBody": "Les gros fichiers entre deux téléphones vont maintenant directement de l'un à l'autre, sans le routeur. Les deux ont besoin de Linksy 0.2.9. Tu peux le désactiver dans les Réglages.",
   "news029LogsTitle": "Journaux",
-  "news029LogsBody": "Réglages › Journaux montre ce téléphone et ce qui s'est passé récemment, à copier dans un rapport de bug. Ils restent sur ce téléphone."
+  "news029LogsBody": "Réglages › Journaux montre ce téléphone et ce qui s'est passé récemment, à copier dans un rapport de bug. Ils restent sur ce téléphone.",
+  "pairingUpdateOlder": "Mettre à jour Linksy sur {name} rend l'association encore plus sûre."
 }

@@ -260,6 +260,14 @@ class PairingDialog extends StatelessWidget {
                 ],
               ),
             ),
+            if (request.older) ...[
+              const SizedBox(height: 14),
+              Text(
+                context.l10n.pairingUpdateOlder(name),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12.5, height: 1.4, color: s.faint),
+              ),
+            ],
             const SizedBox(height: 26),
             SigButton(
               label: context.l10n.pairingCodesMatch,

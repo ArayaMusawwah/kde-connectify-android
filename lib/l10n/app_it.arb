@@ -616,5 +616,6 @@
   "news029PhonesTitle": "Wi-Fi Direct tra telefoni",
   "news029PhonesBody": "I file grandi tra due telefoni ora vanno dritti dall'uno all'altro, senza router. Entrambi devono avere Linksy 0.2.9. Puoi disattivarlo nelle Impostazioni.",
   "news029LogsTitle": "Log",
-  "news029LogsBody": "Impostazioni › Log mostra questo telefono e cosa è successo di recente, da copiare in una segnalazione. Restano su questo telefono."
+  "news029LogsBody": "Impostazioni › Log mostra questo telefono e cosa è successo di recente, da copiare in una segnalazione. Restano su questo telefono.",
+  "pairingUpdateOlder": "Aggiornare Linksy su {name} rende l'associazione ancora più sicura."
 }

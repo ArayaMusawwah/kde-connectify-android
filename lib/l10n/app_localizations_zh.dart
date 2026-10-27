@@ -2234,4 +2234,9 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get news029LogsBody =>
       '设置 › 日志显示这台手机的信息和最近发生的事，可复制到问题报告中。日志只保存在这台手机上。';
+
+  @override
+  String pairingUpdateOlder(String name) {
+    return '更新 $name 上的 Linksy，配对会更安全。';
+  }
 }

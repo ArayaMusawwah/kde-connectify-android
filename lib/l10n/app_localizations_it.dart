@@ -2325,4 +2325,9 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get news029LogsBody =>
       'Impostazioni › Log mostra questo telefono e cosa è successo di recente, da copiare in una segnalazione. Restano su questo telefono.';
+
+  @override
+  String pairingUpdateOlder(String name) {
+    return 'Aggiornare Linksy su $name rende l\'associazione ancora più sicura.';
+  }
 }

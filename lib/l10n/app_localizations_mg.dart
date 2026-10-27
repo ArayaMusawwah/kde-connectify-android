@@ -2323,4 +2323,9 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get news029LogsBody =>
       'Fikirakirana › Tatitra mampiseho ity finday ity sy ny zava-nitranga farany, azo adika ho tatitra olana. Mijanona amin\'ity finday ity izy ireo.';
+
+  @override
+  String pairingUpdateOlder(String name) {
+    return 'Rehefa havaozina ny Linksy ao amin\'ny $name, vao mainka azo antoka ny fampifandraisana.';
+  }
 }

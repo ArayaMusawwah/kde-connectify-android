@@ -2318,4 +2318,9 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get news029LogsBody =>
       'Configurações › Registros mostra este telefone e o que aconteceu há pouco, para copiar num relato de erro. Eles ficam neste telefone.';
+
+  @override
+  String pairingUpdateOlder(String name) {
+    return 'Atualizar o Linksy em $name deixa o pareamento ainda mais seguro.';
+  }
 }

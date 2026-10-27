@@ -2309,4 +2309,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get news029LogsBody =>
       'Settings › Logs shows this phone and what happened lately, to copy into a bug report. They stay on this phone.';
+
+  @override
+  String pairingUpdateOlder(String name) {
+    return 'Updating Linksy on $name makes pairing even safer.';
+  }
 }

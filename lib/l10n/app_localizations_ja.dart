@@ -2264,4 +2264,9 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get news029LogsBody =>
       '設定 › ログで、この端末の情報と最近の出来事を確認し、不具合報告にコピーできます。ログはこの端末にだけ保存されます。';
+
+  @override
+  String pairingUpdateOlder(String name) {
+    return '$name の Linksy を更新すると、ペアリングがさらに安全になります。';
+  }
 }

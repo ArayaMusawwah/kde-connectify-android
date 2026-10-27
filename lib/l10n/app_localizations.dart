@@ -3815,6 +3815,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings › Logs shows this phone and what happened lately, to copy into a bug report. They stay on this phone.'**
   String get news029LogsBody;
+
+  /// Small dim line under the pairing code when the other device has an older Linksy (pairing still works).
+  ///
+  /// In en, this message translates to:
+  /// **'Updating Linksy on {name} makes pairing even safer.'**
+  String pairingUpdateOlder(String name);
 }
 
 class _AppLocalizationsDelegate
