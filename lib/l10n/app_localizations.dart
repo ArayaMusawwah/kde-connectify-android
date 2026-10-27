@@ -117,7 +117,7 @@ abstract class AppLocalizations {
   /// The app's name; not translated.
   ///
   /// In en, this message translates to:
-  /// **'Linksy'**
+  /// **'KDE Connectify'**
   String get appTitle;
 
   /// First screen title.
