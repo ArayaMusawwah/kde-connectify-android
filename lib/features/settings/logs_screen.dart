@@ -189,7 +189,8 @@ class _LogsScreenState extends State<LogsScreen> {
   }
 }
 
-/// One log line: the time faint, what happened in ink, monospace.
+/// One log line: the time faint (with the day, when it isn't today), what
+/// happened in ink, monospace.
 class _Line extends StatelessWidget {
   const _Line(this.line);
 
@@ -205,12 +206,15 @@ class _Line extends StatelessWidget {
       height: 1.4,
       color: s.ink,
     );
-    if (cut < 0) return Text(line, style: style);
+    if (cut < 6) return Text(line, style: style);
+    final now = DateTime.now();
+    String two(int n) => n.toString().padLeft(2, '0');
+    final today = line.startsWith('${two(now.month)}-${two(now.day)} ');
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
-            text: '${line.substring(6, cut)}  ',
+            text: '${line.substring(today ? 6 : 0, cut)}  ',
             style: TextStyle(color: s.faint),
           ),
           TextSpan(text: line.substring(cut + 2)),
