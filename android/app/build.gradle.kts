@@ -61,6 +61,16 @@ android {
             isShrinkResources = true
         }
     }
+
+    applicationVariants.all {
+        val variant = this
+        outputs.all {
+            val output = this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val abi = output?.getFilter(com.android.build.OutputFile.ABI)
+            val abiPart = if (!abi.isNullOrEmpty()) "-$abi" else ""
+            output?.outputFileName = "kde-connectify-v${variant.versionName}${abiPart}.apk"
+        }
+    }
 }
 
 kotlin {
