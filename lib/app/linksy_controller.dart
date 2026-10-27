@@ -130,6 +130,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   StreamSubscription<String>? _callSub;
   StreamSubscription<(String, bool)>? _answerSub;
   StreamSubscription<(String, Map<String, Object?>)>? _directSub;
+  StreamSubscription<void>? _networkSub;
   StreamSubscription<(String, int?)>? _mediaActionSub;
 
   bool get pauseOnCalls => prefs['pause_calls'] != 'off';
@@ -250,6 +251,11 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _answerSub = LinksyPlatform.transferAnswers.listen(
       (a) => respond(a.$1, accept: a.$2),
     );
+    // Wi-Fi came or went, mobile data took over: the core checks its links.
+    _networkSub = LinksyPlatform.networkChanges.listen((_) {
+      log.add('Networks changed');
+      node.networkChanged();
+    });
     // The Wi-Fi part of a direct link did a step: the other device hears it,
     // except a joiner's own (`joining`, `joined`).
     _directSub = LinksyPlatform.directSteps.listen((s) {
@@ -1878,6 +1884,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _callSub?.cancel();
     _answerSub?.cancel();
     _directSub?.cancel();
+    _networkSub?.cancel();
     log.dispose();
     _mediaActionSub?.cancel();
     LinksyPlatform.mediaNotice(null);

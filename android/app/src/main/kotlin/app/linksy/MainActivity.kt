@@ -55,6 +55,8 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         engine = flutterEngine
+        networks?.stop()
+        networks = NetworkWatcher(this) { channel?.invokeMethod("networkChanged", null) }.apply { start() }
         pendingLink = linkFrom(intent)
         takeShared(intent)
         watchBattery()
@@ -661,7 +663,12 @@ class MainActivity : FlutterActivity() {
         return producer.id()
     }
 
+    /// Network changes, for the core (§4.13).
+    private var networks: NetworkWatcher? = null
+
     override fun onDestroy() {
+        networks?.stop()
+        networks = null
         TransferNotice.answer = null
         DirectHost.step = null
         ShareService.webcamListener = null

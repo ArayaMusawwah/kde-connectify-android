@@ -44,6 +44,14 @@ abstract final class LinksyPlatform {
   static final _openWebcam = StreamController<String>.broadcast();
   static final _transferAnswers = StreamController<(String, bool)>.broadcast();
   static final _usbPorts = StreamController<int>.broadcast();
+  static final _networkChanges = StreamController<void>.broadcast();
+
+  /// This phone's networks changed (at most once a second).
+  static Stream<void> get networkChanges {
+    _listen();
+    return _networkChanges.stream;
+  }
+
   static final _directSteps =
       StreamController<(String, Map<String, Object?>)>.broadcast();
   static var _listening = false;
@@ -83,6 +91,8 @@ abstract final class LinksyPlatform {
           ));
         case 'openWebcam' when call.arguments is String:
           _openWebcam.add(call.arguments as String);
+        case 'networkChanged':
+          _networkChanges.add(null);
         case 'directStep' when call.arguments is Map:
           final a = (call.arguments as Map).cast<String, Object?>();
           final device = a.remove('device');
