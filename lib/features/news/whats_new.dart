@@ -20,8 +20,8 @@ class Highlight {
   final String Function(AppLocalizations) body;
 }
 
-/// Linksy's source, for "Star Linksy on GitHub".
-const repo = 'https://github.com/LinkSy-mg/linksy-desktop';
+/// Source repository, for "Star KDE Connectify on GitHub".
+const repo = 'https://github.com/ArayaMusawwah/kde-connectify';
 
 /// At most this many highlights at once, when several versions were skipped.
 const _most = 5;
@@ -137,7 +137,7 @@ const _beforeNews = '0.2.3';
 
 /// The release notes of [version] on GitHub.
 String notesUrl(String version) =>
-    'https://github.com/LinkSy-mg/linksy-releases/releases/tag/v$version';
+    'https://github.com/ArayaMusawwah/kde-connectify-android/releases/tag/v$version';
 
 Future<void> showWhatsNew(
   BuildContext context,

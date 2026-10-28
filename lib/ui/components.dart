@@ -517,15 +517,15 @@ IconData fileIcon(String name) {
 
 /// The "Sender" mark: Signal blue and cyan, or white and light cyan on blue
 /// (as on the app icon).
-class LinksyMark extends StatelessWidget {
-  const LinksyMark({super.key, this.size = 48, this.onBlue = false});
+class KdeConnectifyMark extends StatelessWidget {
+  const KdeConnectifyMark({super.key, this.size = 48, this.onBlue = false});
 
   final double size;
   final bool onBlue;
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: 'Linksy',
+    label: 'KDE Connectify',
     image: true,
     child: CustomPaint(
       size: Size.square(size),
@@ -536,6 +536,9 @@ class LinksyMark extends StatelessWidget {
     ),
   );
 }
+
+/// Compatibility alias for the mark
+typedef LinksyMark = KdeConnectifyMark;
 
 /// The app icon, flat: the mark in white and light cyan on a rounded blue
 /// tile (data/icons in linksy-desktop).
@@ -599,28 +602,32 @@ class _Mark extends CustomPainter {
       old.sender != sender || old.receiver != receiver;
 }
 
-/// Mark plus the "Linksy" name.
+/// Mark plus the "KDE Connectify" name.
 class Wordmark extends StatelessWidget {
   const Wordmark({super.key, this.onBlue = false});
 
   final bool onBlue;
 
   @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      LinksyMark(size: 30, onBlue: onBlue),
-      const SizedBox(width: 8),
-      Text(
-        'Linksy',
-        style: sora(
-          24,
-          weight: FontWeight.w700,
-          color: onBlue ? Colors.white : Sig.of(context).ink,
-          spacing: -0.8,
+  Widget build(BuildContext context) => FittedBox(
+    fit: BoxFit.scaleDown,
+    alignment: Alignment.centerLeft,
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        LinksyMark(size: 28, onBlue: onBlue),
+        const SizedBox(width: 8),
+        Text(
+          'KDE Connectify',
+          style: sora(
+            20,
+            weight: FontWeight.w700,
+            color: onBlue ? Colors.white : Sig.of(context).ink,
+            spacing: -0.6,
+          ),
         ),
-      ),
-    ],
+      ],
+    ),
   );
 }
 

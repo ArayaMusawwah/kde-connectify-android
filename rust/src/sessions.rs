@@ -176,7 +176,7 @@ mod jni_api {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_media_NativeSession_write(
+    pub extern "system" fn Java_org_kde_connectify_media_NativeSession_write(
         mut env: JNIEnv,
         _this: JClass,
         session: JString,
@@ -188,7 +188,7 @@ mod jni_api {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_media_NativeSession_read(
+    pub extern "system" fn Java_org_kde_connectify_media_NativeSession_read(
         mut env: JNIEnv,
         _this: JClass,
         session: JString,
@@ -201,7 +201,7 @@ mod jni_api {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_media_NativeSession_cameraState(
+    pub extern "system" fn Java_org_kde_connectify_media_NativeSession_cameraState(
         mut env: JNIEnv,
         _this: JClass,
         session: JString,
@@ -212,7 +212,7 @@ mod jni_api {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_media_NativeSession_finish(
+    pub extern "system" fn Java_org_kde_connectify_media_NativeSession_finish(
         mut env: JNIEnv,
         _this: JClass,
         session: JString,
@@ -220,5 +220,44 @@ mod jni_api {
         if let Some(session) = id(&mut env, &session) {
             super::end(&session);
         }
+    }
+
+    // Dual-export fallback stubs
+    #[unsafe(no_mangle)]
+    pub extern "system" fn Java_app_linksy_media_NativeSession_write(
+        env: JNIEnv,
+        this: JClass,
+        session: JString,
+        data: JByteArray,
+    ) -> jboolean {
+        Java_org_kde_connectify_media_NativeSession_write(env, this, session, data)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "system" fn Java_app_linksy_media_NativeSession_read(
+        env: JNIEnv,
+        this: JClass,
+        session: JString,
+    ) -> jbyteArray {
+        Java_org_kde_connectify_media_NativeSession_read(env, this, session)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "system" fn Java_app_linksy_media_NativeSession_cameraState(
+        env: JNIEnv,
+        this: JClass,
+        session: JString,
+        json: JString,
+    ) {
+        Java_org_kde_connectify_media_NativeSession_cameraState(env, this, session, json)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "system" fn Java_app_linksy_media_NativeSession_finish(
+        env: JNIEnv,
+        this: JClass,
+        session: JString,
+    ) {
+        Java_org_kde_connectify_media_NativeSession_finish(env, this, session)
     }
 }

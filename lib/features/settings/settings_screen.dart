@@ -316,7 +316,7 @@ class SettingsScreen extends StatelessWidget {
                   FutureBuilder<String?>(
                     future: LinksyPlatform.appVersion(),
                     builder: (context, v) => Text(
-                      v.data == null ? '' : 'Linksy ${v.data}',
+                      v.data == null ? '' : 'KDE Connectify ${v.data}',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: s.faint, fontSize: 12),
                     ),

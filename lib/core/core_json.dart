@@ -179,6 +179,11 @@ LinksyEvent? eventFromJson(Json j) {
       from: device('from'),
       state: mediaStateFromJson(j['state'] as Json),
     ),
+    'media_command' => MediaCommandReceived(
+      from: device('from'),
+      player: j['player'] as String? ?? '',
+      command: (j['command'] as Map?)?.cast<String, Object?>() ?? const {},
+    ),
     'volume_state' => VolumeStateReceived(
       from: device('from'),
       state: volumeStateFromJson(j['state'] as Json),

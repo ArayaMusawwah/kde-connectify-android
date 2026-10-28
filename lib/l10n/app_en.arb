@@ -4,7 +4,7 @@
   "@appTitle": {
     "description": "The app's name; not translated."
   },
-  "onboardingWelcome": "Welcome to Linksy",
+  "onboardingWelcome": "Welcome to KDE Connectify",
   "@onboardingWelcome": {
     "description": "First screen title."
   },
@@ -14,9 +14,9 @@
   "@onboardingLanguageHint": {},
   "onboardingContinue": "Continue",
   "@onboardingContinue": {},
-  "onboardingSetUpTitle": "Set up Linksy",
+  "onboardingSetUpTitle": "Set up KDE Connectify",
   "@onboardingSetUpTitle": {},
-  "onboardingSetUpSubtitle": "Choose what Linksy may do. Nothing leaves this phone until you say so.",
+  "onboardingSetUpSubtitle": "Choose what KDE Connectify may do. Nothing leaves this phone until you say so.",
   "@onboardingSetUpSubtitle": {},
   "onboardingNotifications": "Notifications",
   "@onboardingNotifications": {},
@@ -32,7 +32,7 @@
   "@onboardingAwayDetail": {},
   "onboardingBackground": "Keep running in the background",
   "@onboardingBackground": {},
-  "onboardingBackgroundDetail": "Files and calls keep working when Linksy is closed. Shows a quiet notification.",
+  "onboardingBackgroundDetail": "Files and calls keep working when KDE Connectify is closed. Shows a quiet notification.",
   "@onboardingBackgroundDetail": {},
   "onboardingFolder": "Share a folder with computers",
   "@onboardingFolder": {},
@@ -64,7 +64,7 @@
   },
   "onboardingAnytime": "You can turn any of these on or off anytime in Settings.",
   "@onboardingAnytime": {},
-  "onboardingStart": "Start using Linksy",
+  "onboardingStart": "Start using KDE Connectify",
   "@onboardingStart": {},
   "onboardingBack": "Back",
   "@onboardingBack": {},
@@ -80,7 +80,7 @@
   "@ctlClipboardCopyFailed": {
     "description": "Activity reason: a file received for the clipboard couldn't be copied"
   },
-  "ctlLocateOff": "Locating is turned off in Linksy on this phone",
+  "ctlLocateOff": "Locating is turned off in KDE Connectify on this phone",
   "@ctlLocateOff": {
     "description": "Sent to the computer (and shown) when it asks for the phone's location but locating is off"
   },
@@ -103,7 +103,7 @@
   },
   "ctlStayingConnected": "Staying connected to your computers",
   "@ctlStayingConnected": {
-    "description": "Persistent notification while Linksy keeps running in the background"
+    "description": "Persistent notification while KDE Connectify keeps running in the background"
   },
   "ctlTransferRequest": "{count, plural, =1{{name} wants to send you a file} other{{name} wants to send you {count} files}}",
   "@ctlTransferRequest": {
@@ -150,11 +150,11 @@
   "@ctlScreenPermission": {
     "description": "Error when Android screen capture permission was refused"
   },
-  "ctlCameraPermission": "Linksy needs the camera permission to work as a webcam.",
+  "ctlCameraPermission": "KDE Connectify needs the camera permission to work as a webcam.",
   "@ctlCameraPermission": {
     "description": "Error when the camera permission was refused"
   },
-  "ctlMicrophonePermission": "Linksy needs the microphone permission to be a microphone.",
+  "ctlMicrophonePermission": "KDE Connectify needs the microphone permission to be a microphone.",
   "@ctlMicrophonePermission": {
     "description": "Error when the microphone permission was refused"
   },
@@ -1013,11 +1013,11 @@
       }
     }
   },
-  "homeUpdateTitle": "Update Linksy to keep connecting",
+  "homeUpdateTitle": "Update KDE Connectify to keep connecting",
   "@homeUpdateTitle": {
     "description": "Title of a warning card when the computers run a newer protocol than this app."
   },
-  "homeUpdateBody": "Your computers now speak a newer Linksy than this app.",
+  "homeUpdateBody": "Your computers now speak a newer KDE Connectify than this app.",
   "@homeUpdateBody": {
     "description": "Body of the update warning card."
   },
@@ -1033,7 +1033,7 @@
   "@homePair": {
     "description": "Button on a nearby unpaired device row that starts pairing."
   },
-  "homeStepOpen": "Open Linksy on your computer",
+  "homeStepOpen": "Open KDE Connectify on your computer",
   "@homeStepOpen": {
     "description": "Step 1 of 'Connect your first device'."
   },
@@ -1065,7 +1065,7 @@
   "@pairingAddDevice": {
     "description": "Title of the 'Add a device' bottom sheet."
   },
-  "pairingAddDeviceHint": "On the other device, open Linksy and choose “Add Device”.",
+  "pairingAddDeviceHint": "On the other device, open KDE Connectify and choose “Add Device”.",
   "@pairingAddDeviceHint": {
     "description": "Hint in the 'Add a device' sheet. “Pair with QR Code” is the desktop app's menu item."
   },
@@ -1099,7 +1099,7 @@
   "@pairingWithOtherDevice": {
     "description": "Snack bar while pairing starts from a pairing link that carries no device name."
   },
-  "pairingAddressHint": "It’s in Linksy’s Preferences on the other device.",
+  "pairingAddressHint": "It’s in KDE Connectify’s Preferences on the other device.",
   "@pairingAddressHint": {
     "description": "Hint in the 'Pair by address' dialog: where to find the address."
   },
@@ -1155,7 +1155,7 @@
   "@pairingCodesMatch": {
     "description": "Button in the pairing dialog to accept: the codes on both screens are the same."
   },
-  "scanNeedsCamera": "Linksy needs the camera to scan the pairing code. Allow it, or pair by address.",
+  "scanNeedsCamera": "KDE Connectify needs the camera to scan the pairing code. Allow it, or pair by address.",
   "@scanNeedsCamera": {
     "description": "Shown in the scanner when camera permission was refused."
   },
@@ -1171,11 +1171,11 @@
   "@scanTitle": {
     "description": "Large title over the QR scanner's camera view."
   },
-  "scanWrongCode": "That’s not a Linksy code. On your computer, open Linksy → Pair with QR Code.",
+  "scanWrongCode": "That’s not a KDE Connectify code. On your computer, open KDE Connectify → Pair with QR Code.",
   "@scanWrongCode": {
-    "description": "Shown in the scanner when a QR code that isn't a Linksy pairing code was scanned. 'Pair with QR Code' is the desktop app's menu item."
+    "description": "Shown in the scanner when a QR code that isn't a KDE Connectify pairing code was scanned. 'Pair with QR Code' is the desktop app's menu item."
   },
-  "scanHint": "On your computer, open Linksy and choose “Add Device”.",
+  "scanHint": "On your computer, open KDE Connectify and choose “Add Device”.",
   "@scanHint": {
     "description": "Hint at the bottom of the QR scanner. “Pair with QR Code” is the desktop app's menu item."
   },
@@ -1185,7 +1185,7 @@
   },
   "shareSheetSendFiles": "{count, plural, =1{Send a file} other{Send {count} files}}",
   "@shareSheetSendFiles": {
-    "description": "Title of the share sheet when files were shared to Linksy from another app.",
+    "description": "Title of the share sheet when files were shared to KDE Connectify from another app.",
     "placeholders": {
       "count": {
         "type": "int"
@@ -1200,7 +1200,7 @@
   "@shareSheetSendToClipboard": {
     "description": "Title of the share sheet when text was shared: it goes to a computer's clipboard."
   },
-  "shareSheetNoClipboardFiles": "None of your computers takes files on its clipboard yet. Update Linksy there.",
+  "shareSheetNoClipboardFiles": "None of your computers takes files on its clipboard yet. Update KDE Connectify there.",
   "@shareSheetNoClipboardFiles": {
     "description": "Share sheet, no computer supports files on its clipboard."
   },
@@ -1397,7 +1397,7 @@
       }
     }
   },
-  "appCouldntStart": "Linksy couldn’t start",
+  "appCouldntStart": "KDE Connectify couldn’t start",
   "@appCouldntStart": {
     "description": "Title of the screen shown when the app fails to start; an error message follows."
   },
@@ -1517,7 +1517,7 @@
   },
   "formatPhone": "Phone",
   "@formatPhone": {
-    "description": "Name of this phone's main storage in folder paths, like 'Phone › Download › Linksy'."
+    "description": "Name of this phone's main storage in folder paths, like 'Phone › Download › KDE Connectify'."
   },
   "settingsBack": "Back",
   "@settingsBack": {
@@ -1535,9 +1535,9 @@
   "@settingsSaveLocation": {
     "description": "Settings row: where received files are saved"
   },
-  "settingsSaveLocationPath": "Downloads › Linksy",
+  "settingsSaveLocationPath": "Downloads › KDE Connectify",
   "@settingsSaveLocationPath": {
-    "description": "Settings row caption: the folder received files go to (Downloads folder, then Linksy subfolder)"
+    "description": "Settings row caption: the folder received files go to (Downloads folder, then KDE Connectify subfolder)"
   },
   "settingsAcceptFromMyDevices": "Accept from my devices",
   "@settingsAcceptFromMyDevices": {
@@ -1563,7 +1563,7 @@
   "@settingsKeepRunning": {
     "description": "Settings switch: keep the app running when closed"
   },
-  "settingsKeepRunningCaption": "Files, photo backup and calls keep working when Linksy is closed. Shows a quiet notification.",
+  "settingsKeepRunningCaption": "Files, photo backup and calls keep working when KDE Connectify is closed. Shows a quiet notification.",
   "@settingsKeepRunningCaption": {
     "description": "Caption of the background switch"
   },
@@ -1579,11 +1579,11 @@
   "@settingsRelay": {
     "description": "Settings row: the relay used away from home; opens a dialog to change it"
   },
-  "settingsRelayDefault": "Linksy’s own",
+  "settingsRelayDefault": "KDE Connectify’s own",
   "@settingsRelayDefault": {
     "description": "Caption of the Relay server row when no relay of the user's own is set"
   },
-  "settingsRelayCaption": "The address of a relay you host yourself, like https://relay.example.com. Leave it empty for Linksy’s own. Set the same relay on every device.",
+  "settingsRelayCaption": "The address of a relay you host yourself, like https://relay.example.com. Leave it empty for KDE Connectify’s own. Set the same relay on every device.",
   "@settingsRelayCaption": {
     "description": "Caption of the dialog that asks for the relay's address"
   },
@@ -1636,11 +1636,11 @@
   "@settingsLocate": {
     "description": "Settings switch: allow computers to ask for the phone location"
   },
-  "settingsLocateCaption": "A computer can ask where this phone is, once, to find it. Nothing is kept or tracked. Works while Linksy is open.",
+  "settingsLocateCaption": "A computer can ask where this phone is, once, to find it. Nothing is kept or tracked. Works while KDE Connectify is open.",
   "@settingsLocateCaption": {
     "description": "Caption of the locate switch"
   },
-  "settingsLocatePermission": "Linksy needs the location permission for this.",
+  "settingsLocatePermission": "KDE Connectify needs the location permission for this.",
   "@settingsLocatePermission": {
     "description": "Message when the location permission was refused"
   },
@@ -1673,7 +1673,7 @@
   "@settingsDemo": {
     "description": "Settings section label for the demo tools"
   },
-  "settingsDemoCaption": "Simulated devices until the Linksy core is connected. These start what another device would.",
+  "settingsDemoCaption": "Simulated devices until the KDE Connectify core is connected. These start what another device would.",
   "@settingsDemoCaption": {
     "description": "Explanation of the demo section"
   },
@@ -1731,7 +1731,7 @@
   "@settingsPermissionsRow": {
     "description": "Settings row that opens the permissions sheet"
   },
-  "settingsPermissionsWhat": "What Linksy asks Android for, and why.",
+  "settingsPermissionsWhat": "What KDE Connectify asks Android for, and why.",
   "@settingsPermissionsWhat": {
     "description": "Caption of the permissions row while loading"
   },
@@ -1752,7 +1752,7 @@
   "@permissionsTitle": {
     "description": "Title of the permissions sheet"
   },
-  "permissionsIntro": "Linksy asks only for what it needs, and you can change any of these later in Settings.",
+  "permissionsIntro": "KDE Connectify asks only for what it needs, and you can change any of these later in Settings.",
   "@permissionsIntro": {
     "description": "Intro text of the permissions sheet"
   },
@@ -1801,7 +1801,7 @@
       }
     }
   },
-  "remoteAsks": "Linksy on {name} asks whether this phone may move its pointer and type.",
+  "remoteAsks": "KDE Connectify on {name} asks whether this phone may move its pointer and type.",
   "@remoteAsks": {
     "description": "Detail while waiting for the computer to allow remote control",
     "placeholders": {
@@ -2288,7 +2288,7 @@
       }
     }
   },
-  "sharingCameraRequestDetail": "{name} gets this phone’s camera as a webcam until you stop. Zoom, focus, light, lenses and rotation are in Linksy while it runs.",
+  "sharingCameraRequestDetail": "{name} gets this phone’s camera as a webcam until you stop. Zoom, focus, light, lenses and rotation are in KDE Connectify while it runs.",
   "@sharingCameraRequestDetail": {
     "description": "Webcam request explanation",
     "placeholders": {
@@ -2631,7 +2631,7 @@
   "@terminalCodeTitle": {
     "description": "Code sheet title"
   },
-  "terminalCodeDetail": "The code set on {name} in Preferences › Terminal. Linksy never keeps it.",
+  "terminalCodeDetail": "The code set on {name} in Preferences › Terminal. KDE Connectify never keeps it.",
   "@terminalCodeDetail": {
     "description": "Code sheet explanation; Preferences › Terminal is the desktop app's menu path",
     "placeholders": {
@@ -2795,7 +2795,7 @@
   "@newsTitle": {
     "description": "Title of the What's New page"
   },
-  "newsHeading": "What’s New in Linksy {version}",
+  "newsHeading": "What’s New in KDE Connectify {version}",
   "@newsHeading": {
     "description": "Heading on the What's New page",
     "placeholders": {
@@ -2817,11 +2817,11 @@
   "@newsContinue": {
     "description": "Button that closes What's New"
   },
-  "newsStar": "Star Linksy on GitHub",
+  "newsStar": "Star KDE Connectify on GitHub",
   "@newsStar": {
-    "description": "Button that opens Linksy on GitHub"
+    "description": "Button that opens KDE Connectify on GitHub"
   },
-  "newsStarCaption": "Linksy is free and open source. A star on GitHub helps others find it.",
+  "newsStarCaption": "KDE Connectify is free and open source. A star on GitHub helps others find it.",
   "@newsStarCaption": {
     "description": "Under the GitHub star button"
   },
@@ -2849,7 +2849,7 @@
   "@news024NewsBody": {
     "description": "0.2.4 highlight body"
   },
-  "updateAvailable": "Linksy {version} Is Available",
+  "updateAvailable": "KDE Connectify {version} Is Available",
   "@updateAvailable": {
     "description": "Card and sheet title when a newer version is out",
     "placeholders": {
@@ -2858,7 +2858,7 @@
       }
     }
   },
-  "updateBody": "This is {current}. Linksy downloads the update and checks it, then Android asks you to install it.",
+  "updateBody": "This is {current}. KDE Connectify downloads the update and checks it, then Android asks you to install it.",
   "@updateBody": {
     "description": "Update sheet text",
     "placeholders": {
@@ -2888,7 +2888,7 @@
   "@updateInstalling": {
     "description": "While Android's installer runs"
   },
-  "updateNewest": "Linksy {version} is the newest version.",
+  "updateNewest": "KDE Connectify {version} is the newest version.",
   "@updateNewest": {
     "description": "After Check for Updates finds nothing newer",
     "placeholders": {
@@ -2909,9 +2909,9 @@
   "@updateFailedCheck": {
     "description": "Checksum mismatch or missing"
   },
-  "updateAllow": "Allow Linksy to install apps, then tap Update Now again.",
+  "updateAllow": "Allow KDE Connectify to install apps, then tap Update Now again.",
   "@updateAllow": {
-    "description": "Linksy may not install apps yet"
+    "description": "KDE Connectify may not install apps yet"
   },
   "updateFailedInstall": "Android didn’t install it: {message}",
   "@updateFailedInstall": {
@@ -3081,7 +3081,7 @@
   "@news028DirectTitle": {
     "description": "What's New 0.2.8: Wi-Fi Direct (title)"
   },
-  "news028DirectBody": "Files of 256 MB or more go straight to your computer over a Wi-Fi link of their own, much faster than through the router. Needs Linksy 0.9.9 on the computer.",
+  "news028DirectBody": "Files of 256 MB or more go straight to your computer over a Wi-Fi link of their own, much faster than through the router. Needs KDE Connectify 0.9.9 on the computer.",
   "@news028DirectBody": {
     "description": "What's New 0.2.8: Wi-Fi Direct (body)"
   },
@@ -3104,12 +3104,12 @@
   "logsCopied": "Copied",
   "logsEmpty": "Nothing yet. Connections, transfers and Wi-Fi Direct steps show up here.",
   "news029PhonesTitle": "Wi-Fi Direct between phones",
-  "news029PhonesBody": "Big files between two phones now go straight from one to the other, without the router. Both need Linksy 0.2.9. You can turn it off in Settings.",
+  "news029PhonesBody": "Big files between two phones now go straight from one to the other, without the router. Both need KDE Connectify 0.2.9. You can turn it off in Settings.",
   "news029LogsTitle": "Logs",
   "news029LogsBody": "Settings › Logs shows this phone and what happened lately, to copy into a bug report. They stay on this phone.",
-  "pairingUpdateOlder": "Updating Linksy on {name} makes pairing even safer.",
+  "pairingUpdateOlder": "Updating KDE Connectify on {name} makes pairing even safer.",
   "@pairingUpdateOlder": {
-    "description": "Small dim line under the pairing code when the other device has an older Linksy (pairing still works).",
+    "description": "Small dim line under the pairing code when the other device has an older KDE Connectify (pairing still works).",
     "placeholders": {
       "name": {
         "type": "String"

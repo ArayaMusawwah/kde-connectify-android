@@ -4,13 +4,13 @@
     <string name="channel_incoming_files">收到的文件</string>
     <string name="accept">接受</string>
     <string name="decline">拒绝</string>
-    <string name="keep_alive_default">Linksy 已连接</string>
+    <string name="keep_alive_default">KDE Connectify 已连接</string>
     <string name="your_computer">你的电脑</string>
-    <string name="locate_not_allowed">Linksy 无权使用这部手机的位置信息</string>
+    <string name="locate_not_allowed">KDE Connectify 无权使用这部手机的位置信息</string>
     <string name="locate_off">这部手机的位置信息已关闭</string>
     <string name="locate_timeout">这部手机未能及时找到自己的位置</string>
-    <string name="locate_open_app">在手机上打开 Linksy 才能共享它的位置</string>
-    <string name="channel_news">Linksy 动态</string>
+    <string name="locate_open_app">在手机上打开 KDE Connectify 才能共享它的位置</string>
+    <string name="channel_news">KDE Connectify 动态</string>
     <string name="channel_staying">保持连接</string>
     <string name="channel_transfers">文件传输</string>
     <string name="camera_didnt_start">相机未能启动。</string>

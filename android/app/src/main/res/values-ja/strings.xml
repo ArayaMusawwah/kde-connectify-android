@@ -4,13 +4,13 @@
     <string name="channel_incoming_files">受信ファイル</string>
     <string name="accept">受け入れる</string>
     <string name="decline">断る</string>
-    <string name="keep_alive_default">Linksy は接続中です</string>
+    <string name="keep_alive_default">KDE Connectify は接続中です</string>
     <string name="your_computer">あなたのコンピュータ</string>
-    <string name="locate_not_allowed">Linksy はこの電話の位置情報を使えません</string>
+    <string name="locate_not_allowed">KDE Connectify はこの電話の位置情報を使えません</string>
     <string name="locate_off">この電話の位置情報がオフです</string>
     <string name="locate_timeout">この電話は時間内に現在地を特定できませんでした</string>
-    <string name="locate_open_app">電話で Linksy を開くと現在地を共有できます</string>
-    <string name="channel_news">Linksy からのお知らせ</string>
+    <string name="locate_open_app">電話で KDE Connectify を開くと現在地を共有できます</string>
+    <string name="channel_news">KDE Connectify からのお知らせ</string>
     <string name="channel_staying">接続を維持中</string>
     <string name="channel_transfers">ファイル転送</string>
     <string name="camera_didnt_start">カメラが起動しませんでした。</string>

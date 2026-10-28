@@ -33,10 +33,10 @@ class _LogsScreenState extends State<LogsScreen> {
     if (!mounted) return;
     setState(
       () => _phone = {
-        'Linksy': version ?? '?',
+        'KDE Connectify': version ?? '?',
         'ID': c.node.info.shortId,
         ...report,
-        'Wi-Fi Direct in Linksy': c.directOn ? 'on' : 'off',
+        'Wi-Fi Direct in KDE Connectify': c.directOn ? 'on' : 'off',
       },
     );
   }

@@ -73,6 +73,8 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="kdeconnectify" android:host="pair"/>
+                <data android:scheme="connectify" android:host="pair"/>
                 <data android:scheme="linksy" android:host="pair"/>
             </intent-filter>
             <!-- A computer running Linksy on the USB cable (docs/protocol.md §4.11). -->
@@ -129,6 +131,15 @@
             android:exported="false"/>
         <!-- Push notifications (Firebase Cloud Messaging). No analytics. -->
         <service
+            android:name=".MediaNotificationListener"
+            android:label="KDE Connectify Media Service"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+        <service
             android:name=".Push"
             android:exported="false">
             <intent-filter>
@@ -137,7 +148,7 @@
         </service>
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_stat_linksy"/>
+            android:resource="@drawable/ic_stat_connectify"/>
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="news"/>

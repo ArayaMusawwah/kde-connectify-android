@@ -9,10 +9,10 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get appTitle => 'Linksy';
+  String get appTitle => 'KDE Connectify';
 
   @override
-  String get onboardingWelcome => 'Добро пожаловать в Linksy';
+  String get onboardingWelcome => 'Добро пожаловать в KDE Connectify';
 
   @override
   String get onboardingChooseLanguage => 'Выберите язык';
@@ -24,11 +24,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get onboardingContinue => 'Продолжить';
 
   @override
-  String get onboardingSetUpTitle => 'Настройка Linksy';
+  String get onboardingSetUpTitle => 'Настройка KDE Connectify';
 
   @override
   String get onboardingSetUpSubtitle =>
-      'Выберите, что может делать Linksy. Ничего не покинет этот телефон, пока вы не разрешите.';
+      'Выберите, что может делать KDE Connectify. Ничего не покинет этот телефон, пока вы не разрешите.';
 
   @override
   String get onboardingNotifications => 'Уведомления';
@@ -56,7 +56,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onboardingBackgroundDetail =>
-      'Файлы и звонки работают, даже когда Linksy закрыт. Показывается тихое уведомление.';
+      'Файлы и звонки работают, даже когда KDE Connectify закрыт. Показывается тихое уведомление.';
 
   @override
   String get onboardingFolder => 'Открыть папку для компьютеров';
@@ -98,7 +98,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Любой из этих пунктов можно включить или выключить в настройках в любое время.';
 
   @override
-  String get onboardingStart => 'Начать пользоваться Linksy';
+  String get onboardingStart => 'Начать пользоваться KDE Connectify';
 
   @override
   String get onboardingBack => 'Назад';
@@ -118,7 +118,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get ctlLocateOff =>
-      'Определение местоположения выключено в Linksy на этом телефоне';
+      'Определение местоположения выключено в KDE Connectify на этом телефоне';
 
   @override
   String get ctlYourComputer => 'ваш компьютер';
@@ -175,11 +175,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get ctlCameraPermission =>
-      'Чтобы работать как веб-камера, Linksy нужно разрешение на камеру.';
+      'Чтобы работать как веб-камера, KDE Connectify нужно разрешение на камеру.';
 
   @override
   String get ctlMicrophonePermission =>
-      'Чтобы работать как микрофон, Linksy нужно разрешение на микрофон.';
+      'Чтобы работать как микрофон, KDE Connectify нужно разрешение на микрофон.';
 
   @override
   String get ctlTerminalTitle => 'Терминал';
@@ -782,11 +782,12 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get homeUpdateTitle => 'Обновите Linksy, чтобы оставаться на связи';
+  String get homeUpdateTitle =>
+      'Обновите KDE Connectify, чтобы оставаться на связи';
 
   @override
   String get homeUpdateBody =>
-      'Ваши компьютеры используют более новую версию Linksy, чем это приложение.';
+      'Ваши компьютеры используют более новую версию KDE Connectify, чем это приложение.';
 
   @override
   String get homeGetUpdate => 'Обновить';
@@ -798,7 +799,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get homePair => 'Связать';
 
   @override
-  String get homeStepOpen => 'Откройте Linksy на компьютере';
+  String get homeStepOpen => 'Откройте KDE Connectify на компьютере';
 
   @override
   String get homeStepChoose => 'Выберите «Добавить устройство»';
@@ -824,7 +825,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pairingAddDeviceHint =>
-      'На другом устройстве откройте Linksy и выберите «Добавить устройство».';
+      'На другом устройстве откройте KDE Connectify и выберите «Добавить устройство».';
 
   @override
   String get pairingScanQr => 'Сканировать QR-код';
@@ -848,7 +849,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pairingAddressHint =>
-      'Адрес указан в настройках Linksy на другом устройстве.';
+      'Адрес указан в настройках KDE Connectify на другом устройстве.';
 
   @override
   String pairingPortHint(String port) {
@@ -881,7 +882,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get scanNeedsCamera =>
-      'Чтобы отсканировать код сопряжения, Linksy нужна камера. Разрешите её или свяжитесь по адресу.';
+      'Чтобы отсканировать код сопряжения, KDE Connectify нужна камера. Разрешите её или свяжитесь по адресу.';
 
   @override
   String get scanCameraUnavailable => 'Камера недоступна.';
@@ -894,11 +895,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get scanWrongCode =>
-      'Это не код Linksy. На компьютере откройте Linksy → Pair with QR Code.';
+      'Это не код KDE Connectify. На компьютере откройте KDE Connectify → Pair with QR Code.';
 
   @override
   String get scanHint =>
-      'На компьютере откройте Linksy и выберите «Добавить устройство».';
+      'На компьютере откройте KDE Connectify и выберите «Добавить устройство».';
 
   @override
   String get shareSheetPutOnClipboard => 'В буфер обмена';
@@ -924,7 +925,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shareSheetNoClipboardFiles =>
-      'Ни один из ваших компьютеров пока не принимает файлы в буфер обмена. Обновите там Linksy.';
+      'Ни один из ваших компьютеров пока не принимает файлы в буфер обмена. Обновите там KDE Connectify.';
 
   @override
   String get shareSheetNoComputers =>
@@ -1045,7 +1046,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get appCouldntStart => 'Не удалось запустить Linksy';
+  String get appCouldntStart => 'Не удалось запустить KDE Connectify';
 
   @override
   String get commonDismiss => 'Скрыть';
@@ -1170,7 +1171,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsSaveLocation => 'Куда сохранять';
 
   @override
-  String get settingsSaveLocationPath => 'Загрузки › Linksy';
+  String get settingsSaveLocationPath => 'Загрузки › KDE Connectify';
 
   @override
   String get settingsAcceptFromMyDevices => 'Принимать с моих устройств';
@@ -1194,7 +1195,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsKeepRunningCaption =>
-      'Файлы, копирование фото и звонки работают, даже когда Linksy закрыт. Показывается тихое уведомление.';
+      'Файлы, копирование фото и звонки работают, даже когда KDE Connectify закрыт. Показывается тихое уведомление.';
 
   @override
   String get settingsAwayFromHome => 'Вне дома';
@@ -1207,11 +1208,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsRelay => 'Релейный сервер';
 
   @override
-  String get settingsRelayDefault => 'Релей Linksy';
+  String get settingsRelayDefault => 'Релей KDE Connectify';
 
   @override
   String get settingsRelayCaption =>
-      'Адрес релея, который вы разместили сами, например https://relay.example.com. Оставьте пустым, чтобы использовать релей Linksy. Задайте один и тот же релей на всех устройствах.';
+      'Адрес релея, который вы разместили сами, например https://relay.example.com. Оставьте пустым, чтобы использовать релей KDE Connectify. Задайте один и тот же релей на всех устройствах.';
 
   @override
   String get settingsWithYourComputers => 'С вашими компьютерами';
@@ -1254,11 +1255,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsLocateCaption =>
-      'Компьютер может один раз спросить, где этот телефон, чтобы найти его. Ничего не сохраняется и не отслеживается. Работает, пока Linksy открыт.';
+      'Компьютер может один раз спросить, где этот телефон, чтобы найти его. Ничего не сохраняется и не отслеживается. Работает, пока KDE Connectify открыт.';
 
   @override
   String get settingsLocatePermission =>
-      'Для этого Linksy нужно разрешение на геолокацию.';
+      'Для этого KDE Connectify нужно разрешение на геолокацию.';
 
   @override
   String get settingsPhotoFolder => 'Папка с фото';
@@ -1283,7 +1284,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsDemoCaption =>
-      'Имитация устройств, пока ядро Linksy не подключено. Эти кнопки запускают то, что сделало бы другое устройство.';
+      'Имитация устройств, пока ядро KDE Connectify не подключено. Эти кнопки запускают то, что сделало бы другое устройство.';
 
   @override
   String get settingsDemoReceiveFiles => 'Получить файлы';
@@ -1325,7 +1326,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsPermissionsWhat =>
-      'Что Linksy запрашивает у Android и зачем.';
+      'Что KDE Connectify запрашивает у Android и зачем.';
 
   @override
   String get settingsPermissionsBoth => 'Оба разрешены.';
@@ -1348,7 +1349,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get permissionsIntro =>
-      'Linksy просит только то, что нужно, и любое из этого можно изменить позже в настройках.';
+      'KDE Connectify просит только то, что нужно, и любое из этого можно изменить позже в настройках.';
 
   @override
   String get permissionsNotifications => 'Уведомления';
@@ -1386,7 +1387,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String remoteAsks(String name) {
-    return 'Linksy на $name спрашивает, может ли этот телефон двигать указатель и печатать.';
+    return 'KDE Connectify на $name спрашивает, может ли этот телефон двигать указатель и печатать.';
   }
 
   @override
@@ -1727,7 +1728,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String sharingCameraRequestDetail(String name) {
-    return '$name получает камеру этого телефона как веб-камеру, пока вы не остановите. Масштаб, фокус, свет, объективы и поворот — в Linksy, пока она работает.';
+    return '$name получает камеру этого телефона как веб-камеру, пока вы не остановите. Масштаб, фокус, свет, объективы и поворот — в KDE Connectify, пока она работает.';
   }
 
   @override
@@ -1943,7 +1944,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String terminalCodeDetail(String name) {
-    return 'Код, заданный на $name в разделе Настройки › Терминал. Linksy его не хранит.';
+    return 'Код, заданный на $name в разделе Настройки › Терминал. KDE Connectify его не хранит.';
   }
 
   @override
@@ -2076,7 +2077,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String newsHeading(String version) {
-    return 'Что нового в Linksy $version';
+    return 'Что нового в KDE Connectify $version';
   }
 
   @override
@@ -2088,11 +2089,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get newsContinue => 'Продолжить';
 
   @override
-  String get newsStar => 'Поставить Linksy звезду на GitHub';
+  String get newsStar => 'Поставить KDE Connectify звезду на GitHub';
 
   @override
   String get newsStarCaption =>
-      'Linksy — свободная программа с открытым кодом. Звезда на GitHub помогает другим её найти.';
+      'KDE Connectify — свободная программа с открытым кодом. Звезда на GitHub помогает другим её найти.';
 
   @override
   String get news024PrivateTitle => 'Незаметен в любой сети';
@@ -2117,12 +2118,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String updateAvailable(String version) {
-    return 'Доступен Linksy $version';
+    return 'Доступен KDE Connectify $version';
   }
 
   @override
   String updateBody(String current) {
-    return 'Сейчас установлена $current. Linksy скачивает обновление и проверяет его, затем Android просит установить.';
+    return 'Сейчас установлена $current. KDE Connectify скачивает обновление и проверяет его, затем Android просит установить.';
   }
 
   @override
@@ -2141,7 +2142,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String updateNewest(String version) {
-    return 'Linksy $version — последняя версия.';
+    return 'KDE Connectify $version — последняя версия.';
   }
 
   @override
@@ -2157,7 +2158,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get updateAllow =>
-      'Разрешите Linksy устанавливать приложения, затем снова нажмите «Обновить сейчас».';
+      'Разрешите KDE Connectify устанавливать приложения, затем снова нажмите «Обновить сейчас».';
 
   @override
   String updateFailedInstall(String message) {
@@ -2289,7 +2290,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get news028DirectBody =>
-      'Файлы от 256 МБ идут прямо на компьютер по отдельному Wi-Fi-соединению, гораздо быстрее, чем через роутер. Нужен Linksy 0.9.9 на компьютере.';
+      'Файлы от 256 МБ идут прямо на компьютер по отдельному Wi-Fi-соединению, гораздо быстрее, чем через роутер. Нужен KDE Connectify 0.9.9 на компьютере.';
 
   @override
   String get news028BackgroundTitle => 'Большие файлы — в фоне';
@@ -2337,7 +2338,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get news029PhonesBody =>
-      'Большие файлы между двумя телефонами теперь идут напрямую, без роутера. На обоих нужен Linksy 0.2.9. Это можно выключить в настройках.';
+      'Большие файлы между двумя телефонами теперь идут напрямую, без роутера. На обоих нужен KDE Connectify 0.2.9. Это можно выключить в настройках.';
 
   @override
   String get news029LogsTitle => 'Журнал';
@@ -2348,6 +2349,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String pairingUpdateOlder(String name) {
-    return 'Обновите Linksy на $name, и сопряжение станет ещё безопаснее.';
+    return 'Обновите KDE Connectify на $name, и сопряжение станет ещё безопаснее.';
   }
 }

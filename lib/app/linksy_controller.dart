@@ -308,7 +308,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     });
     unawaited(
       log.load().then((_) async {
-        log.add('Linksy ${await LinksyPlatform.appVersion() ?? ''} started');
+        log.add('KDE Connectify ${await LinksyPlatform.appVersion() ?? ''} started');
       }),
     );
     unawaited(_loadPlatform());
@@ -1222,7 +1222,10 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _logEvent(e);
     switch (e) {
       case Connected(:final id):
-        refresh().then((_) => _onConnected(id));
+        refresh().then((_) {
+          _onConnected(id);
+          LinksyPlatform.triggerPhoneMediaBroadcast();
+        });
       case Paired(:final device):
         refresh().then((_) => _tellBattery(device.id, always: true));
       case DeviceFound(:final device):
@@ -1257,6 +1260,10 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           _showMediaNotice();
           notifyListeners();
         }
+      case MediaCommandReceived(:final player, :final command):
+        final action = command['action'] as String? ?? '';
+        final pos = (command['position_ms'] as num?)?.toInt();
+        LinksyPlatform.sendPhoneMediaCommand(player, action, pos);
       case VolumeStateReceived(:final from, :final state):
         final known = volume[from.id];
         if (known == null || state.seq >= known.seq) {

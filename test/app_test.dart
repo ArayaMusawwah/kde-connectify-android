@@ -63,10 +63,10 @@ void main() {
       )
       ..notifyListeners();
     await tester.pumpAndSettle();
-    expect(find.text('Linksy 0.2.5 Is Available'), findsOneWidget);
+    expect(find.text('KDE Connectify 0.2.5 Is Available'), findsOneWidget);
     await tester.tap(find.text('Update Now'));
     await tester.pumpAndSettle();
-    expect(find.text('Linksy 0.2.5 Is Available'), findsNWidgets(2));
+    expect(find.text('KDE Connectify 0.2.5 Is Available'), findsNWidgets(2));
     expect(find.textContaining('Faster sending'), findsOneWidget);
     expect(find.text('Later'), findsOneWidget);
   });
@@ -181,7 +181,7 @@ void main() {
         .id;
     const codec = StandardMethodCodec();
     await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
-      'app.linksy/platform',
+      'org.kde.connectify/platform',
       codec.encodeMethodCall(
         MethodCall('share', {
           'files': ['/x/a.jpg', '/x/b.jpg'],

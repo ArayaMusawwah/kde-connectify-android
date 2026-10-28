@@ -14,7 +14,7 @@ val hasReleaseKey = keyPropsFile.exists()
 if (hasReleaseKey) keyPropsFile.inputStream().use { keyProps.load(it) }
 
 android {
-    namespace = "app.linksy"
+    namespace = "org.kde.connectify"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -24,7 +24,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "app.linksy.mg"
+        applicationId = "org.kde.connectify"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION

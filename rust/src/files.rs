@@ -115,7 +115,7 @@ mod jni_api {
     use jni::sys::{jboolean, jbyteArray, jlong, jstring};
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeFiles_next(env: JNIEnv, _this: JClass) -> jstring {
+    pub extern "system" fn Java_org_kde_connectify_files_NativeFiles_next(env: JNIEnv, _this: JClass) -> jstring {
         match super::next() {
             Some(s) => env.new_string(s).map(|s| s.into_raw()).unwrap_or(std::ptr::null_mut()),
             None => std::ptr::null_mut(),
@@ -123,7 +123,7 @@ mod jni_api {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeFiles_body(env: JNIEnv, _this: JClass, id: jlong) -> jbyteArray {
+    pub extern "system" fn Java_org_kde_connectify_files_NativeFiles_body(env: JNIEnv, _this: JClass, id: jlong) -> jbyteArray {
         match super::body(id as u64) {
             Some(b) => env.byte_array_from_slice(&b).map(|a| a.into_raw()).unwrap_or(std::ptr::null_mut()),
             None => std::ptr::null_mut(),
@@ -131,7 +131,7 @@ mod jni_api {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeFiles_reply(
+    pub extern "system" fn Java_org_kde_connectify_files_NativeFiles_reply(
         mut env: JNIEnv,
         _this: JClass,
         id: jlong,
@@ -144,7 +144,34 @@ mod jni_api {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeFiles_sharing(_env: JNIEnv, _this: JClass, on: jboolean) {
+    pub extern "system" fn Java_org_kde_connectify_files_NativeFiles_sharing(_env: JNIEnv, _this: JClass, on: jboolean) {
         super::set_sharing(on != 0);
+    }
+
+    // Dual-export fallback stubs
+    #[unsafe(no_mangle)]
+    pub extern "system" fn Java_app_linksy_files_NativeFiles_next(env: JNIEnv, this: JClass) -> jstring {
+        Java_org_kde_connectify_files_NativeFiles_next(env, this)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "system" fn Java_app_linksy_files_NativeFiles_body(env: JNIEnv, this: JClass, id: jlong) -> jbyteArray {
+        Java_org_kde_connectify_files_NativeFiles_body(env, this, id)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "system" fn Java_app_linksy_files_NativeFiles_reply(
+        env: JNIEnv,
+        this: JClass,
+        id: jlong,
+        json: JString,
+        data: JByteArray,
+    ) {
+        Java_org_kde_connectify_files_NativeFiles_reply(env, this, id, json, data)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "system" fn Java_app_linksy_files_NativeFiles_sharing(env: JNIEnv, this: JClass, on: jboolean) {
+        Java_org_kde_connectify_files_NativeFiles_sharing(env, this, on)
     }
 }

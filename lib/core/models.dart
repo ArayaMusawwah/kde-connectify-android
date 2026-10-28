@@ -461,6 +461,18 @@ class MediaStateReceived extends LinksyEvent {
   final MediaState state;
 }
 
+/// A computer sent a media control command to a phone player.
+class MediaCommandReceived extends LinksyEvent {
+  const MediaCommandReceived({
+    required this.from,
+    required this.player,
+    required this.command,
+  });
+  final DeviceInfo from;
+  final String player;
+  final Map<String, Object?> command;
+}
+
 /// A computer's system volume: [level] from 0 to 1, and [muted].
 class VolumeState {
   const VolumeState({

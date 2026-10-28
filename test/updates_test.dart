@@ -50,6 +50,17 @@ void main() {
     expect(r.apkName(null), 'linksy-0.2.4.apk');
   });
 
+  test('the APK for kde-connectify asset names', () {
+    final r = AppRelease.newest(
+      jsonEncode([
+        _release('v0.2.4', ['kde-connectify-v0.2.4.apk', 'kde-connectify-v0.2.4-arm64.apk']),
+      ]),
+    )!;
+    expect(r.apkName('arm64-v8a'), 'kde-connectify-v0.2.4-arm64.apk');
+    expect(r.apkName('armeabi-v7a'), 'kde-connectify-v0.2.4.apk');
+    expect(r.apkName(null), 'kde-connectify-v0.2.4.apk');
+  });
+
   test('versions compare by number', () {
     expect(isNewer('0.2.10', '0.2.9'), isTrue);
     expect(isNewer('0.3.0', '0.2.23'), isTrue);

@@ -9,11 +9,12 @@ import 'dart:convert';
 import 'dart:io';
 
 const _github =
-    'https://api.github.com/repos/LinkSy-mg/linksy-releases/releases?per_page=20';
+    'https://api.github.com/repos/ArayaMusawwah/kde-connectify-android/releases?per_page=20';
 
-/// A test build may ask a test server instead (`--dart-define=LINKSY_RELEASES=`),
+/// A test build may ask a test server instead (`--dart-define=CONNECTIFY_RELEASES=`),
 /// over plain HTTP too. Releases never set it.
-const _test = String.fromEnvironment('LINKSY_RELEASES');
+const _test = String.fromEnvironment('CONNECTIFY_RELEASES',
+    defaultValue: String.fromEnvironment('LINKSY_RELEASES'));
 const releasesApi = _test == '' ? _github : _test;
 
 bool _allowed(String url) =>
@@ -43,14 +44,26 @@ class AppRelease {
   /// when there's none for it.
   String apkName(String? abi) {
     final split = switch (abi) {
+      'arm64-v8a' => 'kde-connectify-v$version-arm64.apk',
+      'armeabi-v7a' => 'kde-connectify-v$version-armv7.apk',
+      'x86_64' => 'kde-connectify-v$version-x86_64.apk',
+      _ => null,
+    };
+    if (split != null && assets.containsKey(split)) return split;
+    if (assets.containsKey('kde-connectify-v$version.apk')) {
+      return 'kde-connectify-v$version.apk';
+    }
+    final legacySplit = switch (abi) {
       'arm64-v8a' => 'linksy-$version-arm64.apk',
       'armeabi-v7a' => 'linksy-$version-armv7.apk',
       'x86_64' => 'linksy-$version-x86_64.apk',
       _ => null,
     };
-    return split != null && assets.containsKey(split)
-        ? split
-        : 'linksy-$version.apk';
+    return legacySplit != null && assets.containsKey(legacySplit)
+        ? legacySplit
+        : (assets.containsKey('linksy-$version.apk')
+            ? 'linksy-$version.apk'
+            : 'kde-connectify-v$version.apk');
   }
 
   /// The newest Android release in a GitHub releases list; null if none.
@@ -79,7 +92,10 @@ class AppRelease {
               _allowed(a['browser_download_url'] as String))
             a['name'] as String: a['browser_download_url'] as String,
       };
-      if (!assets.containsKey('linksy-$version.apk')) continue;
+      if (!assets.containsKey('kde-connectify-v$version.apk') &&
+          !assets.containsKey('linksy-$version.apk')) {
+        continue;
+      }
       best = AppRelease(
         version: version,
         page: r['html_url'] is String ? r['html_url'] as String : '',

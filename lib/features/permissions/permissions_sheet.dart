@@ -25,6 +25,7 @@ class _PermissionsSheet extends StatefulWidget {
 class _PermissionsSheetState extends State<_PermissionsSheet>
     with WidgetsBindingObserver {
   ({bool notifications, bool camera})? _state;
+  bool _mediaListenerAllowed = false;
 
   @override
   void initState() {
@@ -46,7 +47,13 @@ class _PermissionsSheetState extends State<_PermissionsSheet>
 
   Future<void> _read() async {
     final state = await LinksyPlatform.permissions();
-    if (mounted) setState(() => _state = state);
+    final mediaAllowed = await LinksyPlatform.isNotificationListenerEnabled();
+    if (mounted) {
+      setState(() {
+        _state = state;
+        _mediaListenerAllowed = mediaAllowed;
+      });
+    }
   }
 
   Future<void> _request(String name) async {
@@ -88,6 +95,18 @@ class _PermissionsSheetState extends State<_PermissionsSheet>
               allowed: state?.camera,
               action: context.l10n.permissionsAllow,
               onTap: () => _request('camera'),
+            ),
+            const SizedBox(height: 10),
+            _Permission(
+              icon: Ph.musicNotes,
+              title: 'Music & Media Sync',
+              why: 'Shares current song title, artist, album art and playback controls with your computer.',
+              allowed: _mediaListenerAllowed,
+              action: context.l10n.permissionsAllow,
+              onTap: () async {
+                await LinksyPlatform.requestNotificationListenerPermission();
+                await _read();
+              },
             ),
             const SizedBox(height: 20),
             SigButton(

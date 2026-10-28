@@ -4,13 +4,13 @@
     <string name="channel_incoming_files">Rakitra miditra</string>
     <string name="accept">Ekena</string>
     <string name="decline">Lavina</string>
-    <string name="keep_alive_default">Mifandray i Linksy</string>
+    <string name="keep_alive_default">Mifandray i KDE Connectify</string>
     <string name="your_computer">Ny solosainao</string>
-    <string name="locate_not_allowed">Tsy nahazo alalana hampiasa ny toerana misy ity finday ity i Linksy</string>
+    <string name="locate_not_allowed">Tsy nahazo alalana hampiasa ny toerana misy ity finday ity i KDE Connectify</string>
     <string name="locate_off">Maty ny toerana (localisation) amin\'ity finday ity</string>
     <string name="locate_timeout">Tsy hitan\'ity finday ity ara-potoana ny toerana misy azy</string>
-    <string name="locate_open_app">Sokafy i Linksy amin\'ny finday hizarana ny toerana misy azy</string>
-    <string name="channel_news">Vaovao avy amin\'i Linksy</string>
+    <string name="locate_open_app">Sokafy i KDE Connectify amin\'ny finday hizarana ny toerana misy azy</string>
+    <string name="channel_news">Vaovao avy amin\'i KDE Connectify</string>
     <string name="channel_staying">Mitoetra mifandray</string>
     <string name="channel_transfers">Fandefasana rakitra</string>
     <string name="camera_didnt_start">Tsy nandeha ny fakantsary.</string>

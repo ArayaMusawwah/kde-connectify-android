@@ -28,7 +28,7 @@ class SharedFiles extends SharedIn {
 
 /// The few things only Android knows (android/…/MainActivity.kt).
 abstract final class LinksyPlatform {
-  static const _channel = MethodChannel('app.linksy/platform');
+  static const _channel = MethodChannel('org.kde.connectify/platform');
   static final _links = StreamController<String>.broadcast();
   static final _displaySizes =
       StreamController<(String, double, double)>.broadcast();
@@ -261,6 +261,26 @@ abstract final class LinksyPlatform {
   /// Null removes it.
   static Future<void> setPref(String key, String? value) =>
       _call<void>('setPref', {'key': key, 'value': value});
+
+  static Future<bool> isNotificationListenerEnabled() async =>
+      await _call<bool>('isNotificationListenerEnabled') ?? false;
+
+  static Future<void> requestNotificationListenerPermission() async =>
+      _call<void>('requestNotificationListenerPermission');
+
+  static Future<void> sendPhoneMediaCommand(
+    String player,
+    String action, [
+    int? positionMs,
+  ]) async =>
+      _call<void>('sendPhoneMediaCommand', {
+        'player': player,
+        'action': action,
+        'position_ms': positionMs,
+      });
+
+  static Future<void> triggerPhoneMediaBroadcast() async =>
+      _call<void>('triggerPhoneMediaBroadcast');
 
   /// Presentation remote: keeps the screen on and turns the volume keys into
   /// [volumeKeys] (true = up) while on.

@@ -307,6 +307,14 @@ impl LinksyNode {
         run(async move { node.watch_media(&id, on).await }).await
     }
 
+    /// Send this phone's media players to another device.
+    pub async fn send_media_state(&self, id: String, state_json: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let state: linksy_core::MediaState = serde_json::from_str(&state_json).map_err(|e| format!("other:{e}"))?;
+        let node = self.node.clone();
+        run(async move { node.send_media_state(&id, &state).await }).await
+    }
+
     /// `command_json` in the core's shape: `{"action":"play_pause"}`.
     pub async fn media_command(&self, id: String, player: String, command_json: String) -> Result<(), String> {
         let id = fingerprint(&id)?;

@@ -9,10 +9,10 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'Linksy';
+  String get appTitle => 'KDE Connectify';
 
   @override
-  String get onboardingWelcome => '欢迎使用 Linksy';
+  String get onboardingWelcome => '欢迎使用 KDE Connectify';
 
   @override
   String get onboardingChooseLanguage => '选择语言';
@@ -24,10 +24,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingContinue => '继续';
 
   @override
-  String get onboardingSetUpTitle => '设置 Linksy';
+  String get onboardingSetUpTitle => '设置 KDE Connectify';
 
   @override
-  String get onboardingSetUpSubtitle => '选择 Linksy 可以做什么。除非你同意，任何内容都不会离开这部手机。';
+  String get onboardingSetUpSubtitle =>
+      '选择 KDE Connectify 可以做什么。除非你同意，任何内容都不会离开这部手机。';
 
   @override
   String get onboardingNotifications => '通知';
@@ -52,7 +53,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingBackground => '在后台保持运行';
 
   @override
-  String get onboardingBackgroundDetail => 'Linksy 关闭后，文件和来电功能仍可使用。会显示一条安静的通知。';
+  String get onboardingBackgroundDetail =>
+      'KDE Connectify 关闭后，文件和来电功能仍可使用。会显示一条安静的通知。';
 
   @override
   String get onboardingFolder => '与电脑共享文件夹';
@@ -90,7 +92,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingAnytime => '这些选项都可以随时在“设置”中开启或关闭。';
 
   @override
-  String get onboardingStart => '开始使用 Linksy';
+  String get onboardingStart => '开始使用 KDE Connectify';
 
   @override
   String get onboardingBack => '返回';
@@ -108,7 +110,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ctlClipboardCopyFailed => '无法放到剪贴板';
 
   @override
-  String get ctlLocateOff => '这部手机上的 Linksy 已关闭定位';
+  String get ctlLocateOff => '这部手机上的 KDE Connectify 已关闭定位';
 
   @override
   String get ctlYourComputer => '你的电脑';
@@ -159,10 +161,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ctlScreenPermission => '共享屏幕需要 Android 授予录屏权限。';
 
   @override
-  String get ctlCameraPermission => 'Linksy 需要相机权限才能用作摄像头。';
+  String get ctlCameraPermission => 'KDE Connectify 需要相机权限才能用作摄像头。';
 
   @override
-  String get ctlMicrophonePermission => 'Linksy 需要麦克风权限才能用作麦克风。';
+  String get ctlMicrophonePermission => 'KDE Connectify 需要麦克风权限才能用作麦克风。';
 
   @override
   String get ctlTerminalTitle => '终端';
@@ -751,10 +753,10 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get homeUpdateTitle => '更新 Linksy 以保持连接';
+  String get homeUpdateTitle => '更新 KDE Connectify 以保持连接';
 
   @override
-  String get homeUpdateBody => '你的电脑使用的 Linksy 比此应用更新。';
+  String get homeUpdateBody => '你的电脑使用的 KDE Connectify 比此应用更新。';
 
   @override
   String get homeGetUpdate => '获取更新';
@@ -766,7 +768,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homePair => '配对';
 
   @override
-  String get homeStepOpen => '在电脑上打开 Linksy';
+  String get homeStepOpen => '在电脑上打开 KDE Connectify';
 
   @override
   String get homeStepChoose => '选择“添加设备”';
@@ -790,7 +792,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pairingAddDevice => '添加设备';
 
   @override
-  String get pairingAddDeviceHint => '在另一台设备上打开 Linksy，然后选择“添加设备”。';
+  String get pairingAddDeviceHint => '在另一台设备上打开 KDE Connectify，然后选择“添加设备”。';
 
   @override
   String get pairingScanQr => '扫描二维码';
@@ -813,7 +815,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pairingWithOtherDevice => '正在与另一台设备配对…';
 
   @override
-  String get pairingAddressHint => '可在另一台设备上 Linksy 的“偏好设置”中找到。';
+  String get pairingAddressHint => '可在另一台设备上 KDE Connectify 的“偏好设置”中找到。';
 
   @override
   String pairingPortHint(String port) {
@@ -845,7 +847,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pairingCodesMatch => '代码一致';
 
   @override
-  String get scanNeedsCamera => 'Linksy 需要相机来扫描配对码。请允许使用，或通过地址配对。';
+  String get scanNeedsCamera => 'KDE Connectify 需要相机来扫描配对码。请允许使用，或通过地址配对。';
 
   @override
   String get scanCameraUnavailable => '相机不可用。';
@@ -857,10 +859,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scanTitle => '扫描代码';
 
   @override
-  String get scanWrongCode => '这不是 Linksy 代码。请在电脑上打开 Linksy → 用二维码配对。';
+  String get scanWrongCode =>
+      '这不是 KDE Connectify 代码。请在电脑上打开 KDE Connectify → 用二维码配对。';
 
   @override
-  String get scanHint => '在电脑上打开 Linksy，然后选择“添加设备”。';
+  String get scanHint => '在电脑上打开 KDE Connectify，然后选择“添加设备”。';
 
   @override
   String get shareSheetPutOnClipboard => '放到剪贴板';
@@ -883,7 +886,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shareSheetSendToClipboard => '发送到剪贴板';
 
   @override
-  String get shareSheetNoClipboardFiles => '你的电脑都还不支持把文件放到剪贴板。请在电脑上更新 Linksy。';
+  String get shareSheetNoClipboardFiles =>
+      '你的电脑都还不支持把文件放到剪贴板。请在电脑上更新 KDE Connectify。';
 
   @override
   String get shareSheetNoComputers => '先配对一台电脑，然后就能从任意应用分享给它。';
@@ -996,7 +1000,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get appCouldntStart => 'Linksy 无法启动';
+  String get appCouldntStart => 'KDE Connectify 无法启动';
 
   @override
   String get commonDismiss => '关闭';
@@ -1112,7 +1116,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsSaveLocation => '保存位置';
 
   @override
-  String get settingsSaveLocationPath => '下载 › Linksy';
+  String get settingsSaveLocationPath => '下载 › KDE Connectify';
 
   @override
   String get settingsAcceptFromMyDevices => '自动接受我的设备';
@@ -1134,7 +1138,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsKeepRunningCaption =>
-      'Linksy 关闭后，文件、照片备份和来电功能仍可使用。会显示一条安静的通知。';
+      'KDE Connectify 关闭后，文件、照片备份和来电功能仍可使用。会显示一条安静的通知。';
 
   @override
   String get settingsAwayFromHome => '离家时';
@@ -1147,11 +1151,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsRelay => '中继服务器';
 
   @override
-  String get settingsRelayDefault => 'Linksy 自带';
+  String get settingsRelayDefault => 'KDE Connectify 自带';
 
   @override
   String get settingsRelayCaption =>
-      '你自己托管的中继地址，例如 https://relay.example.com。留空则使用 Linksy 的中继。请在每台设备上设置相同的中继。';
+      '你自己托管的中继地址，例如 https://relay.example.com。留空则使用 KDE Connectify 的中继。请在每台设备上设置相同的中继。';
 
   @override
   String get settingsWithYourComputers => '与你的电脑';
@@ -1191,10 +1195,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsLocateCaption =>
-      '电脑可以询问一次这部手机的位置来找到它。不会保留或追踪任何信息。Linksy 打开时可用。';
+      '电脑可以询问一次这部手机的位置来找到它。不会保留或追踪任何信息。KDE Connectify 打开时可用。';
 
   @override
-  String get settingsLocatePermission => 'Linksy 需要位置权限才能使用此功能。';
+  String get settingsLocatePermission => 'KDE Connectify 需要位置权限才能使用此功能。';
 
   @override
   String get settingsPhotoFolder => '照片文件夹';
@@ -1217,7 +1221,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsDemo => '演示';
 
   @override
-  String get settingsDemoCaption => '连接 Linksy 核心前的模拟设备。这些操作会模拟另一台设备发起的动作。';
+  String get settingsDemoCaption =>
+      '连接 KDE Connectify 核心前的模拟设备。这些操作会模拟另一台设备发起的动作。';
 
   @override
   String get settingsDemoReceiveFiles => '接收文件';
@@ -1257,7 +1262,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsPermissionsRow => '通知和相机';
 
   @override
-  String get settingsPermissionsWhat => 'Linksy 向 Android 申请哪些权限，以及原因。';
+  String get settingsPermissionsWhat => 'KDE Connectify 向 Android 申请哪些权限，以及原因。';
 
   @override
   String get settingsPermissionsBoth => '均已允许。';
@@ -1276,7 +1281,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get permissionsTitle => '权限';
 
   @override
-  String get permissionsIntro => 'Linksy 只申请必要的权限，你之后可以在“设置”中更改任何一项。';
+  String get permissionsIntro => 'KDE Connectify 只申请必要的权限，你之后可以在“设置”中更改任何一项。';
 
   @override
   String get permissionsNotifications => '通知';
@@ -1312,7 +1317,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String remoteAsks(String name) {
-    return '$name 上的 Linksy 正在询问是否允许这部手机移动其指针并输入文字。';
+    return '$name 上的 KDE Connectify 正在询问是否允许这部手机移动其指针并输入文字。';
   }
 
   @override
@@ -1643,7 +1648,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String sharingCameraRequestDetail(String name) {
-    return '在你停止之前，$name 会把这部手机的相机用作摄像头。运行期间，可在 Linksy 中调整缩放、对焦、光线、镜头和旋转。';
+    return '在你停止之前，$name 会把这部手机的相机用作摄像头。运行期间，可在 KDE Connectify 中调整缩放、对焦、光线、镜头和旋转。';
   }
 
   @override
@@ -1858,7 +1863,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String terminalCodeDetail(String name) {
-    return '即在 $name 的“偏好设置 › 终端”中设置的代码。Linksy 从不保存它。';
+    return '即在 $name 的“偏好设置 › 终端”中设置的代码。KDE Connectify 从不保存它。';
   }
 
   @override
@@ -1981,7 +1986,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String newsHeading(String version) {
-    return 'Linksy $version 新功能';
+    return 'KDE Connectify $version 新功能';
   }
 
   @override
@@ -1993,10 +1998,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get newsContinue => '继续';
 
   @override
-  String get newsStar => '在 GitHub 上为 Linksy 点星';
+  String get newsStar => '在 GitHub 上为 KDE Connectify 点星';
 
   @override
-  String get newsStarCaption => 'Linksy 是自由开源软件。在 GitHub 上点个星，能帮助更多人发现它。';
+  String get newsStarCaption =>
+      'KDE Connectify 是自由开源软件。在 GitHub 上点个星，能帮助更多人发现它。';
 
   @override
   String get news024PrivateTitle => '在任何网络上都不暴露';
@@ -2019,12 +2025,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String updateAvailable(String version) {
-    return 'Linksy $version 已推出';
+    return 'KDE Connectify $version 已推出';
   }
 
   @override
   String updateBody(String current) {
-    return '当前是 $current。Linksy 会下载并校验更新，然后 Android 会请你确认安装。';
+    return '当前是 $current。KDE Connectify 会下载并校验更新，然后 Android 会请你确认安装。';
   }
 
   @override
@@ -2043,7 +2049,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String updateNewest(String version) {
-    return 'Linksy $version 已是最新版本。';
+    return 'KDE Connectify $version 已是最新版本。';
   }
 
   @override
@@ -2056,7 +2062,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get updateFailedCheck => '下载的文件与该版本的校验和不符，因此没有安装。';
 
   @override
-  String get updateAllow => '请允许 Linksy 安装应用，然后再点一次“立即更新”。';
+  String get updateAllow => '请允许 KDE Connectify 安装应用，然后再点一次“立即更新”。';
 
   @override
   String updateFailedInstall(String message) {
@@ -2182,7 +2188,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get news028DirectBody =>
-      '256 MB 及以上的文件通过专属 Wi-Fi 连接直接传到电脑，比经过路由器快得多。电脑需要 Linksy 0.9.9。';
+      '256 MB 及以上的文件通过专属 Wi-Fi 连接直接传到电脑，比经过路由器快得多。电脑需要 KDE Connectify 0.9.9。';
 
   @override
   String get news028BackgroundTitle => '大文件，后台传输';
@@ -2225,7 +2231,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get news029PhonesBody =>
-      '两台手机之间的大文件现在直接传输，不经过路由器。两台都需要 Linksy 0.2.9。可以在设置中关闭。';
+      '两台手机之间的大文件现在直接传输，不经过路由器。两台都需要 KDE Connectify 0.2.9。可以在设置中关闭。';
 
   @override
   String get news029LogsTitle => '日志';
@@ -2236,6 +2242,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String pairingUpdateOlder(String name) {
-    return '更新 $name 上的 Linksy，配对会更安全。';
+    return '更新 $name 上的 KDE Connectify，配对会更安全。';
   }
 }

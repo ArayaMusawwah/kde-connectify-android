@@ -9,10 +9,10 @@ class AppLocalizationsMg extends AppLocalizations {
   AppLocalizationsMg([String locale = 'mg']) : super(locale);
 
   @override
-  String get appTitle => 'Linksy';
+  String get appTitle => 'KDE Connectify';
 
   @override
-  String get onboardingWelcome => 'Tongasoa eto amin\'i Linksy';
+  String get onboardingWelcome => 'Tongasoa eto amin\'i KDE Connectify';
 
   @override
   String get onboardingChooseLanguage => 'Safidio ny fiteninao';
@@ -25,11 +25,11 @@ class AppLocalizationsMg extends AppLocalizations {
   String get onboardingContinue => 'Tohizo';
 
   @override
-  String get onboardingSetUpTitle => 'Amboary i Linksy';
+  String get onboardingSetUpTitle => 'Amboary i KDE Connectify';
 
   @override
   String get onboardingSetUpSubtitle =>
-      'Safidio izay azon\'i Linksy atao. Tsy misy mivoaka ity finday ity raha tsy ianao no milaza.';
+      'Safidio izay azon\'i KDE Connectify atao. Tsy misy mivoaka ity finday ity raha tsy ianao no milaza.';
 
   @override
   String get onboardingNotifications => 'Fampahafantarana';
@@ -57,7 +57,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get onboardingBackgroundDetail =>
-      'Mbola mandeha ny rakitra sy ny antso na dia mikatona aza i Linksy. Misy fampahafantarana mangina.';
+      'Mbola mandeha ny rakitra sy ny antso na dia mikatona aza i KDE Connectify. Misy fampahafantarana mangina.';
 
   @override
   String get onboardingFolder => 'Zarao lahatahiry amin\'ny solosaina';
@@ -99,7 +99,7 @@ class AppLocalizationsMg extends AppLocalizations {
       'Azonao alefa na vonoina amin\'ny fotoana rehetra ao amin\'ny Fikirana ireo.';
 
   @override
-  String get onboardingStart => 'Atombohy ny fampiasana an\'i Linksy';
+  String get onboardingStart => 'Atombohy ny fampiasana an\'i KDE Connectify';
 
   @override
   String get onboardingBack => 'Hiverina';
@@ -119,7 +119,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get ctlLocateOff =>
-      'Maty ao amin\'i Linksy amin\'ity finday ity ny fitadiavana toerana';
+      'Maty ao amin\'i KDE Connectify amin\'ity finday ity ny fitadiavana toerana';
 
   @override
   String get ctlYourComputer => 'ny solosainao';
@@ -173,11 +173,11 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get ctlCameraPermission =>
-      'Mila alalana hampiasa ny fakantsary i Linksy mba ho webcam.';
+      'Mila alalana hampiasa ny fakantsary i KDE Connectify mba ho webcam.';
 
   @override
   String get ctlMicrophonePermission =>
-      'Mila alalana hampiasa ny mikrô i Linksy mba ho mikrô.';
+      'Mila alalana hampiasa ny mikrô i KDE Connectify mba ho mikrô.';
 
   @override
   String get ctlTerminalTitle => 'Terminal';
@@ -774,11 +774,11 @@ class AppLocalizationsMg extends AppLocalizations {
   }
 
   @override
-  String get homeUpdateTitle => 'Havaozy i Linksy mba hifandray foana';
+  String get homeUpdateTitle => 'Havaozy i KDE Connectify mba hifandray foana';
 
   @override
   String get homeUpdateBody =>
-      'Linksy vaovao kokoa noho ity app ity no ampiasain\'ny solosainao izao.';
+      'KDE Connectify vaovao kokoa noho ity app ity no ampiasain\'ny solosainao izao.';
 
   @override
   String get homeGetUpdate => 'Alaivo ny fanavaozana';
@@ -790,7 +790,7 @@ class AppLocalizationsMg extends AppLocalizations {
   String get homePair => 'Ampifandraiso';
 
   @override
-  String get homeStepOpen => 'Sokafy i Linksy ao amin\'ny solosainao';
+  String get homeStepOpen => 'Sokafy i KDE Connectify ao amin\'ny solosainao';
 
   @override
   String get homeStepChoose => 'Safidio ny “Hanampy fitaovana”';
@@ -816,7 +816,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get pairingAddDeviceHint =>
-      'Ao amin’ilay fitaovana iray, sokafy i Linksy ary safidio ny “Hanampy fitaovana”.';
+      'Ao amin’ilay fitaovana iray, sokafy i KDE Connectify ary safidio ny “Hanampy fitaovana”.';
 
   @override
   String get pairingScanQr => 'Vakio ny QR code';
@@ -841,7 +841,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get pairingAddressHint =>
-      'Ao amin\'ny Preferences an\'i Linksy ao amin\'ilay fitaovana iray izany.';
+      'Ao amin\'ny Preferences an\'i KDE Connectify ao amin\'ilay fitaovana iray izany.';
 
   @override
   String pairingPortHint(String port) {
@@ -875,7 +875,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get scanNeedsCamera =>
-      'Mila ny fakantsary i Linksy hamakiana ny kaody fampifandraisana. Avelao, na ampifandraiso amin\'ny adiresy.';
+      'Mila ny fakantsary i KDE Connectify hamakiana ny kaody fampifandraisana. Avelao, na ampifandraiso amin\'ny adiresy.';
 
   @override
   String get scanCameraUnavailable => 'Tsy azo ampiasaina ny fakantsary.';
@@ -888,11 +888,11 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get scanWrongCode =>
-      'Tsy kaody Linksy io. Ao amin\'ny solosainao, sokafy Linksy → Pair with QR Code.';
+      'Tsy kaody KDE Connectify io. Ao amin\'ny solosainao, sokafy KDE Connectify → Pair with QR Code.';
 
   @override
   String get scanHint =>
-      'Ao amin’ny solosainao, sokafy i Linksy ary safidio ny “Hanampy fitaovana”.';
+      'Ao amin’ny solosainao, sokafy i KDE Connectify ary safidio ny “Hanampy fitaovana”.';
 
   @override
   String get shareSheetPutOnClipboard => 'Apetraho amin\'ny clipboard';
@@ -916,7 +916,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get shareSheetNoClipboardFiles =>
-      'Tsy misy amin\'ny solosainao mandray rakitra amin\'ny clipboard-ny aloha. Havaozy ao i Linksy.';
+      'Tsy misy amin\'ny solosainao mandray rakitra amin\'ny clipboard-ny aloha. Havaozy ao i KDE Connectify.';
 
   @override
   String get shareSheetNoComputers =>
@@ -1034,7 +1034,7 @@ class AppLocalizationsMg extends AppLocalizations {
   }
 
   @override
-  String get appCouldntStart => 'Tsy afaka nanomboka i Linksy';
+  String get appCouldntStart => 'Tsy afaka nanomboka i KDE Connectify';
 
   @override
   String get commonDismiss => 'Esory';
@@ -1150,7 +1150,7 @@ class AppLocalizationsMg extends AppLocalizations {
   String get settingsSaveLocation => 'Toerana itahirizana';
 
   @override
-  String get settingsSaveLocationPath => 'Downloads › Linksy';
+  String get settingsSaveLocationPath => 'Downloads › KDE Connectify';
 
   @override
   String get settingsAcceptFromMyDevices => 'Ekeo avy amin\'ny fitaovako';
@@ -1174,7 +1174,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get settingsKeepRunningCaption =>
-      'Mbola mandeha ny rakitra, ny fitahirizana sary ary ny antso na dia mikatona aza i Linksy. Misy fampahafantarana mangina.';
+      'Mbola mandeha ny rakitra, ny fitahirizana sary ary ny antso na dia mikatona aza i KDE Connectify. Misy fampahafantarana mangina.';
 
   @override
   String get settingsAwayFromHome => 'Lavitra ny trano';
@@ -1187,11 +1187,11 @@ class AppLocalizationsMg extends AppLocalizations {
   String get settingsRelay => 'Mpampita (relay)';
 
   @override
-  String get settingsRelayDefault => 'An\'i Linksy';
+  String get settingsRelayDefault => 'An\'i KDE Connectify';
 
   @override
   String get settingsRelayCaption =>
-      'Ny adiresin\'ny mpampita ampiasainao manokana, toy ny https://relay.example.com. Avelao ho foana raha an\'i Linksy. Apetraho mitovy amin\'ny fitaovana rehetra ny mpampita.';
+      'Ny adiresin\'ny mpampita ampiasainao manokana, toy ny https://relay.example.com. Avelao ho foana raha an\'i KDE Connectify. Apetraho mitovy amin\'ny fitaovana rehetra ny mpampita.';
 
   @override
   String get settingsWithYourComputers => 'Miaraka amin\'ny solosainao';
@@ -1234,11 +1234,11 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get settingsLocateCaption =>
-      'Afaka manontany indray mandeha ny solosaina hoe aiza ity finday ity, mba hahitana azy. Tsy misy tehirizina na arahina. Mandeha raha misokatra i Linksy.';
+      'Afaka manontany indray mandeha ny solosaina hoe aiza ity finday ity, mba hahitana azy. Tsy misy tehirizina na arahina. Mandeha raha misokatra i KDE Connectify.';
 
   @override
   String get settingsLocatePermission =>
-      'Mila alalana hahafantatra ny toerana i Linksy amin\'ity.';
+      'Mila alalana hahafantatra ny toerana i KDE Connectify amin\'ity.';
 
   @override
   String get settingsPhotoFolder => 'Lahatahiry sary';
@@ -1263,7 +1263,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get settingsDemoCaption =>
-      'Fitaovana sandoka mandra-pifandray ny Linksy core. Manomboka izay ho ataon\'ny fitaovana hafa ireto.';
+      'Fitaovana sandoka mandra-pifandray ny KDE Connectify core. Manomboka izay ho ataon\'ny fitaovana hafa ireto.';
 
   @override
   String get settingsDemoReceiveFiles => 'Handray rakitra';
@@ -1307,7 +1307,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get settingsPermissionsWhat =>
-      'Izay angatahan\'i Linksy amin\'i Android, sy ny antony.';
+      'Izay angatahan\'i KDE Connectify amin\'i Android, sy ny antony.';
 
   @override
   String get settingsPermissionsBoth => 'Samy navela.';
@@ -1327,7 +1327,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get permissionsIntro =>
-      'Izay ilainy ihany no angatahan\'i Linksy, ary azonao ovaina any aoriana ao amin\'ny Fikirana ireo.';
+      'Izay ilainy ihany no angatahan\'i KDE Connectify, ary azonao ovaina any aoriana ao amin\'ny Fikirana ireo.';
 
   @override
   String get permissionsNotifications => 'Fampahafantarana';
@@ -1365,7 +1365,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String remoteAsks(String name) {
-    return 'Manontany i Linksy ao amin\'i $name raha azon\'ity finday ity hetsehina ny tondro sy hanoratana.';
+    return 'Manontany i KDE Connectify ao amin\'i $name raha azon\'ity finday ity hetsehina ny tondro sy hanoratana.';
   }
 
   @override
@@ -1710,7 +1710,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String sharingCameraRequestDetail(String name) {
-    return 'Azon\'i $name ho webcam ny fakantsarin\'ity finday ity mandra-pampitsaharinao. Ao amin\'i Linksy ny zoom, fahazavan-tsary, hazavana, lantihy ary fihodinana mandritra izany.';
+    return 'Azon\'i $name ho webcam ny fakantsarin\'ity finday ity mandra-pampitsaharinao. Ao amin\'i KDE Connectify ny zoom, fahazavan-tsary, hazavana, lantihy ary fihodinana mandritra izany.';
   }
 
   @override
@@ -1927,7 +1927,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String terminalCodeDetail(String name) {
-    return 'Ilay kaody napetraka tao amin’i $name ao amin’ny Fikirana › Terminal. Tsy tehirizin’i Linksy mihitsy.';
+    return 'Ilay kaody napetraka tao amin’i $name ao amin’ny Fikirana › Terminal. Tsy tehirizin’i KDE Connectify mihitsy.';
   }
 
   @override
@@ -2052,7 +2052,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String newsHeading(String version) {
-    return 'Ny vaovao ao amin\'ny Linksy $version';
+    return 'Ny vaovao ao amin\'ny KDE Connectify $version';
   }
 
   @override
@@ -2064,11 +2064,11 @@ class AppLocalizationsMg extends AppLocalizations {
   String get newsContinue => 'Tohizo';
 
   @override
-  String get newsStar => 'Omeo kintana ny Linksy amin\'ny GitHub';
+  String get newsStar => 'Omeo kintana ny KDE Connectify amin\'ny GitHub';
 
   @override
   String get newsStarCaption =>
-      'Maimaim-poana sy misokatra ny Linksy. Kintana iray amin\'ny GitHub dia manampy ny hafa hahita azy.';
+      'Maimaim-poana sy misokatra ny KDE Connectify. Kintana iray amin\'ny GitHub dia manampy ny hafa hahita azy.';
 
   @override
   String get news024PrivateTitle => 'Miafina amin\'ny tambajotra rehetra';
@@ -2093,12 +2093,12 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String updateAvailable(String version) {
-    return 'Efa misy i Linksy $version';
+    return 'Efa misy i KDE Connectify $version';
   }
 
   @override
   String updateBody(String current) {
-    return 'Ity no $current. Maka sy manamarina ny fanavaozana ny Linksy, avy eo i Android no mangataka anao hametraka azy.';
+    return 'Ity no $current. Maka sy manamarina ny fanavaozana ny KDE Connectify, avy eo i Android no mangataka anao hametraka azy.';
   }
 
   @override
@@ -2117,7 +2117,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String updateNewest(String version) {
-    return 'Linksy $version no vaovao indrindra.';
+    return 'KDE Connectify $version no vaovao indrindra.';
   }
 
   @override
@@ -2133,7 +2133,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get updateAllow =>
-      'Avelao hametraka fampiharana ny Linksy, dia tsindrio indray ny Havaozy izao.';
+      'Avelao hametraka fampiharana ny KDE Connectify, dia tsindrio indray ny Havaozy izao.';
 
   @override
   String updateFailedInstall(String message) {
@@ -2266,7 +2266,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get news028DirectBody =>
-      'Ny rakitra 256 MB na mihoatra dia mandeha mivantana any amin\'ny solosainao amin\'ny rohy Wi-Fi manokana, haingana lavitra noho ny mandalo amin\'ny router. Mila Linksy 0.9.9 ao amin\'ny solosaina.';
+      'Ny rakitra 256 MB na mihoatra dia mandeha mivantana any amin\'ny solosainao amin\'ny rohy Wi-Fi manokana, haingana lavitra noho ny mandalo amin\'ny router. Mila KDE Connectify 0.9.9 ao amin\'ny solosaina.';
 
   @override
   String get news028BackgroundTitle => 'Rakitra lehibe, ao ambadika';
@@ -2314,7 +2314,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get news029PhonesBody =>
-      'Mandeha mivantana avy amin\'ny finday iray mankany amin\'ny iray hafa ny rakitra lehibe, tsy mila router. Samy mila Linksy 0.2.9 izy roa. Azonao vonoina ao amin\'ny Fikirakirana.';
+      'Mandeha mivantana avy amin\'ny finday iray mankany amin\'ny iray hafa ny rakitra lehibe, tsy mila router. Samy mila KDE Connectify 0.2.9 izy roa. Azonao vonoina ao amin\'ny Fikirakirana.';
 
   @override
   String get news029LogsTitle => 'Tatitra';
@@ -2325,6 +2325,6 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String pairingUpdateOlder(String name) {
-    return 'Rehefa havaozina ny Linksy ao amin\'ny $name, vao mainka azo antoka ny fampifandraisana.';
+    return 'Rehefa havaozina ny KDE Connectify ao amin\'ny $name, vao mainka azo antoka ny fampifandraisana.';
   }
 }

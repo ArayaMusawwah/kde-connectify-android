@@ -4,13 +4,13 @@
     <string name="channel_incoming_files">Incoming files</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
-    <string name="keep_alive_default">Linksy is connected</string>
+    <string name="keep_alive_default">KDE Connectify is connected</string>
     <string name="your_computer">Your computer</string>
-    <string name="locate_not_allowed">Linksy isn\'t allowed to use this phone\'s location</string>
+    <string name="locate_not_allowed">KDE Connectify isn\'t allowed to use this phone\'s location</string>
     <string name="locate_off">Location is off on this phone</string>
     <string name="locate_timeout">This phone couldn\'t find where it is in time</string>
-    <string name="locate_open_app">Open Linksy on the phone to share where it is</string>
-    <string name="channel_news">News from Linksy</string>
+    <string name="locate_open_app">Open KDE Connectify on the phone to share where it is</string>
+    <string name="channel_news">News from KDE Connectify</string>
     <string name="channel_staying">Staying connected</string>
     <string name="channel_transfers">File transfers</string>
     <string name="camera_didnt_start">The camera didn\'t start.</string>

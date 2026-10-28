@@ -123,7 +123,7 @@ abstract class AppLocalizations {
   /// First screen title.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Linksy'**
+  /// **'Welcome to KDE Connectify'**
   String get onboardingWelcome;
 
   /// No description provided for @onboardingChooseLanguage.
@@ -147,13 +147,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingSetUpTitle.
   ///
   /// In en, this message translates to:
-  /// **'Set up Linksy'**
+  /// **'Set up KDE Connectify'**
   String get onboardingSetUpTitle;
 
   /// No description provided for @onboardingSetUpSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Choose what Linksy may do. Nothing leaves this phone until you say so.'**
+  /// **'Choose what KDE Connectify may do. Nothing leaves this phone until you say so.'**
   String get onboardingSetUpSubtitle;
 
   /// No description provided for @onboardingNotifications.
@@ -201,7 +201,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingBackgroundDetail.
   ///
   /// In en, this message translates to:
-  /// **'Files and calls keep working when Linksy is closed. Shows a quiet notification.'**
+  /// **'Files and calls keep working when KDE Connectify is closed. Shows a quiet notification.'**
   String get onboardingBackgroundDetail;
 
   /// No description provided for @onboardingFolder.
@@ -273,7 +273,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingStart.
   ///
   /// In en, this message translates to:
-  /// **'Start using Linksy'**
+  /// **'Start using KDE Connectify'**
   String get onboardingStart;
 
   /// No description provided for @onboardingBack.
@@ -309,7 +309,7 @@ abstract class AppLocalizations {
   /// Sent to the computer (and shown) when it asks for the phone's location but locating is off
   ///
   /// In en, this message translates to:
-  /// **'Locating is turned off in Linksy on this phone'**
+  /// **'Locating is turned off in KDE Connectify on this phone'**
   String get ctlLocateOff;
 
   /// Fallback name for a computer whose name is unknown, used inside sentences
@@ -330,7 +330,7 @@ abstract class AppLocalizations {
   /// **'Keeping {names} locked when you leave'**
   String ctlKeepingLocked(String names);
 
-  /// Persistent notification while Linksy keeps running in the background
+  /// Persistent notification while KDE Connectify keeps running in the background
   ///
   /// In en, this message translates to:
   /// **'Staying connected to your computers'**
@@ -387,13 +387,13 @@ abstract class AppLocalizations {
   /// Error when the camera permission was refused
   ///
   /// In en, this message translates to:
-  /// **'Linksy needs the camera permission to work as a webcam.'**
+  /// **'KDE Connectify needs the camera permission to work as a webcam.'**
   String get ctlCameraPermission;
 
   /// Error when the microphone permission was refused
   ///
   /// In en, this message translates to:
-  /// **'Linksy needs the microphone permission to be a microphone.'**
+  /// **'KDE Connectify needs the microphone permission to be a microphone.'**
   String get ctlMicrophonePermission;
 
   /// Default title of a remote terminal tab
@@ -1359,13 +1359,13 @@ abstract class AppLocalizations {
   /// Title of a warning card when the computers run a newer protocol than this app.
   ///
   /// In en, this message translates to:
-  /// **'Update Linksy to keep connecting'**
+  /// **'Update KDE Connectify to keep connecting'**
   String get homeUpdateTitle;
 
   /// Body of the update warning card.
   ///
   /// In en, this message translates to:
-  /// **'Your computers now speak a newer Linksy than this app.'**
+  /// **'Your computers now speak a newer KDE Connectify than this app.'**
   String get homeUpdateBody;
 
   /// Button on the update warning card that opens the download page.
@@ -1389,7 +1389,7 @@ abstract class AppLocalizations {
   /// Step 1 of 'Connect your first device'.
   ///
   /// In en, this message translates to:
-  /// **'Open Linksy on your computer'**
+  /// **'Open KDE Connectify on your computer'**
   String get homeStepOpen;
 
   /// Step 2 of 'Connect your first device'. “Pair with QR Code” is the desktop app's menu item; translate it as the desktop app does.
@@ -1437,7 +1437,7 @@ abstract class AppLocalizations {
   /// Hint in the 'Add a device' sheet. “Pair with QR Code” is the desktop app's menu item.
   ///
   /// In en, this message translates to:
-  /// **'On the other device, open Linksy and choose “Add Device”.'**
+  /// **'On the other device, open KDE Connectify and choose “Add Device”.'**
   String get pairingAddDeviceHint;
 
   /// Option in the 'Add a device' sheet that opens the QR scanner.
@@ -1479,7 +1479,7 @@ abstract class AppLocalizations {
   /// Hint in the 'Pair by address' dialog: where to find the address.
   ///
   /// In en, this message translates to:
-  /// **'It’s in Linksy’s Preferences on the other device.'**
+  /// **'It’s in KDE Connectify’s Preferences on the other device.'**
   String get pairingAddressHint;
 
   /// Hint under the address field: the default network port. port is a number like 47200; do not format it.
@@ -1527,7 +1527,7 @@ abstract class AppLocalizations {
   /// Shown in the scanner when camera permission was refused.
   ///
   /// In en, this message translates to:
-  /// **'Linksy needs the camera to scan the pairing code. Allow it, or pair by address.'**
+  /// **'KDE Connectify needs the camera to scan the pairing code. Allow it, or pair by address.'**
   String get scanNeedsCamera;
 
   /// Shown in the scanner when the camera can't start.
@@ -1548,16 +1548,16 @@ abstract class AppLocalizations {
   /// **'Scan the code'**
   String get scanTitle;
 
-  /// Shown in the scanner when a QR code that isn't a Linksy pairing code was scanned. 'Pair with QR Code' is the desktop app's menu item.
+  /// Shown in the scanner when a QR code that isn't a KDE Connectify pairing code was scanned. 'Pair with QR Code' is the desktop app's menu item.
   ///
   /// In en, this message translates to:
-  /// **'That’s not a Linksy code. On your computer, open Linksy → Pair with QR Code.'**
+  /// **'That’s not a KDE Connectify code. On your computer, open KDE Connectify → Pair with QR Code.'**
   String get scanWrongCode;
 
   /// Hint at the bottom of the QR scanner. “Pair with QR Code” is the desktop app's menu item.
   ///
   /// In en, this message translates to:
-  /// **'On your computer, open Linksy and choose “Add Device”.'**
+  /// **'On your computer, open KDE Connectify and choose “Add Device”.'**
   String get scanHint;
 
   /// Title of the share sheet when one shared file goes onto a computer's clipboard.
@@ -1566,7 +1566,7 @@ abstract class AppLocalizations {
   /// **'Put on a clipboard'**
   String get shareSheetPutOnClipboard;
 
-  /// Title of the share sheet when files were shared to Linksy from another app.
+  /// Title of the share sheet when files were shared to KDE Connectify from another app.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{Send a file} other{Send {count} files}}'**
@@ -1587,7 +1587,7 @@ abstract class AppLocalizations {
   /// Share sheet, no computer supports files on its clipboard.
   ///
   /// In en, this message translates to:
-  /// **'None of your computers takes files on its clipboard yet. Update Linksy there.'**
+  /// **'None of your computers takes files on its clipboard yet. Update KDE Connectify there.'**
   String get shareSheetNoClipboardFiles;
 
   /// Share sheet, no paired computer yet.
@@ -1749,7 +1749,7 @@ abstract class AppLocalizations {
   /// Title of the screen shown when the app fails to start; an error message follows.
   ///
   /// In en, this message translates to:
-  /// **'Linksy couldn’t start'**
+  /// **'KDE Connectify couldn’t start'**
   String get appCouldntStart;
 
   /// Tooltip of the close button on a notice card.
@@ -1878,7 +1878,7 @@ abstract class AppLocalizations {
   /// **'Yesterday'**
   String get formatYesterday;
 
-  /// Name of this phone's main storage in folder paths, like 'Phone › Download › Linksy'.
+  /// Name of this phone's main storage in folder paths, like 'Phone › Download › KDE Connectify'.
   ///
   /// In en, this message translates to:
   /// **'Phone'**
@@ -1908,10 +1908,10 @@ abstract class AppLocalizations {
   /// **'Save location'**
   String get settingsSaveLocation;
 
-  /// Settings row caption: the folder received files go to (Downloads folder, then Linksy subfolder)
+  /// Settings row caption: the folder received files go to (Downloads folder, then KDE Connectify subfolder)
   ///
   /// In en, this message translates to:
-  /// **'Downloads › Linksy'**
+  /// **'Downloads › KDE Connectify'**
   String get settingsSaveLocationPath;
 
   /// Settings switch: accept files from paired devices automatically
@@ -1953,7 +1953,7 @@ abstract class AppLocalizations {
   /// Caption of the background switch
   ///
   /// In en, this message translates to:
-  /// **'Files, photo backup and calls keep working when Linksy is closed. Shows a quiet notification.'**
+  /// **'Files, photo backup and calls keep working when KDE Connectify is closed. Shows a quiet notification.'**
   String get settingsKeepRunningCaption;
 
   /// Settings switch: reach computers over the internet
@@ -1977,13 +1977,13 @@ abstract class AppLocalizations {
   /// Caption of the Relay server row when no relay of the user's own is set
   ///
   /// In en, this message translates to:
-  /// **'Linksy’s own'**
+  /// **'KDE Connectify’s own'**
   String get settingsRelayDefault;
 
   /// Caption of the dialog that asks for the relay's address
   ///
   /// In en, this message translates to:
-  /// **'The address of a relay you host yourself, like https://relay.example.com. Leave it empty for Linksy’s own. Set the same relay on every device.'**
+  /// **'The address of a relay you host yourself, like https://relay.example.com. Leave it empty for KDE Connectify’s own. Set the same relay on every device.'**
   String get settingsRelayCaption;
 
   /// Settings section label: features shared with paired computers
@@ -2055,13 +2055,13 @@ abstract class AppLocalizations {
   /// Caption of the locate switch
   ///
   /// In en, this message translates to:
-  /// **'A computer can ask where this phone is, once, to find it. Nothing is kept or tracked. Works while Linksy is open.'**
+  /// **'A computer can ask where this phone is, once, to find it. Nothing is kept or tracked. Works while KDE Connectify is open.'**
   String get settingsLocateCaption;
 
   /// Message when the location permission was refused
   ///
   /// In en, this message translates to:
-  /// **'Linksy needs the location permission for this.'**
+  /// **'KDE Connectify needs the location permission for this.'**
   String get settingsLocatePermission;
 
   /// Settings row: the camera folder backed up to computers
@@ -2103,7 +2103,7 @@ abstract class AppLocalizations {
   /// Explanation of the demo section
   ///
   /// In en, this message translates to:
-  /// **'Simulated devices until the Linksy core is connected. These start what another device would.'**
+  /// **'Simulated devices until the KDE Connectify core is connected. These start what another device would.'**
   String get settingsDemoCaption;
 
   /// Demo action: simulate incoming files
@@ -2175,7 +2175,7 @@ abstract class AppLocalizations {
   /// Caption of the permissions row while loading
   ///
   /// In en, this message translates to:
-  /// **'What Linksy asks Android for, and why.'**
+  /// **'What KDE Connectify asks Android for, and why.'**
   String get settingsPermissionsWhat;
 
   /// Caption when both permissions are allowed
@@ -2199,7 +2199,7 @@ abstract class AppLocalizations {
   /// Intro text of the permissions sheet
   ///
   /// In en, this message translates to:
-  /// **'Linksy asks only for what it needs, and you can change any of these later in Settings.'**
+  /// **'KDE Connectify asks only for what it needs, and you can change any of these later in Settings.'**
   String get permissionsIntro;
 
   /// Permission name: notifications
@@ -2265,7 +2265,7 @@ abstract class AppLocalizations {
   /// Detail while waiting for the computer to allow remote control
   ///
   /// In en, this message translates to:
-  /// **'Linksy on {name} asks whether this phone may move its pointer and type.'**
+  /// **'KDE Connectify on {name} asks whether this phone may move its pointer and type.'**
   String remoteAsks(String name);
 
   /// Title when the remote could not start
@@ -2859,7 +2859,7 @@ abstract class AppLocalizations {
   /// Webcam request explanation
   ///
   /// In en, this message translates to:
-  /// **'{name} gets this phone’s camera as a webcam until you stop. Zoom, focus, light, lenses and rotation are in Linksy while it runs.'**
+  /// **'{name} gets this phone’s camera as a webcam until you stop. Zoom, focus, light, lenses and rotation are in KDE Connectify while it runs.'**
   String sharingCameraRequestDetail(String name);
 
   /// Request dialog title; name is a computer
@@ -3189,7 +3189,7 @@ abstract class AppLocalizations {
   /// Code sheet explanation; Preferences › Terminal is the desktop app's menu path
   ///
   /// In en, this message translates to:
-  /// **'The code set on {name} in Preferences › Terminal. Linksy never keeps it.'**
+  /// **'The code set on {name} in Preferences › Terminal. KDE Connectify never keeps it.'**
   String terminalCodeDetail(String name);
 
   /// Code field hint when letters are allowed
@@ -3369,7 +3369,7 @@ abstract class AppLocalizations {
   /// Heading on the What's New page
   ///
   /// In en, this message translates to:
-  /// **'What’s New in Linksy {version}'**
+  /// **'What’s New in KDE Connectify {version}'**
   String newsHeading(String version);
 
   /// Link to the full release notes
@@ -3384,16 +3384,16 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get newsContinue;
 
-  /// Button that opens Linksy on GitHub
+  /// Button that opens KDE Connectify on GitHub
   ///
   /// In en, this message translates to:
-  /// **'Star Linksy on GitHub'**
+  /// **'Star KDE Connectify on GitHub'**
   String get newsStar;
 
   /// Under the GitHub star button
   ///
   /// In en, this message translates to:
-  /// **'Linksy is free and open source. A star on GitHub helps others find it.'**
+  /// **'KDE Connectify is free and open source. A star on GitHub helps others find it.'**
   String get newsStarCaption;
 
   /// 0.2.4 highlight: private discovery
@@ -3435,13 +3435,13 @@ abstract class AppLocalizations {
   /// Card and sheet title when a newer version is out
   ///
   /// In en, this message translates to:
-  /// **'Linksy {version} Is Available'**
+  /// **'KDE Connectify {version} Is Available'**
   String updateAvailable(String version);
 
   /// Update sheet text
   ///
   /// In en, this message translates to:
-  /// **'This is {current}. Linksy downloads the update and checks it, then Android asks you to install it.'**
+  /// **'This is {current}. KDE Connectify downloads the update and checks it, then Android asks you to install it.'**
   String updateBody(String current);
 
   /// Button that downloads and installs the update
@@ -3471,7 +3471,7 @@ abstract class AppLocalizations {
   /// After Check for Updates finds nothing newer
   ///
   /// In en, this message translates to:
-  /// **'Linksy {version} is the newest version.'**
+  /// **'KDE Connectify {version} is the newest version.'**
   String updateNewest(String version);
 
   /// Settings row that checks for a newer version
@@ -3492,10 +3492,10 @@ abstract class AppLocalizations {
   /// **'The download doesn’t match the release’s checksum, so it wasn’t installed.'**
   String get updateFailedCheck;
 
-  /// Linksy may not install apps yet
+  /// KDE Connectify may not install apps yet
   ///
   /// In en, this message translates to:
-  /// **'Allow Linksy to install apps, then tap Update Now again.'**
+  /// **'Allow KDE Connectify to install apps, then tap Update Now again.'**
   String get updateAllow;
 
   /// The installer refused
@@ -3717,7 +3717,7 @@ abstract class AppLocalizations {
   /// What's New 0.2.8: Wi-Fi Direct (body)
   ///
   /// In en, this message translates to:
-  /// **'Files of 256 MB or more go straight to your computer over a Wi-Fi link of their own, much faster than through the router. Needs Linksy 0.9.9 on the computer.'**
+  /// **'Files of 256 MB or more go straight to your computer over a Wi-Fi link of their own, much faster than through the router. Needs KDE Connectify 0.9.9 on the computer.'**
   String get news028DirectBody;
 
   /// What's New 0.2.8: big files and background transfers (title)
@@ -3801,7 +3801,7 @@ abstract class AppLocalizations {
   /// No description provided for @news029PhonesBody.
   ///
   /// In en, this message translates to:
-  /// **'Big files between two phones now go straight from one to the other, without the router. Both need Linksy 0.2.9. You can turn it off in Settings.'**
+  /// **'Big files between two phones now go straight from one to the other, without the router. Both need KDE Connectify 0.2.9. You can turn it off in Settings.'**
   String get news029PhonesBody;
 
   /// No description provided for @news029LogsTitle.
@@ -3816,10 +3816,10 @@ abstract class AppLocalizations {
   /// **'Settings › Logs shows this phone and what happened lately, to copy into a bug report. They stay on this phone.'**
   String get news029LogsBody;
 
-  /// Small dim line under the pairing code when the other device has an older Linksy (pairing still works).
+  /// Small dim line under the pairing code when the other device has an older KDE Connectify (pairing still works).
   ///
   /// In en, this message translates to:
-  /// **'Updating Linksy on {name} makes pairing even safer.'**
+  /// **'Updating KDE Connectify on {name} makes pairing even safer.'**
   String pairingUpdateOlder(String name);
 }
 

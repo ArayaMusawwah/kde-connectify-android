@@ -247,7 +247,7 @@ class _LinksyAppState extends State<LinksyApp> {
         widget.controller.themeMode,
       ]),
       builder: (context, _) => MaterialApp(
-        title: 'Linksy',
+        title: 'KDE Connectify',
         debugShowCheckedModeBanner: false,
         navigatorKey: _navigator,
         scaffoldMessengerKey: _messenger,

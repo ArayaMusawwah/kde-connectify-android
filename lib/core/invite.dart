@@ -25,7 +25,10 @@ class Invite {
   /// Returns null for anything that isn't a valid version-1 invite.
   static Invite? tryParse(String text) {
     final uri = Uri.tryParse(text.trim());
-    if (uri == null || uri.scheme != 'linksy' || uri.host != 'pair') {
+    if (uri == null || uri.host != 'pair') {
+      return null;
+    }
+    if (uri.scheme != 'kdeconnectify' && uri.scheme != 'connectify' && uri.scheme != 'linksy') {
       return null;
     }
     // Uri decodes `+` as a space in queryParameters, as the format requires.

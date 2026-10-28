@@ -7,6 +7,13 @@ void main() {
 
   String link(String query) => 'linksy://pair?$query';
 
+  test('parses kdeconnectify and connectify and linksy schemes', () {
+    final query = 'v=1&id=$id&n=Device&a=192.168.1.1:47200&t=$token';
+    expect(Invite.tryParse('kdeconnectify://pair?$query'), isNotNull);
+    expect(Invite.tryParse('connectify://pair?$query'), isNotNull);
+    expect(Invite.tryParse('linksy://pair?$query'), isNotNull);
+  });
+
   test('parses a desktop invite', () {
     final invite = Invite.tryParse(
       link(
