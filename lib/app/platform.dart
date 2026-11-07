@@ -208,6 +208,14 @@ abstract final class LinksyPlatform {
   static Future<void> shareFiles(bool on) =>
       _call<void>('shareFiles', {'on': on});
 
+  /// True when the user granted MANAGE_EXTERNAL_STORAGE for free browsing.
+  static Future<bool> isStoragePermissionGranted() async =>
+      await _call<bool>('isStoragePermissionGranted') ?? false;
+
+  /// Opens Android Settings > All Files Access for this app.
+  static Future<void> requestStoragePermission() =>
+      _call<void>('requestStoragePermission');
+
   /// Keeps Linksy running with the screen off, with a quiet notification
   /// saying [text]; [awake] keeps the CPU on too (heartbeats). With
   /// [progress] (a percentage, or -1 not started yet), it's files on their
@@ -281,6 +289,29 @@ abstract final class LinksyPlatform {
 
   static Future<void> triggerPhoneMediaBroadcast() async =>
       _call<void>('triggerPhoneMediaBroadcast');
+
+  static Future<void> saveWidgetCommands({
+    required String deviceId,
+    required String deviceName,
+    required String commandsJson,
+  }) async =>
+      _call<void>('saveWidgetCommands', {
+        'device_id': deviceId,
+        'device_name': deviceName,
+        'commands_json': commandsJson,
+      });
+
+  static Future<Map<String, String>?> getSavedCommandsCache() async {
+    final res = await _call<Map<Object?, Object?>>('getSavedCommandsCache');
+    if (res == null) return null;
+    return res.map((k, v) => MapEntry(k.toString(), v.toString()));
+  }
+
+  static Future<bool> runCommand(String id, String key) async =>
+      await _call<bool>('runCommand', {'id': id, 'key': key}) ?? false;
+
+  static Future<bool> requestCommands(String id) async =>
+      await _call<bool>('requestCommands', {'id': id}) ?? false;
 
   /// Presentation remote: keeps the screen on and turns the volume keys into
   /// [volumeKeys] (true = up) while on.

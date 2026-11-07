@@ -315,6 +315,20 @@ impl LinksyNode {
         run(async move { node.send_media_state(&id, &state).await }).await
     }
 
+    /// Execute a command preset on the computer.
+    pub async fn run_command(&self, id: String, key: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.run_command(&id, &key).await }).await
+    }
+
+    /// Request commands list from the computer.
+    pub async fn request_commands(&self, id: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.request_commands(&id).await }).await
+    }
+
     /// `command_json` in the core's shape: `{"action":"play_pause"}`.
     pub async fn media_command(&self, id: String, player: String, command_json: String) -> Result<(), String> {
         let id = fingerprint(&id)?;

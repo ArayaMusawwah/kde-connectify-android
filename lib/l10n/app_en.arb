@@ -557,6 +557,14 @@
       }
     }
   },
+  "deviceSavedCommands": "Saved Commands",
+  "@deviceSavedCommands": {
+    "description": "Card title: preset terminal commands from the computer"
+  },
+  "deviceNoCommandsSaved": "No commands saved on this computer yet",
+  "@deviceNoCommandsSaved": {
+    "description": "Commands card caption when the computer has no saved commands"
+  },
   "deviceFilterAll": "All",
   "@deviceFilterAll": {
     "description": "Timeline filter: everything"

@@ -810,6 +810,18 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 terminal open} other{{count} terminals open}}'**
   String deviceTerminalsOpen(int count);
 
+  /// Card title: preset terminal commands from the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Commands'**
+  String get deviceSavedCommands;
+
+  /// Commands card caption when the computer has no saved commands
+  ///
+  /// In en, this message translates to:
+  /// **'No commands saved on this computer yet'**
+  String get deviceNoCommandsSaved;
+
   /// Timeline filter: everything
   ///
   /// In en, this message translates to:

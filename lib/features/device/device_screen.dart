@@ -18,6 +18,7 @@ import '../remote/remote_screen.dart';
 import '../sharing/sharing.dart';
 import '../sharing/webcam_screen.dart';
 import '../terminal/terminal_screen.dart';
+import 'commands_screen.dart';
 import '../../app/terminals.dart';
 import 'activity_tile.dart';
 import '../transfer/transfer_bubble.dart';
@@ -196,6 +197,11 @@ class _DeviceScreenState extends State<DeviceScreen> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                             child: _TerminalCard(view: view),
+                          ),
+                        if (_isComputer(view.device))
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                            child: _SavedCommandsCard(view: view),
                           ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
@@ -1709,6 +1715,55 @@ class _NoActivity extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(color: s.muted, height: 1.4),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Card linking to the saved commands screen for this computer.
+class _SavedCommandsCard extends StatelessWidget {
+  const _SavedCommandsCard({required this.view});
+
+  final DeviceView view;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final c = LinksyScope.of(context);
+    final id = view.device.id;
+    final list = c.commands[id] ?? const [];
+
+    return SigCard(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => CommandsScreen(deviceId: id),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+      child: Row(
+        children: [
+          IconCircle(icon: Ph.terminalWindow, color: Sig.blue, size: 40),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.l10n.deviceSavedCommands,
+                  style: sora(16, color: s.ink),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  list.isEmpty
+                      ? context.l10n.deviceNoCommandsSaved
+                      : '${list.length} ${list.length == 1 ? "command" : "commands"}',
+                  style: TextStyle(fontSize: 12.5, color: s.muted),
+                ),
+              ],
+            ),
+          ),
+          Icon(Ph.caretRight, color: s.faint, size: 18),
         ],
       ),
     );

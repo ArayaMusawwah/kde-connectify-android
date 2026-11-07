@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import '../app/platform.dart';
 import '../src/rust/api/node.dart' as rust;
 import '../ui/l10n.dart';
 import '../src/rust/frb_generated.dart';
@@ -254,6 +255,14 @@ class RustNode implements LinksyNode {
     () => _node.setVolume(id: id, level: level, muted: muted),
     name: _nameOf(id),
   );
+
+  @override
+  Future<void> runCommand(String id, String key) =>
+      LinksyPlatform.runCommand(id, key);
+
+  @override
+  Future<void> requestCommands(String id) =>
+      LinksyPlatform.requestCommands(id);
 
   @override
   Future<void> mediaCommand(

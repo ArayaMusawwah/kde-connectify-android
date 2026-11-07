@@ -75,6 +75,11 @@ class MainActivity : FlutterActivity() {
         ComputerMedia.onAction = { action, position ->
             runOnUiThread { channel?.invokeMethod("mediaAction", mapOf("action" to action, "position_ms" to position)) }
         }
+        val fs = fileServer(this)
+        if (fs.allFilesGranted()) {
+            fs.enableAllFiles(true)
+            NativeFiles.sharing(true)
+        }
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "org.kde.connectify/platform").apply {
             setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -99,8 +104,15 @@ class MainActivity : FlutterActivity() {
                     "folder" -> result.success(folderName(call.argument<String>("kind")!!))
                     "shareFiles" -> {
                         val on = call.argument<Boolean>("on") == true
-                        fileServer(this@MainActivity).root = folder("files")
-                        NativeFiles.sharing(on && folder("files") != null)
+                        val fs = fileServer(this@MainActivity)
+                        if (fs.allFilesGranted()) {
+                            fs.enableAllFiles(on)
+                            NativeFiles.sharing(on)
+                        } else {
+                            val f = folder("files")
+                            fs.root = f
+                            NativeFiles.sharing(on && f != null)
+                        }
                         result.success(null)
                     }
                     "isNotificationListenerEnabled" -> {
@@ -120,6 +132,50 @@ class MainActivity : FlutterActivity() {
                     "triggerPhoneMediaBroadcast" -> {
                         MediaNotificationListener.triggerBroadcast()
                         result.success(null)
+                    }
+                    "saveWidgetCommands" -> {
+                        val deviceId = call.argument<String>("device_id") ?: ""
+                        val deviceName = call.argument<String>("device_name") ?: "KDE Connectify"
+                        val commandsJson = call.argument<String>("commands_json") ?: "[]"
+                        getSharedPreferences("commands_cache", MODE_PRIVATE)
+                            .edit()
+                            .putString("device_id", deviceId)
+                            .putString("device_name", deviceName)
+                            .putString("commands_json", commandsJson)
+                            .apply()
+                        CommandWidgetProvider.updateAllWidgets(this@MainActivity)
+                        result.success(null)
+                    }
+                    "getSavedCommandsCache" -> {
+                        val prefs = getSharedPreferences("commands_cache", MODE_PRIVATE)
+                        val deviceId = prefs.getString("device_id", "") ?: ""
+                        val commandsJson = prefs.getString("commands_json", "[]") ?: "[]"
+                        result.success(mapOf(
+                            "device_id" to deviceId,
+                            "commands_json" to commandsJson
+                        ))
+                    }
+                    "isStoragePermissionGranted" -> {
+                        result.success(fileServer(this@MainActivity).allFilesGranted())
+                    }
+                    "requestStoragePermission" -> {
+                        val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                        startActivityForResult(intent, REQUEST_ALL_FILES)
+                        result.success(null)
+                    }
+                    "setAllFilesMode" -> {
+                        val on = call.argument<Boolean>("on") == true
+                        fileServer(this@MainActivity).enableAllFiles(on)
+                        result.success(null)
+                    }
+                    "runCommand" -> {
+                        val id = call.argument<String>("id") ?: ""
+                        val key = call.argument<String>("key") ?: ""
+                        result.success(NativeCommands.runCommand(id, key))
+                    }
+                    "requestCommands" -> {
+                        val id = call.argument<String>("id") ?: ""
+                        result.success(NativeCommands.requestCommands(id))
                     }
                     "directHost" -> result.success(DirectHost.supported(this@MainActivity))
                     "deviceReport" -> result.success(deviceReport())
@@ -945,6 +1001,11 @@ class MainActivity : FlutterActivity() {
             if (kind == "files") fileServer(this).root = uri
             return result.success(folderName(kind))
         }
+        if (requestCode == REQUEST_ALL_FILES) {
+            // Permission was either granted or denied by the user in the system settings screen.
+            // The FileServer reads allFilesGranted() live, no state to persist here.
+            return
+        }
         if (requestCode == REQUEST_PICK) {
             val result = pendingPick ?: return
             pendingPick = null
@@ -999,6 +1060,7 @@ class MainActivity : FlutterActivity() {
         const val REQUEST_PICK = 44
         const val REQUEST_FOLDER = 45
         const val REQUEST_PICTURE = 46
+        const val REQUEST_ALL_FILES = 47
 
         private var files: FileServer? = null
 

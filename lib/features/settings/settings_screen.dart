@@ -179,13 +179,15 @@ class SettingsScreen extends StatelessWidget {
                       _Row(
                         icon: Ph.folderOpen,
                         title: context.l10n.settingsBrowseFiles,
-                        caption: c.filesFolder == null
-                            ? context.l10n.settingsBrowseFilesChoose
-                            : context.l10n.settingsSharesFolder(c.filesFolder!),
-                        onTap: c.pickFilesFolder,
+                        caption: c.allFilesGranted
+                            ? 'All storage access (entire phone)'
+                            : (c.filesFolder == null
+                                ? context.l10n.settingsBrowseFilesChoose
+                                : context.l10n.settingsSharesFolder(c.filesFolder!)),
+                        onTap: c.allFilesGranted ? null : c.pickFilesFolder,
                         trailing: Switch(
-                          value: c.sharingFiles && c.filesFolder != null,
-                          onChanged: (v) => v && c.filesFolder == null
+                          value: c.sharingFiles && (c.filesFolder != null || c.allFilesGranted),
+                          onChanged: (v) => v && (c.filesFolder == null && !c.allFilesGranted)
                               ? c.pickFilesFolder()
                               : c.setSharingFiles(v),
                         ),

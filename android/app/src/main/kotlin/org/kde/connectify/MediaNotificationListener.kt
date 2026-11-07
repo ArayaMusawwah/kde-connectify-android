@@ -215,37 +215,15 @@ class MediaNotificationListener : NotificationListenerService() {
         val ctrl = controllers.firstOrNull { it.packageName == player } ?: controllers.firstOrNull() ?: return false
         Log.i("KDEConnectify", "executeCommand: $action for ${ctrl.packageName}")
         when (action) {
-            "play" -> {
-                ctrl.transportControls.play()
-                sendMediaKey(ctrl, KeyEvent.KEYCODE_MEDIA_PLAY)
-            }
-            "pause" -> {
-                ctrl.transportControls.pause()
-                sendMediaKey(ctrl, KeyEvent.KEYCODE_MEDIA_PAUSE)
-            }
+            "play" -> ctrl.transportControls.play()
+            "pause" -> ctrl.transportControls.pause()
             "play_pause" -> {
                 val isPlaying = ctrl.playbackState?.state == PlaybackState.STATE_PLAYING
-                if (isPlaying) {
-                    ctrl.transportControls.pause()
-                    sendMediaKey(ctrl, KeyEvent.KEYCODE_MEDIA_PAUSE)
-                } else {
-                    ctrl.transportControls.play()
-                    sendMediaKey(ctrl, KeyEvent.KEYCODE_MEDIA_PLAY)
-                }
+                if (isPlaying) ctrl.transportControls.pause() else ctrl.transportControls.play()
             }
-            "next" -> {
-                ctrl.transportControls.skipToNext()
-                sendMediaKey(ctrl, KeyEvent.KEYCODE_MEDIA_NEXT)
-            }
-            "previous" -> {
-                ctrl.transportControls.skipToPrevious()
-                sendMediaKey(ctrl, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
-            }
-            "seek" -> {
-                if (positionMs != null) {
-                    ctrl.transportControls.seekTo(positionMs)
-                }
-            }
+            "next" -> ctrl.transportControls.skipToNext()
+            "previous" -> ctrl.transportControls.skipToPrevious()
+            "seek" -> positionMs?.let { ctrl.transportControls.seekTo(it) }
             else -> return false
         }
         broadcastCurrentState()

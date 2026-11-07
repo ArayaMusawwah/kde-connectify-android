@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- QUIC over the local network, and mDNS presence (needs a multicast lock). -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -37,6 +38,10 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     <!-- "Ring my phone" also vibrates. -->
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <!-- Full storage access for "Browse All Files" from the desktop. Android 11+
+         shows an explicit user consent screen; grant is per-app in Settings. -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage"/>
 
     <application
         android:label="KDE Connectify"
@@ -129,6 +134,24 @@
         <receiver
             android:name=".ComputerMedia$Button"
             android:exported="false"/>
+        <!-- Home Screen Saved Commands Widget -->
+        <receiver
+            android:name=".CommandWidgetProvider"
+            android:label="@string/widget_commands_title"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="org.kde.connectify.ACTION_RUN_COMMAND" />
+                <action android:name="org.kde.connectify.ACTION_REFRESH_WIDGET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/command_widget_info" />
+        </receiver>
+        <service
+            android:name=".CommandWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="false" />
         <!-- Push notifications (Firebase Cloud Messaging). No analytics. -->
         <service
             android:name=".MediaNotificationListener"

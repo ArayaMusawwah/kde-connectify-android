@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 
 import '../core/linksy_node.dart';
+import '../core/core_json.dart';
 import 'app_log.dart';
 import '../core/models.dart';
 import '../core/service_info.dart';
@@ -107,6 +108,9 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   /// Each computer's volume, while its players are watched (desktop 0.9.8).
   final Map<String, VolumeState> volume = {};
 
+  /// Each computer's saved commands (preset terminal actions).
+  final Map<String, List<CommandEntry>> commands = {};
+
   /// Computers that lock themselves when this phone leaves.
   final Map<String, int> lockWatchers = {};
 
@@ -122,6 +126,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   /// Folders picked in Android's picker: shared with computers, backed up.
   String? filesFolder;
   String? photosFolder;
+  bool allFilesGranted = false;
 
   /// Photo imports going out: transfer → (device, newest photo time, more).
   final Map<String, (String, int, bool)> _imports = {};
@@ -374,7 +379,8 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       ..remove(_self);
     filesFolder = await LinksyPlatform.folder('files');
     photosFolder = await LinksyPlatform.folder('photos');
-    await LinksyPlatform.shareFiles(sharingFiles && filesFolder != null);
+    allFilesGranted = await LinksyPlatform.isStoragePermissionGranted();
+    await LinksyPlatform.shareFiles(sharingFiles && (filesFolder != null || allFilesGranted));
     await LinksyPlatform.watchCalls(pauseOnCalls);
     _updateKeepAlive();
     notifyListeners();
@@ -383,6 +389,22 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _usbSub = LinksyPlatform.usbPorts.listen(_onUsb);
     final usb = await LinksyPlatform.usbPort();
     if (usb != null) _onUsb(usb);
+    final cached = await LinksyPlatform.getSavedCommandsCache();
+    if (cached != null) {
+      final cachedId = cached['device_id'] ?? '';
+      final cachedJson = cached['commands_json'] ?? '[]';
+      if (cachedId.isNotEmpty && cachedJson != '[]') {
+        try {
+          final list = (jsonDecode(cachedJson) as List)
+              .cast<Map<String, Object?>>()
+              .map(commandEntryFromJson)
+              .toList();
+          if (list.isNotEmpty) {
+            commands[cachedId] = list;
+          }
+        } catch (_) {}
+      }
+    }
     for (final v in devices) {
       if (v.connected) _onConnected(v.device.id);
     }
@@ -681,6 +703,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
     _tellPicture(id);
     _watchClipboard(id);
     _importTo(id);
+    node.requestCommands(id).catchError((Object _) {});
   }
 
   void dismissNotice(String id) => _setPref('notice.$id', '1');
@@ -931,8 +954,25 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> setSharingFiles(bool on) async {
     await _setPref('share_files', on ? 'on' : null);
-    await LinksyPlatform.shareFiles(on && filesFolder != null);
+    allFilesGranted = await LinksyPlatform.isStoragePermissionGranted();
+    await LinksyPlatform.shareFiles(on && (filesFolder != null || allFilesGranted));
+    notifyListeners();
   }
+
+  Future<void> requestAllFilesPermission() async {
+    await LinksyPlatform.requestStoragePermission();
+    allFilesGranted = await LinksyPlatform.isStoragePermissionGranted();
+    if (allFilesGranted) {
+      await setSharingFiles(true);
+    }
+    notifyListeners();
+  }
+
+  Future<void> runCommand(String id, String key) =>
+      node.runCommand(id, key).catchError((Object _) {});
+
+  Future<void> requestCommands(String id) =>
+      node.requestCommands(id).catchError((Object _) {});
 
   // Media (§4.5): a computer's players, while a page or the media
   // notification shows them.
@@ -1237,6 +1277,7 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
       case Disconnected(:final id):
         media.remove(id);
         volume.remove(id);
+        commands.remove(id);
         _showMediaNotice();
         _toldPicture.remove(id);
         _clipWatching.remove(id);
@@ -1264,6 +1305,14 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
         final action = command['action'] as String? ?? '';
         final pos = (command['position_ms'] as num?)?.toInt();
         LinksyPlatform.sendPhoneMediaCommand(player, action, pos);
+      case CommandsReceived(:final from, :final list):
+        commands[from.id] = list;
+        notifyListeners();
+        LinksyPlatform.saveWidgetCommands(
+          deviceId: from.id,
+          deviceName: from.name,
+          commandsJson: jsonEncode(list.map((c) => c.toJson()).toList()),
+        );
       case VolumeStateReceived(:final from, :final state):
         final known = volume[from.id];
         if (known == null || state.seq >= known.seq) {

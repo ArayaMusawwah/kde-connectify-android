@@ -353,6 +353,12 @@ class DemoNode implements LinksyNode {
   Future<void> setVolume(String id, {double? level, bool? muted}) async {}
 
   @override
+  Future<void> runCommand(String id, String key) async {}
+
+  @override
+  Future<void> requestCommands(String id) async {}
+
+  @override
   Future<void> mediaCommand(
     String id,
     String player,

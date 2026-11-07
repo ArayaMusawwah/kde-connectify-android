@@ -473,6 +473,32 @@ class MediaCommandReceived extends LinksyEvent {
   final Map<String, Object?> command;
 }
 
+/// A preset command configured on a computer.
+class CommandEntry {
+  const CommandEntry({
+    required this.key,
+    required this.name,
+    required this.command,
+  });
+
+  final String key;
+  final String name;
+  final String command;
+
+  Map<String, Object?> toJson() => {
+    'key': key,
+    'name': name,
+    'command': command,
+  };
+}
+
+/// A computer sent its list of saved commands.
+class CommandsReceived extends LinksyEvent {
+  const CommandsReceived({required this.from, required this.list});
+  final DeviceInfo from;
+  final List<CommandEntry> list;
+}
+
 /// A computer's system volume: [level] from 0 to 1, and [muted].
 class VolumeState {
   const VolumeState({

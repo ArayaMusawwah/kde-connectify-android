@@ -449,6 +449,12 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get deviceSavedCommands => 'Saved Commands';
+
+  @override
+  String get deviceNoCommandsSaved => 'No commands saved on this computer yet';
+
+  @override
   String get deviceFilterAll => 'Todo';
 
   @override

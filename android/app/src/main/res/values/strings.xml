@@ -29,4 +29,7 @@
     <string name="media_next">Next</string>
     <string name="media_back10">10 seconds back</string>
     <string name="media_forward10">10 seconds forward</string>
+    <string name="widget_commands_title">Saved Commands</string>
+    <string name="widget_commands_description">Run terminal commands on your connected computer</string>
+    <string name="widget_no_commands">No commands found. Connect to your computer to sync.</string>
 </resources>

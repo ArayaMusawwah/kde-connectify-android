@@ -65,6 +65,12 @@ Battery batteryFromJson(Json j) => Battery(
   charging: j['charging'] as bool? ?? false,
 );
 
+CommandEntry commandEntryFromJson(Json j) => CommandEntry(
+  key: j['key'] as String? ?? '',
+  name: j['name'] as String? ?? '',
+  command: j['command'] as String? ?? '',
+);
+
 NodeSettings settingsFromJson(Json j) => NodeSettings(
   name: j['name'] as String,
   downloadDir: j['download_dir'] as String,
@@ -183,6 +189,13 @@ LinksyEvent? eventFromJson(Json j) {
       from: device('from'),
       player: j['player'] as String? ?? '',
       command: (j['command'] as Map?)?.cast<String, Object?>() ?? const {},
+    ),
+    'commands_received' => CommandsReceived(
+      from: device('from'),
+      list: [
+        for (final item in (j['list'] as List? ?? const []))
+          if (item is Map) commandEntryFromJson(item.cast<String, Object?>()),
+      ],
     ),
     'volume_state' => VolumeStateReceived(
       from: device('from'),

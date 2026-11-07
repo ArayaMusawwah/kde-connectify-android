@@ -78,6 +78,12 @@ abstract interface class LinksyNode {
   /// [id]'s volume: [level] from 0 to 1, [muted], or both.
   Future<void> setVolume(String id, {double? level, bool? muted});
 
+  /// Run command [key] on computer [id].
+  Future<void> runCommand(String id, String key);
+
+  /// Request commands list from computer [id].
+  Future<void> requestCommands(String id);
+
   /// `ringing`, `active` or `idle`.
   Future<void> sendCallState(String id, String state);
 
