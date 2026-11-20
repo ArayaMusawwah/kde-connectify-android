@@ -1,109 +1,46 @@
-# KDE Connectify for Android 📱
+# KDE Connectify for Android
 
-Your devices, connected. The companion Android mobile app for [KDE Connectify Desktop](https://github.com/ArayaMusawwah/kde-connectify):
-share files, clipboard text, pings, camera webcam, second display (sidecar), and microphone directly over the local network or USB cable, with no account, cloud or server.
+Your devices, connected. Companion Android mobile app for
+[Project KDE Connectify](https://github.com/ArayaMusawwah/kde-connectify):
+share files, clipboard text, pings, camera webcam, second display (sidecar),
+microphone directly over local network or USB cable, no account, cloud or
+server.
 
----
+## Status
 
-## 🌟 Key Features
+This is a fork of
+[LinkSy-mg/linksy-mobile](https://github.com/LinkSy-mg/linksy-mobile), merged
+with KDE Connectify-specific features:
+
+- Android accessibility input/control overlay (pointer + keyboard)
+- Home-screen command widgets synced from the computer
+- PC file browsing with all-files access (`MANAGE_EXTERNAL_STORAGE`)
+- Phone media sync (`MediaNotificationListener`)
+- Dual/triple pairing scheme (`kdeconnectify://`, `connectify://`, `linksy://`)
+- Application id `org.kde.connectify` and rebranded strings
+
+## Key Features
 
 - **Virtual Webcam**: Stream phone camera (1080p, 60fps, front/back switch, zoom) into PC PipeWire apps.
-- **Second Display (Sidecar)**: Use phone or tablet as a low-latency touch-enabled monitor for Linux.
+- **Second Display (Sidecar)**: Use phone tablet as low-latency touch-enabled monitor.
 - **Virtual Microphone**: Low-latency PCM 48kHz audio directly into PC PipeWire.
-- **Screen Mirror & Remote Desktop**: Real-time display mirroring and mouse/keyboard control.
+- **Screen Mirror & Remote Desktop**: Real-time display mirroring, mouse/keyboard control.
 - **USB Cable Mode (AOA)**: Zero Wi-Fi latency connection via plain USB cable (no developer options / ADB required).
-- **Away from Home**: Reach paired computers securely over the internet via `iroh` P2P relay.
-- **Wi-Fi Direct**: Ad-hoc 5GHz P2P group transfer for files $\ge 256$ MB (~80 MB/s).
-- **Remote Terminal**: Interactive shell on your computer with PIN authorization.
-- **Shared Clipboard, Files & Notifications**: Fast local-first transfers with BLAKE3 checksums and resume support.
-
----
-
-## 🏗️ Architecture
-
-The app runs on **linksy-core itself** (Rust, from linksy-desktop) through `flutter_rust_bridge`, providing 100% protocol fidelity with KDE Connectify Desktop.
-
-Up to date with desktop 0.6.0 (core `1c8ebe4`). Done on the phone:
-
-- Discovery, pairing (QR scanner, `linksy://pair` links, address, 6-digit code), presence,
-  **away from home** over iroh and Linksy's relay, the **USB cable** (AOA bridge).
-- Files both ways (Accept/Decline also in the notification, Downloads/Linksy), share
-  sheet, clipboard text and **files**, clipboard watch from computers, ping, open links.
-- Battery, ring both ways, the computer's players, calls pause music, lock when away
-  (heartbeats), photo backup, the Files sidebar on a picked folder.
-- Sessions: screen sharing, **webcam** (full controls, 720p/1080p, 30/60 fps, controls
-  from the computer), **microphone**, second display in the phone's shape, watching and
-  controlling the computer's screen, touchpad/keyboard/slides.
-- Device pictures both ways, locate (opt-in), service notices, push news.
-- 10 languages (English, French, Malagasy, Spanish, Portuguese, German, Italian,
-  Russian, Chinese, Japanese) with gen-l10n: `lib/l10n/app_*.arb`, Android's own text in
-  `android/app/src/main/res/values-*`. First-run setup, light/dark/system appearance.
-
-Not possible in a sideloaded app (see [`docs/android-app.md`](docs/android-app.md) §3): texting, mirroring
-the phone's notifications or its media, remote control of the phone, watching its
-clipboard, background location.
+- **Away Home**: Reach paired computers securely over internet via `iroh` P2P relay.
+- **Wi-Fi Direct**: Ad-hoc 5GHz P2P group transfer files > 256 MB (~80 MB/s).
+- **Remote Terminal**: Interactive shell on computer PIN authorization.
+- **Shared Clipboard, Files & Notifications**: Fast local-first transfers, BLAKE3 checksums, resume support.
 
 ## For the desktop side
 
-[`docs/android-app.md`](docs/android-app.md) tells linksy-desktop what the phone does, what it needs from the
-desktop, and which features Android won't allow in a sideloaded app.
+The C++ side lives in
+[Project KDE Connectify](https://github.com/ArayaMusawwah/kde-connectify) under
+`3rdparty/linksy-desktop`.
 
 ## Lean on purpose
 
-What ships is only what runs. Dependencies are Flutter and `flutter_rust_bridge`, plus
-ZXing core (Java, offline) for reading QR codes and Firebase Cloud Messaging for push
-(wired natively in `Push.kt`, analytics off; config in `android/app/google-services.json`,
-project `linksy-mg`; every install joins the `all` topic, so the console can send news). Everything else is the platform's own:
-Android's document picker for sending, a read-only `ReceivedFiles` provider for opening
-received files, Camera2 for the scanner and sharing, and folder paths over the
-platform channel. No ML Kit, analytics or storage permissions; folders come from
-Android's folder picker.
-
-The APK declares: network and Wi-Fi multicast, camera, microphone (asked only when a
-computer wants it), location while in use (asked only when "Let computers locate this
-phone" is turned on), notifications, vibration, push (`c2dm.permission.RECEIVE`), and
-foreground services for screen capture, camera and microphone (only while sharing) and
-for staying connected (lock when away, opt-in background). No SMS, notification-listener,
-accessibility, background-location or storage permissions. Check a build with
-`aapt2 dump permissions <apk>` before releasing.
-
-The Rust library is built for size (`opt-level = "z"`, fat LTO) except the hot paths,
-QUIC, TLS and BLAKE3, which stay at `opt-level = 3`.
+See the upstream documentation for design rationale.
 
 ## The Rust bridge
 
-Per `docs/protocol.md` §3 the protocol is **not** reimplemented in Dart (QUIC, mutual TLS with
-self-signed certificates, the TLS exporter behind the pairing code). Instead:
-
-- `rust/` is a thin crate over `linksy_core::Node` (a git dependency pinned to a
-  linksy-desktop commit). Values cross as JSON in the core's own serde shapes; errors as
-  kinds (`unreachable`, `declined`…) that `lib/core/rust_node.dart` words with the
-  device's name.
-- `lib/src/rust/` and `rust/src/frb_generated.rs` are generated by
-  `flutter_rust_bridge_codegen generate` (committed, so Dart builds without Rust).
-- `lib/core/rust_node.dart` implements the app's `LinksyNode` on the bindings.
-- `MainActivity.kt` holds a `WifiManager.MulticastLock` from `onStart` to `onStop`,
-  gives Dart the phone's name, forwards `linksy://pair` links, and asks for screen
-  capture and camera consent.
-- Screen and camera sharing (`android/…/media/`): `ShareService` (foreground, types
-  `mediaProjection|camera`) feeds MediaProjection or Camera2 into a hardware H.264
-  encoder (Constrained Baseline, Annex-B, keyframe every 2 s, SPS/PPS before each,
-  screen at its exact shape within 1920×1080 at ≤ 30 fps, restarted on rotation; camera
-  1280×720 at 30 fps). Video and input cross through JNI (`rust/src/sessions.rs`, one
-  task per session owning its streams), not through Dart.
-- Second display: `DisplayReceiver` decodes the desktop's stream into a Flutter texture
-  (`TextureRegistry.SurfaceProducer`); `DisplayScreen` sends touches back as framed
-  `pointer`/`button`/`scroll` messages.
-
-Build the native libraries before `flutter run` or a release (release.sh does it):
-
-```sh
-tool/build_rust.sh
-```
-
-It needs `rustup` (Homebrew's keg: `/opt/homebrew/opt/rustup/bin`), the targets
-`aarch64-linux-android armv7-linux-androideabi x86_64-linux-android`, `cargo-ndk`,
-`flutter_rust_bridge_codegen` 2.13.0, NDK 28.2 and SSH access to linksy-desktop. To move
-to a newer core, change the `rev` in `rust/Cargo.toml` and rebuild.
-
-Core logs go to logcat under the tag `linksy`.
+`rust/` contains the flutter_rust_bridge wrapper around `linksy_core`.

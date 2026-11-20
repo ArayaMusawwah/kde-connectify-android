@@ -13,6 +13,14 @@ abstract final class Ph {
     fontFamily: 'PhosphorRegular',
   );
   static const bellRinging = IconData(0xe5e8, fontFamily: 'PhosphorRegular');
+  static const camera = IconData(0xe10e, fontFamily: 'PhosphorRegular');
+  static const arrowCounterClockwise = IconData(
+    0xe038,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const deviceRotate = IconData(0xe1da, fontFamily: 'PhosphorRegular');
+  static const palette = IconData(0xe6c8, fontFamily: 'PhosphorRegular');
+  static const stack = IconData(0xe466, fontFamily: 'PhosphorRegular');
   static const cameraSlash = IconData(0xe110, fontFamily: 'PhosphorRegular');
   static const caretRight = IconData(0xe13a, fontFamily: 'PhosphorRegular');
   static const caretDown = IconData(0xe136, fontFamily: 'PhosphorRegular');
@@ -20,6 +28,10 @@ abstract final class Ph {
   static const clock = IconData(0xe19a, fontFamily: 'PhosphorRegular');
   static const arrowCircleUp = IconData(0xe030, fontFamily: 'PhosphorRegular');
   static const sparkle = IconData(0xe6a2, fontFamily: 'PhosphorRegular');
+  static const personSimpleWalk = IconData(
+    0xe73a,
+    fontFamily: 'PhosphorRegular',
+  );
   static const star = IconData(0xe46a, fontFamily: 'PhosphorRegular');
   static const eyeSlash = IconData(0xe224, fontFamily: 'PhosphorRegular');
   static const copy = IconData(0xe1ca, fontFamily: 'PhosphorRegular');
@@ -50,6 +62,10 @@ abstract final class Ph {
   static const linkBreak = IconData(0xe2e4, fontFamily: 'PhosphorRegular');
   static const network = IconData(0xedde, fontFamily: 'PhosphorRegular');
   static const pencilSimple = IconData(0xe3b4, fontFamily: 'PhosphorRegular');
+  static const chatCircleText = IconData(0xe16e, fontFamily: 'PhosphorRegular');
+  static const squaresFour = IconData(0xe464, fontFamily: 'PhosphorRegular');
+  static const imagesSquare = IconData(0xe834, fontFamily: 'PhosphorRegular');
+  static const trash = IconData(0xe4a6, fontFamily: 'PhosphorRegular');
   static const qrCode = IconData(0xe3e6, fontFamily: 'PhosphorRegular');
   static const scan = IconData(0xebb6, fontFamily: 'PhosphorRegular');
   static const shieldCheck = IconData(0xe40c, fontFamily: 'PhosphorRegular');
@@ -82,11 +98,21 @@ abstract final class Ph {
   static const arrowClockwise = IconData(0xe036, fontFamily: 'PhosphorRegular');
   static const hand = IconData(0xe298, fontFamily: 'PhosphorRegular');
   static const handPointing = IconData(0xe29a, fontFamily: 'PhosphorRegular');
+  static const handGrabbing = IconData(0xe57c, fontFamily: 'PhosphorRegular');
+  static const house = IconData(0xe2c2, fontFamily: 'PhosphorRegular');
+  static const arrowRight = IconData(0xe06c, fontFamily: 'PhosphorRegular');
+  static const plus = IconData(0xe3d4, fontFamily: 'PhosphorRegular');
+  static const cards = IconData(0xe0f8, fontFamily: 'PhosphorRegular');
+  static const tabs = IconData(0xe778, fontFamily: 'PhosphorRegular');
   static const mouseSimple = IconData(0xe644, fontFamily: 'PhosphorRegular');
   static const keyboard = IconData(0xe2d8, fontFamily: 'PhosphorRegular');
   static const presentation = IconData(0xe654, fontFamily: 'PhosphorRegular');
   static const images = IconData(0xe836, fontFamily: 'PhosphorRegular');
   static const folderOpen = IconData(0xe256, fontFamily: 'PhosphorRegular');
+  static const magnifyingGlass = IconData(
+    0xe30c,
+    fontFamily: 'PhosphorRegular',
+  );
   static const lockSimple = IconData(0xe308, fontFamily: 'PhosphorRegular');
   static const phoneCall = IconData(0xe3ba, fontFamily: 'PhosphorRegular');
   static const caretLeft = IconData(0xe138, fontFamily: 'PhosphorRegular');
@@ -128,6 +154,7 @@ abstract final class PhBold {
   static const arrowRight = IconData(0xe06c, fontFamily: 'PhosphorBold');
   static const arrowUpRight = IconData(0xe092, fontFamily: 'PhosphorBold');
   static const check = IconData(0xe182, fontFamily: 'PhosphorBold');
+  static const minus = IconData(0xe32a, fontFamily: 'PhosphorBold');
   static const downloadSimple = IconData(0xe20c, fontFamily: 'PhosphorBold');
   static const plus = IconData(0xe3d4, fontFamily: 'PhosphorBold');
   static const qrCode = IconData(0xe3e6, fontFamily: 'PhosphorBold');

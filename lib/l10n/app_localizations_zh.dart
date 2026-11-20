@@ -167,10 +167,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ctlMicrophonePermission => 'KDE Connectify 需要麦克风权限才能用作麦克风。';
 
   @override
-  String get deviceControlNoOverlayPermission =>
-      'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.';
-
-  @override
   String get ctlTerminalTitle => '终端';
 
   @override
@@ -438,18 +434,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get deviceSavedCommands => 'Saved Commands';
-
-  @override
-  String get deviceNoCommandsSaved => 'No commands saved on this computer yet';
-
-  @override
-  String get devicePcFiles => 'Computer Files';
-
-  @override
-  String get deviceNoPcFiles => 'Nothing to show here';
-
-  @override
   String get deviceFilterAll => '全部';
 
   @override
@@ -559,7 +543,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deviceAwayAllOn => '离家时也可使用：本机屏幕、摄像头、麦克风和文件';
 
   @override
-  String get deviceAwayAllOff => '离家时仅限：剪贴板、链接、文件和响铃';
+  String get deviceAwayAllOff => '离家时可用:剪贴板、链接、文件、响铃、照片和控制';
 
   @override
   String get deviceNothingShared => '还没有共享任何内容';
@@ -685,6 +669,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get activityInProgress => '进行中';
 
   @override
+  String get activityReconnecting => '连接中断，恢复后继续';
+
+  @override
   String get activityCopiedHere => '已复制到本机';
 
   @override
@@ -797,12 +784,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeConnectSubtitle => '直接通过你的 Wi-Fi。无需账号，无需云端。';
-
-  @override
-  String get homeScanQr => '扫描二维码';
-
-  @override
-  String get homePairByAddress => '改用地址配对';
 
   @override
   String get pairingAddDevice => '添加设备';
@@ -1126,10 +1107,29 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsTitle => '设置';
 
   @override
+  String get settingsSearch => '搜索设置';
+
+  @override
+  String settingsNothingMatches(String query) {
+    return '没有与“$query”匹配的设置';
+  }
+
+  @override
+  String get settingsRecommended => '推荐';
+
+  @override
   String get settingsReceiving => '接收';
 
   @override
+  String get settingsFiles => '文件';
+
+  @override
   String get settingsSaveLocation => '保存位置';
+
+  @override
+  String settingsSaveLocationUse(String path) {
+    return '使用 $path';
+  }
 
   @override
   String get settingsSaveLocationPath => '下载 › KDE Connectify';
@@ -1144,6 +1144,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsConnection => '连接';
 
   @override
+  String get settingsWays => '它如何连接你的电脑';
+
+  @override
   String get settingsStayConnected => '保持连接';
 
   @override
@@ -1155,6 +1158,13 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get settingsKeepRunningCaption =>
       'KDE Connectify 关闭后，文件、照片备份和来电功能仍可使用。会显示一条安静的通知。';
+
+  @override
+  String get settingsStartAtBoot => '手机启动时启动';
+
+  @override
+  String get settingsStartAtBootCaption =>
+      '重启后，无需打开 KDE Connectify，你的电脑也能看到这部手机。会显示一条静默通知。';
 
   @override
   String get settingsAwayFromHome => '离家时';
@@ -1184,6 +1194,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsBrowseFiles => '允许电脑浏览文件';
+
+  @override
+  String get settingsFilesFolder => '你选择的文件夹';
+
+  @override
+  String get settingsFilesAll => '所有文件';
+
+  @override
+  String get settingsFilesAllCaption => '你的电脑可以打开这部手机上的所有文件。';
+
+  @override
+  String get settingsFilesAllAllow => '在 Android 设置中允许 KDE Connectify“访问所有文件”。';
 
   @override
   String get settingsBrowseFilesChoose =>
@@ -1360,6 +1382,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get remoteTouchpadHint => '单指移动，轻点即单击\n双指滚动，双指轻点即右键单击';
 
   @override
+  String get remoteDragHint => '双击并滑动即可拖动，轻点即可松开';
+
+  @override
+  String get remoteDragging => '正在拖动。抬起手指可继续，轻点即可松开';
+
+  @override
   String get remoteLeftClick => '左键';
 
   @override
@@ -1388,6 +1416,72 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get remoteVolumeHint => '音量减：下一张 · 音量加：上一张。屏幕保持常亮。';
+
+  @override
+  String get remoteBrowser => '浏览器';
+
+  @override
+  String get remoteWebBack => '后退';
+
+  @override
+  String get remoteWebForward => '前进';
+
+  @override
+  String get remoteWebReload => '刷新';
+
+  @override
+  String get remoteWebHome => '主页';
+
+  @override
+  String get remoteWebNewTab => '新标签页';
+
+  @override
+  String get remoteWebCloseTab => '关闭标签页';
+
+  @override
+  String get remoteWebNextTab => '下一个标签页';
+
+  @override
+  String get remoteWebPrevTab => '上一个标签页';
+
+  @override
+  String get remoteWebAddress => '地址';
+
+  @override
+  String get remoteWebHint => '控制电脑上最前面的浏览器。';
+
+  @override
+  String get remoteFirstSlide => '第一张';
+
+  @override
+  String get remoteLastSlide => '最后一张';
+
+  @override
+  String get remoteBlackScreen => '黑屏';
+
+  @override
+  String get remoteWhiteScreen => '白屏';
+
+  @override
+  String get remoteFromHere => '从当前开始';
+
+  @override
+  String get remoteModHint => '轻点：与下一个键组合。长按：单独按下。';
+
+  @override
+  String get switchTitle => '切换到';
+
+  @override
+  String get switchHere => '当前';
+
+  @override
+  String get switchOpen => '已打开';
+
+  @override
+  String get settingsPointerSpeed => '触控板速度';
+
+  @override
+  String get settingsPointerSpeedCaption => '同样的滑动让电脑指针移动多远';
 
   @override
   String get ringTitle => '我在这儿！';
@@ -1762,6 +1856,14 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get displayChooseScreen => '选择屏幕';
+
+  @override
+  String displayChooseOn(String name) {
+    return '请在 $name 上选择屏幕…';
+  }
+
+  @override
   String terminalTabClosed(String title) {
     return '“$title”已关闭';
   }
@@ -1918,6 +2020,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get usbConnecting => '正在通过 USB 数据线连接…';
+
+  @override
   String get usbPairTitle => '数据线上有一台电脑';
 
   @override
@@ -2054,6 +2159,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get updateLater => '稍后';
+
+  @override
+  String updateWhatChanged(String version) {
+    return '$version 的更新内容';
+  }
+
+  @override
+  String get updateToInstall => '将要安装';
 
   @override
   String updateDownloading(String percent) {
@@ -2260,6 +2373,1028 @@ class AppLocalizationsZh extends AppLocalizations {
   String pairingUpdateOlder(String name) {
     return '更新 $name 上的 KDE Connectify，配对会更安全。';
   }
+
+  @override
+  String get settingsPhoneNotifications => '显示这部手机的通知';
+
+  @override
+  String get settingsPhoneNotificationsCaption => '显示在你的电脑上，消息可直接回复。';
+
+  @override
+  String get settingsPhoneNotificationsAllow => 'Android 还没有允许。点按以允许通知使用权。';
+
+  @override
+  String get noticeAccessTitle => '允许通知使用权';
+
+  @override
+  String get noticeAccessGreyed => '对于从网页安装的应用，Android 会将此开关变灰。要允许它：';
+
+  @override
+  String get noticeAccessStepInfo => '打开 KDE Connectify 的应用信息。';
+
+  @override
+  String get noticeAccessStepRestricted => '点按右上角的 ⋮，然后点按“允许受限制的设置”。';
+
+  @override
+  String get noticeAccessStepAgain => '再次打开“通知使用权”并开启 KDE Connectify。';
+
+  @override
+  String get noticeAccessPlain => '在 Android 的“通知使用权”中开启 KDE Connectify，然后返回。';
+
+  @override
+  String get commonOpenAppInfo => '打开应用信息';
+
+  @override
+  String get batteryGuide => '让 KDE Connectify 保持运行';
+
+  @override
+  String batteryGuideCaption(String maker) {
+    return '这部 $maker 手机需要更改的设置';
+  }
+
+  @override
+  String batteryIntro(String maker) {
+    return '为了省电，有些手机会关闭后台应用，KDE Connectify 就会漏收文件和通知。在这部 $maker 手机上：';
+  }
+
+  @override
+  String get batteryAutostart => '应用信息 › 自启动：开启。';
+
+  @override
+  String get batteryXiaomiSaver => '应用信息 › 省电策略：无限制。';
+
+  @override
+  String get batteryLockRecents => '在最近任务中，长按 KDE Connectify 并点按锁，这样清理时它会继续运行。';
+
+  @override
+  String get batterySamsungUnrestricted => '应用信息 › 电池：不受限制。';
+
+  @override
+  String get batterySamsungSleeping =>
+      '设置 › 电池 › 后台使用限制：把 KDE Connectify 移出休眠应用和深度休眠应用。';
+
+  @override
+  String get batteryOppoBackground => '应用信息 › 耗电管理：允许后台运行、前台运行和自动启动。';
+
+  @override
+  String get batteryVivoBackground => '设置 › 电池 › 后台耗电管理：允许 KDE Connectify。';
+
+  @override
+  String get batteryHuaweiLaunch =>
+      '设置 › 电池 › 应用启动管理 › KDE Connectify：手动管理，开启自动启动、关联启动和后台活动。';
+
+  @override
+  String get batteryUnrestricted => '应用信息 › 应用的电池用量：无限制。';
+
+  @override
+  String get batteryKeepRunning => '在 KDE Connectify 中：设置 › 连接 › 在后台保持运行。';
+
+  @override
+  String get batteryNames => '不同版本的 Android 中名称会略有不同。';
+
+  @override
+  String get updatePlayProtect =>
+      'KDE Connectify 可以在你的电脑上显示通知，因此 Play 保护机制可能会阻止安装。如果出现这种情况：';
+
+  @override
+  String get updateProtectStep1 => 'Play 商店 › 你的头像 › Play 保护机制 › ⚙。';
+
+  @override
+  String get updateProtectStep2 => '关闭“使用 Play 保护机制扫描应用”。';
+
+  @override
+  String get updateProtectStep3 => '再次点按“立即更新”，然后重新开启扫描。';
+
+  @override
+  String get news032NotificationsTitle => '在电脑上查看你的通知';
+
+  @override
+  String get news032NotificationsBody =>
+      '消息和其他通知会显示在已配对的电脑上，并可直接回复。在 设置 › 与你的电脑 中开启。如果 Android 将开关变灰：应用信息 › ⋮ › 允许受限制的设置。';
+
+  @override
+  String get news032BatteryTitle => '让 KDE Connectify 保持运行';
+
+  @override
+  String get news032BatteryBody =>
+      '设置 › 连接 › 让 KDE Connectify 保持运行 会按你的手机品牌说明需要更改的设置，让 KDE Connectify 在后台继续运行。';
+
+  @override
+  String get settingsReduceMotion => '减少动态效果';
+
+  @override
+  String get settingsReduceMotionCaption => '页面淡入而不滑动，按钮变淡而不缩小。';
+
+  @override
+  String get deviceDeck => '控制面板';
+
+  @override
+  String deviceDeckCaption(String name) {
+    return '你为 $name 设置的按钮';
+  }
+
+  @override
+  String get deckEdit => '编辑';
+
+  @override
+  String get deckDone => '完成';
+
+  @override
+  String deckAsking(String name) {
+    return '正在询问 $name 控制面板可以做什么…';
+  }
+
+  @override
+  String deckAway(String name) {
+    return '$name 未连接。连接后控制面板即可使用。';
+  }
+
+  @override
+  String deckNothingOffered(String name) {
+    return '$name 还没有允许控制面板做任何事。请在电脑上的 KDE Connectify 中开启相应操作。';
+  }
+
+  @override
+  String get deckEmptyPage => '这里还没有内容。点按“编辑”，然后点按“添加”。';
+
+  @override
+  String get deckAdd => '添加';
+
+  @override
+  String get deckAddTitle => '添加到控制面板';
+
+  @override
+  String get deckUnavailable => '不可用';
+
+  @override
+  String get deckGroupMedia => '媒体';
+
+  @override
+  String get deckGroupSound => '声音';
+
+  @override
+  String get deckGroupSystem => '系统';
+
+  @override
+  String get deckGroupCommands => '命令';
+
+  @override
+  String get deckKindButton => '按钮';
+
+  @override
+  String get deckKindToggle => '开或关';
+
+  @override
+  String get deckKindSlider => '滑块';
+
+  @override
+  String get deckSize => '大小';
+
+  @override
+  String get deckSizeSmall => '小';
+
+  @override
+  String get deckSizeWide => '宽';
+
+  @override
+  String get deckSizeTall => '高';
+
+  @override
+  String get deckSizeBig => '大';
+
+  @override
+  String get deckSizeRow => '整行';
+
+  @override
+  String get deckColor => '颜色';
+
+  @override
+  String get deckIcon => '图标';
+
+  @override
+  String get deckRemove => '从控制面板移除';
+
+  @override
+  String get deckNewPage => '新页面';
+
+  @override
+  String get deckRemovePage => '移除此页面';
+
+  @override
+  String get deckMoveHint => '按住按钮并拖动即可移动。';
+
+  @override
+  String get settingsGallery => '在电脑上查看照片';
+
+  @override
+  String get settingsGalleryCaption => '你的电脑可以浏览这部手机上的照片和视频，并保存你选中的。';
+
+  @override
+  String get settingsGalleryDenied => '请在 Android 设置中允许 KDE Connectify 查看你的照片。';
+
+  @override
+  String get deckGroupNetwork => '网络';
+
+  @override
+  String get deckGroupPower => '电源';
+
+  @override
+  String get deckThemeTitle => '主题';
+
+  @override
+  String deckThemeAsMade(String name) {
+    return '与 $name 上相同';
+  }
+
+  @override
+  String get deckThemesShared => '电脑上也有';
+
+  @override
+  String get deckThemesPhone => '仅限这部手机';
+
+  @override
+  String get deckThemeStock => '标准';
+
+  @override
+  String get deckThemeDots => '点阵';
+
+  @override
+  String get deckThemeEink => '墨水屏';
+
+  @override
+  String get deckThemeTerm => '终端';
+
+  @override
+  String get deckThemePixel => '像素';
+
+  @override
+  String get deckThemeSignal => 'Signal';
+
+  @override
+  String get deckThemeGlass => '玻璃';
+
+  @override
+  String get deckThemeMidnight => '午夜';
+
+  @override
+  String deckNotAvailable(String name) {
+    return '$name 上不可用';
+  }
+
+  @override
+  String get deckAwayShort => '未连接';
+
+  @override
+  String deckAwayNote(String name) {
+    return '$name 未连接。连接后这些按钮即可使用。';
+  }
+
+  @override
+  String get deckNothingPlaying => '没有正在播放的内容';
+
+  @override
+  String get deckPickPlayer => '控制哪个播放器';
+
+  @override
+  String get deckDisplay => '显示';
+
+  @override
+  String get deckFullScreen => '全屏';
+
+  @override
+  String get deckFullScreenCaption => '隐藏状态栏和导航栏。从边缘滑动即可显示。';
+
+  @override
+  String get deckSwipeForMenu => '从顶部下滑打开菜单';
+
+  @override
+  String get deckFromPhone => '来自此手机';
+
+  @override
+  String get deckShortcut => '快捷键';
+
+  @override
+  String get deckTypeText => '输入文字';
+
+  @override
+  String get deckOpenLink => '打开链接';
+
+  @override
+  String get deckKeys => '按键';
+
+  @override
+  String get deckKeyHint => '一个键：T、F5、Tab、Left…';
+
+  @override
+  String get deckTextHint => '要在电脑上输入的内容';
+
+  @override
+  String get deckLinkHint => '地址，例如 example.com';
+
+  @override
+  String get deckSetUpFirst => '请先设置：长按即可编辑';
+
+  @override
+  String get deckShow => '显示';
+
+  @override
+  String get deckShowBoth => '图标和名称';
+
+  @override
+  String get deckShowIcon => '图标';
+
+  @override
+  String get deckShowName => '名称';
+
+  @override
+  String get deckLookSize => '显示内容大小';
+
+  @override
+  String get deckSmall => '小';
+
+  @override
+  String get deckMedium => '中';
+
+  @override
+  String get deckLarge => '大';
+
+  @override
+  String get deckRealCovers => '保持专辑封面原样';
+
+  @override
+  String get deckRealCoversCaption => '不使用主题的点阵或像素效果';
+
+  @override
+  String deckNoLayouts(String name) {
+    return '$name 还没有为这部手机设置控制面板。请在电脑上的 KDE Connectify 中创建一个。';
+  }
+
+  @override
+  String get news034TurnOnBody => '在主屏幕的卡片上开启后，电脑的收件箱和图库会自动显示内容。';
+
+  @override
+  String get news034SaveTitle => '选择文件保存位置';
+
+  @override
+  String get news034SaveBody => '设置 › 文件 › 保存位置：点按即可为收到的文件选择其他文件夹。';
+
+  @override
+  String get news033DeckTitle => '控制面板：电脑的按钮';
+
+  @override
+  String get news033DeckBody =>
+      '播放、音量、静音、Wi-Fi 和你自己的命令，在电脑上的 KDE Connectify 中布置，在这里使用：电脑页面 › 控制 › 控制面板。长按控制面板的名称可更换外观。需要电脑上最新版的 KDE Connectify。';
+
+  @override
+  String get news033PhotosTitle => '在电脑上查看你的照片';
+
+  @override
+  String get news033PhotosBody =>
+      '电脑的图库可以逐页浏览这部手机的照片和视频，并保存你选中的。设置 › 文件 › 在电脑上查看照片。';
+
+  @override
+  String get news033MessagesTitle => '更早的消息';
+
+  @override
+  String get news033MessagesBody => '在电脑上，对话也会显示更早的消息，通知消失后一天内仍可回复。';
+
+  @override
+  String get onboardingMessages => '在电脑上查看消息';
+
+  @override
+  String get onboardingMessagesDetail => '在电脑的收件箱中阅读并回复你的消息和通知。';
+
+  @override
+  String get onboardingGalleryDetail =>
+      '在电脑的图库中浏览这部手机的照片和视频。Android 询问时，请选择“全部允许”。';
+
+  @override
+  String get homeTurnOnTitle => '在电脑上查看你的消息和照片';
+
+  @override
+  String get homeTurnOnBody => '它们会显示在电脑的收件箱和图库中。';
+
+  @override
+  String get homeTurnOnMessages => '开启消息';
+
+  @override
+  String get homeTurnOnPhotos => '开启照片';
+
+  @override
+  String turnOnAskMessages(String name) {
+    return '$name 请求显示这部手机的消息';
+  }
+
+  @override
+  String turnOnAskPhotos(String name) {
+    return '$name 请求显示这部手机的照片';
+  }
+
+  @override
+  String get turnOnNow => '开启';
+
+  @override
+  String get settingsDemoAsk => '电脑将在 4 秒后请求';
+
+  @override
+  String get noticeAccessStepSwitch =>
+      '打开“通知使用权”并开启 KDE Connectify。如果开关是灰色的，也请点按一下：Android 会拒绝，之后才能进行下一步。';
+
+  @override
+  String get noticeAccessOpen => '打开通知使用权';
+
+  @override
+  String get phoneClipboard => '发送剪贴板';
+
+  @override
+  String phoneClipboardCaption(String name) {
+    return '此处复制的内容会发送到 $name';
+  }
+
+  @override
+  String get phoneNoteHint => '便条或链接';
+
+  @override
+  String get phoneSend => '发送';
+
+  @override
+  String phoneFind(String name) {
+    return '查找 $name';
+  }
+
+  @override
+  String get phoneFindCaption => '即使静音也会大声响铃';
+
+  @override
+  String get phoneWhere => '它在哪里?';
+
+  @override
+  String get phoneWhereCaption => '询问一次它的位置';
+
+  @override
+  String phoneWhereRefused(String name, String reason) {
+    return '$name 未告知位置:$reason';
+  }
+
+  @override
+  String get phoneFromThis => '来自此手机';
+
+  @override
+  String get phonePhotos => '照片和视频';
+
+  @override
+  String get phonePhotosCaption => '按日期或相册';
+
+  @override
+  String get phoneAllowPhotos => '允许访问照片';
+
+  @override
+  String get phoneAllowPhotosCaption =>
+      'KDE Connectify 需要此权限才能在此显示照片。在你发送之前不会传出任何内容。';
+
+  @override
+  String get phoneFiles => '文件和文件夹';
+
+  @override
+  String get phoneFilesCaption => '使用 Android 文件选择器';
+
+  @override
+  String get phoneChooseFiles => '选择文件';
+
+  @override
+  String get phoneChooseFolder => '选择文件夹';
+
+  @override
+  String get phoneApps => '应用';
+
+  @override
+  String get phoneAppsCaption => '发送或更新应用';
+
+  @override
+  String get phoneAppsNote => '应用的数据和登录信息不会迁移。检查许可或账户的应用可能无法运行。';
+
+  @override
+  String get phoneAppsSearch => '搜索应用';
+
+  @override
+  String get phoneSortName => '名称';
+
+  @override
+  String get phoneSortSize => '大小';
+
+  @override
+  String phoneAppNotThere(String name) {
+    return '$name 上没有';
+  }
+
+  @override
+  String get phoneAppUpdate => '更新 (那边版本较旧)';
+
+  @override
+  String get phoneAppSame => '已存在';
+
+  @override
+  String get phoneAppNewer => '那边版本更新';
+
+  @override
+  String phoneAppOtherSigner(String name) {
+    return '$name 上的来自其他开发者。Android 无法更新,只能替换,这会删除其数据。';
+  }
+
+  @override
+  String get phoneAllAlbums => '全部';
+
+  @override
+  String get phoneNoPhotos => '这里还没有照片';
+
+  @override
+  String get phoneNoApps => '没有可发送的应用';
+
+  @override
+  String phoneSelected(int count, String size) {
+    return '已选 $count 项 · $size';
+  }
+
+  @override
+  String phoneSendTo(String name) {
+    return '发送到 $name';
+  }
+
+  @override
+  String get phoneClear => '清除';
+
+  @override
+  String get routeDirect => '直连';
+
+  @override
+  String get routeLan => '同一网络';
+
+  @override
+  String get routeAway => '通过互联网 · 使用移动数据';
+
+  @override
+  String get routeUsb => '数据线';
+
+  @override
+  String routeAbout(String time) {
+    return '约 $time';
+  }
+
+  @override
+  String get routeSettingUp => '正在建立直连…';
+
+  @override
+  String routeNotDirect(String reason) {
+    return '无法直连:$reason。正在通过网络发送。';
+  }
+
+  @override
+  String warnNoRoom(String name, String free, String size) {
+    return '$name 剩余 $free,而这需要 $size';
+  }
+
+  @override
+  String warnWillAsk(String name) {
+    return '$name 接收前会询问';
+  }
+
+  @override
+  String warnCantInstall(String name) {
+    return '$name 需要先允许 KDE Connectify 安装应用';
+  }
+
+  @override
+  String warnCantInstallHow(String name) {
+    return '在 $name 上:Android 设置 › 应用 › 特殊应用权限 › 安装未知应用 › KDE Connectify。';
+  }
+
+  @override
+  String get mobileDataTitle => '通过互联网发送?';
+
+  @override
+  String mobileDataAsk(String size) {
+    return '这将通过互联网发送,约使用 $size 移动数据。';
+  }
+
+  @override
+  String phoneInstallAsk(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '从 $name 安装 $count 个应用?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get phoneAppNew => '新应用';
+
+  @override
+  String get phoneAppUpdateShort => '更新';
+
+  @override
+  String get phoneInstall => '安装';
+
+  @override
+  String get phoneInstallAllowBody =>
+      'KDE Connectify 安装应用前需要你在 Android 中同意一次。请打开“允许来自此来源”,然后返回。';
+
+  @override
+  String get phoneInstallAllow => '允许安装';
+
+  @override
+  String phoneInstalled(String app) {
+    return '$app 已安装';
+  }
+
+  @override
+  String phoneInstallCancelled(String app) {
+    return '$app 未安装';
+  }
+
+  @override
+  String phoneInstallMismatch(String app, String name) {
+    return '$app 与 $name 所述不符,因此未安装。';
+  }
+
+  @override
+  String phoneInstallOtherSigner(String app) {
+    return '此手机上的 $app 来自其他开发者。Android 无法更新。';
+  }
+
+  @override
+  String phoneInstallFailed(String app, String reason) {
+    return '$app 未安装:$reason';
+  }
+
+  @override
+  String get news035PhonesTitle => '两部手机,无需电脑';
+
+  @override
+  String get news035PhonesBody => '打开已配对的手机:发送复制的内容、便条或链接,让它响铃,或按日期选择照片和文件。';
+
+  @override
+  String get news035AppsTitle => '将应用发送到另一部手机';
+
+  @override
+  String get news035AppsBody =>
+      'KDE Connectify 会显示那边缺少或较旧的应用,安装前 Android 会询问。应用数据和登录信息不会迁移。';
+
+  @override
+  String get phoneNote => '便条';
+
+  @override
+  String get phoneWhereShort => '位置';
+
+  @override
+  String get phoneShelfPhotos => '照片';
+
+  @override
+  String get phoneSeeAll => '查看全部';
+
+  @override
+  String get phoneSelectDay => '选择当天';
+
+  @override
+  String get phoneHistory => '历史记录';
+
+  @override
+  String get deviceSnap => '拍照';
+
+  @override
+  String snapSent(String name) {
+    return '照片已发送到 $name';
+  }
+
+  @override
+  String copySent(String name) {
+    return '已复制到 $name';
+  }
+
+  @override
+  String get usbConnectCable => '通过 USB 线连接';
+
+  @override
+  String get settingsSendCopied => '发送你复制的内容';
+
+  @override
+  String get settingsSendCopiedCaption =>
+      '每次回到 KDE Connectify，你复制的内容都会发送到已连接的电脑。密码也会发送，如不确定请保持关闭。';
+
+  @override
+  String get doctorTitle => '为什么看不到我的电脑?';
+
+  @override
+  String get doctorCaption => '找出原因和解决方法';
+
+  @override
+  String get doctorAllGood => '这台手机没有问题';
+
+  @override
+  String get doctorAllGoodDetail =>
+      '如果电脑仍未显示，可能是防火墙阻止了连接，或电脑上没有运行 KDE Connectify。';
+
+  @override
+  String get doctorWifi => '未连接 Wi-Fi';
+
+  @override
+  String get doctorWifiDetail => '请连接到与电脑相同的网络。';
+
+  @override
+  String get doctorHeard => '在此网络上未发现设备';
+
+  @override
+  String get doctorHeardDetail => '电脑可能处于睡眠状态或在其他网络上，或此路由器像访客网络一样隔离了设备。';
+
+  @override
+  String get doctorVpn => 'VPN 已开启';
+
+  @override
+  String get doctorVpnDetail => '它可能使这台手机看不到电脑。请关闭它，或允许本地网络。';
+
+  @override
+  String get doctorBattery => '省电功能可能会停止 KDE Connectify';
+
+  @override
+  String doctorBatteryDetail(String maker) {
+    return '$maker 手机可能会在后台关闭 KDE Connectify。';
+  }
+
+  @override
+  String get doctorPowerSave => '省电模式已开启';
+
+  @override
+  String get doctorPowerSaveDetail => '它会限制 KDE Connectify 在屏幕关闭时的工作。';
+
+  @override
+  String get doctorDataSaver => '流量节省模式已开启';
+
+  @override
+  String get doctorDataSaverDetail => '它可能阻止 KDE Connectify 在后台连接。';
+
+  @override
+  String get doctorOpenSettings => '打开设置';
+
+  @override
+  String get doctorShowHow => '查看方法';
+
+  @override
+  String get doctorCheckAgain => '再次检查';
+
+  @override
+  String get news035DeckTitle => '在手机上搭建你的面板';
+
+  @override
+  String get news035DeckBody => '点铅笔或长按磁贴。拖动它、拉到任意大小,其他磁贴会自动让位。横过手机即可编辑横屏面板。';
+
+  @override
+  String get news035SnapTitle => '拍照到电脑';
+
+  @override
+  String get news035SnapBody => '在电脑页面或快捷设置磁贴拍照，照片会直接发送过去，可立即粘贴。';
+
+  @override
+  String get news035CopyTitle => '复制到电脑';
+
+  @override
+  String get news035CopyBody => '在任意应用中选择文本，然后选“复制到电脑”。如果无法连接，设置 › 连接会告诉你原因。';
+
+  @override
+  String get controlsNoDnd => '请先在手机上允许 KDE Connectify 访问“勿扰”';
+
+  @override
+  String get controlsNoFlashlight => '手电筒现在无法使用';
+
+  @override
+  String get controlsDenied => 'Android 不允许此操作';
+
+  @override
+  String get snapNoCamera => 'KDE Connectify 需要相机权限';
+
+  @override
+  String snapAsked(String name) {
+    return '为 $name 拍照';
+  }
+
+  @override
+  String get settingsComputerNotifications => '电脑的通知';
+
+  @override
+  String get settingsComputerNotificationsCaption => '在电脑上也为这台手机开启后，它们会显示在这里';
+
+  @override
+  String get settingsDndAccess => '“勿扰”访问权限';
+
+  @override
+  String get settingsDndAccessCaption => '允许你的电脑更改这里的“勿扰”';
+
+  @override
+  String get settingsDndAccessOn => '已允许：你的电脑可以更改';
+
+  @override
+  String get settingsTurnTaps => '横屏时旋转点按';
+
+  @override
+  String get settingsTurnTapsCaption => '仅在手机横放时，电脑的点按位置不对才需要';
+
+  @override
+  String get deckDiscardTitle => '放弃更改?';
+
+  @override
+  String get deckDiscard => '放弃';
+
+  @override
+  String get deckKeepEditing => '继续编辑';
+
+  @override
+  String get deckUndo => '撤销';
+
+  @override
+  String get deckRedo => '重做';
+
+  @override
+  String get deckCopy => '复制';
+
+  @override
+  String get deckPage => '页面';
+
+  @override
+  String deckPageN(int n) {
+    return '第 $n 页';
+  }
+
+  @override
+  String deckPages(int n) {
+    String _temp0 = intl.Intl.pluralLogic(n, locale: localeName, other: '$n 页');
+    return '$_temp0';
+  }
+
+  @override
+  String get deckRemoveShort => '移除';
+
+  @override
+  String get deckNoRoom => '这里放不下';
+
+  @override
+  String get deckFillForMe => '帮我填充';
+
+  @override
+  String get deckTryIt => '试用';
+
+  @override
+  String get deckLayouts => '布局';
+
+  @override
+  String get deckPortrait => '竖屏';
+
+  @override
+  String get deckLandscape => '横屏';
+
+  @override
+  String get deckAddSearch => '搜索它能做什么';
+
+  @override
+  String get deckLive => '实时磁贴';
+
+  @override
+  String get deckSuggested => '建议';
+
+  @override
+  String get deckMusic => '音乐';
+
+  @override
+  String get deckClock => '时钟';
+
+  @override
+  String get deckName => '名称';
+
+  @override
+  String get deckDoes => '功能';
+
+  @override
+  String get deckAccent => '强调色';
+
+  @override
+  String get deckRename => '重命名';
+
+  @override
+  String get deckNewLayout => '新建自';
+
+  @override
+  String get deckBlank => '空白';
+
+  @override
+  String get deckPresenter => '演示者';
+
+  @override
+  String get deckLandscapeFromPortrait => '从竖屏生成横屏';
+
+  @override
+  String get deckMade => '已完成，请在横屏中查看';
+
+  @override
+  String deckUseComputers(String name) {
+    return '使用 $name 上的';
+  }
+
+  @override
+  String deckSavedHere(String name) {
+    return '暂时保存在这台手机上。在能接收之前，$name 会保留自己的布局。';
+  }
+
+  @override
+  String get deckWidth => '宽度';
+
+  @override
+  String get deckHeight => '高度';
+
+  @override
+  String get deckStartFromPortrait => '从竖屏布局开始';
+
+  @override
+  String get deckStartEmpty => '从空白开始';
+
+  @override
+  String get remoteMiddle => '中键';
+
+  @override
+  String get remoteMiddleClick => '中键单击';
+
+  @override
+  String get remoteSendText => '输入';
+
+  @override
+  String get remoteSendTextCaption => '在这里用键盘的滑行输入、联想词和纠错写好，再发送到电脑光标所在的位置。';
+
+  @override
+  String get remoteSendTextHint => '消息、搜索词、一长行文字…';
+
+  @override
+  String get remoteSendTextGo => '发送到电脑';
+
+  @override
+  String get settingsEdgeScroll => '滚动条';
+
+  @override
+  String get settingsEdgeScrollCaption => '一根手指沿触控板右边缘滑动即可滚动，方便单手操作。';
+
+  @override
+  String get settingsKeyboardSuggestions => '键盘联想';
+
+  @override
+  String get settingsKeyboardSuggestionsCaption =>
+      '遥控器键盘上的滑行输入和联想词。关闭后，每个按键按下即发送。';
+
+  @override
+  String get deckGridTitle => '网格';
+
+  @override
+  String deckGridColumns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 列',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String deckGridRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 行',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deckGridBigger => '更大的按钮';
+
+  @override
+  String get deckGridSmaller => '更小的按钮';
+
+  @override
+  String get deviceControlNoOverlayPermission =>
+      'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.';
+
+  @override
+  String get deviceSavedCommands => 'Saved Commands';
+
+  @override
+  String get deviceNoCommandsSaved => 'No commands saved on this computer yet';
+
+  @override
+  String get devicePcFiles => 'Computer Files';
+
+  @override
+  String get deviceNoPcFiles => 'Nothing to show here';
+
+  @override
+  String get homeScanQr => '扫描二维码';
+
+  @override
+  String get homePairByAddress => '改用地址配对';
 
   @override
   String get deviceMenuMore => 'More actions';

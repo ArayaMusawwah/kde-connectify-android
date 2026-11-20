@@ -3,8 +3,11 @@
 
 pub mod api;
 mod frb_generated;
+mod cable;
 mod commands;
 mod files;
+mod gallery;
 mod heartbeats;
 mod media;
+mod preflight;
 mod sessions;

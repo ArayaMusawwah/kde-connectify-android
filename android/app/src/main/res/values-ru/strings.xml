@@ -29,4 +29,13 @@
     <string name="media_next">Далее</string>
     <string name="media_back10">Назад на 10 секунд</string>
     <string name="media_forward10">Вперёд на 10 секунд</string>
+    <string name="channel_from_computer">С этого компьютера</string>
+    <string name="all_files">Все файлы</string>
+    <string name="channel_arrived">С ваших компьютеров</string>
+    <string name="controlled_from">Управляется с устройства %1$s</string>
+    <string name="copy_to_computer">Копировать на компьютер</string>
+    <string name="keep_alive_boot">KDE Connectify готов к работе с компьютерами</string>
+    <string name="phone_storage">Память телефона</string>
+    <string name="snap_no_camera">На телефоне нет приложения камеры</string>
+    <string name="snap_to_computer">Снимок на компьютер</string>
 </resources>

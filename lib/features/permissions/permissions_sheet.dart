@@ -4,16 +4,16 @@ import '../../app/platform.dart';
 import '../../ui/components.dart';
 import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
+import '../../ui/responsive.dart';
 
 /// What Linksy asks Android for, why, and a button that brings up Android's
 /// own dialog (or, for remote control, its settings page). Re-reads when the
 /// user comes back from Android's settings.
-Future<void> showPermissions(BuildContext context) =>
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => const _PermissionsSheet(),
-    );
+Future<void> showPermissions(BuildContext context) => showSheet<void>(
+  context: context,
+  isScrollControlled: true,
+  builder: (_) => const _PermissionsSheet(),
+);
 
 class _PermissionsSheet extends StatefulWidget {
   const _PermissionsSheet();
@@ -160,29 +160,46 @@ class _Permission extends StatelessWidget {
                   style: TextStyle(fontSize: 13, color: s.muted, height: 1.4),
                 ),
                 const SizedBox(height: 12),
-                if (allowed == true)
-                  Row(
-                    children: [
-                      const Icon(PhBold.check, size: 16, color: Sig.blue),
-                      const SizedBox(width: 6),
-                      Text(
-                        context.l10n.permissionsAllowed,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: s.ink,
-                        ),
-                      ),
-                    ],
-                  )
-                else
-                  Align(
+                // Allow turns into Allowed when it comes back granted.
+                AnimatedSwitcher(
+                  duration: motion(context),
+                  transitionBuilder: popIn,
+                  layoutBuilder: (current, previous) => Stack(
                     alignment: Alignment.centerLeft,
-                    child: SigButton(
-                      label: action,
-                      height: 40,
-                      onTap: allowed == null ? null : onTap,
-                    ),
+                    children: [...previous, ?current],
                   ),
+                  child: allowed == true
+                      ? SizedBox(
+                          key: const ValueKey(true),
+                          height: 40,
+                          child: Row(
+                            children: [
+                              const Icon(
+                                PhBold.check,
+                                size: 16,
+                                color: Sig.blue,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                context.l10n.permissionsAllowed,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: s.ink,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Align(
+                          key: const ValueKey(false),
+                          alignment: Alignment.centerLeft,
+                          child: SigButton(
+                            label: action,
+                            height: 40,
+                            onTap: allowed == null ? null : onTap,
+                          ),
+                        ),
+                ),
               ],
             ),
           ),

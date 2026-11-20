@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:linksy/core/core_json.dart';
+import 'package:linksy/core/deck_layouts.dart';
 import 'package:linksy/core/models.dart';
 import 'package:linksy/core/rust_node.dart';
 
@@ -132,6 +134,33 @@ void main() {
     expect(v.battery?.level, 40);
   });
 
+  test('reads what a computer answers to this phone\'s notifications', () {
+    const key = '0|com.whatsapp|1|null|10123';
+    final reply = parse({
+      'type': 'notification_reply',
+      'from': device,
+      'key': key,
+      'text': 'Sure!',
+    });
+    expect((reply as NotificationReplyRequested).key, key);
+    expect(reply.text, 'Sure!');
+
+    final action = parse({
+      'type': 'notification_action',
+      'from': device,
+      'key': key,
+      'action': '1',
+    });
+    expect((action as NotificationActionRequested).action, '1');
+
+    final dismissed = parse({
+      'type': 'notification_dismissed',
+      'from': device,
+      'key': key,
+    });
+    expect((dismissed as NotificationDismissRequested).key, key);
+  });
+
   test('reads media and lock-when-away events', () {
     final media = parse({
       'type': 'media_state',
@@ -167,6 +196,120 @@ void main() {
     expect(SessionKind.parse('input'), SessionKind.input);
   });
 
+  test('reads the deck: confirm questions, state text and layouts', () {
+    final actions =
+        parse({
+              'type': 'deck_actions',
+              'from': device,
+              'actions': [
+                {'id': 'media.next', 'name': 'Next Track', 'kind': 'button'},
+                {
+                  'id': 'system.restart',
+                  'name': 'Restart',
+                  'kind': 'button',
+                  'group': 'System',
+                  'confirm': 'Restart Studio Desktop?',
+                },
+              ],
+            })!
+            as DeckActionsReceived;
+    expect(actions.actions.first.confirm, isNull);
+    expect(actions.actions.last.confirm, 'Restart Studio Desktop?');
+    final states =
+        parse({
+              'type': 'deck_state',
+              'from': device,
+              'states': [
+                {'id': 'sound.output', 'text': 'Speakers'},
+              ],
+            })!
+            as DeckStateReceived;
+    expect(states.states.single.text, 'Speakers');
+
+    final e =
+        parse({
+              'type': 'deck_layout',
+              'from': device,
+              'layouts': {
+                'version': 3,
+                'active': 'work',
+                'layouts': [
+                  {'id': 'music', 'name': 'Music'},
+                  {
+                    'id': 'work',
+                    'name': 'Work',
+                    'theme': {'id': 'glass_from_later', 'accent': '#2563ff'},
+                    'portrait': {
+                      'grid': [4, 8],
+                      'pages': [
+                        [
+                          {
+                            'id': 'c',
+                            'kind': 'clock',
+                            'x': 0,
+                            'y': 0,
+                            'w': 2,
+                            'h': 1,
+                          },
+                          {
+                            'id': 'l',
+                            'kind': 'button',
+                            'x': 3,
+                            'y': 7,
+                            'w': 2,
+                            'h': 1,
+                            'color': '#e01b24',
+                            'action': 'system.lock',
+                            'props': {'zone': 'Europe/Paris', 'n': 1},
+                          },
+                          {
+                            'id': 'w',
+                            'kind': 'weather',
+                            'x': 0,
+                            'y': 1,
+                            'w': 1,
+                            'h': 1,
+                          },
+                        ],
+                      ],
+                    },
+                  },
+                ],
+              },
+            })!
+            as DeckLayoutReceived;
+    final layouts = DeckLayouts.parse(e.layouts)!;
+    expect(layouts.version, 3);
+    final work = layouts.shown!;
+    expect(work.id, 'work');
+    // An unknown theme is drawn as Stock by the phone; the id stays.
+    expect(work.theme.id, 'glass_from_later');
+    expect(work.theme.accent, const Color(0xFF2563FF));
+    // A face not sent: the editor's grid, one empty page.
+    expect((work.landscape.columns, work.landscape.rows), (9, 4));
+    expect(work.landscape.isEmpty, isTrue);
+    final tiles = work.portrait.pages.single;
+    expect(tiles.map((t) => t.kind), ['clock', 'button', 'weather']);
+    // Kept inside the grid, whatever came.
+    expect((tiles[1].x, tiles[1].w), (3, 1));
+    expect(tiles[1].color, const Color(0xFFE01B24));
+    expect(tiles[1].props, {'zone': 'Europe/Paris'});
+    expect(layouts.layouts.first.theme.id, 'stock');
+
+    // The active one gone: the first.
+    expect(
+      DeckLayouts.parse({
+        'active': 'gone',
+        'layouts': [
+          {'id': 'a', 'name': 'A'},
+        ],
+      })!.shown!.id,
+      'a',
+    );
+    expect(DeckLayouts.decode('not json'), isNull);
+    expect(DeckLayouts.parse({'layouts': []})!.shown, isNull);
+  });
+
   test('ignores event types and session kinds it does not know', () {
     expect(parse({'type': 'from_the_future'}), isNull);
     expect(
@@ -194,5 +337,42 @@ void main() {
       describeCoreError('other:connection lost: timed out', 'X'),
       'Something went wrong: connection lost: timed out',
     );
+  });
+
+  group('what a computer asks of this phone', () {
+    test('its controls', () {
+      final watch = eventFromJson({
+        'type': 'controls_watch',
+        'from': device,
+        'on': true,
+      });
+      expect(watch, isA<ControlsWatchRequested>());
+      final set = eventFromJson({
+        'type': 'controls_set',
+        'from': device,
+        'change': {'media': 0.5, 'dnd': 'priority'},
+      });
+      expect((set! as ControlsSetRequested).change, {
+        'media': 0.5,
+        'dnd': 'priority',
+      });
+    });
+
+    test('its notifications and a snap', () {
+      final note = eventFromJson({
+        'type': 'computer_notification',
+        'from': device,
+        'key': '4121-17',
+        'app': 'Thunderbird',
+        'title': 'Mum',
+        'body': 'Dinner at eight?',
+        'at_ms': 1760945000123,
+      });
+      expect((note! as ComputerNotificationReceived).key, '4121-17');
+      expect(
+        eventFromJson({'type': 'snap_request', 'from': device}),
+        isA<SnapRequested>(),
+      );
+    });
   });
 }

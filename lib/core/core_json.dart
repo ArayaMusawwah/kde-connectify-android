@@ -31,6 +31,7 @@ DeviceView deviceViewFromJson(Json j) => DeviceView(
     final num s => DateTime.fromMillisecondsSinceEpoch(s.toInt() * 1000),
     _ => null,
   },
+  direct: j['direct'] as bool? ?? false,
 );
 
 MediaState mediaStateFromJson(Json j) => MediaState(
@@ -89,6 +90,10 @@ Json settingsToJson(NodeSettings s) => {
   'relay': s.relay,
 };
 
+List<AppInfo> _apps(Object? list) => [
+  for (final a in (list as List? ?? const []).cast<Json>()) AppInfo.fromJson(a),
+];
+
 List<OfferedFile> _files(Object? list) => [
   for (final f in (list as List? ?? const []).cast<Json>())
     OfferedFile(path: f['path'] as String, size: (f['size'] as num).toInt()),
@@ -121,6 +126,7 @@ LinksyEvent? eventFromJson(Json j) {
       from: device('from'),
       files: _files(j['files']),
       total: _int(j['total']),
+      apps: _apps(j['apps']),
     ),
     'transfer_started' => TransferStarted(
       j['transfer'] as String,
@@ -128,6 +134,30 @@ LinksyEvent? eventFromJson(Json j) {
       incoming: j['direction'] == 'incoming',
       files: _files(j['files']),
       total: _int(j['total']),
+      apps: _apps(j['apps']),
+    ),
+    'transfer_route' => TransferRouted(
+      transfer: j['transfer'] as String,
+      route: j['route'] as String? ?? 'lan',
+      settingUpDirect: j['setting_up_direct'] as bool? ?? false,
+      whyNotDirect: j['why_not_direct'] as String?,
+    ),
+    'location' => LocationReceived(
+      from: device('from'),
+      lat: (j['lat'] as num?)?.toDouble(),
+      lon: (j['lon'] as num?)?.toDouble(),
+    ),
+    'location_refused' => LocationReceived(
+      from: device('from'),
+      refused: j['reason'] as String? ?? '',
+    ),
+    'apps_received' => AppsReceived(
+      transfer: j['transfer'] as String,
+      from: device('from'),
+      apps: [
+        for (final a in (j['apps'] as List? ?? const []).cast<Json>())
+          ReceivedApp.fromJson(a),
+      ],
     ),
     'transfer_progress' => TransferProgress(
       transfer: j['transfer'] as String,
@@ -185,6 +215,20 @@ LinksyEvent? eventFromJson(Json j) {
       from: device('from'),
       state: mediaStateFromJson(j['state'] as Json),
     ),
+    'notification_reply' => NotificationReplyRequested(
+      from: device('from'),
+      key: j['key'] as String,
+      text: j['text'] as String? ?? '',
+    ),
+    'notification_action' => NotificationActionRequested(
+      from: device('from'),
+      key: j['key'] as String,
+      action: j['action'] as String? ?? '',
+    ),
+    'notification_dismissed' => NotificationDismissRequested(
+      from: device('from'),
+      key: j['key'] as String,
+    ),
     'media_command' => MediaCommandReceived(
       from: device('from'),
       player: j['player'] as String? ?? '',
@@ -211,6 +255,40 @@ LinksyEvent? eventFromJson(Json j) {
       image: j['image'] as String? ?? '',
     ),
     'locate_request' => LocateRequested(device('from')),
+    'controls_watch' => ControlsWatchRequested(
+      from: device('from'),
+      on: j['on'] as bool? ?? false,
+    ),
+    'controls_set' => ControlsSetRequested(
+      from: device('from'),
+      change: (j['change'] as Map?)?.cast<String, Object?>() ?? const {},
+    ),
+    'computer_notification' => ComputerNotificationReceived(
+      from: device('from'),
+      key: j['key'] as String? ?? '',
+      app: j['app'] as String? ?? '',
+      title: j['title'] as String? ?? '',
+      body: j['body'] as String? ?? '',
+      atMs: (j['at_ms'] as num?)?.toInt() ?? 0,
+    ),
+    'snap_request' => SnapRequested(device('from')),
+    'usb_plugged' => UsbPlugged(
+      from: device('from'),
+      phones: [
+        for (final p
+            in (j['phones'] as List? ?? const []).cast<Map<String, Object?>>())
+          PluggedPhone(
+            key: p['key'] as String? ?? '',
+            manufacturer: p['manufacturer'] as String? ?? '',
+            product: p['product'] as String? ?? '',
+            state: p['state'] as String? ?? '',
+          ),
+      ],
+    ),
+    'turn_on_request' => TurnOnRequested(
+      from: device('from'),
+      feature: j['feature'] as String? ?? '',
+    ),
     'direct_wanted' => DirectWanted(
       j['id'] as String,
       group: (j['group'] as Map?)?.cast<String, Object?>(),
@@ -231,6 +309,42 @@ LinksyEvent? eventFromJson(Json j) {
     'clipboard_file' => ClipboardFileReceived(
       from: device('from'),
       path: j['path'] as String,
+    ),
+    'inbox_history' => InboxHistoryRequested(
+      from: device('from'),
+      app: j['app'] as String? ?? '',
+      conversation: j['conversation'] as String? ?? '',
+      beforeMs: _int(j['before_ms']),
+      limit: _int(j['limit']),
+    ),
+    'deck_actions' => DeckActionsReceived(
+      from: device('from'),
+      actions: [
+        for (final a in (j['actions'] as List? ?? const []).cast<Json>())
+          DeckAction(
+            id: a['id'] as String,
+            name: a['name'] as String? ?? '',
+            kind: DeckKind.parse(a['kind'] as String?),
+            group: a['group'] as String? ?? '',
+            confirm: a['confirm'] as String?,
+          ),
+      ],
+    ),
+    'deck_state' => DeckStateReceived(
+      from: device('from'),
+      states: [
+        for (final d in (j['states'] as List? ?? const []).cast<Json>())
+          DeckState(
+            id: d['id'] as String,
+            on: d['on'] as bool?,
+            value: (d['value'] as num?)?.toDouble(),
+            text: d['text'] as String?,
+          ),
+      ],
+    ),
+    'deck_layout' => DeckLayoutReceived(
+      from: device('from'),
+      layouts: j['layouts'] as Json? ?? const {},
     ),
     _ => null,
   };

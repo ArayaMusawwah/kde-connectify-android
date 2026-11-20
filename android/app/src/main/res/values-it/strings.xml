@@ -29,4 +29,13 @@
     <string name="media_next">Successivo</string>
     <string name="media_back10">Indietro di 10 secondi</string>
     <string name="media_forward10">Avanti di 10 secondi</string>
+    <string name="channel_from_computer">Da questo computer</string>
+    <string name="all_files">Tutti i file</string>
+    <string name="channel_arrived">Dai tuoi computer</string>
+    <string name="controlled_from">Controllato da %1$s</string>
+    <string name="copy_to_computer">Copia sul computer</string>
+    <string name="keep_alive_boot">KDE Connectify è pronto per i tuoi computer</string>
+    <string name="phone_storage">Memoria del telefono</string>
+    <string name="snap_no_camera">Nessuna app fotocamera su questo telefono</string>
+    <string name="snap_to_computer">Foto al computer</string>
 </resources>

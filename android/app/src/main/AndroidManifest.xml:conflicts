@@ -1,0 +1,16 @@
+    <!-- Full storage access for "Browse All Files" from the desktop. Android 11+
+         shows an explicit user consent screen; grant is per-app in Settings. -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage"/>
+    <!-- A computer controlling this phone: the input overlay is drawn over
+         other apps (grant in Android's "Display over other apps" settings). -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <!-- Start When the Phone Starts (mobile#23): back in the background after a
+         restart, so computers see the phone without opening the app. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <application
+        android:label="KDE Connectify"
+        android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"

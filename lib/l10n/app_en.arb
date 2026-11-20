@@ -158,10 +158,6 @@
   "@ctlMicrophonePermission": {
     "description": "Error when the microphone permission was refused"
   },
-  "deviceControlNoOverlayPermission": "Letting a computer control this phone needs the 'Display over other apps' permission. Enable it in Android settings for KDE Connectify.",
-  "@deviceControlNoOverlayPermission": {
-    "description": "Error when the draw-over-apps permission was refused for a control session"
-  },
   "ctlTerminalTitle": "Terminal",
   "@ctlTerminalTitle": {
     "description": "Default title of a remote terminal tab"
@@ -561,22 +557,6 @@
       }
     }
   },
-  "deviceSavedCommands": "Saved Commands",
-  "@deviceSavedCommands": {
-    "description": "Card title: preset terminal commands from the computer"
-  },
-  "deviceNoCommandsSaved": "No commands saved on this computer yet",
-  "@deviceNoCommandsSaved": {
-    "description": "Commands card caption when the computer has no saved commands"
-  },
-  "devicePcFiles": "Computer Files",
-  "@devicePcFiles": {
-    "description": "Card title and screen title: browse the files a computer shares"
-  },
-  "deviceNoPcFiles": "Nothing to show here",
-  "@deviceNoPcFiles": {
-    "description": "Empty state when a shared folder has no entries"
-  },
   "deviceFilterAll": "All",
   "@deviceFilterAll": {
     "description": "Timeline filter: everything"
@@ -744,7 +724,7 @@
   "@deviceAwayAllOn": {
     "description": "Detail of Allow everything from away, on"
   },
-  "deviceAwayAllOff": "From away: clipboard, links, files and ring only",
+  "deviceAwayAllOff": "From away: clipboard, links, files, ring, photos and controls",
   "@deviceAwayAllOff": {
     "description": "Detail of Allow everything from away, off"
   },
@@ -911,6 +891,10 @@
   "@activityInProgress": {
     "description": "Timeline status: in progress"
   },
+  "activityReconnecting": "Connection lost, continuing when it's back",
+  "@activityReconnecting": {
+    "description": "A file transfer whose connection dropped, waiting to continue"
+  },
   "activityCopiedHere": "Copied here",
   "@activityCopiedHere": {
     "description": "Timeline status: clipboard received on this phone"
@@ -1072,14 +1056,6 @@
   "homeConnectSubtitle": "Straight over your Wi-Fi. No account, no cloud.",
   "@homeConnectSubtitle": {
     "description": "Subtitle under 'Connect your first device'."
-  },
-  "homeScanQr": "Scan QR code",
-  "@homeScanQr": {
-    "description": "Main button on the empty home screen that opens the QR scanner."
-  },
-  "homePairByAddress": "Pair by address instead",
-  "@homePairByAddress": {
-    "description": "Secondary button on the empty home screen: pair by typing the computer's IP address."
   },
   "pairingAddDevice": "Add a device",
   "@pairingAddDevice": {
@@ -1547,13 +1523,43 @@
   "@settingsTitle": {
     "description": "Title of the Settings screen"
   },
+  "settingsSearch": "Search settings",
+  "@settingsSearch": {
+    "description": "Settings: placeholder of the search field"
+  },
+  "settingsNothingMatches": "Nothing matches “{query}”",
+  "@settingsNothingMatches": {
+    "description": "Settings search: no setting matches",
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsRecommended": "Recommended",
+  "@settingsRecommended": {
+    "description": "Settings: label of the card suggesting one thing to set up next"
+  },
   "settingsReceiving": "Receiving",
   "@settingsReceiving": {
     "description": "Settings section label: receiving files"
   },
+  "settingsFiles": "Files",
+  "@settingsFiles": {
+    "description": "Settings: the page about received files, the shared folder and photo backup"
+  },
   "settingsSaveLocation": "Save location",
   "@settingsSaveLocation": {
     "description": "Settings row: where received files are saved"
+  },
+  "settingsSaveLocationUse": "Use {path}",
+  "@settingsSaveLocationUse": {
+    "description": "Button in the Save location card: back to the default folder",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
   },
   "settingsSaveLocationPath": "Downloads › KDE Connectify",
   "@settingsSaveLocationPath": {
@@ -1571,6 +1577,10 @@
   "@settingsConnection": {
     "description": "Settings section label"
   },
+  "settingsWays": "How it reaches your computers",
+  "@settingsWays": {
+    "description": "Connection page: label over the list of ways the phone reaches computers (Same Wi-Fi, Away from home, Wi-Fi Direct, USB cable); not buttons"
+  },
   "settingsStayConnected": "Stay connected",
   "@settingsStayConnected": {
     "description": "Settings switch: keep connections to nearby devices open"
@@ -1586,6 +1596,14 @@
   "settingsKeepRunningCaption": "Files, photo backup and calls keep working when KDE Connectify is closed. Shows a quiet notification.",
   "@settingsKeepRunningCaption": {
     "description": "Caption of the background switch"
+  },
+  "settingsStartAtBoot": "Start when the phone starts",
+  "@settingsStartAtBoot": {
+    "description": "Settings switch: start KDE Connectify in the background when the phone restarts"
+  },
+  "settingsStartAtBootCaption": "After a restart, your computers see this phone without opening KDE Connectify. Shows a quiet notification.",
+  "@settingsStartAtBootCaption": {
+    "description": "Caption of the start-at-boot switch"
   },
   "settingsAwayFromHome": "Away from home",
   "@settingsAwayFromHome": {
@@ -1622,6 +1640,22 @@
   "settingsBrowseFiles": "Let computers browse files",
   "@settingsBrowseFiles": {
     "description": "Settings switch: share a phone folder with computers"
+  },
+  "settingsFilesFolder": "A folder you choose",
+  "settingsFilesAll": "All files",
+  "settingsFilesAllCaption": "Your computers can open every file on this phone.",
+  "settingsFilesAllAllow": "Allow “All files access” for KDE Connectify in Android’s settings.",
+  "@settingsFilesFolder": {
+    "description": "Browse files: computers see one folder the user picks"
+  },
+  "@settingsFilesAll": {
+    "description": "Browse files: computers see all of the phone's files (Android's All files access)"
+  },
+  "@settingsFilesAllCaption": {
+    "description": "Under All files, once allowed"
+  },
+  "@settingsFilesAllAllow": {
+    "description": "Under All files, before Android allows it"
   },
   "settingsBrowseFilesChoose": "Choose a folder your computers can open in their Files app, like Documents (Android doesn’t allow Download).",
   "@settingsBrowseFilesChoose": {
@@ -1863,6 +1897,14 @@
   "@remoteTouchpadHint": {
     "description": "Hint on the touchpad area (two lines)"
   },
+  "remoteDragHint": "Double-tap and slide to drag, tap to let go",
+  "@remoteDragHint": {
+    "description": "Touchpad hint line: double tap and slide to drag"
+  },
+  "remoteDragging": "Dragging. Lift and keep going, tap to let go",
+  "@remoteDragging": {
+    "description": "Touchpad while dragging (button held down)"
+  },
   "remoteLeftClick": "Left click",
   "@remoteLeftClick": {
     "description": "Touchpad button"
@@ -1902,6 +1944,94 @@
   "remoteVolumeHint": "Volume down: next · Volume up: back. The screen stays on.",
   "@remoteVolumeHint": {
     "description": "Hint under the slide buttons"
+  },
+  "remoteBrowser": "Browser",
+  "@remoteBrowser": {
+    "description": "Remote mode tab: browser controls"
+  },
+  "remoteWebBack": "Back",
+  "@remoteWebBack": {
+    "description": "Browser remote: go back a page"
+  },
+  "remoteWebForward": "Forward",
+  "@remoteWebForward": {
+    "description": "Browser remote: go forward a page"
+  },
+  "remoteWebReload": "Reload",
+  "@remoteWebReload": {
+    "description": "Browser remote: reload the page"
+  },
+  "remoteWebHome": "Home",
+  "@remoteWebHome": {
+    "description": "Browser remote: home page"
+  },
+  "remoteWebNewTab": "New tab",
+  "@remoteWebNewTab": {
+    "description": "Browser remote: open a new tab"
+  },
+  "remoteWebCloseTab": "Close tab",
+  "@remoteWebCloseTab": {
+    "description": "Browser remote: close the tab"
+  },
+  "remoteWebNextTab": "Next tab",
+  "@remoteWebNextTab": {
+    "description": "Browser remote: next tab"
+  },
+  "remoteWebPrevTab": "Previous tab",
+  "@remoteWebPrevTab": {
+    "description": "Browser remote: previous tab"
+  },
+  "remoteWebAddress": "Address",
+  "@remoteWebAddress": {
+    "description": "Browser remote: go to the address bar and type"
+  },
+  "remoteWebHint": "Works on the browser in front on the computer.",
+  "@remoteWebHint": {
+    "description": "Browser remote: hint under the buttons"
+  },
+  "remoteFirstSlide": "First",
+  "@remoteFirstSlide": {
+    "description": "Slides remote: go to the first slide (Home)"
+  },
+  "remoteLastSlide": "Last",
+  "@remoteLastSlide": {
+    "description": "Slides remote: go to the last slide (End)"
+  },
+  "remoteBlackScreen": "Black screen",
+  "@remoteBlackScreen": {
+    "description": "Slides remote: black screen (B)"
+  },
+  "remoteWhiteScreen": "White screen",
+  "@remoteWhiteScreen": {
+    "description": "Slides remote: white screen (W)"
+  },
+  "remoteFromHere": "From here",
+  "@remoteFromHere": {
+    "description": "Slides remote: start the show from the current slide (Shift+F5)"
+  },
+  "remoteModHint": "Tap: with the next key. Hold: press it alone.",
+  "@remoteModHint": {
+    "description": "Tooltip of Ctrl/Alt/Shift/Super on the touchpad's key row"
+  },
+  "switchTitle": "Switch to",
+  "@switchTitle": {
+    "description": "Sheet title: jump to another page for this computer"
+  },
+  "switchHere": "Here",
+  "@switchHere": {
+    "description": "Switcher: the page you're on"
+  },
+  "switchOpen": "Open",
+  "@switchOpen": {
+    "description": "Switcher: its session is still open"
+  },
+  "settingsPointerSpeed": "Touchpad speed",
+  "@settingsPointerSpeed": {
+    "description": "Setting: touchpad pointer speed"
+  },
+  "settingsPointerSpeedCaption": "How far the computer’s pointer goes for the same swipe",
+  "@settingsPointerSpeedCaption": {
+    "description": "Setting caption: touchpad pointer speed"
   },
   "ringTitle": "Here I am!",
   "@ringTitle": {
@@ -2469,6 +2599,19 @@
       }
     }
   },
+  "displayChooseScreen": "Choose screen",
+  "@displayChooseScreen": {
+    "description": "Button on a computer's screen viewer: ask its user to pick another screen"
+  },
+  "displayChooseOn": "Pick the screen on {name}…",
+  "@displayChooseOn": {
+    "description": "Shown after Choose screen, while the computer's user picks",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "terminalTabClosed": "“{title}” closed",
   "@terminalTabClosed": {
     "description": "Message: a terminal tab was closed here",
@@ -2697,6 +2840,10 @@
   "@settingsThemeLight": {},
   "@settingsThemeDark": {},
   "usbConnectedTo": "Connected to {name} by USB cable",
+  "usbConnecting": "Connecting over the USB cable…",
+  "@usbConnecting": {
+    "description": "While the phone dials the computer through the USB cable"
+  },
   "usbPairTitle": "A computer is on the cable",
   "usbPairBody": "It isn’t paired with this phone yet. Pair with it over the cable? Both screens show a code to compare.",
   "usbPairAction": "Pair",
@@ -2894,6 +3041,19 @@
   "updateLater": "Later",
   "@updateLater": {
     "description": "Closes the update sheet"
+  },
+  "updateWhatChanged": "What changed in {version}",
+  "@updateWhatChanged": {
+    "description": "Update sheet: title of the release notes card",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateToInstall": "To be installed",
+  "@updateToInstall": {
+    "description": "Update sheet: small label above the file that will be installed"
   },
   "updateDownloading": "Downloading, {percent}%",
   "@updateDownloading": {
@@ -3135,6 +3295,1445 @@
         "type": "String"
       }
     }
+  },
+  "settingsPhoneNotifications": "Show this phone's notifications",
+  "@settingsPhoneNotifications": {
+    "description": "Settings › With your computers: switch that mirrors this phone's notifications to paired computers"
+  },
+  "settingsPhoneNotificationsCaption": "On your computers, with Reply for messages.",
+  "@settingsPhoneNotificationsCaption": {
+    "description": "Caption of that switch"
+  },
+  "settingsPhoneNotificationsAllow": "Android hasn't allowed it yet. Tap to allow notification access.",
+  "@settingsPhoneNotificationsAllow": {
+    "description": "Caption (shown in red) when the switch is wanted but Android's Notification access isn't allowed"
+  },
+  "noticeAccessTitle": "Allow notification access",
+  "@noticeAccessTitle": {
+    "description": "Sheet title: guide to allow Notification access"
+  },
+  "noticeAccessGreyed": "Android greys out the switch for apps installed from the web. To allow it:",
+  "@noticeAccessGreyed": {
+    "description": "Android 13+: Notification access is greyed out for apps installed from a browser (restricted settings)"
+  },
+  "noticeAccessStepInfo": "Open App info for KDE Connectify.",
+  "@noticeAccessStepInfo": {
+    "description": "Step 1 of the restricted settings guide"
+  },
+  "noticeAccessStepRestricted": "Tap ⋮ at the top right, then Allow restricted settings.",
+  "@noticeAccessStepRestricted": {
+    "description": "Step 2: Android's own label is Allow restricted settings"
+  },
+  "noticeAccessStepAgain": "Open Notification access again and turn KDE Connectify on.",
+  "@noticeAccessStepAgain": {
+    "description": "Step 3; Try again is the button below"
+  },
+  "noticeAccessPlain": "Turn KDE Connectify on in Android's Notification access, then come back.",
+  "@noticeAccessPlain": {
+    "description": "Before Android 13: just turn KDE Connectify on in Notification access"
+  },
+  "commonOpenAppInfo": "Open App info",
+  "@commonOpenAppInfo": {
+    "description": "Button opening Android's App info page for KDE Connectify"
+  },
+  "batteryGuide": "Keep KDE Connectify alive",
+  "@batteryGuide": {
+    "description": "Settings › Connection row and page title: per-brand steps so Android doesn't close KDE Connectify"
+  },
+  "batteryGuideCaption": "What to change on this {maker} phone",
+  "@batteryGuideCaption": {
+    "description": "Caption of that row; maker is the phone's maker as Android writes it (realme, Xiaomi, samsung)",
+    "placeholders": {
+      "maker": {
+        "type": "String"
+      }
+    }
+  },
+  "batteryIntro": "To save battery, some phones close apps in the background, and KDE Connectify then misses files and notifications. On this {maker} phone:",
+  "@batteryIntro": {
+    "description": "Intro of the battery guide page",
+    "placeholders": {
+      "maker": {
+        "type": "String"
+      }
+    }
+  },
+  "batteryAutostart": "App info › Autostart: on.",
+  "@batteryAutostart": {
+    "description": "Battery guide step (Xiaomi, vivo): Android's labels"
+  },
+  "batteryXiaomiSaver": "App info › Battery saver: No restrictions.",
+  "@batteryXiaomiSaver": {
+    "description": "Battery guide step (Xiaomi)"
+  },
+  "batteryLockRecents": "In recent apps, hold KDE Connectify and tap the lock, so clearing them leaves it running.",
+  "@batteryLockRecents": {
+    "description": "Battery guide step (Xiaomi, OPPO, realme, OnePlus, vivo, Huawei): lock the app in the recent apps screen"
+  },
+  "batterySamsungUnrestricted": "App info › Battery: Unrestricted.",
+  "@batterySamsungUnrestricted": {
+    "description": "Battery guide step (Samsung)"
+  },
+  "batterySamsungSleeping": "Settings › Battery › Background usage limits: take KDE Connectify out of Sleeping and Deep sleeping apps.",
+  "@batterySamsungSleeping": {
+    "description": "Battery guide step (Samsung)"
+  },
+  "batteryOppoBackground": "App info › Battery usage: allow background activity, foreground activity and auto launch.",
+  "@batteryOppoBackground": {
+    "description": "Battery guide step (OPPO, realme, OnePlus)"
+  },
+  "batteryVivoBackground": "Settings › Battery › Background power consumption: allow KDE Connectify.",
+  "@batteryVivoBackground": {
+    "description": "Battery guide step (vivo, iQOO)"
+  },
+  "batteryHuaweiLaunch": "Settings › Battery › App launch › KDE Connectify: manage manually, with Auto-launch, Secondary launch and Run in background on.",
+  "@batteryHuaweiLaunch": {
+    "description": "Battery guide step (Huawei, Honor)"
+  },
+  "batteryUnrestricted": "App info › App battery usage: Unrestricted.",
+  "@batteryUnrestricted": {
+    "description": "Battery guide step (Pixel and other phones)"
+  },
+  "batteryKeepRunning": "In KDE Connectify: Settings › Connection › Keep running in the background.",
+  "@batteryKeepRunning": {
+    "description": "Last step of the battery guide, for every phone"
+  },
+  "batteryNames": "The names change a little between versions of Android.",
+  "@batteryNames": {
+    "description": "Small note under the battery guide's steps"
+  },
+  "updatePlayProtect": "KDE Connectify can show your notifications on your computers, so Play Protect may stop the install. If it does:",
+  "@updatePlayProtect": {
+    "description": "Update sheet, Important box: Play Protect may block installing KDE Connectify (it can read notifications); steps follow"
+  },
+  "updateProtectStep1": "Play Store › your picture › Play Protect › ⚙.",
+  "@updateProtectStep1": {
+    "description": "Step 1 of getting past Play Protect: where its settings are"
+  },
+  "updateProtectStep2": "Turn off Scan apps with Play Protect.",
+  "@updateProtectStep2": {
+    "description": "Step 2: Play Protect's own label is Scan apps with Play Protect"
+  },
+  "updateProtectStep3": "Tap Update Now again, then turn scanning back on.",
+  "@updateProtectStep3": {
+    "description": "Step 3; Update Now is the button below"
+  },
+  "news032NotificationsTitle": "Your notifications on your computer",
+  "@news032NotificationsTitle": {
+    "description": "What's New: this phone's notifications on its computers"
+  },
+  "news032NotificationsBody": "Messages and other notifications show on your paired computers, with Reply. Turn it on in Settings › With your computers. If Android greys out the switch: App info › ⋮ › Allow restricted settings.",
+  "@news032NotificationsBody": {
+    "description": "What's New body; mentions Android 13+ restricted settings"
+  },
+  "news032BatteryTitle": "Keep KDE Connectify alive",
+  "@news032BatteryTitle": {
+    "description": "What's New: the per-brand battery guide (same name as its Settings row)"
+  },
+  "news032BatteryBody": "Settings › Connection › Keep KDE Connectify alive shows what to change on your phone's brand so KDE Connectify keeps running in the background.",
+  "@news032BatteryBody": {
+    "description": "What's New body"
+  },
+  "settingsReduceMotion": "Reduce motion",
+  "@settingsReduceMotion": {
+    "description": "Settings › This app: a switch for fewer animations (like the phone's own Remove animations)"
+  },
+  "settingsReduceMotionCaption": "Screens fade instead of sliding, and buttons dim instead of shrinking.",
+  "@settingsReduceMotionCaption": {
+    "description": "What Reduce motion changes"
+  },
+  "deviceDeck": "Deck",
+  "@deviceDeck": {
+    "description": "Device page, Control section: the deck, this phone as buttons for the computer (desktop's own name for the feature)"
+  },
+  "deviceDeckCaption": "Your own buttons for {name}",
+  "@deviceDeckCaption": {
+    "description": "Under Deck; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckEdit": "Edit",
+  "@deckEdit": {
+    "description": "Deck"
+  },
+  "deckDone": "Done",
+  "@deckDone": {
+    "description": "Deck"
+  },
+  "deckAsking": "Asking {name} what the deck may do…",
+  "@deckAsking": {
+    "description": "Deck screen, waiting for the computer's list of actions",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckAway": "{name} isn't connected. The deck works once it is.",
+  "@deckAway": {
+    "description": "Deck screen when the computer isn't connected",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckNothingOffered": "{name} lets the deck do nothing yet. Turn its actions on in KDE Connectify on the computer.",
+  "@deckNothingOffered": {
+    "description": "Deck screen when the computer turned on no actions for this phone",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckEmptyPage": "Nothing here yet. Tap Edit, then Add.",
+  "@deckEmptyPage": {
+    "description": "An empty page of the deck"
+  },
+  "deckAdd": "Add",
+  "@deckAdd": {
+    "description": "Deck"
+  },
+  "deckAddTitle": "Add to the deck",
+  "@deckAddTitle": {
+    "description": "Deck"
+  },
+  "deckUnavailable": "Not available",
+  "@deckUnavailable": {
+    "description": "On a deck button whose action the computer no longer offers"
+  },
+  "deckGroupMedia": "Media",
+  "@deckGroupMedia": {
+    "description": "Group of deck actions sent by the computer as Media"
+  },
+  "deckGroupSound": "Sound",
+  "@deckGroupSound": {
+    "description": "Deck"
+  },
+  "deckGroupSystem": "System",
+  "@deckGroupSystem": {
+    "description": "Deck"
+  },
+  "deckGroupCommands": "Commands",
+  "@deckGroupCommands": {
+    "description": "Deck"
+  },
+  "deckKindButton": "Button",
+  "@deckKindButton": {
+    "description": "Deck"
+  },
+  "deckKindToggle": "On or off",
+  "@deckKindToggle": {
+    "description": "A deck action that switches something on or off"
+  },
+  "deckKindSlider": "Slider",
+  "@deckKindSlider": {
+    "description": "Deck"
+  },
+  "deckSize": "Size",
+  "@deckSize": {
+    "description": "Deck"
+  },
+  "deckSizeSmall": "Small",
+  "@deckSizeSmall": {
+    "description": "Deck"
+  },
+  "deckSizeWide": "Wide",
+  "@deckSizeWide": {
+    "description": "Deck"
+  },
+  "deckSizeTall": "Tall",
+  "@deckSizeTall": {
+    "description": "Deck"
+  },
+  "deckSizeBig": "Big",
+  "@deckSizeBig": {
+    "description": "Deck"
+  },
+  "deckSizeRow": "Full row",
+  "@deckSizeRow": {
+    "description": "Deck button size: as wide as the whole row"
+  },
+  "deckColor": "Color",
+  "@deckColor": {
+    "description": "Deck"
+  },
+  "deckIcon": "Icon",
+  "@deckIcon": {
+    "description": "Deck"
+  },
+  "deckRemove": "Remove from the deck",
+  "@deckRemove": {
+    "description": "Deck"
+  },
+  "deckNewPage": "New page",
+  "@deckNewPage": {
+    "description": "Deck"
+  },
+  "deckRemovePage": "Remove this page",
+  "@deckRemovePage": {
+    "description": "Deck"
+  },
+  "deckMoveHint": "Hold a button and drag it to move it.",
+  "@deckMoveHint": {
+    "description": "Deck, editing: how to move a button"
+  },
+  "settingsGallery": "Photos on your computers",
+  "@settingsGallery": {
+    "description": "Settings > Files: computers can browse this phone's photos (their Gallery)"
+  },
+  "settingsGalleryCaption": "Your computers can look through this phone's photos and videos, and save the ones you pick.",
+  "@settingsGalleryCaption": {
+    "description": "Deck"
+  },
+  "settingsGalleryDenied": "Allow KDE Connectify to see your photos in Android's settings.",
+  "@settingsGalleryDenied": {
+    "description": "Snack bar when Android didn't allow photo access"
+  },
+  "deckGroupNetwork": "Network",
+  "@deckGroupNetwork": {
+    "description": "Group of deck actions the computer offers (Wi-Fi, Bluetooth, airplane mode); the computer sends the group in English"
+  },
+  "deckGroupPower": "Power",
+  "@deckGroupPower": {
+    "description": "Group of deck actions the computer offers (power profiles)"
+  },
+  "deckThemeTitle": "Theme",
+  "@deckThemeTitle": {
+    "description": "Sheet title: the deck's look, picked by holding the deck's name"
+  },
+  "deckThemeAsMade": "As on {name}",
+  "@deckThemeAsMade": {
+    "description": "First choice of the theme sheet: the theme picked in the computer's deck editor; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckThemesShared": "On the computer too",
+  "@deckThemesShared": {
+    "description": "Theme sheet section: the five themes the computer's editor also has"
+  },
+  "deckThemesPhone": "Only on this phone",
+  "@deckThemesPhone": {
+    "description": "Theme sheet section: themes only the phone has; the choice stays on the phone"
+  },
+  "deckThemeStock": "Stock",
+  "@deckThemeStock": {
+    "description": "Deck theme: the GNOME look (the desktop's own translation)"
+  },
+  "deckThemeDots": "Dot Matrix",
+  "@deckThemeDots": {
+    "description": "Deck theme: black with lit dots (the desktop's own translation)"
+  },
+  "deckThemeEink": "E-Ink",
+  "@deckThemeEink": {
+    "description": "Deck theme: paper and ink (the desktop's own translation)"
+  },
+  "deckThemeTerm": "Terminal",
+  "@deckThemeTerm": {
+    "description": "Deck theme: green terminal (the desktop's own translation)"
+  },
+  "deckThemePixel": "Pixel",
+  "@deckThemePixel": {
+    "description": "Deck theme: 16-colour pixel art (the desktop's own translation)"
+  },
+  "deckThemeSignal": "Signal",
+  "@deckThemeSignal": {
+    "description": "Deck theme of the phone: KDE Connectify's own colours (Signal is the name of KDE Connectify's design)"
+  },
+  "deckThemeGlass": "Glass",
+  "@deckThemeGlass": {
+    "description": "Deck theme of the phone: frosted glass tiles"
+  },
+  "deckThemeMidnight": "Midnight",
+  "@deckThemeMidnight": {
+    "description": "Deck theme of the phone: black, for a screen kept on at night"
+  },
+  "deckNotAvailable": "Not available on {name}",
+  "@deckNotAvailable": {
+    "description": "Shown a moment after tapping a deck tile whose action the computer doesn't offer; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckAwayShort": "Not connected",
+  "@deckAwayShort": {
+    "description": "Pill at the top of the deck while the computer isn't connected"
+  },
+  "deckAwayNote": "{name} isn't connected. The tiles work once it is.",
+  "@deckAwayNote": {
+    "description": "Shown a moment after tapping a deck tile while the computer isn't connected",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckNothingPlaying": "Nothing playing",
+  "@deckNothingPlaying": {
+    "description": "The deck's music tile when the computer plays nothing"
+  },
+  "deckPickPlayer": "Control which player",
+  "@deckPickPlayer": {
+    "description": "Title of the sheet to choose which of the computer's media players the deck controls"
+  },
+  "deckDisplay": "Display",
+  "@deckDisplay": {
+    "description": "Deck theme sheet section: how the deck shows"
+  },
+  "deckFullScreen": "Full screen",
+  "@deckFullScreen": {
+    "description": "Deck switch: hide the status and navigation bars"
+  },
+  "deckFullScreenCaption": "Hides the status and navigation bars. Swipe from the edge to see them.",
+  "@deckFullScreenCaption": {
+    "description": "Caption of the deck full screen switch"
+  },
+  "deckSwipeForMenu": "Swipe down from the top for the menu",
+  "@deckSwipeForMenu": {
+    "description": "Shown once on the full-screen deck: how to bring back its header and the bars"
+  },
+  "deckFromPhone": "From this phone",
+  "@deckFromPhone": {
+    "description": "Deck editor, Add: tiles the phone runs itself"
+  },
+  "deckShortcut": "Shortcut",
+  "@deckShortcut": {
+    "description": "Deck tile: a key combination sent to the computer"
+  },
+  "deckTypeText": "Type text",
+  "@deckTypeText": {
+    "description": "Deck tile: types saved text on the computer"
+  },
+  "deckOpenLink": "Open link",
+  "@deckOpenLink": {
+    "description": "Deck tile: opens a link on the computer"
+  },
+  "deckKeys": "Keys",
+  "@deckKeys": {
+    "description": "Deck editor: the keys of a shortcut tile"
+  },
+  "deckKeyHint": "A key: T, F5, Tab, Left…",
+  "@deckKeyHint": {
+    "description": "Deck editor: hint of the key field of a shortcut"
+  },
+  "deckTextHint": "What to type on the computer",
+  "@deckTextHint": {
+    "description": "Deck editor: hint of the text of a Type text tile"
+  },
+  "deckLinkHint": "Address, like example.com",
+  "@deckLinkHint": {
+    "description": "Deck editor: hint of the address of an Open link tile"
+  },
+  "deckSetUpFirst": "Set it up first: hold it to edit",
+  "@deckSetUpFirst": {
+    "description": "Deck: tapped a shortcut, text or link tile with nothing set"
+  },
+  "deckShow": "Shows",
+  "@deckShow": {
+    "description": "Deck editor: what a tile shows"
+  },
+  "deckShowBoth": "Icon and name",
+  "@deckShowBoth": {
+    "description": "Deck editor: icon and name"
+  },
+  "deckShowIcon": "Icon",
+  "@deckShowIcon": {
+    "description": "Deck editor: icon only"
+  },
+  "deckShowName": "Name",
+  "@deckShowName": {
+    "description": "Deck editor: name only"
+  },
+  "deckLookSize": "Size of what it shows",
+  "@deckLookSize": {
+    "description": "Deck editor: how big the icon and words are"
+  },
+  "deckSmall": "Small",
+  "@deckSmall": {
+    "description": "Deck editor: small"
+  },
+  "deckMedium": "Medium",
+  "@deckMedium": {
+    "description": "Deck editor: medium"
+  },
+  "deckLarge": "Large",
+  "@deckLarge": {
+    "description": "Deck editor: large"
+  },
+  "deckRealCovers": "Album art as it is",
+  "@deckRealCovers": {
+    "description": "Deck switch: show album art unchanged by the theme"
+  },
+  "deckRealCoversCaption": "Not redrawn in the theme's dots or pixels",
+  "@deckRealCoversCaption": {
+    "description": "Caption of the album art switch"
+  },
+  "deckNoLayouts": "{name} has no deck for this phone yet. Make one in KDE Connectify on the computer.",
+  "@deckNoLayouts": {
+    "description": "Deck screen when the computer sent layouts but none for this phone",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "news034TurnOnBody": "Turn them on from the card on the home screen, and the computer's Inbox and Gallery fill by themselves.",
+  "@news034TurnOnBody": {
+    "description": "What's New 0.3.4: the home card turns on the Inbox and Gallery"
+  },
+  "news034SaveTitle": "Choose where files go",
+  "@news034SaveTitle": {
+    "description": "What's New 0.3.4: title, choosing the save folder"
+  },
+  "news034SaveBody": "Settings › Files › Save location: tap it to pick another folder for what you receive.",
+  "@news034SaveBody": {
+    "description": "What's New 0.3.4: where to choose it"
+  },
+  "news033DeckTitle": "Deck: buttons for your computer",
+  "@news033DeckTitle": {
+    "description": "What's New 0.3.3: the deck, the phone as buttons for the computer, laid out on the computer"
+  },
+  "news033DeckBody": "Play, volume, mute, Wi-Fi and your own commands, laid out in KDE Connectify on the computer and used from here: its page › Control › Deck. Hold the deck's name to change its look. Needs the newest KDE Connectify on the computer.",
+  "@news033DeckBody": {
+    "description": "Its page › Control › Deck are the app's own labels"
+  },
+  "news033PhotosTitle": "Your photos on your computer",
+  "@news033PhotosTitle": {
+    "description": "What's New 0.3.3: the computer's Gallery shows this phone's photos"
+  },
+  "news033PhotosBody": "A computer's Gallery looks through this phone's photos and videos, page by page, and saves the ones you pick. Settings › Files › Photos on your computers.",
+  "@news033PhotosBody": {
+    "description": "Settings › Files › Photos on your computers are the app's own labels"
+  },
+  "news033MessagesTitle": "Earlier messages",
+  "@news033MessagesTitle": {
+    "description": "What's New 0.3.3: earlier messages of a conversation, on the computer"
+  },
+  "news033MessagesBody": "On the computer, a conversation shows its earlier messages too, and Reply still works for a day after the notification is gone.",
+  "@news033MessagesBody": {
+    "description": "What's New 0.3.3"
+  },
+  "onboardingMessages": "Messages on your computers",
+  "@onboardingMessages": {
+    "description": "First-run setup row: this phone's messages and notifications in the computer's Inbox. Parallels settingsGallery"
+  },
+  "onboardingMessagesDetail": "Read and answer your messages and notifications in the computer's Inbox.",
+  "@onboardingMessagesDetail": {
+    "description": "Under that row, and on a computer's ask. Inbox is the computer's tab, as the desktop translates it"
+  },
+  "onboardingGalleryDetail": "Look through this phone's photos and videos in the computer's Gallery. When Android asks, pick Allow all.",
+  "@onboardingGalleryDetail": {
+    "description": "Under Photos on your computers in the first-run setup, and on a computer's ask. Gallery is the computer's tab; Allow all is Android's own label for photos and videos"
+  },
+  "homeTurnOnTitle": "Your messages and photos on your computers",
+  "@homeTurnOnTitle": {
+    "description": "One-time home card for people updating, when the computer's Inbox or Gallery isn't on"
+  },
+  "homeTurnOnBody": "See them in the computer's Inbox and Gallery.",
+  "@homeTurnOnBody": {
+    "description": "Under that title"
+  },
+  "homeTurnOnMessages": "Turn On Messages",
+  "@homeTurnOnMessages": {
+    "description": "Button on that card"
+  },
+  "homeTurnOnPhotos": "Turn On Photos",
+  "@homeTurnOnPhotos": {
+    "description": "Button on that card"
+  },
+  "turnOnAskMessages": "{name} asks to show this phone's messages",
+  "@turnOnAskMessages": {
+    "description": "A computer's Ask the Phone, as a sheet and a notification; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "turnOnAskPhotos": "{name} asks to show this phone's photos",
+  "@turnOnAskPhotos": {
+    "description": "A computer's Ask the Phone, as a sheet and a notification; name is the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "turnOnNow": "Turn On",
+  "@turnOnNow": {
+    "description": "Button on that sheet"
+  },
+  "settingsDemoAsk": "A computer asks for it, in 4 seconds",
+  "@settingsDemoAsk": {
+    "description": "Demo mode only: a computer's Ask the Phone comes 4 seconds after the tap"
+  },
+  "noticeAccessStepSwitch": "Open Notification access and turn KDE Connectify on. If its switch is greyed out, tap it anyway: Android refuses, and that makes the next step possible.",
+  "noticeAccessOpen": "Open Notification access",
+  "@noticeAccessStepSwitch": {
+    "description": "First step for a switch Android greys out: Allow restricted settings only appears in App info after Android refused once (tested on Android 15)"
+  },
+  "@noticeAccessOpen": {
+    "description": "Button opening Android's Notification access page for KDE Connectify"
+  },
+  "phoneClipboard": "Send clipboard",
+  "@phoneClipboard": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneClipboardCaption": "What's copied here goes to {name}",
+  "@phoneClipboardCaption": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneNoteHint": "A note or a link",
+  "@phoneNoteHint": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneSend": "Send",
+  "@phoneSend": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneFind": "Find {name}",
+  "@phoneFind": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneFindCaption": "It rings loud, even on silent",
+  "@phoneFindCaption": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneWhere": "Where is it?",
+  "@phoneWhere": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneWhereCaption": "Asks for its location, once",
+  "@phoneWhereCaption": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneWhereRefused": "{name} didn't say where it is: {reason}",
+  "@phoneWhereRefused": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneFromThis": "From this phone",
+  "@phoneFromThis": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phonePhotos": "Photos and videos",
+  "@phonePhotos": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phonePhotosCaption": "By day or album",
+  "@phonePhotosCaption": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneAllowPhotos": "Allow photos",
+  "@phoneAllowPhotos": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneAllowPhotosCaption": "KDE Connectify needs this to show your photos here. Nothing goes until you send it.",
+  "@phoneAllowPhotosCaption": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneFiles": "Files and folders",
+  "@phoneFiles": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneFilesCaption": "With Android's file picker",
+  "@phoneFilesCaption": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneChooseFiles": "Choose files",
+  "@phoneChooseFiles": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneChooseFolder": "Choose a folder",
+  "@phoneChooseFolder": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneApps": "Apps",
+  "@phoneApps": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneAppsCaption": "Send an app, or update one",
+  "@phoneAppsCaption": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneAppsNote": "An app's data and logins don't move. Apps that check a licence or an account may refuse to run.",
+  "@phoneAppsNote": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneAppsSearch": "Search apps",
+  "@phoneAppsSearch": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneSortName": "Name",
+  "@phoneSortName": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneSortSize": "Size",
+  "@phoneSortSize": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneAppNotThere": "Not on {name}",
+  "@phoneAppNotThere": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneAppUpdate": "Update (older there)",
+  "@phoneAppUpdate": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneAppSame": "Already there",
+  "@phoneAppSame": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneAppNewer": "Newer there",
+  "@phoneAppNewer": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneAppOtherSigner": "{name} has it from another developer. Android can't update it, only replace it, and that deletes its data.",
+  "@phoneAppOtherSigner": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneAllAlbums": "All",
+  "@phoneAllAlbums": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneNoPhotos": "No photos here yet",
+  "@phoneNoPhotos": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneNoApps": "No apps to send",
+  "@phoneNoApps": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneSelected": "{count} selected · {size}",
+  "@phoneSelected": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSendTo": "Send to {name}",
+  "@phoneSendTo": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneClear": "Clear",
+  "@phoneClear": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "routeDirect": "Direct link",
+  "@routeDirect": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "routeLan": "Same network",
+  "@routeLan": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "routeAway": "Over the internet · uses mobile data",
+  "@routeAway": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "routeUsb": "Cable",
+  "@routeUsb": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "routeAbout": "about {time}",
+  "@routeAbout": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "routeSettingUp": "Setting up a direct link…",
+  "@routeSettingUp": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "routeNotDirect": "Couldn't go direct: {reason}. Sending over the network.",
+  "@routeNotDirect": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "warnNoRoom": "{name} has {free} free and this is {size}",
+  "@warnNoRoom": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "free": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "warnWillAsk": "{name} will ask before taking it",
+  "@warnWillAsk": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "warnCantInstall": "{name} needs to allow installs from KDE Connectify first",
+  "@warnCantInstall": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "warnCantInstallHow": "On {name}: Android's Settings › Apps › Special app access › Install unknown apps › KDE Connectify.",
+  "@warnCantInstallHow": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mobileDataTitle": "Send over the internet?",
+  "@mobileDataTitle": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "mobileDataAsk": "This goes over the internet and uses about {size} of mobile data.",
+  "@mobileDataAsk": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneInstallAsk": "{count, plural, =1{Install an app from {name}?} other{Install {count} apps from {name}?}}",
+  "@phoneInstallAsk": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneAppNew": "New",
+  "@phoneAppNew": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneAppUpdateShort": "Update",
+  "@phoneAppUpdateShort": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneInstall": "Install",
+  "@phoneInstall": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneInstallAllowBody": "Android needs your OK once before KDE Connectify can install apps. Turn on Allow from this source, then come back.",
+  "@phoneInstallAllowBody": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneInstallAllow": "Allow installs",
+  "@phoneInstallAllow": {
+    "description": "Phone to phone (§4.22)"
+  },
+  "phoneInstalled": "{app} is installed",
+  "@phoneInstalled": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneInstallCancelled": "{app} wasn't installed",
+  "@phoneInstallCancelled": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneInstallMismatch": "{app} isn't what {name} said it was, so it wasn't installed.",
+  "@phoneInstallMismatch": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "app": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneInstallOtherSigner": "{app} on this phone is from another developer. Android can't update it.",
+  "@phoneInstallOtherSigner": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneInstallFailed": "{app} wasn't installed: {reason}",
+  "@phoneInstallFailed": {
+    "description": "Phone to phone (§4.22)",
+    "placeholders": {
+      "app": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "news035PhonesTitle": "Two phones, no computer",
+  "@news035PhonesTitle": {
+    "description": "What's New 0.3.5"
+  },
+  "news035PhonesBody": "Open a paired phone: send what you copied, a note or a link, make it ring, or pick photos and files by day.",
+  "@news035PhonesBody": {
+    "description": "What's New 0.3.5"
+  },
+  "news035AppsTitle": "Send apps to another phone",
+  "@news035AppsTitle": {
+    "description": "What's New 0.3.5"
+  },
+  "news035AppsBody": "KDE Connectify shows what's missing or older there, and Android asks before installing. An app's data and logins stay behind.",
+  "@news035AppsBody": {
+    "description": "What's New 0.3.5"
+  },
+  "phoneNote": "Note",
+  "@phoneNote": {
+    "description": "Phone to phone page"
+  },
+  "phoneWhereShort": "Where",
+  "@phoneWhereShort": {
+    "description": "Phone to phone page"
+  },
+  "phoneShelfPhotos": "Photos",
+  "@phoneShelfPhotos": {
+    "description": "Phone to phone page"
+  },
+  "phoneSeeAll": "See all",
+  "@phoneSeeAll": {
+    "description": "Phone to phone page"
+  },
+  "phoneSelectDay": "Select day",
+  "@phoneSelectDay": {
+    "description": "Phone to phone page"
+  },
+  "phoneHistory": "History",
+  "@phoneHistory": {
+    "description": "Phone to phone page"
+  },
+  "deviceSnap": "Snap",
+  "@deviceSnap": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "snapSent": "Picture sent to {name}",
+  "@snapSent": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "copySent": "Copied to {name}",
+  "@copySent": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "usbConnectCable": "Connect by USB Cable",
+  "@usbConnectCable": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "settingsSendCopied": "Send what you copy",
+  "@settingsSendCopied": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "settingsSendCopiedCaption": "Each time you come back to KDE Connectify, what you copied goes to connected computers. Passwords too, so leave it off if unsure.",
+  "@settingsSendCopiedCaption": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorTitle": "Why can't I see my computer?",
+  "@doctorTitle": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorCaption": "Finds what's in the way, and what to do about it",
+  "@doctorCaption": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorAllGood": "Nothing wrong on this phone",
+  "@doctorAllGood": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorAllGoodDetail": "If your computer still doesn't show, its firewall may be in the way, or KDE Connectify isn't running there.",
+  "@doctorAllGoodDetail": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorWifi": "Wi-Fi isn't connected",
+  "@doctorWifi": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorWifiDetail": "Join the same network as your computer.",
+  "@doctorWifiDetail": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorHeard": "No device heard on this network",
+  "@doctorHeard": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorHeardDetail": "Your computer may be asleep or on another network, or this router keeps devices apart, as guest networks do.",
+  "@doctorHeardDetail": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorVpn": "A VPN is on",
+  "@doctorVpn": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorVpnDetail": "It can hide your computer from this phone. Turn it off, or let it allow local networks.",
+  "@doctorVpnDetail": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorBattery": "Battery saving can stop KDE Connectify",
+  "@doctorBattery": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorBatteryDetail": "{maker} phones can close KDE Connectify in the background.",
+  "@doctorBatteryDetail": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button.",
+    "placeholders": {
+      "maker": {
+        "type": "String"
+      }
+    }
+  },
+  "doctorPowerSave": "Battery Saver is on",
+  "@doctorPowerSave": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorPowerSaveDetail": "It limits what KDE Connectify can do while the screen is off.",
+  "@doctorPowerSaveDetail": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorDataSaver": "Data Saver is on",
+  "@doctorDataSaver": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorDataSaverDetail": "It can stop KDE Connectify from connecting in the background.",
+  "@doctorDataSaverDetail": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorOpenSettings": "Open settings",
+  "@doctorOpenSettings": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorShowHow": "Show me how",
+  "@doctorShowHow": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "doctorCheckAgain": "Check again",
+  "@doctorCheckAgain": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "news035DeckTitle": "Build your deck on the phone",
+  "@news035DeckTitle": {
+    "description": "What's New 0.3.5"
+  },
+  "news035DeckBody": "Tap the pencil or hold a tile. Drag it, pull it to any size, and the others make room. Turn the phone for the landscape deck.",
+  "@news035DeckBody": {
+    "description": "What's New 0.3.5"
+  },
+  "news035SnapTitle": "Snap to Computer",
+  "@news035SnapTitle": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "news035SnapBody": "Take a picture from a computer's page or the Quick Settings tile, and it goes straight there, ready to paste.",
+  "@news035SnapBody": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "news035CopyTitle": "Copy to Computer",
+  "@news035CopyTitle": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "news035CopyBody": "Select text in any app and pick Copy to Computer. And when something won't connect, Settings › Connection says why.",
+  "@news035CopyBody": {
+    "description": "Snap, Copy to Computer, Connection Doctor or USB button."
+  },
+  "controlsNoDnd": "Allow Do Not Disturb access to KDE Connectify on the phone first",
+  "@controlsNoDnd": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "controlsNoFlashlight": "The flashlight can't be used right now",
+  "@controlsNoFlashlight": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "controlsDenied": "Android didn't allow this",
+  "@controlsDenied": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "snapNoCamera": "KDE Connectify needs the camera permission",
+  "@snapNoCamera": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "snapAsked": "Take a picture for {name}",
+  "@snapAsked": {
+    "description": "Phone controls, computer notifications, snap.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsComputerNotifications": "Your computer's notifications",
+  "@settingsComputerNotifications": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "settingsComputerNotificationsCaption": "Shows them here, once you turn it on for this phone on the computer too",
+  "@settingsComputerNotificationsCaption": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "settingsDndAccess": "Do Not Disturb access",
+  "@settingsDndAccess": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "settingsDndAccessCaption": "Lets your computers change Do Not Disturb here",
+  "@settingsDndAccessCaption": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "settingsDndAccessOn": "Allowed: your computers can change it",
+  "@settingsDndAccessOn": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "settingsTurnTaps": "Turn taps in landscape",
+  "@settingsTurnTaps": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "settingsTurnTapsCaption": "Only if taps from a computer land in the wrong place with the phone on its side",
+  "@settingsTurnTapsCaption": {
+    "description": "Phone controls, computer notifications, snap."
+  },
+  "deckDiscardTitle": "Discard your changes?",
+  "@deckDiscardTitle": {
+    "description": "The deck editor."
+  },
+  "deckDiscard": "Discard",
+  "@deckDiscard": {
+    "description": "The deck editor."
+  },
+  "deckKeepEditing": "Keep editing",
+  "@deckKeepEditing": {
+    "description": "The deck editor."
+  },
+  "deckUndo": "Undo",
+  "@deckUndo": {
+    "description": "The deck editor."
+  },
+  "deckRedo": "Redo",
+  "@deckRedo": {
+    "description": "The deck editor."
+  },
+  "deckCopy": "Copy",
+  "@deckCopy": {
+    "description": "The deck editor."
+  },
+  "deckPage": "Page",
+  "@deckPage": {
+    "description": "The deck editor."
+  },
+  "deckPageN": "Page {n}",
+  "@deckPageN": {
+    "description": "The deck editor.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "deckPages": "{n, plural, =1{1 page} other{{n} pages}}",
+  "@deckPages": {
+    "description": "The deck editor.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "deckRemoveShort": "Remove",
+  "@deckRemoveShort": {
+    "description": "The deck editor."
+  },
+  "deckNoRoom": "No room for it here",
+  "@deckNoRoom": {
+    "description": "The deck editor."
+  },
+  "deckFillForMe": "Fill for me",
+  "@deckFillForMe": {
+    "description": "The deck editor."
+  },
+  "deckTryIt": "Try it",
+  "@deckTryIt": {
+    "description": "The deck editor."
+  },
+  "deckLayouts": "Layouts",
+  "@deckLayouts": {
+    "description": "The deck editor."
+  },
+  "deckPortrait": "Portrait",
+  "@deckPortrait": {
+    "description": "The deck editor."
+  },
+  "deckLandscape": "Landscape",
+  "@deckLandscape": {
+    "description": "The deck editor."
+  },
+  "deckAddSearch": "Search what it can do",
+  "@deckAddSearch": {
+    "description": "The deck editor."
+  },
+  "deckLive": "Live on the deck",
+  "@deckLive": {
+    "description": "The deck editor."
+  },
+  "deckSuggested": "Suggested",
+  "@deckSuggested": {
+    "description": "The deck editor."
+  },
+  "deckMusic": "Music",
+  "@deckMusic": {
+    "description": "The deck editor."
+  },
+  "deckClock": "Clock",
+  "@deckClock": {
+    "description": "The deck editor."
+  },
+  "deckName": "Name",
+  "@deckName": {
+    "description": "The deck editor."
+  },
+  "deckDoes": "What it does",
+  "@deckDoes": {
+    "description": "The deck editor."
+  },
+  "deckAccent": "Accent",
+  "@deckAccent": {
+    "description": "The deck editor."
+  },
+  "deckRename": "Rename",
+  "@deckRename": {
+    "description": "The deck editor."
+  },
+  "deckNewLayout": "Start a new one from",
+  "@deckNewLayout": {
+    "description": "The deck editor."
+  },
+  "deckBlank": "Blank",
+  "@deckBlank": {
+    "description": "The deck editor."
+  },
+  "deckPresenter": "Presenter",
+  "@deckPresenter": {
+    "description": "The deck editor."
+  },
+  "deckLandscapeFromPortrait": "Make landscape from portrait",
+  "@deckLandscapeFromPortrait": {
+    "description": "The deck editor."
+  },
+  "deckMade": "Done, have a look in Landscape",
+  "@deckMade": {
+    "description": "The deck editor."
+  },
+  "deckUseComputers": "Use the one on {name}",
+  "@deckUseComputers": {
+    "description": "The deck editor.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckSavedHere": "Saved on this phone for now. {name} keeps its own until it can take this one.",
+  "@deckSavedHere": {
+    "description": "The deck editor.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckWidth": "Width",
+  "@deckWidth": {
+    "description": "The deck editor."
+  },
+  "deckHeight": "Height",
+  "@deckHeight": {
+    "description": "The deck editor."
+  },
+  "deckStartFromPortrait": "Start from your portrait deck",
+  "@deckStartFromPortrait": {
+    "description": "The deck editor."
+  },
+  "deckStartEmpty": "Start empty",
+  "@deckStartEmpty": {
+    "description": "The deck editor."
+  },
+  "remoteMiddle": "Middle",
+  "@remoteMiddle": {
+    "description": "Touchpad button between Left and Right click, short"
+  },
+  "remoteMiddleClick": "Middle click",
+  "@remoteMiddleClick": {
+    "description": "Deck tile: a middle mouse click"
+  },
+  "remoteSendText": "Write",
+  "@remoteSendText": {
+    "description": "Remote: button and sheet title to write text and send it at once"
+  },
+  "remoteSendTextCaption": "Write here with your keyboard's swiping, words and corrections, then send it where the computer's cursor is.",
+  "@remoteSendTextCaption": {
+    "description": "Remote: under the Write sheet title"
+  },
+  "remoteSendTextHint": "A message, a search, a long line…",
+  "@remoteSendTextHint": {
+    "description": "Remote: Write sheet field hint"
+  },
+  "remoteSendTextGo": "Send to the computer",
+  "@remoteSendTextGo": {
+    "description": "Remote: Write sheet button"
+  },
+  "settingsEdgeScroll": "Scroll strip",
+  "@settingsEdgeScroll": {
+    "description": "Setting: one finger on the touchpad's right edge scrolls"
+  },
+  "settingsEdgeScrollCaption": "One finger along the touchpad's right edge scrolls, for one-handed use.",
+  "@settingsEdgeScrollCaption": {
+    "description": "Setting caption"
+  },
+  "settingsKeyboardSuggestions": "Keyboard suggestions",
+  "@settingsKeyboardSuggestions": {
+    "description": "Setting: suggestions and swipe typing on the Remote keyboard"
+  },
+  "settingsKeyboardSuggestionsCaption": "Swiping and word suggestions on the Remote's keyboard. Off, each key goes as you press it.",
+  "@settingsKeyboardSuggestionsCaption": {
+    "description": "Setting caption"
+  },
+  "deckGridTitle": "Grid",
+  "@deckGridTitle": {
+    "description": "Deck editor theme sheet: section for the grid size"
+  },
+  "deckGridColumns": "{count, plural, =1{1 column} other{{count} columns}}",
+  "@deckGridColumns": {
+    "description": "Deck grid: number of columns upright",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deckGridRows": "{count, plural, =1{1 row} other{{count} rows}}",
+  "@deckGridRows": {
+    "description": "Deck grid: number of rows sideways",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deckGridBigger": "Bigger tiles",
+  "@deckGridBigger": {
+    "description": "Deck grid: fewer cells, bigger tiles (minus button)"
+  },
+  "deckGridSmaller": "Smaller tiles",
+  "@deckGridSmaller": {
+    "description": "Deck grid: more cells, smaller tiles (plus button)"
+  },
+  "deviceControlNoOverlayPermission": "Letting a computer control this phone needs the 'Display over other apps' permission. Enable it in Android settings for KDE Connectify.",
+  "@deviceControlNoOverlayPermission": {
+    "description": "Error when the draw-over-apps permission was refused for a control session"
+  },
+  "deviceSavedCommands": "Saved Commands",
+  "@deviceSavedCommands": {
+    "description": "Card title: preset terminal commands from the computer"
+  },
+  "deviceNoCommandsSaved": "No commands saved on this computer yet",
+  "@deviceNoCommandsSaved": {
+    "description": "Commands card caption when the computer has no saved commands"
+  },
+  "devicePcFiles": "Computer Files",
+  "@devicePcFiles": {
+    "description": "Card title and screen title: browse the files a computer shares"
+  },
+  "deviceNoPcFiles": "Nothing to show here",
+  "@deviceNoPcFiles": {
+    "description": "Empty state when a shared folder has no entries"
+  },
+  "homeScanQr": "Scan QR code",
+  "@homeScanQr": {
+    "description": "Main button on the empty home screen that opens the QR scanner."
+  },
+  "homePairByAddress": "Pair by address instead",
+  "@homePairByAddress": {
+    "description": "Secondary button on the empty home screen: pair by typing the computer's IP address."
   },
   "deviceMenuMore": "More actions",
   "@deviceMenuMore": {

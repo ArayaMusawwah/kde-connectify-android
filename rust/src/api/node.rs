@@ -10,9 +10,8 @@ use std::sync::OnceLock;
 
 use flutter_rust_bridge::frb;
 use linksy_core::fs::{FsAnswer, MAX_CHUNK};
-use linksy_core::{Battery, CallState, Config, DeviceKind, Error, Fingerprint, MediaCommand, Node, SessionKind, Settings, Uuid};
-use linksy_core::{Event, FsRequest, Link, TerminalOpen};
 use linksy_core::route::DirectPlan;
+use linksy_core::{AppInfo, AppProbe, AppSend, Battery, CallState, Config, ConversationMessage, DeviceKind, Error, Event, Fingerprint, FsRequest, Link, MediaCommand, Node, RemoteNotification, SessionKind, Settings, TerminalOpen, Uuid};
 use tokio::runtime::Runtime;
 use tokio::sync::broadcast::error::RecvError;
 
@@ -84,6 +83,36 @@ pub struct LinksyNode {
 /// Starts this phone's node. Identity, paired devices and settings live in
 /// `data_dir` (app-private). Prefers the desktop's port 47200 and mDNS; falls
 /// back to a free port, then to no discovery, rather than not starting.
+/// An app to send, as the app describes it. The core names its folder.
+#[derive(serde::Deserialize)]
+struct AppJson {
+    package: String,
+    label: String,
+    version_code: u64,
+    #[serde(default)]
+    version_name: Option<String>,
+    #[serde(default)]
+    signer: Option<String>,
+    #[serde(default)]
+    icon: Option<String>,
+    apks: Vec<PathBuf>,
+}
+
+impl AppJson {
+    fn send(self) -> AppSend {
+        let info = AppInfo {
+            package: self.package,
+            label: self.label,
+            version_code: self.version_code,
+            version_name: self.version_name,
+            signer: self.signer,
+            dir: String::new(),
+            icon: self.icon,
+        };
+        AppSend { info, apks: self.apks }
+    }
+}
+
 /// The node this process runs, for code that isn't called from Dart (media
 /// sessions reporting the camera's state).
 static RUNNING: std::sync::Mutex<Option<Node>> = std::sync::Mutex::new(None);
@@ -121,6 +150,8 @@ pub async fn start_node(
             Ok(node) => {
                 crate::sessions::collect(&node);
                 crate::files::collect(&node);
+                crate::gallery::collect(&node);
+                crate::preflight::collect(&node);
                 crate::heartbeats::run(&node);
                 *RUNNING.lock().unwrap() = Some(node.clone());
                 return Ok(LinksyNode { node });
@@ -265,6 +296,42 @@ impl LinksyNode {
         run(async move { node.send_battery(&id, Battery { level, charging }).await }).await
     }
 
+    /// Asks the computer to use the cable for the plugged-in phone `key` (§4.11).
+    pub async fn usb_connect(&self, id: String, key: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.usb_connect(&id, &key).await }).await
+    }
+
+    /// This phone's controls, to a computer watching them (§4.24).
+    pub async fn send_controls_state(&self, id: String, state_json: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let state: linksy_core::ControlsState = serde_json::from_str(&state_json).map_err(|e| format!("{e}"))?;
+        let node = self.node.clone();
+        run(async move { node.send_controls_state(&id, &state).await }).await
+    }
+
+    /// One control that wasn't changed, and why (§4.24).
+    pub async fn refuse_controls(&self, id: String, what: String, reason: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.refuse_controls(&id, &what, &reason).await }).await
+    }
+
+    /// A `snap_request` this phone can't answer (§4.23).
+    pub async fn refuse_snap(&self, id: String, reason: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.refuse_snap(&id, &reason).await }).await
+    }
+
+    /// How the display is turned, for a computer driving it by cable (§4.11).
+    pub async fn send_screen_rotation(&self, id: String, degrees: u16) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.send_screen_rotation(&id, degrees).await }).await
+    }
+
     /// "Find my computer": makes it ring (`on`), or stops it.
     pub async fn ring(&self, id: String, on: bool) -> Result<(), String> {
         let id = fingerprint(&id)?;
@@ -285,13 +352,16 @@ impl LinksyNode {
     }
 
     /// Watch a computer's screen (`control`: and use its mouse and keyboard).
-    /// Its user picks the screen there. Returns the session id; the video
-    /// arrives on it like a second display's.
-    pub async fn start_view(&self, id: String, control: bool) -> Result<String, String> {
+    /// Its user picks the screen there (`choose`: again, not the one picked last
+    /// time). Returns the session id; the video arrives on it like a second display's.
+    pub async fn start_view(&self, id: String, control: bool, choose: bool) -> Result<String, String> {
         let id = fingerprint(&id)?;
         let kind = if control { SessionKind::Control } else { SessionKind::Screen };
         let node = self.node.clone();
-        let session = run(async move { node.request_session(&id, kind).await }).await?;
+        let session = run(async move {
+            if choose { node.request_session_choosing(&id, kind).await } else { node.request_session(&id, kind).await }
+        })
+        .await?;
         let session_id = session.id.to_string();
         crate::sessions::run(session);
         Ok(session_id)
@@ -398,6 +468,142 @@ impl LinksyNode {
         let state: CallState = serde_json::from_value(state.into()).map_err(|e| format!("other:{e}"))?;
         let node = self.node.clone();
         run(async move { node.send_call_state(&id, state, None).await }).await
+    }
+
+    /// What this phone can do now (§4.10), the whole list: connected
+    /// computers hear it at once, others at their next handshake.
+    pub async fn set_features(&self, features: Vec<String>) -> Result<(), String> {
+        let node = self.node.clone();
+        run(async move {
+            node.set_features(features).await;
+            Ok(())
+        })
+        .await
+    }
+
+    /// How a connected device is reached now: `usb`, `direct`, `lan` or `away`
+    /// (§4.22); nothing when it isn't connected.
+    #[frb(sync)]
+    pub fn route(&self, id: String) -> Result<Option<String>, String> {
+        let id = fingerprint(&id)?;
+        Ok(self.node.route(&id).map(|r| json(&r).trim_matches('"').to_string()))
+    }
+
+    /// What sending `bytes` would do now, without sending: a `SendPlan` as
+    /// JSON, or nothing when it isn't connected (§4.22).
+    #[frb(sync)]
+    pub fn plan_send(&self, id: String, bytes: u64) -> Result<Option<String>, String> {
+        let id = fingerprint(&id)?;
+        Ok(self.node.plan_send(&id, bytes).map(|p| json(&p)))
+    }
+
+    /// The user is choosing what to send, `bytes` of it so far: gets the best
+    /// route ready (§4.22). Sends nothing and does nothing twice.
+    pub async fn prepare_send(&self, id: String, bytes: u64) -> Result<Option<String>, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { Ok(node.prepare_send(&id, bytes).await.map(|p| json(&p))) }).await
+    }
+
+    /// Asks a device about a send (§4.22): a `PreflightReply` as JSON.
+    /// `probes_json`: `[{"package","version_code","signer"}]`. Fails with
+    /// `unsupported` for a device without the feature: send anyway.
+    pub async fn preflight(&self, id: String, bytes: u64, files: u32, probes_json: String) -> Result<String, String> {
+        let id = fingerprint(&id)?;
+        let probes: Vec<AppProbe> = serde_json::from_str(&probes_json).map_err(|e| format!("invalid:{e}"))?;
+        let node = self.node.clone();
+        run(async move { node.preflight(&id, bytes, files, probes).await.map(|r| json(&r)) }).await
+    }
+
+    /// Files, folders and apps as one offer (§4.22). `apps_json`:
+    /// `[{"package","label","version_code","version_name","signer","icon",
+    /// "apks":[paths]}]`; the core names the folders.
+    pub async fn send_bundle(&self, id: String, paths: Vec<String>, apps_json: String) -> Result<String, String> {
+        let id = fingerprint(&id)?;
+        let apps: Vec<AppJson> = serde_json::from_str(&apps_json).map_err(|e| format!("invalid:{e}"))?;
+        let apps = apps.into_iter().map(AppJson::send).collect();
+        let paths = paths.into_iter().map(PathBuf::from).collect();
+        let node = self.node.clone();
+        run(async move { node.send_bundle(&id, paths, apps).await.map(|t| t.to_string()) }).await
+    }
+
+    /// Preflights from other devices (§4.22), as JSON with the `call` to
+    /// answer: `{"call":n,"from":{…},"bytes":…,"files":…,"apps":[probes]}`.
+    /// A later listener takes over from an earlier one.
+    pub fn preflight_calls(&self, sink: StreamSink<String>) {
+        crate::preflight::listen(sink);
+    }
+
+    /// Answers a preflight within about two seconds, or the core does.
+    /// `answer_json`: `{"free","direct","can_install","apps":[{"package",
+    /// "have","version_code"}]}`.
+    #[frb(sync)]
+    pub fn answer_preflight(&self, call: u64, answer_json: String) -> Result<(), String> {
+        crate::preflight::answer(call, &answer_json)
+    }
+
+    /// Asks a device where it is, once (§4.14).
+    pub async fn locate(&self, id: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.locate(&id).await }).await
+    }
+
+    /// One of this phone's notifications, new or changed (§4.5), shown on the
+    /// computer: `notification_json` in the core's shape (`key`, `app`,
+    /// `app_name`, `title`, `body`, `can_reply`, `actions`, `icon`, and for
+    /// chats `category`, `conversation`, `sender`, `group`, `time`, `picture`,
+    /// `messages`, `mine`; for mail `subject`).
+    pub async fn post_notification(&self, id: String, notification_json: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let notification: RemoteNotification = serde_json::from_str(&notification_json).map_err(|e| format!("other:{e}"))?;
+        let node = self.node.clone();
+        run(async move { node.post_notification(&id, notification).await }).await
+    }
+
+    /// The notification `key` went away on this phone; with `reply_kept`, its
+    /// conversation can still be answered (§4.5).
+    pub async fn remove_notification(&self, id: String, key: String, reply_kept: bool) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move {
+            if reply_kept {
+                node.remove_notification_reply_kept(&id, &key).await
+            } else {
+                node.remove_notification(&id, &key).await
+            }
+        })
+        .await
+    }
+
+    /// Answers `inbox_history`: a conversation's earlier messages this phone
+    /// kept, oldest first (`messages_json`, a list in the core's shape).
+    pub async fn inbox_history_page(
+        &self,
+        id: String,
+        app: String,
+        conversation: String,
+        messages_json: String,
+        more: bool,
+    ) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let messages: Vec<ConversationMessage> = serde_json::from_str(&messages_json).map_err(|e| format!("other:{e}"))?;
+        let node = self.node.clone();
+        run(async move { node.inbox_history_page(&id, &app, &conversation, messages, more).await }).await
+    }
+
+    /// This phone's deck for that computer shows (`open`) or stopped (§4.19).
+    pub async fn deck_open(&self, id: String, open: bool) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.deck_open(&id, open).await }).await
+    }
+
+    /// Runs one of the deck's actions there: a tap, or a slider's `value` (0 to 1).
+    pub async fn deck_run(&self, id: String, action: String, value: Option<f64>) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.deck_run(&id, &action, value).await }).await
     }
 
     /// Photo auto-import: offers files into the computer's picture library.

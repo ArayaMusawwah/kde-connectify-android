@@ -2,61 +2,47 @@ package org.kde.connectify.files
 
 import android.content.Context
 import android.net.Uri
-import android.os.Environment
+import android.provider.DocumentsContract
+import android.provider.DocumentsContract.Document
 import android.util.Log
 import android.webkit.MimeTypeMap
 import org.json.JSONArray
+import org.kde.connectify.Lang
+import org.kde.connectify.R
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.nio.ByteBuffer
 
-/// Handles file operations from the desktop: read, write, list, mkdir, delete, rename.
-/// Two modes:
-/// - Picker mode (`allFiles=false`): SAF document URI pointing to one user-chosen folder.
-/// - All-files mode (`allFiles=true`): direct java.io.File access to `/storage/emulated/0`
-///   when `MANAGE_EXTERNAL_STORAGE` is granted by the user.
+/// Answers a computer browsing this phone (docs/protocol.md §4.9) from the one folder
+/// the user chose in Android's picker: `/` is that folder, and the picker's grant
+/// is all it uses. Or, with All files access ([everything]), from the phone's
+/// whole shared storage, as plain files.
 class FileServer(private val context: Context) {
-    /// True when the user has granted MANAGE_EXTERNAL_STORAGE.
-    @Volatile var allFiles: Boolean = false
-
-    /// In picker mode, the SAF tree URI. Null means "no folder is shared yet".
     @Volatile var root: Uri? = null
 
-    /// The absolute path to the top of what we share (picker: a subdir; all-files: /storage/emulated/0).
-    private var sharePath: String = ""
+    /// The phone's shared storage, when the user chose All files and Android
+    /// allows it (MANAGE_EXTERNAL_STORAGE); [root] is left aside meanwhile.
+    @Volatile var everything: File? = null
+
+    /// Local KDE Connectify API: mirrors [everything] for all-files browsing.
+    var allFiles: Boolean
+        get() = everything != null
+        set(value) {
+            everything = if (value && android.os.Environment.isExternalStorageManager()) {
+                android.os.Environment.getExternalStorageDirectory()
+            } else null
+        }
+
+    fun enableAllFiles(on: Boolean) { allFiles = on }
+    fun allFilesGranted(): Boolean = android.os.Environment.isExternalStorageManager()
 
     private val resolver get() = context.contentResolver
 
-    init {
-        if (Environment.isExternalStorageManager()) {
-            allFiles = true
-            sharePath = Environment.getExternalStorageDirectory().absolutePath
-            Log.i("KDEConnectify", "FileServer: MANAGE_EXTERNAL_STORAGE is active, root set to $sharePath")
-        }
-    }
-
-    fun enableAllFiles(on: Boolean) {
-        if (on) {
-            // Verify actual permission before enabling.
-            if (Environment.isExternalStorageManager()) {
-                allFiles = true
-                sharePath = Environment.getExternalStorageDirectory().absolutePath
-                root = null // not used in all-files mode
-                Log.i("KDEConnectify", "FileServer: enabled allFiles -> $sharePath")
-            } else {
-                Log.w("KDEConnectify", "setAllFiles=true but MANAGE_EXTERNAL_STORAGE not granted")
-            }
-        } else {
-            allFiles = false
-            sharePath = ""
-            Log.i("KDEConnectify", "FileServer: disabled allFiles")
-        }
-    }
-
-    fun allFilesGranted(): Boolean = Environment.isExternalStorageManager()
-
-    fun start(workers: Int = 3) {
+    /// A computer copying keeps up to 4 reads in flight, and several copies
+    /// run at once: each request is answered on its own thread.
+    fun start(workers: Int = 8) {
         repeat(workers) { n -> Thread({ loop() }, "linksy-files-$n").apply { isDaemon = true; start() } }
     }
 
@@ -75,90 +61,19 @@ class FileServer(private val context: Context) {
     }
 
     private fun handle(id: Long, r: JSONObject) {
+        // Never outside what's shared, and never the shared folder itself gone.
+        val paths = listOfNotNull(r.optString("path", "/"), r.optString("to").takeIf { r.has("to") })
+        if (paths.any { p -> p.split('/').any { it == ".." || it == "." } }) {
+            return error(id, "That path leaves the shared folder.")
+        }
+        if (r.getString("op") in setOf("delete", "rename") && normalize(r.optString("path", "/")) == "/") {
+            return error(id, "The shared folder itself can't be deleted or moved.")
+        }
+        everything?.let { return handlePlain(id, r, it) }
+        val tree = root ?: return error(id, "No folder is shared.")
         val path = r.optString("path", "/")
-        if (allFiles) {
-            handleAllFiles(id, r, path)
-        } else {
-            handlePicker(id, r, path)
-        }
-    }
-
-    // ── All-files mode (direct File IO) ──────────────────────────────────────
-
-    private fun handleAllFiles(id: Long, r: JSONObject, path: String) {
-        val shareRoot = File(sharePath)
-        val op = r.getString("op")
-        Log.i("KDEConnectify", "FileServer allFiles op=$op path=$path shareRoot=$sharePath")
-        when (op) {
-            "info" -> reply(id, JSONObject().put("type", "fs_info").put("name", shareRoot.name))
-            "list" -> {
-                val dir = resolveFile(shareRoot, path) ?: return notFound(id, path)
-                if (!dir.isDirectory) return error(id, "That's a file, not a folder.")
-                val entries = JSONArray()
-                dir.listFiles()?.forEach { f ->
-                    entries.put(entryJson(f))
-                }
-                reply(id, JSONObject().put("type", "fs_entries").put("entries", entries))
-            }
-            "stat" -> {
-                val f = resolveFile(shareRoot, path) ?: return notFound(id, path)
-                reply(id, JSONObject().put("type", "fs_entry").put("entry", entryJson(f)))
-            }
-            "read" -> {
-                val f = resolveFile(shareRoot, path) ?: return notFound(id, path)
-                val offset = r.getLong("offset")
-                val length = r.getLong("length").coerceAtMost(4L shl 20).toInt()
-                val bytes = FileInputStream(f).channel.use { ch ->
-                    ch.position(offset)
-                    val buf = java.nio.ByteBuffer.allocate(length)
-                    while (buf.hasRemaining() && ch.read(buf) > 0) Unit
-                    buf.array().copyOf(buf.position())
-                }
-                NativeFiles.reply(id, JSONObject().put("type", "fs_data").put("length", bytes.size).toString(), bytes)
-            }
-            "write" -> {
-                val body = NativeFiles.body(id) ?: return error(id, "The data didn't arrive.")
-                val offset = r.getLong("offset")
-                val dir = resolveFile(shareRoot, parent(path)) ?: return notFound(id, parent(path))
-                val f = File(dir, name(path)); f.createNewFile()
-                FileOutputStream(f).channel.use { ch ->
-                    ch.position(offset)
-                    ch.write(java.nio.ByteBuffer.wrap(body))
-                    if (r.optBoolean("truncate")) ch.truncate(offset + body.size)
-                }
-                ok(id)
-            }
-            "mkdir" -> {
-                val p = resolveFile(shareRoot, parent(path)) ?: return notFound(id, parent(path))
-                val dir = File(p, name(path)); dir.mkdir(); if (dir.exists()) ok(id) else error(id, "Couldn't create the folder.")
-            }
-            "delete" -> {
-                val f = resolveFile(shareRoot, path) ?: return notFound(id, path)
-                if (f.deleteRecursively()) ok(id) else error(id, "Couldn't delete ${f.name}.")
-            }
-            "rename" -> {
-                val f = resolveFile(shareRoot, path) ?: return notFound(id, path)
-                val to = r.getString("to")
-                val dest = File(f.parentFile, name(to))
-                if (f.renameTo(dest)) ok(id) else error(id, "Couldn't rename ${f.name}.")
-            }
-            else -> error(id, "This phone can't do that yet.")
-        }
-    }
-
-    /// Resolve absolute path (as seen by desktop, starts with "/") to a File.
-    private fun resolveFile(root: File, path: String): File? {
-        val rel = path.removePrefix("/")
-        val f = if (rel.isEmpty()) root else File(root, rel)
-        // Safety: ensure f is inside root
-        return if (f.canonicalPath.startsWith(root.canonicalPath)) f else null
-    }
-
-    // ── Picker mode (SAF document URI) ─────────────────────────────────────────
-
-    private fun handlePicker(id: Long, r: JSONObject, path: String) {
-        val tree = root ?: return error(id, "No folder is shared. Pick a folder in the app's settings.")
         when (r.getString("op")) {
+            // The shared folder's name, for "Pixel 9 (Documents)" on the computer.
             "info" -> reply(id, JSONObject().put("type", "fs_info").put("name", find(tree, "/")?.name ?: ""))
             "list" -> {
                 val doc = find(tree, path) ?: return notFound(id, path)
@@ -178,7 +93,7 @@ class FileServer(private val context: Context) {
                 val bytes = resolver.openFileDescriptor(uri(tree, doc.id), "r")!!.use { pfd ->
                     FileInputStream(pfd.fileDescriptor).channel.use { ch ->
                         ch.position(offset)
-                        val buf = java.nio.ByteBuffer.allocate(length)
+                        val buf = ByteBuffer.allocate(length)
                         while (buf.hasRemaining() && ch.read(buf) > 0) Unit
                         buf.array().copyOf(buf.position())
                     }
@@ -187,13 +102,13 @@ class FileServer(private val context: Context) {
             }
             "write" -> {
                 val body = NativeFiles.body(id) ?: return error(id, "The data didn't arrive.")
-                val offset = r.getLong("offset")
                 val existing = find(tree, path)
                 val docId = existing?.id ?: create(tree, path, dir = false) ?: return error(id, "Couldn't create ${name(path)}.")
+                val offset = r.getLong("offset")
                 resolver.openFileDescriptor(uri(tree, docId), "rw")!!.use { pfd ->
                     FileOutputStream(pfd.fileDescriptor).channel.use { ch ->
                         ch.position(offset)
-                        ch.write(java.nio.ByteBuffer.wrap(body))
+                        ch.write(ByteBuffer.wrap(body))
                         if (r.optBoolean("truncate")) ch.truncate(offset + body.size)
                     }
                 }
@@ -203,26 +118,22 @@ class FileServer(private val context: Context) {
             "delete" -> {
                 val doc = find(tree, path) ?: return notFound(id, path)
                 if (path.trim('/').isEmpty()) return error(id, "The shared folder itself can't be deleted.")
-                try {
-                    android.provider.DocumentsContract.deleteDocument(resolver, uri(tree, doc.id))
-                    forget(path)
-                    ok(id)
-                } catch (e: Exception) {
-                    error(id, "Couldn't delete ${doc.name}.")
-                }
+                DocumentsContract.deleteDocument(resolver, uri(tree, doc.id))
+                forget(path)
+                ok(id)
             }
             "rename" -> {
                 val to = r.getString("to")
                 val doc = find(tree, path) ?: return notFound(id, path)
                 if (parent(path) == parent(to)) {
-                    try {
-                        android.provider.DocumentsContract.renameDocument(resolver, uri(tree, doc.id), name(to))
-                            ?: return error(id, "Couldn't rename it.")
-                    } catch (e: Exception) {
-                        return error(id, "Couldn't rename ${doc.name}.")
-                    }
+                    DocumentsContract.renameDocument(resolver, uri(tree, doc.id), name(to))
+                        ?: return error(id, "Couldn't rename it.")
                 } else {
-                    return error(id, "Moving between folders is not supported yet.")
+                    val from = find(tree, parent(path)) ?: return notFound(id, parent(path))
+                    val into = find(tree, parent(to)) ?: return notFound(id, parent(to))
+                    val moved = DocumentsContract.moveDocument(resolver, uri(tree, doc.id), uri(tree, from.id), uri(tree, into.id))
+                        ?: return error(id, "Couldn't move it.")
+                    if (name(to) != name(path)) DocumentsContract.renameDocument(resolver, moved, name(to))
                 }
                 forget(path)
                 ok(id)
@@ -231,32 +142,80 @@ class FileServer(private val context: Context) {
         }
     }
 
-    // ── JSON helpers ───────────────────────────────────────────────────────────
+    // All files: the same answers from plain files under [base].
 
-    private fun entryJson(f: File): JSONObject = JSONObject()
-        .put("name", f.name)
-        .put("dir", f.isDirectory)
-        .put("size", if (f.isDirectory) 0 else f.length())
-        .put("modified_ms", f.lastModified())
+    private fun handlePlain(id: Long, r: JSONObject, base: File) {
+        val top = base.canonicalFile
+        // Never above the shared storage, whatever the path says.
+        fun at(path: String): File? =
+            File(top, normalize(path).trimStart('/')).canonicalFile.takeIf { it == top || it.path.startsWith(top.path + "/") }
+        fun entry(f: File) = JSONObject().put("name", f.name).put("dir", f.isDirectory)
+            .put("size", if (f.isDirectory) 0 else f.length()).put("modified_ms", f.lastModified())
+        val path = r.optString("path", "/")
+        when (r.getString("op")) {
+            "info" -> reply(id, JSONObject().put("type", "fs_info").put("name", Lang.str(context, R.string.all_files)))
+            "list" -> {
+                val dir = at(path)?.takeIf { it.exists() } ?: return notFound(id, path)
+                if (!dir.isDirectory) return error(id, "That's a file, not a folder.")
+                val entries = JSONArray()
+                dir.listFiles().orEmpty().forEach { entries.put(entry(it)) }
+                reply(id, JSONObject().put("type", "fs_entries").put("entries", entries))
+            }
+            "stat" -> {
+                val f = at(path)?.takeIf { it.exists() } ?: return notFound(id, path)
+                reply(id, JSONObject().put("type", "fs_entry").put("entry", entry(f)))
+            }
+            "read" -> {
+                val f = at(path)?.takeIf { it.isFile } ?: return notFound(id, path)
+                val offset = r.getLong("offset")
+                val length = r.getLong("length").coerceAtMost(4L shl 20).toInt()
+                val bytes = java.io.RandomAccessFile(f, "r").use { file ->
+                    file.seek(offset)
+                    val buf = ByteArray(length)
+                    var got = 0
+                    while (got < length) {
+                        val n = file.read(buf, got, length - got)
+                        if (n <= 0) break
+                        got += n
+                    }
+                    buf.copyOf(got)
+                }
+                NativeFiles.reply(id, JSONObject().put("type", "fs_data").put("length", bytes.size).toString(), bytes)
+            }
+            "write" -> {
+                val body = NativeFiles.body(id) ?: return error(id, "The data didn't arrive.")
+                val f = at(path) ?: return error(id, "Couldn't create ${name(path)}.")
+                val offset = r.getLong("offset")
+                java.io.RandomAccessFile(f, "rw").use { file ->
+                    file.seek(offset)
+                    file.write(body)
+                    if (r.optBoolean("truncate")) file.setLength(offset + body.size)
+                }
+                ok(id)
+            }
+            "mkdir" -> if (at(path)?.let { it.isDirectory || it.mkdirs() } == true) ok(id) else error(id, "Couldn't create the folder.")
+            "delete" -> {
+                val f = at(path)?.takeIf { it.exists() } ?: return notFound(id, path)
+                if (f == top) return error(id, "The shared folder itself can't be deleted.")
+                if (f.deleteRecursively()) ok(id) else error(id, "Couldn't delete it.")
+            }
+            "rename" -> {
+                val f = at(path)?.takeIf { it.exists() } ?: return notFound(id, path)
+                val to = at(r.getString("to")) ?: return error(id, "Couldn't move it.")
+                if (f.renameTo(to)) ok(id) else error(id, "Couldn't move it.")
+            }
+            else -> error(id, "This phone can't do that yet.")
+        }
+    }
 
-    private fun parent(path: String): String = "/" + path.split('/').filter { it.isNotEmpty() }.dropLast(1).joinToString("/").ifEmpty { "/" }
-    private fun name(path: String): String = path.trimEnd('/').substringAfterLast('/')
-
-    // ── SAF helpers (picker mode) ───────────────────────────────────────────────
+    // Documents, by path from the shared folder.
 
     private class Doc(val id: String, val name: String, val dir: Boolean, val size: Long, val modified: Long) {
         fun json(): JSONObject = JSONObject().put("name", name).put("dir", dir)
             .put("size", if (dir) 0 else size).put("modified_ms", modified)
     }
 
-    private val columns = arrayOf(
-        android.provider.DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-        android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-        android.provider.DocumentsContract.Document.COLUMN_MIME_TYPE,
-        android.provider.DocumentsContract.Document.COLUMN_SIZE,
-        android.provider.DocumentsContract.Document.COLUMN_LAST_MODIFIED,
-    )
-
+    /// Path → document id, so deep paths don't walk the tree every time.
     private val ids = java.util.concurrent.ConcurrentHashMap<String, String>()
 
     private fun forget(path: String) {
@@ -266,8 +225,9 @@ class FileServer(private val context: Context) {
 
     private fun normalize(path: String) = "/" + path.split('/').filter { it.isNotEmpty() }.joinToString("/")
 
-    private fun uri(tree: Uri, docId: String) = android.provider.DocumentsContract.buildDocumentUriUsingTree(tree, docId)
-    private fun rootId(tree: Uri) = android.provider.DocumentsContract.getTreeDocumentId(tree)
+    private fun uri(tree: Uri, docId: String) = DocumentsContract.buildDocumentUriUsingTree(tree, docId)
+
+    private fun rootId(tree: Uri) = DocumentsContract.getTreeDocumentId(tree)
 
     private fun find(tree: Uri, path: String): Doc? {
         val key = normalize(path)
@@ -282,9 +242,15 @@ class FileServer(private val context: Context) {
         return doc
     }
 
+    private val columns = arrayOf(
+        Document.COLUMN_DOCUMENT_ID, Document.COLUMN_DISPLAY_NAME, Document.COLUMN_MIME_TYPE,
+        Document.COLUMN_SIZE, Document.COLUMN_LAST_MODIFIED,
+    )
+
     private fun doc(c: android.database.Cursor) = Doc(
-        id = c.getString(0), name = c.getString(1) ?: "",
-        dir = c.getString(2) == android.provider.DocumentsContract.Document.MIME_TYPE_DIR,
+        id = c.getString(0),
+        name = c.getString(1) ?: "",
+        dir = c.getString(2) == Document.MIME_TYPE_DIR,
         size = if (c.isNull(3)) 0 else c.getLong(3),
         modified = if (c.isNull(4)) 0 else c.getLong(4),
     )
@@ -295,7 +261,7 @@ class FileServer(private val context: Context) {
         }.getOrNull()
 
     private fun children(tree: Uri, docId: String): List<Doc> {
-        val uri = android.provider.DocumentsContract.buildChildDocumentsUriUsingTree(tree, docId)
+        val uri = DocumentsContract.buildChildDocumentsUriUsingTree(tree, docId)
         return resolver.query(uri, columns, null, null, null)?.use { c ->
             buildList { while (c.moveToNext()) add(doc(c)) }
         }.orEmpty()
@@ -303,20 +269,28 @@ class FileServer(private val context: Context) {
 
     private fun create(tree: Uri, path: String, dir: Boolean): String? {
         val parent = find(tree, parent(path))?.takeIf { it.dir } ?: return null
-        val n = name(path)
-        val mime = if (dir) android.provider.DocumentsContract.Document.MIME_TYPE_DIR else
-            MimeTypeMap.getSingleton().getMimeTypeFromExtension(n.substringAfterLast('.', "").lowercase()) ?: "application/octet-stream"
-        val created = android.provider.DocumentsContract.createDocument(resolver, uri(tree, parent.id), mime, n) ?: return null
-        val id = android.provider.DocumentsContract.getDocumentId(created)
+        val name = name(path)
+        val mime = if (dir) Document.MIME_TYPE_DIR else
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(name.substringAfterLast('.', "").lowercase())
+                ?: "application/octet-stream"
+        val created = DocumentsContract.createDocument(resolver, uri(tree, parent.id), mime, name) ?: return null
+        val id = DocumentsContract.getDocumentId(created)
         ids[normalize(path)] = id
         return id
     }
 
-    // ── Reply helpers ───────────────────────────────────────────────────────────
+    private fun parent(path: String) = normalize(path).substringBeforeLast('/').ifEmpty { "/" }
+
+    private fun name(path: String) = normalize(path).substringAfterLast('/')
+
+    // Answers.
 
     private fun reply(id: Long, json: JSONObject) = NativeFiles.reply(id, json.toString(), null)
+
     private fun ok(id: Long) = reply(id, JSONObject().put("type", "fs_ok"))
+
     private fun error(id: Long, message: String, notFound: Boolean = false) =
         reply(id, JSONObject().put("type", "fs_error").put("message", message).put("not_found", notFound))
+
     private fun notFound(id: Long, path: String) = error(id, "${normalize(path)} isn't there.", notFound = true)
 }

@@ -1,14 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../core/invite.dart';
 import '../core/models.dart';
+import '../features/device/device_screen.dart';
 import '../features/devices/home_screen.dart';
 import '../features/news/whats_new.dart';
+import '../features/phones/install_sheet.dart';
 import '../features/pairing/pairing_flows.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/ring/ring_screen.dart';
+import '../features/settings/turn_on.dart';
 import '../features/share/share_sheet.dart';
 import '../features/sharing/display_screen.dart';
 import '../features/sharing/sharing.dart';
@@ -17,9 +21,11 @@ import '../features/transfer/incoming_sheet.dart';
 import '../ui/icons.dart';
 import '../ui/l10n.dart';
 import '../ui/sig.dart';
+import 'launch_intro.dart';
 import 'linksy_controller.dart';
 import 'platform.dart';
 import 'scope.dart';
+import '../ui/responsive.dart';
 
 class LinksyApp extends StatefulWidget {
   const LinksyApp({super.key, required this.controller});
@@ -38,6 +44,7 @@ class _LinksyAppState extends State<LinksyApp> {
   StreamSubscription<String>? _links;
   StreamSubscription<SharedIn>? _shares;
   StreamSubscription<String>? _webcams;
+  StreamSubscription<void>? _turnOns;
 
   /// The pairing dialog on screen, so a decline from the other side closes it.
   String? _openPairing;
@@ -63,13 +70,21 @@ class _LinksyAppState extends State<LinksyApp> {
     LinksyPlatform.takeShare().then((shared) {
       if (shared != null) _shareOut(shared);
     });
+    // A computer's ask, from its notification.
+    _turnOns = LinksyPlatform.turnOnAsks.listen((_) => _takeTurnOn());
+    _takeTurnOn();
     // First run: the language, then what Linksy may do.
     if (!widget.controller.onboarded) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        // In place, not sliding over a home that was never seen.
         _navigator.currentState?.push(
-          MaterialPageRoute<void>(
+          PageRouteBuilder<void>(
             fullscreenDialog: true,
-            builder: (_) => const OnboardingScreen(),
+            transitionDuration: Duration.zero,
+            pageBuilder: (_, _, _) => const OnboardingScreen(),
+            // Done, it fades into home.
+            transitionsBuilder: (_, animation, _, child) =>
+                FadeTransition(opacity: animation, child: child),
           ),
         );
       });
@@ -94,7 +109,24 @@ class _LinksyAppState extends State<LinksyApp> {
     _links?.cancel();
     _shares?.cancel();
     _webcams?.cancel();
+    _turnOns?.cancel();
     super.dispose();
+  }
+
+  /// A computer asks for its Inbox or Gallery; from a notification it may be
+  /// on by now.
+  Future<void> _takeTurnOn() async {
+    final ask = await LinksyPlatform.takeTurnOn();
+    if (ask != null) await _askTurnOn(ask.$1, ask.$2);
+  }
+
+  Future<void> _askTurnOn(String computer, String feature) async {
+    final c = widget.controller;
+    await c.accessRead;
+    await c.refreshAccess();
+    final context = _navigator.currentContext;
+    if (c.isTurnedOn(feature) != false || context == null) return;
+    if (context.mounted) await askTurnOn(context, computer, feature);
   }
 
   Future<void> _pairWith(String link) async {
@@ -113,16 +145,35 @@ class _LinksyAppState extends State<LinksyApp> {
   }
 
   Future<void> _shareOut(SharedIn shared) async {
-    final context = _navigator.currentContext;
-    if (context == null) return;
     // A device picked in Android's share sheet: no need to ask which.
-    final to = shared.device;
-    if (to != null && widget.controller.device(to)?.trusted == true) {
-      final message = await sendShared(widget.controller, to, shared);
+    final c = widget.controller;
+    List<String> near() => [
+      for (final v in c.paired)
+        if (v.reachable &&
+            v.device.kind != DeviceKind.phone &&
+            v.device.kind != DeviceKind.tablet)
+          v.device.id,
+    ];
+    // Opened by this very snap or copy, Linksy needs a moment to find it.
+    for (var i = 0; shared.quick && near().isEmpty && i < 8; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+    }
+    final live = near();
+    final to =
+        shared.device ??
+        (shared.quick && live.length == 1 ? live.single : null);
+    if (to != null && c.device(to)?.trusted == true) {
+      final message = await sendShared(c, to, shared);
       if (message != null) _say(message);
+      // Back to what was on screen, for a snap or text from another app.
+      if (shared.quick && shared.device == null) {
+        await LinksyPlatform.toBackground();
+      }
       return;
     }
-    showModalBottomSheet<void>(
+    final context = _navigator.currentContext;
+    if (context == null || !context.mounted) return;
+    showSheet<void>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
@@ -136,8 +187,21 @@ class _LinksyAppState extends State<LinksyApp> {
 
   Future<void> _onUsb(UsbNews news) async {
     switch (news) {
-      case UsbConnected(:final name):
+      case UsbDialing():
+        _say(tr.usbConnecting);
+      case UsbConnected(:final name, :final id):
         _say(tr.usbConnectedTo(name));
+        // From the home screen, that computer's page, which says "USB cable".
+        final navigator = _navigator.currentState;
+        if (id != null && navigator != null && !navigator.canPop()) {
+          unawaited(
+            navigator.push(
+              MaterialPageRoute<void>(
+                builder: (_) => DeviceScreen(deviceId: id),
+              ),
+            ),
+          );
+        }
       case UsbPairOffer(:final address):
         final context = _navigator.currentContext;
         if (context == null) return;
@@ -165,9 +229,29 @@ class _LinksyAppState extends State<LinksyApp> {
     }
   }
 
-  void _say(String text) => _messenger.currentState
+  /// A snack bar; [icon] in cyan for what came in, so it reads at a glance.
+  void _say(String text, {IconData? icon}) => _messenger.currentState
     ?..hideCurrentSnackBar()
-    ..showSnackBar(SnackBar(content: Text(text)));
+    ..showSnackBar(
+      SnackBar(
+        content: icon == null
+            ? Text(text)
+            : Row(
+                children: [
+                  Icon(icon, color: Sig.cyan, size: 20),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text(text)),
+                ],
+              ),
+      ),
+    );
+
+  /// A ping: two short buzzes, like a knock.
+  static Future<void> _knock() async {
+    await HapticFeedback.mediumImpact();
+    await Future<void>.delayed(const Duration(milliseconds: 140));
+    await HapticFeedback.mediumImpact();
+  }
 
   void _onPrompt(LinksyEvent e) {
     final context = _navigator.currentContext;
@@ -194,6 +278,8 @@ class _LinksyAppState extends State<LinksyApp> {
         );
       case Paired(:final device):
         _say(tr.appPairedWith(device.name));
+      case TurnOnRequested(:final from, :final feature):
+        _askTurnOn(from.name, feature);
       case SessionStarted(kind: SessionKind.camera) when e.sharing:
         _openWebcam(e);
       case SessionStarted() when !e.sharing && e.kind != SessionKind.input:
@@ -206,8 +292,36 @@ class _LinksyAppState extends State<LinksyApp> {
           barrierDismissible: false,
           builder: (_) => SessionRequestDialog(request: e),
         );
+      case AppsReceived():
+        HapticFeedback.lightImpact();
+        showSheet<void>(
+          context: context,
+          isDismissible: false,
+          enableDrag: false,
+          isScrollControlled: true,
+          showDragHandle: true,
+          builder: (_) => InstallSheet(offer: e),
+        );
+      case AppInstalled(:final label, :final from, :final status):
+        _say(switch (status) {
+          'installed' => tr.phoneInstalled(label),
+          'cancelled' => tr.phoneInstallCancelled(label),
+          'mismatch' => tr.phoneInstallMismatch(label, from),
+          'other_signer' => tr.phoneInstallOtherSigner(label),
+          _ => tr.phoneInstallFailed(
+            label,
+            status.split(':').skip(1).join(':'),
+          ),
+        });
+      case LocationReceived(:final from, :final lat, :final lon):
+        if (lat != null && lon != null) {
+          LinksyPlatform.openMap(lat, lon);
+        } else {
+          _say(tr.phoneWhereRefused(from.name, e.refused ?? ''));
+        }
       case TransferRequest():
-        showModalBottomSheet<void>(
+        HapticFeedback.lightImpact();
+        showSheet<void>(
           context: context,
           isDismissible: false,
           enableDrag: false,
@@ -216,12 +330,26 @@ class _LinksyAppState extends State<LinksyApp> {
           builder: (_) => IncomingFilesSheet(request: e),
         );
       case NotificationReceived(:final from, :final title, :final body):
-        _say(tr.appNotification(from.name, body.isEmpty ? title : body));
+        _knock();
+        // A ping's body only says who it's from, which the line says first.
+        _say(
+          tr.appNotification(
+            from.name,
+            body.isEmpty || body.contains(from.name) ? title : body,
+          ),
+          icon: Ph.bellRinging,
+        );
       case ClipboardReceived(:final from):
-        _say(tr.appCopiedText(from.name));
+        HapticFeedback.lightImpact();
+        _say(tr.appCopiedText(from.name), icon: Ph.clipboardText);
       case ClipboardFileReceived(:final from, :final path):
-        _say(tr.appCopiedFile(path.split('/').last, from.name));
+        HapticFeedback.lightImpact();
+        _say(
+          tr.appCopiedFile(path.split('/').last, from.name),
+          icon: Ph.clipboardText,
+        );
       case OpenUrlReceived():
+        HapticFeedback.lightImpact();
         showDialog<void>(
           context: context,
           builder: (_) => LinkReceivedDialog(event: e),
@@ -245,6 +373,7 @@ class _LinksyAppState extends State<LinksyApp> {
       listenable: Listenable.merge([
         widget.controller.locale,
         widget.controller.themeMode,
+        widget.controller.reduceMotion,
       ]),
       builder: (context, _) => MaterialApp(
         title: 'KDE Connectify',
@@ -257,6 +386,24 @@ class _LinksyAppState extends State<LinksyApp> {
         locale: widget.controller.locale.value,
         supportedLocales: [for (final l in languages) Locale(l.code)],
         localizationsDelegates: localizationsDelegates,
+        // The launch intro over everything, until the mark has landed; and
+        // Reduce motion, read like the phone's own setting.
+        builder: (context, child) {
+          final media = MediaQuery.of(context);
+          return MediaQuery(
+            data: media.copyWith(
+              disableAnimations:
+                  media.disableAnimations ||
+                  widget.controller.reduceMotion.value,
+            ),
+            child: Stack(
+              children: [
+                child!,
+                LaunchIntro(plays: widget.controller.onboarded),
+              ],
+            ),
+          );
+        },
         home: const HomeScreen(),
       ),
     ),

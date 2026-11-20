@@ -8,12 +8,19 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.hardware.input.InputManager
 import android.media.projection.MediaProjectionManager
+import android.net.wifi.WifiManager
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.util.Log
+import android.os.Looper
+import android.os.PowerManager
+import android.view.InputDevice
 import org.kde.connectify.MainActivity
 import org.kde.connectify.Lang
+import org.kde.connectify.Logs
 import org.kde.connectify.R
 
 /// Keeps a screen or camera share going while the user is in other apps,
@@ -39,8 +46,10 @@ class ShareService : Service() {
         active[session] = mapOf("session" to session, "kind" to kind, "peer" to (intent.getStringExtra(EXTRA_PEER_ID) ?: ""))
         val screen = kind == "screen" || kind == "control"
         val mic = kind == "microphone"
+        val sound = kind == "sound"
+        peers[session] = peer
         val text = when {
-            screen -> Lang.str(this, R.string.sharing_screen, peer)
+            screen || sound -> screenText(peer)
             mic -> Lang.str(this, R.string.using_microphone, peer)
             else -> Lang.str(this, R.string.using_camera, peer)
         }
@@ -67,6 +76,11 @@ class ShareService : Service() {
                     }
                 }
                 mic -> MicShare(session, onEnded)
+                sound -> {
+                    val screenShare = shares.values.filterIsInstance<ScreenShare>().firstOrNull() ?: error("no screen to take the sound from")
+                    if (Build.VERSION.SDK_INT < 29) error("needs Android 10")
+                    SoundShare(screenShare.projection, session, onEnded)
+                }
                 else -> CameraShare(this, session, onEnded).also { camera ->
                     webcams[session] = camera
                     camera.onState = { state ->
@@ -77,8 +91,10 @@ class ShareService : Service() {
                 }
             }
             shares[session] = share
+            holdAwake()
+            if (screen) watchControl()
         } catch (e: Exception) {
-            Log.w("linksy", "couldn't start sharing", e)
+            Logs.add("Sharing ($kind) couldn't start: $e")
             stop(session)
         }
     }
@@ -90,7 +106,7 @@ class ShareService : Service() {
         var type = 0
         for (k in kinds.values) {
             type = type or when (k) {
-                "screen", "control" -> ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
+                "screen", "control", "sound" -> ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
                 "microphone" -> if (Build.VERSION.SDK_INT >= 30) ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE else 0
                 else -> if (Build.VERSION.SDK_INT >= 30) ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA else 0
             }
@@ -106,10 +122,15 @@ class ShareService : Service() {
         webcams.remove(session)
         active.remove(session)
         kinds.remove(session)
+        peers.remove(session)
+        checkControl()
         shares.remove(session)?.let { runCatching { it.stop() } }
         org.kde.connectify.input.ControlOverlayService.stop(this, session)
         NativeSession.finish(session)
         if (shares.isEmpty()) {
+            if (watching) inputs.unregisterInputDeviceListener(inputListener)
+            watching = false
+            letGo()
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
@@ -119,6 +140,77 @@ class ShareService : Service() {
         shares.keys.toList().forEach(::stop)
         super.onDestroy()
     }
+
+    /// Peer names by session, for the notification.
+    private val peers = mutableMapOf<String, String>()
+
+    // With the phone locked, the CPU sleeps and Wi-Fi saves power, and a webcam
+    // or microphone freezes on the computer: both are held while anything is shared.
+    private var wake: PowerManager.WakeLock? = null
+    private var wifi: WifiManager.WifiLock? = null
+
+    private fun holdAwake() {
+        if (wake == null) {
+            wake = (getSystemService(Context.POWER_SERVICE) as PowerManager)
+                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "linksy:sharing")
+                .apply { setReferenceCounted(false); acquire() }
+        }
+        if (wifi == null) {
+            @Suppress("DEPRECATION")
+            wifi = (applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
+                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "linksy:sharing")
+                .apply { setReferenceCounted(false); acquire() }
+        }
+    }
+
+    private fun letGo() {
+        wake?.takeIf { it.isHeld }?.release()
+        wake = null
+        wifi?.takeIf { it.isHeld }?.release()
+        wifi = null
+    }
+
+    // A computer that drives the phone over the cable (docs/protocol.md §4.11, desktop
+    // 0.11) plugs a virtual touchscreen into it (Android Open Accessory 2.0) and asks
+    // for a plain screen share. While that touchscreen is there, the share's
+    // notification says who is in control, and its Stop ends it.
+    private var controlled = false
+    private var watching = false
+    private val inputs by lazy { getSystemService(InputManager::class.java) }
+    private val inputListener = object : InputManager.InputDeviceListener {
+        override fun onInputDeviceAdded(deviceId: Int) = checkControl()
+        override fun onInputDeviceRemoved(deviceId: Int) = checkControl()
+        override fun onInputDeviceChanged(deviceId: Int) = checkControl()
+    }
+
+    private fun watchControl() {
+        if (!watching && Build.VERSION.SDK_INT >= 29) {
+            inputs.registerInputDeviceListener(inputListener, Handler(Looper.getMainLooper()))
+            watching = true
+        }
+        checkControl()
+    }
+
+    /// A touchscreen that isn't the phone's own: the computer's, over the cable.
+    private fun touchFromOutside(): Boolean = Build.VERSION.SDK_INT >= 29 &&
+        inputs.inputDeviceIds.any { id ->
+            val device = inputs.getInputDevice(id)
+            device != null && device.isExternal && device.supportsSource(InputDevice.SOURCE_TOUCHSCREEN)
+        }
+
+    private fun checkControl() {
+        val screen = kinds.entries.firstOrNull { it.value == "screen" || it.value == "control" }?.key
+        val now = screen != null && touchFromOutside()
+        if (now == controlled) return
+        controlled = now
+        Logs.add(if (now) "Screen: controlled over the cable" else "Screen: control over the cable ended")
+        if (screen == null) return
+        val peer = peers[screen] ?: Lang.str(this, R.string.your_computer)
+        getSystemService(NotificationManager::class.java).notify(NOTIFICATION, notification(screenText(peer), screen))
+    }
+
+    private fun screenText(peer: String) =
+        Lang.str(this, if (controlled) R.string.controlled_from else R.string.sharing_screen, peer)
 
     private fun notification(text: String, session: String, camera: Boolean = false): Notification {
         val manager = getSystemService(NotificationManager::class.java)
@@ -143,7 +235,7 @@ class ShareService : Service() {
         val builder = if (Build.VERSION.SDK_INT >= 26) Notification.Builder(this, CHANNEL) else Notification.Builder(this)
         return builder
             .setSmallIcon(R.drawable.ic_stat_connectify)
-            .setContentTitle("Linksy")
+            .setContentTitle("KDE Connectify")
             .setContentText(text)
             .setOngoing(true)
             .setContentIntent(open)
@@ -162,6 +254,13 @@ class ShareService : Service() {
     }
 
     companion object {
+        /// Set by the app: (session, degrees) when the display turns.
+        @Volatile var rotationListener: ((String, Int) -> Unit)? = null
+
+        fun tellRotation(session: String, degrees: Int) {
+            rotationListener?.invoke(session, degrees)
+        }
+
         private const val CHANNEL = "sharing"
         private const val NOTIFICATION = 7
         private const val ACTION_START = "org.kde.connectify.START_SHARE"

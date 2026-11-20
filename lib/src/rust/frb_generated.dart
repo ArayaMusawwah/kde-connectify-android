@@ -66,7 +66,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => -310824280;
+  int get rustContentHash => -1988135864;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -78,6 +78,12 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  void crateApiNodeLinksyNodeAnswerPreflight({
+    required LinksyNode that,
+    required BigInt call,
+    required String answerJson,
+  });
+
   bool crateApiNodeLinksyNodeCancel({
     required LinksyNode that,
     required String transfer,
@@ -91,6 +97,19 @@ abstract class RustLibApi extends BaseApi {
   Future<void> crateApiNodeLinksyNodeConnectAway({
     required LinksyNode that,
     required String id,
+  });
+
+  Future<void> crateApiNodeLinksyNodeDeckOpen({
+    required LinksyNode that,
+    required String id,
+    required bool open,
+  });
+
+  Future<void> crateApiNodeLinksyNodeDeckRun({
+    required LinksyNode that,
+    required String id,
+    required String action,
+    double? value,
   });
 
   bool crateApiNodeLinksyNodeDeclineUnsupported({
@@ -196,9 +215,23 @@ abstract class RustLibApi extends BaseApi {
     required List<String> paths,
   });
 
+  Future<void> crateApiNodeLinksyNodeInboxHistoryPage({
+    required LinksyNode that,
+    required String id,
+    required String app,
+    required String conversation,
+    required String messagesJson,
+    required bool more,
+  });
+
   String crateApiNodeLinksyNodeInfoJson({required LinksyNode that});
 
   String crateApiNodeLinksyNodeLink({
+    required LinksyNode that,
+    required String id,
+  });
+
+  Future<void> crateApiNodeLinksyNodeLocate({
     required LinksyNode that,
     required String id,
   });
@@ -254,7 +287,31 @@ abstract class RustLibApi extends BaseApi {
     required bool on_,
   });
 
+  String? crateApiNodeLinksyNodePlanSend({
+    required LinksyNode that,
+    required String id,
+    required BigInt bytes,
+  });
+
   int crateApiNodeLinksyNodePort({required LinksyNode that});
+
+  Future<void> crateApiNodeLinksyNodePostNotification({
+    required LinksyNode that,
+    required String id,
+    required String notificationJson,
+  });
+
+  Future<String> crateApiNodeLinksyNodePreflight({
+    required LinksyNode that,
+    required String id,
+    required BigInt bytes,
+    required int files,
+    required String probesJson,
+  });
+
+  Stream<String> crateApiNodeLinksyNodePreflightCalls({
+    required LinksyNode that,
+  });
 
   Future<bool> crateApiNodeLinksyNodePrepareLink({
     required LinksyNode that,
@@ -262,10 +319,36 @@ abstract class RustLibApi extends BaseApi {
     required BigInt bytes,
   });
 
+  Future<String?> crateApiNodeLinksyNodePrepareSend({
+    required LinksyNode that,
+    required String id,
+    required BigInt bytes,
+  });
+
+  Future<void> crateApiNodeLinksyNodeRefuseControls({
+    required LinksyNode that,
+    required String id,
+    required String what,
+    required String reason,
+  });
+
   Future<void> crateApiNodeLinksyNodeRefuseLocation({
     required LinksyNode that,
     required String id,
     required String reason,
+  });
+
+  Future<void> crateApiNodeLinksyNodeRefuseSnap({
+    required LinksyNode that,
+    required String id,
+    required String reason,
+  });
+
+  Future<void> crateApiNodeLinksyNodeRemoveNotification({
+    required LinksyNode that,
+    required String id,
+    required String key,
+    required bool replyKept,
   });
 
   Future<void> crateApiNodeLinksyNodeRequestCommands({
@@ -293,6 +376,11 @@ abstract class RustLibApi extends BaseApi {
     required bool on_,
   });
 
+  String? crateApiNodeLinksyNodeRoute({
+    required LinksyNode that,
+    required String id,
+  });
+
   Future<void> crateApiNodeLinksyNodeRunCommand({
     required LinksyNode that,
     required String id,
@@ -304,6 +392,13 @@ abstract class RustLibApi extends BaseApi {
     required String id,
     required int level,
     required bool charging,
+  });
+
+  Future<String> crateApiNodeLinksyNodeSendBundle({
+    required LinksyNode that,
+    required String id,
+    required List<String> paths,
+    required String appsJson,
   });
 
   Future<void> crateApiNodeLinksyNodeSendCallState({
@@ -322,6 +417,12 @@ abstract class RustLibApi extends BaseApi {
     required LinksyNode that,
     required String id,
     required String path,
+  });
+
+  Future<void> crateApiNodeLinksyNodeSendControlsState({
+    required LinksyNode that,
+    required String id,
+    required String stateJson,
   });
 
   Future<String> crateApiNodeLinksyNodeSendFiles({
@@ -351,6 +452,12 @@ abstract class RustLibApi extends BaseApi {
     required String image,
   });
 
+  Future<void> crateApiNodeLinksyNodeSendScreenRotation({
+    required LinksyNode that,
+    required String id,
+    required int degrees,
+  });
+
   Future<bool> crateApiNodeLinksyNodeSessionWrite({
     required LinksyNode that,
     required String session,
@@ -361,6 +468,11 @@ abstract class RustLibApi extends BaseApi {
     required LinksyNode that,
     required String id,
     required bool on_,
+  });
+
+  Future<void> crateApiNodeLinksyNodeSetFeatures({
+    required LinksyNode that,
+    required List<String> features,
   });
 
   Future<void> crateApiNodeLinksyNodeSetVolume({
@@ -388,6 +500,7 @@ abstract class RustLibApi extends BaseApi {
     required LinksyNode that,
     required String id,
     required bool control,
+    required bool choose,
   });
 
   Stream<Uint8List> crateApiNodeLinksyNodeTerminalOutput({
@@ -403,6 +516,12 @@ abstract class RustLibApi extends BaseApi {
   Future<void> crateApiNodeLinksyNodeUpdateSettings({
     required LinksyNode that,
     required String settingsJson,
+  });
+
+  Future<void> crateApiNodeLinksyNodeUsbConnect({
+    required LinksyNode that,
+    required String id,
+    required String key,
   });
 
   Future<void> crateApiNodeLinksyNodeWatchClipboard({
@@ -452,6 +571,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
+  void crateApiNodeLinksyNodeAnswerPreflight({
+    required LinksyNode that,
+    required BigInt call,
+    required String answerJson,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_u_64(call, serializer);
+          sse_encode_String(answerJson, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeAnswerPreflightConstMeta,
+        argValues: [that, call, answerJson],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeAnswerPreflightConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_answer_preflight",
+        argNames: ["that", "call", "answerJson"],
+      );
+
+  @override
   bool crateApiNodeLinksyNodeCancel({
     required LinksyNode that,
     required String transfer,
@@ -465,7 +619,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_String(transfer, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_bool,
@@ -501,7 +655,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 2,
+            funcId: 3,
             port: port_,
           );
         },
@@ -539,7 +693,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 3,
+            funcId: 4,
             port: port_,
           );
         },
@@ -561,6 +715,88 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiNodeLinksyNodeDeckOpen({
+    required LinksyNode that,
+    required String id,
+    required bool open,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_bool(open, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 5,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeDeckOpenConstMeta,
+        argValues: [that, id, open],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeDeckOpenConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_deck_open",
+        argNames: ["that", "id", "open"],
+      );
+
+  @override
+  Future<void> crateApiNodeLinksyNodeDeckRun({
+    required LinksyNode that,
+    required String id,
+    required String action,
+    double? value,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_String(action, serializer);
+          sse_encode_opt_box_autoadd_f_64(value, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 6,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeDeckRunConstMeta,
+        argValues: [that, id, action, value],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeDeckRunConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_deck_run",
+        argNames: ["that", "id", "action", "value"],
+      );
+
+  @override
   bool crateApiNodeLinksyNodeDeclineUnsupported({
     required LinksyNode that,
     required String request,
@@ -574,7 +810,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_String(request, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_bool,
@@ -603,7 +839,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -641,7 +877,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 6,
+            funcId: 9,
             port: port_,
           );
         },
@@ -679,7 +915,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 10,
             port: port_,
           );
         },
@@ -719,7 +955,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 8,
+            funcId: 11,
             port: port_,
           );
         },
@@ -754,7 +990,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_String(session, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -789,7 +1025,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 10,
+              funcId: 13,
               port: port_,
             );
           },
@@ -826,7 +1062,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_String(id, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -855,7 +1091,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_u_64,
@@ -890,7 +1126,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 13,
+            funcId: 16,
             port: port_,
           );
         },
@@ -928,7 +1164,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 14,
+            funcId: 17,
             port: port_,
           );
         },
@@ -968,7 +1204,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 15,
+            funcId: 18,
             port: port_,
           );
         },
@@ -1008,7 +1244,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 16,
+            funcId: 19,
             port: port_,
           );
         },
@@ -1048,7 +1284,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 17,
+            funcId: 20,
             port: port_,
           );
         },
@@ -1092,7 +1328,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 18,
+            funcId: 21,
             port: port_,
           );
         },
@@ -1134,7 +1370,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 19,
+            funcId: 22,
             port: port_,
           );
         },
@@ -1174,7 +1410,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 20,
+            funcId: 23,
             port: port_,
           );
         },
@@ -1220,7 +1456,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 21,
+            funcId: 24,
             port: port_,
           );
         },
@@ -1260,7 +1496,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 22,
+            funcId: 25,
             port: port_,
           );
         },
@@ -1282,6 +1518,52 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiNodeLinksyNodeInboxHistoryPage({
+    required LinksyNode that,
+    required String id,
+    required String app,
+    required String conversation,
+    required String messagesJson,
+    required bool more,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_String(app, serializer);
+          sse_encode_String(conversation, serializer);
+          sse_encode_String(messagesJson, serializer);
+          sse_encode_bool(more, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 26,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeInboxHistoryPageConstMeta,
+        argValues: [that, id, app, conversation, messagesJson, more],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeInboxHistoryPageConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_inbox_history_page",
+        argNames: ["that", "id", "app", "conversation", "messagesJson", "more"],
+      );
+
+  @override
   String crateApiNodeLinksyNodeInfoJson({required LinksyNode that}) {
     return handler.executeSync(
       SyncTask(
@@ -1291,7 +1573,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -1324,7 +1606,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_String(id, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -1341,6 +1623,44 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     debugName: "LinksyNode_link",
     argNames: ["that", "id"],
   );
+
+  @override
+  Future<void> crateApiNodeLinksyNodeLocate({
+    required LinksyNode that,
+    required String id,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 29,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeLocateConstMeta,
+        argValues: [that, id],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeLocateConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_locate",
+        argNames: ["that", "id"],
+      );
 
   @override
   Future<void> crateApiNodeLinksyNodeMediaCommand({
@@ -1363,7 +1683,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 25,
+            funcId: 30,
             port: port_,
           );
         },
@@ -1399,7 +1719,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 26,
+            funcId: 31,
             port: port_,
           );
         },
@@ -1441,7 +1761,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 27,
+            funcId: 32,
             port: port_,
           );
         },
@@ -1487,7 +1807,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 28,
+            funcId: 33,
             port: port_,
           );
         },
@@ -1527,7 +1847,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 29,
+            funcId: 34,
             port: port_,
           );
         },
@@ -1565,7 +1885,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 30,
+            funcId: 35,
             port: port_,
           );
         },
@@ -1603,7 +1923,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 31,
+            funcId: 36,
             port: port_,
           );
         },
@@ -1641,7 +1961,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 32,
+            funcId: 37,
             port: port_,
           );
         },
@@ -1676,7 +1996,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_bool(on_, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -1696,6 +2016,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  String? crateApiNodeLinksyNodePlanSend({
+    required LinksyNode that,
+    required String id,
+    required BigInt bytes,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_u_64(bytes, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodePlanSendConstMeta,
+        argValues: [that, id, bytes],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodePlanSendConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_plan_send",
+        argNames: ["that", "id", "bytes"],
+      );
+
+  @override
   int crateApiNodeLinksyNodePort({required LinksyNode that}) {
     return handler.executeSync(
       SyncTask(
@@ -1705,7 +2060,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_u_16,
@@ -1720,6 +2075,131 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiNodeLinksyNodePortConstMeta =>
       const TaskConstMeta(debugName: "LinksyNode_port", argNames: ["that"]);
+
+  @override
+  Future<void> crateApiNodeLinksyNodePostNotification({
+    required LinksyNode that,
+    required String id,
+    required String notificationJson,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_String(notificationJson, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 41,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodePostNotificationConstMeta,
+        argValues: [that, id, notificationJson],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodePostNotificationConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_post_notification",
+        argNames: ["that", "id", "notificationJson"],
+      );
+
+  @override
+  Future<String> crateApiNodeLinksyNodePreflight({
+    required LinksyNode that,
+    required String id,
+    required BigInt bytes,
+    required int files,
+    required String probesJson,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_u_64(bytes, serializer);
+          sse_encode_u_32(files, serializer);
+          sse_encode_String(probesJson, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 42,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodePreflightConstMeta,
+        argValues: [that, id, bytes, files, probesJson],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodePreflightConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_preflight",
+        argNames: ["that", "id", "bytes", "files", "probesJson"],
+      );
+
+  @override
+  Stream<String> crateApiNodeLinksyNodePreflightCalls({
+    required LinksyNode that,
+  }) {
+    final sink = RustStreamSink<String>();
+    unawaited(
+      handler.executeNormal(
+        NormalTask(
+          callFfi: (port_) {
+            final serializer = SseSerializer(generalizedFrbRustBinding);
+            sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+              that,
+              serializer,
+            );
+            sse_encode_StreamSink_String_Sse(sink, serializer);
+            pdeCallFfi(
+              generalizedFrbRustBinding,
+              serializer,
+              funcId: 43,
+              port: port_,
+            );
+          },
+          codec: SseCodec(
+            decodeSuccessData: sse_decode_unit,
+            decodeErrorData: null,
+          ),
+          constMeta: kCrateApiNodeLinksyNodePreflightCallsConstMeta,
+          argValues: [that, sink],
+          apiImpl: this,
+        ),
+      ),
+    );
+    return sink.stream;
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodePreflightCallsConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_preflight_calls",
+        argNames: ["that", "sink"],
+      );
 
   @override
   Future<bool> crateApiNodeLinksyNodePrepareLink({
@@ -1740,7 +2220,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 35,
+            funcId: 44,
             port: port_,
           );
         },
@@ -1762,6 +2242,88 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<String?> crateApiNodeLinksyNodePrepareSend({
+    required LinksyNode that,
+    required String id,
+    required BigInt bytes,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_u_64(bytes, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 45,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodePrepareSendConstMeta,
+        argValues: [that, id, bytes],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodePrepareSendConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_prepare_send",
+        argNames: ["that", "id", "bytes"],
+      );
+
+  @override
+  Future<void> crateApiNodeLinksyNodeRefuseControls({
+    required LinksyNode that,
+    required String id,
+    required String what,
+    required String reason,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_String(what, serializer);
+          sse_encode_String(reason, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 46,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeRefuseControlsConstMeta,
+        argValues: [that, id, what, reason],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeRefuseControlsConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_refuse_controls",
+        argNames: ["that", "id", "what", "reason"],
+      );
+
+  @override
   Future<void> crateApiNodeLinksyNodeRefuseLocation({
     required LinksyNode that,
     required String id,
@@ -1780,7 +2342,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 36,
+            funcId: 47,
             port: port_,
           );
         },
@@ -1802,6 +2364,88 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiNodeLinksyNodeRefuseSnap({
+    required LinksyNode that,
+    required String id,
+    required String reason,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_String(reason, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 48,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeRefuseSnapConstMeta,
+        argValues: [that, id, reason],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeRefuseSnapConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_refuse_snap",
+        argNames: ["that", "id", "reason"],
+      );
+
+  @override
+  Future<void> crateApiNodeLinksyNodeRemoveNotification({
+    required LinksyNode that,
+    required String id,
+    required String key,
+    required bool replyKept,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_String(key, serializer);
+          sse_encode_bool(replyKept, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 49,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeRemoveNotificationConstMeta,
+        argValues: [that, id, key, replyKept],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeRemoveNotificationConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_remove_notification",
+        argNames: ["that", "id", "key", "replyKept"],
+      );
+
+  @override
   Future<void> crateApiNodeLinksyNodeRequestCommands({
     required LinksyNode that,
     required String id,
@@ -1818,7 +2462,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 37,
+            funcId: 50,
             port: port_,
           );
         },
@@ -1855,7 +2499,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
           sse_encode_String(request, serializer);
           sse_encode_bool(accept, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 51)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_bool,
@@ -1894,7 +2538,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_bool(accept, serializer);
           sse_encode_u_32(width, serializer);
           sse_encode_u_32(height, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 52)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_bool,
@@ -1932,7 +2576,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 40,
+            funcId: 53,
             port: port_,
           );
         },
@@ -1953,6 +2597,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   );
 
   @override
+  String? crateApiNodeLinksyNodeRoute({
+    required LinksyNode that,
+    required String id,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 54)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeRouteConstMeta,
+        argValues: [that, id],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeRouteConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_route",
+        argNames: ["that", "id"],
+      );
+
+  @override
   Future<void> crateApiNodeLinksyNodeRunCommand({
     required LinksyNode that,
     required String id,
@@ -1971,7 +2648,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 41,
+            funcId: 55,
             port: port_,
           );
         },
@@ -2013,7 +2690,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 42,
+            funcId: 56,
             port: port_,
           );
         },
@@ -2035,6 +2712,48 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<String> crateApiNodeLinksyNodeSendBundle({
+    required LinksyNode that,
+    required String id,
+    required List<String> paths,
+    required String appsJson,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_list_String(paths, serializer);
+          sse_encode_String(appsJson, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 57,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeSendBundleConstMeta,
+        argValues: [that, id, paths, appsJson],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeSendBundleConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_send_bundle",
+        argNames: ["that", "id", "paths", "appsJson"],
+      );
+
+  @override
   Future<void> crateApiNodeLinksyNodeSendCallState({
     required LinksyNode that,
     required String id,
@@ -2053,7 +2772,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 43,
+            funcId: 58,
             port: port_,
           );
         },
@@ -2093,7 +2812,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 44,
+            funcId: 59,
             port: port_,
           );
         },
@@ -2133,7 +2852,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 45,
+            funcId: 60,
             port: port_,
           );
         },
@@ -2155,6 +2874,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiNodeLinksyNodeSendControlsState({
+    required LinksyNode that,
+    required String id,
+    required String stateJson,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_String(stateJson, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 61,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeSendControlsStateConstMeta,
+        argValues: [that, id, stateJson],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeSendControlsStateConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_send_controls_state",
+        argNames: ["that", "id", "stateJson"],
+      );
+
+  @override
   Future<String> crateApiNodeLinksyNodeSendFiles({
     required LinksyNode that,
     required String id,
@@ -2173,7 +2932,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 46,
+            funcId: 62,
             port: port_,
           );
         },
@@ -2219,7 +2978,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 47,
+            funcId: 63,
             port: port_,
           );
         },
@@ -2259,7 +3018,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 48,
+            funcId: 64,
             port: port_,
           );
         },
@@ -2299,7 +3058,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 49,
+            funcId: 65,
             port: port_,
           );
         },
@@ -2321,6 +3080,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiNodeLinksyNodeSendScreenRotation({
+    required LinksyNode that,
+    required String id,
+    required int degrees,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_u_16(degrees, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 66,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeSendScreenRotationConstMeta,
+        argValues: [that, id, degrees],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeSendScreenRotationConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_send_screen_rotation",
+        argNames: ["that", "id", "degrees"],
+      );
+
+  @override
   Future<bool> crateApiNodeLinksyNodeSessionWrite({
     required LinksyNode that,
     required String session,
@@ -2339,7 +3138,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 50,
+            funcId: 67,
             port: port_,
           );
         },
@@ -2376,7 +3175,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
           sse_encode_String(id, serializer);
           sse_encode_bool(on_, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 51)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 68)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -2393,6 +3192,44 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "LinksyNode_set_away_all",
         argNames: ["that", "id", "on_"],
+      );
+
+  @override
+  Future<void> crateApiNodeLinksyNodeSetFeatures({
+    required LinksyNode that,
+    required List<String> features,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_list_String(features, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 69,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeSetFeaturesConstMeta,
+        argValues: [that, features],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeSetFeaturesConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_set_features",
+        argNames: ["that", "features"],
       );
 
   @override
@@ -2416,7 +3253,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 52,
+            funcId: 70,
             port: port_,
           );
         },
@@ -2447,7 +3284,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 53)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 71)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -2480,7 +3317,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_bool(on_, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 54)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 72)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -2512,7 +3349,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 55,
+            funcId: 73,
             port: port_,
           );
         },
@@ -2547,7 +3384,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 56,
+            funcId: 74,
             port: port_,
           );
         },
@@ -2573,6 +3410,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     required LinksyNode that,
     required String id,
     required bool control,
+    required bool choose,
   }) {
     return handler.executeNormal(
       NormalTask(
@@ -2584,10 +3422,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
           sse_encode_String(id, serializer);
           sse_encode_bool(control, serializer);
+          sse_encode_bool(choose, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 57,
+            funcId: 75,
             port: port_,
           );
         },
@@ -2596,7 +3435,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: sse_decode_String,
         ),
         constMeta: kCrateApiNodeLinksyNodeStartViewConstMeta,
-        argValues: [that, id, control],
+        argValues: [that, id, control, choose],
         apiImpl: this,
       ),
     );
@@ -2605,7 +3444,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiNodeLinksyNodeStartViewConstMeta =>
       const TaskConstMeta(
         debugName: "LinksyNode_start_view",
-        argNames: ["that", "id", "control"],
+        argNames: ["that", "id", "control", "choose"],
       );
 
   @override
@@ -2628,7 +3467,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 58,
+              funcId: 76,
               port: port_,
             );
           },
@@ -2668,7 +3507,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 59,
+            funcId: 77,
             port: port_,
           );
         },
@@ -2706,7 +3545,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 60,
+            funcId: 78,
             port: port_,
           );
         },
@@ -2728,6 +3567,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiNodeLinksyNodeUsbConnect({
+    required LinksyNode that,
+    required String id,
+    required String key,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerLinksyNode(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          sse_encode_String(key, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 79,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiNodeLinksyNodeUsbConnectConstMeta,
+        argValues: [that, id, key],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiNodeLinksyNodeUsbConnectConstMeta =>
+      const TaskConstMeta(
+        debugName: "LinksyNode_usb_connect",
+        argNames: ["that", "id", "key"],
+      );
+
+  @override
   Future<void> crateApiNodeLinksyNodeWatchClipboard({
     required LinksyNode that,
     required String id,
@@ -2746,7 +3625,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 61,
+            funcId: 80,
             port: port_,
           );
         },
@@ -2786,7 +3665,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 62,
+            funcId: 81,
             port: port_,
           );
         },
@@ -2826,7 +3705,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 63,
+            funcId: 82,
             port: port_,
           );
         },
@@ -2856,7 +3735,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 64,
+            funcId: 83,
             port: port_,
           );
         },
@@ -2896,7 +3775,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 65,
+            funcId: 84,
             port: port_,
           );
         },
@@ -3498,6 +4377,16 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
         RustLib.instance.api.rust_arc_decrement_strong_count_LinksyNodePtr,
   );
 
+  /// Answers a preflight within about two seconds, or the core does.
+  /// `answer_json`: `{"free","direct","can_install","apps":[{"package",
+  /// "have","version_code"}]}`.
+  void answerPreflight({required BigInt call, required String answerJson}) =>
+      RustLib.instance.api.crateApiNodeLinksyNodeAnswerPreflight(
+        that: this,
+        call: call,
+        answerJson: answerJson,
+      );
+
   bool cancel({required String transfer}) => RustLib.instance.api
       .crateApiNodeLinksyNodeCancel(that: this, transfer: transfer);
 
@@ -3508,6 +4397,24 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
   /// Connect over the internet now (away from home).
   Future<void> connectAway({required String id}) => RustLib.instance.api
       .crateApiNodeLinksyNodeConnectAway(that: this, id: id);
+
+  /// This phone's deck for that computer shows (`open`) or stopped (§4.19).
+  Future<void> deckOpen({required String id, required bool open}) => RustLib
+      .instance
+      .api
+      .crateApiNodeLinksyNodeDeckOpen(that: this, id: id, open: open);
+
+  /// Runs one of the deck's actions there: a tap, or a slider's `value` (0 to 1).
+  Future<void> deckRun({
+    required String id,
+    required String action,
+    double? value,
+  }) => RustLib.instance.api.crateApiNodeLinksyNodeDeckRun(
+    that: this,
+    id: id,
+    action: action,
+    value: value,
+  );
 
   /// Turns down a session this phone can't do at all (the desktop then says
   /// "can't" rather than "didn't allow it"). False if it already expired.
@@ -3642,6 +4549,23 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
     paths: paths,
   );
 
+  /// Answers `inbox_history`: a conversation's earlier messages this phone
+  /// kept, oldest first (`messages_json`, a list in the core's shape).
+  Future<void> inboxHistoryPage({
+    required String id,
+    required String app,
+    required String conversation,
+    required String messagesJson,
+    required bool more,
+  }) => RustLib.instance.api.crateApiNodeLinksyNodeInboxHistoryPage(
+    that: this,
+    id: id,
+    app: app,
+    conversation: conversation,
+    messagesJson: messagesJson,
+    more: more,
+  );
+
   /// This device, as `DeviceInfo` JSON.
   String infoJson() =>
       RustLib.instance.api.crateApiNodeLinksyNodeInfoJson(that: this);
@@ -3649,6 +4573,10 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
   /// How a device is connected: `usb`, `lan`, `away`, or empty.
   String link({required String id}) =>
       RustLib.instance.api.crateApiNodeLinksyNodeLink(that: this, id: id);
+
+  /// Asks a device where it is, once (§4.14).
+  Future<void> locate({required String id}) =>
+      RustLib.instance.api.crateApiNodeLinksyNodeLocate(that: this, id: id);
 
   /// `command_json` in the core's shape: `{"action":"play_pause"}`.
   Future<void> mediaCommand({
@@ -3721,8 +4649,51 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
   void pairingMode({required bool on_}) => RustLib.instance.api
       .crateApiNodeLinksyNodePairingMode(that: this, on_: on_);
 
+  /// What sending `bytes` would do now, without sending: a `SendPlan` as
+  /// JSON, or nothing when it isn't connected (§4.22).
+  String? planSend({required String id, required BigInt bytes}) => RustLib
+      .instance
+      .api
+      .crateApiNodeLinksyNodePlanSend(that: this, id: id, bytes: bytes);
+
   /// The port this node listens on, for "pair by address" from elsewhere.
   int port() => RustLib.instance.api.crateApiNodeLinksyNodePort(that: this);
+
+  /// One of this phone's notifications, new or changed (§4.5), shown on the
+  /// computer: `notification_json` in the core's shape (`key`, `app`,
+  /// `app_name`, `title`, `body`, `can_reply`, `actions`, `icon`, and for
+  /// chats `category`, `conversation`, `sender`, `group`, `time`, `picture`,
+  /// `messages`, `mine`; for mail `subject`).
+  Future<void> postNotification({
+    required String id,
+    required String notificationJson,
+  }) => RustLib.instance.api.crateApiNodeLinksyNodePostNotification(
+    that: this,
+    id: id,
+    notificationJson: notificationJson,
+  );
+
+  /// Asks a device about a send (§4.22): a `PreflightReply` as JSON.
+  /// `probes_json`: `[{"package","version_code","signer"}]`. Fails with
+  /// `unsupported` for a device without the feature: send anyway.
+  Future<String> preflight({
+    required String id,
+    required BigInt bytes,
+    required int files,
+    required String probesJson,
+  }) => RustLib.instance.api.crateApiNodeLinksyNodePreflight(
+    that: this,
+    id: id,
+    bytes: bytes,
+    files: files,
+    probesJson: probesJson,
+  );
+
+  /// Preflights from other devices (§4.22), as JSON with the `call` to
+  /// answer: `{"call":n,"from":{…},"bytes":…,"files":…,"apps":[probes]}`.
+  /// A later listener takes over from an earlier one.
+  Stream<String> preflightCalls() =>
+      RustLib.instance.api.crateApiNodeLinksyNodePreflightCalls(that: this);
 
   /// Have a direct link (Wi-Fi Direct) coming up for `bytes` on its way, when both
   /// devices can make one and it would pay for itself. Answers at once: the reads go
@@ -3734,6 +4705,27 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
         bytes: bytes,
       );
 
+  /// The user is choosing what to send, `bytes` of it so far: gets the best
+  /// route ready (§4.22). Sends nothing and does nothing twice.
+  Future<String?> prepareSend({required String id, required BigInt bytes}) =>
+      RustLib.instance.api.crateApiNodeLinksyNodePrepareSend(
+        that: this,
+        id: id,
+        bytes: bytes,
+      );
+
+  /// One control that wasn't changed, and why (§4.24).
+  Future<void> refuseControls({
+    required String id,
+    required String what,
+    required String reason,
+  }) => RustLib.instance.api.crateApiNodeLinksyNodeRefuseControls(
+    that: this,
+    id: id,
+    what: what,
+    reason: reason,
+  );
+
   /// Answers `locate` with why not.
   Future<void> refuseLocation({required String id, required String reason}) =>
       RustLib.instance.api.crateApiNodeLinksyNodeRefuseLocation(
@@ -3741,6 +4733,27 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
         id: id,
         reason: reason,
       );
+
+  /// A `snap_request` this phone can't answer (§4.23).
+  Future<void> refuseSnap({required String id, required String reason}) =>
+      RustLib.instance.api.crateApiNodeLinksyNodeRefuseSnap(
+        that: this,
+        id: id,
+        reason: reason,
+      );
+
+  /// The notification `key` went away on this phone; with `reply_kept`, its
+  /// conversation can still be answered (§4.5).
+  Future<void> removeNotification({
+    required String id,
+    required String key,
+    required bool replyKept,
+  }) => RustLib.instance.api.crateApiNodeLinksyNodeRemoveNotification(
+    that: this,
+    id: id,
+    key: key,
+    replyKept: replyKept,
+  );
 
   /// Request commands list from the computer.
   Future<void> requestCommands({required String id}) => RustLib.instance.api
@@ -3775,6 +4788,11 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
       .api
       .crateApiNodeLinksyNodeRing(that: this, id: id, on_: on_);
 
+  /// How a connected device is reached now: `usb`, `direct`, `lan` or `away`
+  /// (§4.22); nothing when it isn't connected.
+  String? route({required String id}) =>
+      RustLib.instance.api.crateApiNodeLinksyNodeRoute(that: this, id: id);
+
   /// Execute a command preset on the computer.
   Future<void> runCommand({required String id, required String key}) => RustLib
       .instance
@@ -3791,6 +4809,20 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
     id: id,
     level: level,
     charging: charging,
+  );
+
+  /// Files, folders and apps as one offer (§4.22). `apps_json`:
+  /// `[{"package","label","version_code","version_name","signer","icon",
+  /// "apks":[paths]}]`; the core names the folders.
+  Future<String> sendBundle({
+    required String id,
+    required List<String> paths,
+    required String appsJson,
+  }) => RustLib.instance.api.crateApiNodeLinksyNodeSendBundle(
+    that: this,
+    id: id,
+    paths: paths,
+    appsJson: appsJson,
   );
 
   /// `ringing`, `active` or `idle`.
@@ -3816,6 +4848,16 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
     that: this,
     id: id,
     path: path,
+  );
+
+  /// This phone's controls, to a computer watching them (§4.24).
+  Future<void> sendControlsState({
+    required String id,
+    required String stateJson,
+  }) => RustLib.instance.api.crateApiNodeLinksyNodeSendControlsState(
+    that: this,
+    id: id,
+    stateJson: stateJson,
   );
 
   /// Returns the transfer id.
@@ -3860,6 +4902,14 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
         image: image,
       );
 
+  /// How the display is turned, for a computer driving it by cable (§4.11).
+  Future<void> sendScreenRotation({required String id, required int degrees}) =>
+      RustLib.instance.api.crateApiNodeLinksyNodeSendScreenRotation(
+        that: this,
+        id: id,
+        degrees: degrees,
+      );
+
   /// Writes to a session (framed input messages). False once it has ended.
   Future<bool> sessionWrite({
     required String session,
@@ -3875,6 +4925,13 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
       .instance
       .api
       .crateApiNodeLinksyNodeSetAwayAll(that: this, id: id, on_: on_);
+
+  /// What this phone can do now (§4.10), the whole list: connected
+  /// computers hear it at once, others at their next handshake.
+  Future<void> setFeatures({required List<String> features}) => RustLib
+      .instance
+      .api
+      .crateApiNodeLinksyNodeSetFeatures(that: this, features: features);
 
   /// The computer's volume: `level` from 0 to 1, `muted`, or both.
   Future<void> setVolume({required String id, double? level, bool? muted}) =>
@@ -3902,14 +4959,18 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
       RustLib.instance.api.crateApiNodeLinksyNodeStartInput(that: this, id: id);
 
   /// Watch a computer's screen (`control`: and use its mouse and keyboard).
-  /// Its user picks the screen there. Returns the session id; the video
-  /// arrives on it like a second display's.
-  Future<String> startView({required String id, required bool control}) =>
-      RustLib.instance.api.crateApiNodeLinksyNodeStartView(
-        that: this,
-        id: id,
-        control: control,
-      );
+  /// Its user picks the screen there (`choose`: again, not the one picked last
+  /// time). Returns the session id; the video arrives on it like a second display's.
+  Future<String> startView({
+    required String id,
+    required bool control,
+    required bool choose,
+  }) => RustLib.instance.api.crateApiNodeLinksyNodeStartView(
+    that: this,
+    id: id,
+    control: control,
+    choose: choose,
+  );
 
   /// A terminal's output, chunk by chunk, until its stream ends (the shell
   /// exited, it was closed or ended on the computer, or the link dropped).
@@ -3928,6 +4989,12 @@ class LinksyNodeImpl extends RustOpaque implements LinksyNode {
         that: this,
         settingsJson: settingsJson,
       );
+
+  /// Asks the computer to use the cable for the plugged-in phone `key` (§4.11).
+  Future<void> usbConnect({required String id, required String key}) => RustLib
+      .instance
+      .api
+      .crateApiNodeLinksyNodeUsbConnect(that: this, id: id, key: key);
 
   /// Ask a computer to send its clipboard text as it changes (or stop).
   Future<void> watchClipboard({required String id, required bool on_}) =>

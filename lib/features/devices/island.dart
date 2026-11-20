@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../app/platform.dart';
 import '../../core/models.dart';
 import '../../app/scope.dart';
 import '../../ui/components.dart';
@@ -33,8 +34,12 @@ class Island extends StatefulWidget {
 class _IslandState extends State<Island> with SingleTickerProviderStateMixin {
   _Open? _open;
 
-  static const _grow = Duration(milliseconds: 460);
-  static const _shrink = Duration(milliseconds: 470);
+  static const _growFor = Duration(milliseconds: 460);
+  static const _shrinkFor = Duration(milliseconds: 470);
+
+  // At once when motion is reduced.
+  Duration get _grow => motion(context, _growFor.inMilliseconds);
+  Duration get _shrink => motion(context, _shrinkFor.inMilliseconds);
 
   // Out fast and settle softly, both ways at once.
   static const _growCurve = Cubic(0.16, 1, 0.3, 1);
@@ -80,10 +85,14 @@ class _IslandState extends State<Island> with SingleTickerProviderStateMixin {
     final width = MediaQuery.sizeOf(context).width;
     final duration = open ? _grow : _shrink;
     final curve = open ? _growCurve : _shrinkCurve;
+    // Back closes the card. Else, on the home screen, it leaves Linksy running
+    // as Home does: finishing would end Flutter but not the core, and files
+    // would go on arriving with nobody to move them, list them or say so.
     return PopScope(
-      canPop: !open,
+      canPop: false,
       onPopInvokedWithResult: (popped, _) {
-        if (!popped) _close();
+        if (popped) return;
+        open ? _close() : LinksyPlatform.toBackground();
       },
       child: Stack(
         children: [
@@ -140,9 +149,7 @@ class _IslandState extends State<Island> with SingleTickerProviderStateMixin {
                   child: AnimatedSwitcher(
                     // Closing, as long as the island's own shrink, so the
                     // pill comes back with it.
-                    duration: open
-                        ? const Duration(milliseconds: 340)
-                        : _shrink,
+                    duration: open ? motion(context, 340) : _shrink,
                     // Only what's coming sets the size, so the island starts
                     // moving at once; what's leaving keeps its own size,
                     // clipped, while it fades.

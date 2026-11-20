@@ -37,6 +37,55 @@ abstract interface class LinksyNode {
   /// Returns the transfer id.
   Future<String> sendFiles(String id, List<String> paths);
 
+  /// How a send of [bytes] to [id] would go now, without sending; null when
+  /// it isn't connected.
+  SendPlan? planSend(String id, int bytes);
+
+  /// This phone's controls as JSON, to computer [id] (§4.24).
+  Future<void> sendControlsState(String id, String stateJson);
+
+  /// One control that wasn't changed, and why.
+  Future<void> refuseControls(String id, String what, String reason);
+
+  /// A `snap_request` this phone can't answer (§4.23).
+  Future<void> refuseSnap(String id, String reason);
+
+  /// How the display is turned, for computer [id] driving it (§4.11).
+  Future<void> sendScreenRotation(String id, int degrees);
+
+  /// Asks computer [id] to use the cable for plugged-in phone [key] (§4.11).
+  Future<void> usbConnect(String id, String key);
+
+  /// Gets the fastest route ready for [bytes], while the user chooses, and
+  /// says how it looks. Sends nothing and does nothing twice.
+  Future<SendPlan?> prepareSend(String id, int bytes);
+
+  /// Asks [id] about a send; null from a device that can't answer, which
+  /// means skip the checks and send.
+  Future<PreflightReply?> preflight(
+    String id,
+    int bytes,
+    int files,
+    List<AppProbe> probes,
+  );
+
+  /// Other devices' preflights (§4.22), to answer with [answerPreflight]
+  /// within about two seconds, or the core does.
+  Stream<PreflightCall> get preflightCalls;
+
+  /// [facts] as [LinksyPlatform.preflightFacts] gives them.
+  void answerPreflight(int call, Map<Object?, Object?> facts);
+
+  /// Asks [id] where it is, once (§4.14).
+  Future<void> locate(String id);
+
+  /// [paths] and [apps] as one offer, so the other device asks once.
+  Future<String> sendBundle(
+    String id,
+    List<String> paths,
+    List<AppBundle> apps,
+  );
+
   Future<void> cancel(String transferId);
 
   Future<void> sendClipboard(String id, String text);
@@ -56,8 +105,13 @@ abstract interface class LinksyNode {
   Future<String> startInput(String id);
 
   /// Watch [id]'s screen ([control]: and drive it). Its user picks the
-  /// screen there. Returns the session id.
-  Future<String> startView(String id, {required bool control});
+  /// screen there ([choose]: again, not the one picked last time). Returns
+  /// the session id.
+  Future<String> startView(
+    String id, {
+    required bool control,
+    bool choose = false,
+  });
 
   /// Framed input messages into a session. False once it has ended.
   Future<bool> sessionWrite(String session, Uint8List bytes);
@@ -86,6 +140,42 @@ abstract interface class LinksyNode {
 
   /// `ringing`, `active` or `idle`.
   Future<void> sendCallState(String id, String state);
+
+  /// What this phone can do now, the whole list (docs/protocol.md §4.10):
+  /// connected computers hear it at once.
+  Future<void> setFeatures(List<String> features);
+
+  /// One of this phone's notifications, new or changed, to show on [id]
+  /// (docs/protocol.md §4.5): `key`, `app`, `app_name`, `title`, `body`,
+  /// `can_reply`, `actions`, `icon`, and for chats `category`,
+  /// `conversation`, `sender`, `group`, `time`, `picture`, `messages`,
+  /// `mine`; for mail `subject`.
+  Future<void> postNotification(String id, Map<String, Object?> notification);
+
+  /// The notification [key] went away on this phone; with [replyKept], its
+  /// conversation can still be answered from [id].
+  Future<void> removeNotification(
+    String id,
+    String key, {
+    bool replyKept = false,
+  });
+
+  /// Answers [id]'s `inbox_history`: a conversation's earlier messages this
+  /// phone kept, oldest first ([messagesJson], a JSON list), and whether
+  /// there are older ones still.
+  Future<void> inboxHistoryPage(
+    String id,
+    String app,
+    String conversation,
+    String messagesJson, {
+    required bool more,
+  });
+
+  /// This phone's deck for [id] shows ([open]) or stopped (§4.19).
+  Future<void> deckOpen(String id, {required bool open});
+
+  /// Runs one of [id]'s deck actions: a tap, or a slider's [value] (0 to 1).
+  Future<void> deckRun(String id, String action, {double? value});
 
   /// A step of a direct link this phone hosts, to [id] (docs/protocol.md
   /// §4.17): `{'type': 'invite', 'address': ...}`, `connecting`, `up` with
@@ -218,8 +308,12 @@ const maxClipboardBytes = 256 * 1024;
 
 /// A failure worth showing to the user as is, naming the device in plain words.
 class LinksyException implements Exception {
-  const LinksyException(this.message);
+  const LinksyException(this.message, {this.kind = ''});
   final String message;
+
+  /// The core's error kind (`not_paired`, `timeout`, …), when it came from
+  /// the core.
+  final String kind;
 
   @override
   String toString() => message;

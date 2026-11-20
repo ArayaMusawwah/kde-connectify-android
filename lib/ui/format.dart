@@ -47,6 +47,26 @@ String formatDay(DateTime t, {DateTime? now}) {
       : DateFormat.yMMMMd(locale).format(day);
 }
 
+/// A heading for what was taken that day: "Today", "Yesterday", "Nov 2", and
+/// the year for earlier years.
+String formatDayHeading(DateTime t, {DateTime? now}) {
+  final today = _date(now ?? DateTime.now());
+  final day = _date(t);
+  final diff = today.difference(day).inDays;
+  if (diff == 0) return tr.formatToday;
+  if (diff == 1) return tr.formatYesterday;
+  final locale = _dateLocale();
+  return day.year == today.year
+      ? DateFormat.MMMd(locale).format(day)
+      : DateFormat.yMMMd(locale).format(day);
+}
+
+/// A day in full, as a wide clock shows it: "Tuesday 3 November".
+String longDate(DateTime t) => DateFormat.MMMMEEEEd(_dateLocale()).format(t);
+
+/// A day in short, as a clock shows it: "Tue, 3 Nov".
+String shortDate(DateTime t) => DateFormat.MMMEd(_dateLocale()).format(t);
+
 /// The app's language for dates: British English for English (day before
 /// month, as the app writes it), French where intl has no data (Malagasy),
 /// else intl's built-in English (all intl has before Flutter's localizations

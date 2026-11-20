@@ -2,6 +2,285 @@
 
 All notable changes to Linksy for Android. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+## [0.3.11] - 2026-11-19
+
+> [!IMPORTANT]
+> **If Play Protect stops the install,** pause **Scan apps with Play Protect** while installing (Play Store › your picture › Play Protect › the gear at the top right), then turn it back on.
+
+### Added
+
+- **Middle click** on the Remote's touchpad: tap with three fingers, or use the new Middle button between Left and Right click. The deck has a Middle click tile too.
+- **Scroll strip:** slide one finger along the right edge of the touchpad to scroll, handy with one hand. A faint bar shows where it is; you can turn it off in Settings.
+- **Swipe typing and suggestions** on the Remote's keyboard. You can turn them off in Settings to send each key exactly as you press it.
+- **Write:** type a whole message on the phone with your keyboard's words and corrections, then send it where the computer's cursor is.
+- **Choose the deck's grid:** the deck editor's Theme sheet has a Grid setting. More columns give smaller tiles and room for more of them.
+
+## [0.3.10] - 2026-11-18
+
+> [!IMPORTANT]
+> **If Play Protect stops the install,** pause **Scan apps with Play Protect** while installing (Play Store › your picture › Play Protect › the gear at the top right), then turn it back on.
+
+### Responsive
+
+- Linksy now fits a phone held sideways, a tablet and an unfolded phone, both ways up.
+- Onboarding sideways: the welcome sits beside the language list and Continue, and Set up sits beside its choices. Before, Continue was off the screen.
+- A computer's or phone's page puts its picture in a pane on the left, with the page beside it, instead of the header filling the first screen.
+- The Remote's touchpad, Next and Back keep the full height on the left, with the buttons in a column on the right.
+- Home, Settings, Logs, Transfers and What's new stay a phone's width and centred on a wide screen. Photos get more columns, not bigger ones.
+- Sheets stay centred on a wide screen, and sideways they show everything they hold. Send files lost its second choice before.
+
+### Fixed
+
+- On the deck's Remote page, sliding a finger on the touchpad moves the pointer and no longer turns the page.
+
+## [0.3.9] - 2026-11-17
+
+> [!IMPORTANT]
+> **If Play Protect stops the install,** pause **Scan apps with Play Protect** while installing (Play Store › your picture › Play Protect › the gear at the top right), then turn it back on.
+
+### Added
+
+- The deck has its own **Remote** page: the touchpad button goes there and back instead of opening the separate Remote page. It's made the first time for your screen, upright and sideways: a big touchpad, left and right click, the keyboard, Esc, Tab and the arrows, all in the deck's theme. Its tiles can be moved, resized or added to any page like the others (Touchpad, Left click, Right click, Keyboard in Add).
+
+## [0.3.8] - 2026-11-17
+
+> [!IMPORTANT]
+> **If Play Protect stops the install,** pause **Scan apps with Play Protect** while installing (Play Store › your picture › Play Protect › the gear at the top right), then turn it back on.
+
+### Fixed
+
+- No more yellow mark in the corner of deck tiles that ask before they run (Restart, turning off and the like). They still ask.
+
+## [0.3.7] - 2026-11-17
+
+> [!IMPORTANT]
+> **If Play Protect stops the install,** pause **Scan apps with Play Protect** while installing (Play Store › your picture › Play Protect › the gear at the top right), then turn it back on.
+
+### Added
+
+- Deck: tiles the phone runs itself, under **From this phone** in Add: **Shortcut** (keys pressed together on the computer, like Ctrl+Shift+T), **Type text**, **Open link**, **Send clipboard**, **Ping** and **Find it**. Shortcuts and text go through Remote Input, which the computer allows once.
+- Deck: each tile can show its icon and name, only one of them, smaller or bigger.
+- Deck: the player has 10 s back and forward when the player can seek and there's room, and picks up the whole tile.
+
+### Changed
+
+- The deck takes the whole screen upright too, with no status bar, navigation bar or header; a swipe down from the top brings them back. Full screen can be turned off in the deck's Theme.
+- Deck tiles are square and as many as fit the screen, so tablets and unfolded phones get more of them instead of huge tiles, and the deck fills the screen edge to edge with the same room around the tiles as between them.
+- A new deck fills the screen both ways up: what the computer offers, then the phone's own tiles, the bigger tiles taking what's left.
+- The deck's clock is as big as its tile, with the date in full when it fits.
+- In the editor, a tile dropped on others swaps with them, so a full deck can still be rearranged; one added to a full page goes on a new page.
+- The files on the transfer lane run faster the faster the transfer goes.
+
+### Fixed
+
+- A deck label with a word too wide for its tile is a little smaller instead of broken in two ("Mute micr / ophone").
+
+## [0.3.6] - 2026-11-13
+
+> [!IMPORTANT]
+> **If Play Protect stops the install,** pause **Scan apps with Play Protect** while installing (Play Store › your picture › Play Protect › the gear at the top right), then turn it back on.
+
+### Added
+
+- **Start when the phone starts** (Settings › Connection): after a restart, Linksy comes back in the background with its quiet notification, and your computers see the phone without you opening the app. On once a computer is paired. Not after Force stop: Android keeps a force-stopped app closed until you open it.
+- The phone's volume buttons step the computer's volume on the Deck too, as they do on its page. A held button no longer floods the computer.
+- A touchpad button on the Deck opens Remote Input in one tap.
+- Touchpad: double-tap and slide to drag (select text, move windows). The button stays down when you lift your finger, so you can keep going; a tap lets go.
+- The Deck's player: pick which of the computer's players it controls (tap its title), one row high, long titles that slide by, and words and buttons that grow with the tile. Buttons the player can't use are gone instead of grey.
+- Deck › Theme: Full screen, without the status and navigation bars, and Album art as it is, not redrawn in the theme's dots or pixels.
+- Terminal: Enter, F1 to F12, Delete, % and + on the key bar, for htop, btm and the like. Ctrl and Alt now work with the arrows and other keys too.
+- Remote Input: a key row under the touchpad with Ctrl, Alt, Shift and Super (tap for the next key or typed letter, hold to press alone), Esc, Tab, the arrows, Home, End, PgUp, PgDn, Delete, Insert, PrtSc and F1 to F12.
+- Remote Input: a Browser tab beside Slides, with Back, Forward, Reload, Home, tabs, page up and down, and Address to type in the address bar.
+- Slides: First, Last, Black screen, White screen and From here.
+- Settings › With your computers › Touchpad speed.
+- Switch between Remote Input, the Deck and the Terminal from their headers, without going back. What each had open stays open.
+- Logs: what Linksy takes of the phone's memory, under This phone, and a line a minute after it leaves the screen, then every half hour, for idle memory reports.
+
+### Changed
+
+- Your computer can set this phone's volumes, ringer, Do Not Disturb and flashlight from away too, and browse its Gallery, without Allow Everything From Away.
+
+### Fixed
+
+- A file transfer cut off by a lost connection (a network change, a link that moved, a device gone for a moment) carries on once the devices are connected again, for up to 2 minutes, instead of failing: the sender offers again what may not have arrived, the receiving phone takes it without asking, and nothing that already arrived is sent or saved twice. It fails only if the other device stays unreachable.
+- A network change that takes nothing away (DNS, routes, an address added, mobile data's details, and every network once more at startup) no longer makes Linksy check every connection and drop the ones that don't answer within 2 seconds. The log now says what changed, including the default network moving between Wi-Fi and mobile data.
+- Wi-Fi Direct between two phones: the host phone makes its group on its own Wi-Fi channel, not anywhere on 5 GHz, so a phone whose Wi-Fi chip works on one channel at a time can join. The joining phone logs its own Wi-Fi channel and what Android says while it joins.
+- On another phone's page, See all on Photos opens again.
+- See all for apps: a picked app gets a thin blue outline instead of a thick one, long notes stop at two lines, and the send bar no longer covers the list.
+- Terminal: the arrow keys work in full-screen programs (htop, vim) that switch to application cursor keys.
+- The Deck's player no longer loses or cuts off its buttons at some sizes.
+- The Deck turned the other way round in landscape keeps clear of the camera cut-out and the bars.
+- Tiles for actions the computer doesn't let this phone use are no longer shown greyed out on the Deck; they're left out.
+- The computer's volume on its page reads 100 % on one line.
+- Going from Remote Input to the Deck, Media or Terminal and back no longer starts a new session each time, so the computer stops announcing it again and again. The session stays open a minute after you leave the page, and ends at once when Linksy goes to the background or the network changes.
+- A Remote Input session reads "Touchpad and keyboard" in History and on the device card, not "Its screen".
+- This phone's notifications, battery and calls reach a paired computer even when no link is up, on the same Wi-Fi or from away. They used to stop once the link went quiet.
+- A deck left open stays ready: its tiles no longer go dim after a quiet minute, and a tap connects by itself. They dim only when the computer doesn't answer, and a tap on a dim tile tries it again.
+
+## [0.3.5] - 2026-11-06
+
+> [!IMPORTANT]
+> **If Play Protect stops the install,** pause **Scan apps with Play Protect** while installing (Play Store › your picture › Play Protect › the gear at the top right), then turn it back on.
+
+### Added
+
+- A page for another phone or tablet, with no computer between them: send what you copied, a note or a link, and find it; then your latest photos and your apps right there to tap, files and folders, and what went between them. See all has photos by day and album, and every app.
+- Apps between phones. Each is marked against the other phone: not there, older there (an update), already there, newer, or from another developer. Android asks before installing; a package that isn't what the other phone said is refused. An app's data and logins don't move.
+- Before a send: how it will go and about how long, room on the other phone, and whether it will ask first. A direct link comes up while you choose.
+- Transfers say which way they go, and why not direct when a direct link failed.
+- History with a phone reads as a conversation, newest first: photos, apps, files, links and what you copied, each shown as itself, with Open on an app that came and Copy on text that came.
+- A computer's Ask the Phone: a sheet when Linksy is open, a notification when it isn't, for the Inbox or the Gallery.
+
+- **Snap to Computer**: from a computer's page or a Quick Settings tile, the camera opens and the picture goes to that computer, as a file and on its clipboard. It stays in Pictures/Linksy here too.
+- **Copy to Computer** in Android's menu over selected text, and Settings › Connection › Send what you copy (off by default) for what you copied when you come back to Linksy.
+- **Why can't I see my computer?** in Settings › Connection, and on a computer that isn't connected: Wi-Fi, a VPN, battery saving, Data Saver and whether anything is heard on the network, each with what to do.
+- **Connect by USB Cable** on a computer's page while this phone is plugged into it.
+- The terminal's key bar has Home, End, PgUp, PgDn and Ctrl-C.
+- A computer's screen shows at the phone's fastest refresh rate.
+
+- **Your computer can set this phone's volumes, ringer, Do Not Disturb and flashlight**, and sees them change. Do Not Disturb needs the access in Settings › Connection.
+- **Your computer's notifications here**, in Settings › Connection, off by default, in their own channel.
+- **Snap from a computer**: it can open this phone's camera, or ask with a notification when Linksy isn't on screen.
+- **The sound of what plays here**, with this phone's screen on a computer, on Android 10 and up.
+- This phone's screen at 60 fps where its encoder can.
+- Wi-Fi Direct on the channel the computer's Wi-Fi is on.
+
+- **The deck, sideways, takes the whole screen**: no bars or header, square tiles across the width. Swipe from the top for them.
+- **Hold a tile to edit the deck**, or an empty spot, as on a home screen. The tile comes up picked, ready to move or resize. Edit sits right under Back when sideways.
+- **Deck editor on the phone**: edit right on the deck with the pencil. Drag a tile, pull any corner or side to any size, and the others make room. Turn the phone for the landscape deck, with its own editor. Tap an empty cell to add, with undo, pages, layouts, themes and Try It. New decks start on Dot Matrix. Saved on this phone until the computer can take it.
+
+### Changed
+
+- A computer's page: its picture or the grid, gray while it isn't around, the bar past it in the page's own color, a slim player that opens up, its controls as tiles, what this phone can be as chips, and History as the conversation.
+- Files on their way: a bar along the bottom of a device's page, with the way they go, instead of the circle. Tap it to open it up, to the speed, each file and Cancel.
+- The home screen before your first device: an arrow leads from the steps to Add a device, instead of a second set of buttons for the same thing.
+
+### Fixed
+
+- A file that arrived after leaving Linksy with Back stayed in Linksy's private folder, out of reach of other apps. Back now leaves Linksy running, like Home, and anything left there moves to your Save location when Linksy opens.
+- Linksy could crash when a small file finished arriving just as it opened.
+
+## [0.3.4] - 2026-11-05
+
+> [!IMPORTANT]
+> **If Play Protect stops the install,** pause **Scan apps with Play Protect** while installing (Play Store › your picture › Play Protect › the gear at the top right), then turn it back on.
+
+### Added
+
+- First-run setup offers Messages on your computers (the computer's Inbox) and Photos on your computers (its Gallery), with an Allow button each.
+- A one-time card on the home screen, for people updating: "Your messages and photos on your computers", with a Turn On button for whichever is off.
+- Settings > Files > Save location: tap it to choose where received files go. Use Downloads › Linksy brings it back.
+
+### Changed
+
+- Show this phone's notifications is on by default: nothing is sent until Android's Notification access is allowed. If you turned it off, it stays off.
+- On Android 13 and later, the steps for Android's greyed-out switch now come first, starting with tapping that switch: App info only shows ⋮ › Allow restricted settings after Android has refused once. They close by themselves once it's allowed.
+- If Android won't ask for your photos again, the message has a button to App info.
+
+### Fixed
+
+- A one-cell deck label like "Bluetooth" could break mid-word in Stock, Signal, Glass and Midnight.
+
+## [0.3.3] - 2026-11-03
+
+> [!IMPORTANT]
+> **If Play Protect stops the install,** pause **Scan apps with Play Protect** while installing (Play Store › your picture › Play Protect › the gear at the top right), then turn it back on. Linksy now asks for your photos too, for Photos on your computers.
+
+### Added
+
+- Deck: this phone as buttons for a computer (its page › Control › Deck, with Linksy for computers' next release). Play, skip, volume, mute, lock, Wi-Fi, power profiles and the computer's own commands, laid out in the computer's deck editor: pages of tiles, the music playing there with its cover, a clock, a volume slider, a layout for each way the phone is held. Five looks from the computer (Standard, Dot Matrix, E-Ink, Terminal, Pixel) and three of the phone's own (Signal, Glass, Midnight): hold the deck's name to pick one. Restart, turn off, Wi-Fi and airplane mode ask first. The deck shows straight away, even while the computer is away; the screen stays on and dims after a minute untouched.
+- Photos on your computers (Settings › Files): a computer's Gallery looks through this phone's photos and videos page by page, and saves the ones picked there. Asks Android for the photos the first time.
+- Messages on your computer: the conversation's earlier messages, mail subjects, your own answers on your side, and Reply still working for a day after the notification is gone. Turning notifications on the computers off forgets the messages kept for it.
+- Reduce motion (Settings › This app): screens fade instead of sliding, and buttons dim instead of shrinking. Linksy also follows the phone's own "Remove animations".
+
+### Changed
+
+- Update sheet: the release notes show in full; the sheet scrolls down to Update Now instead of the notes scrolling in their own small box.
+- Every tap shows: buttons dip even on a quick tap in a list, keys and media buttons light up while pressed, and a switch row toggles from anywhere on it.
+- Phone as mouse: Touchpad and Slides slide from one to the other, as does the pill above them; the camera's tabs and choices slide the same way.
+- Clipboard and Ping show "Sent" for a moment, Find it rings at once, Pair and Stop show they're working, and the last few Material buttons now press like the rest.
+- Things that come and go (notices, share banners, players, the number pad, the Recommended card) make room and close up instead of jumping.
+- What arrives is felt too: a ping knocks twice, copied text and links give a light tick, as do files when they come in and when they're all there, both ways. The snack bar shows what came.
+- A ping or a link from a computer while Linksy isn't on screen now shows a notification ("From your computers") instead of waiting in the timeline.
+- Find my phone: a soft wave leaves the bell while it rings.
+
+### Fixed
+
+- A one-to-one chat answered on the phone showed on the computer under your own name ("You", "Vous"); it keeps the other person's.
+- A computer copying files to or from the phone no longer waits for each request in turn, and paths outside the shared folder are refused.
+- The transfer bubble's check vanished at once when files finished; it now stays while the bubble goes.
+
+## [0.3.2] - 2026-11-02
+
+> [!IMPORTANT]
+> **Play Protect may block this version.** Linksy can now show your phone's notifications on your computers, so Google Play Protect may stop the install ("App blocked to protect your device") when it doesn't come from the Play Store. To install it:
+> 1. Open the Play Store, tap your picture, then **Play Protect**, then the gear at the top right.
+> 2. Turn off **Scan apps with Play Protect**.
+> 3. Install Linksy (or tap **Update Now** in the app), then turn scanning back on.
+>
+> **To show notifications on your computer:** turn on Settings › With your computers › Show this phone's notifications. On Android 13 and later, Android greys out Linksy's switch in Notification access when it was installed from the web: open **App info** for Linksy, tap **⋮** at the top right, then **Allow restricted settings**, and turn Linksy on again. Linksy walks you through it.
+
+### Added
+- **This phone's notifications on your computers**: Settings › With your computers › Show this phone's notifications. Each one shows on your paired computers (Linksy 0.11 there), with Reply for messages (WhatsApp, Signal, Telegram, the SMS app, without any SMS permission) and the app's own buttons. Dismissing it on the computer dismisses it on the phone, and the other way. Linksy's own notifications and ongoing ones (music, navigation, downloads) stay on the phone, and nothing is kept on either side. It needs Android's Notification access: on Android 13 and later, Android greys out that switch for apps installed from the web, and Linksy shows how to allow it (App info › ⋮ › Allow restricted settings). Android 15 may still hide the text of some notifications from Linksy, such as one-time codes.
+- **Messages on your computer**: a chat's notification also tells the computer which chat it's in, who wrote the newest message, when, whether it's a group, and the person's or group's picture, so the computer can show your conversations on its Messages page (needs the computer's Linksy that has it). Turning notifications on or off tells your connected computers at once, without reconnecting.
+- **Keep Linksy alive**: Settings › Connection › Keep Linksy alive lists what to change on your phone's brand (Xiaomi, Samsung, OPPO, realme, OnePlus, vivo, Huawei, Honor and others) so it doesn't close Linksy in the background.
+- **Logs**: each read and write on the USB cable, for the first moments of a connection, then a summary every few seconds.
+
+### Changed
+- **Update sheet**: says what to do when Play Protect blocks the install, step by step.
+- **What's New** is back for this version: notifications on your computer, and Keep Linksy alive.
+
+### Fixed
+- **USB cable**: when the cable's link closes because the computer said nothing for 5 seconds, Linksy lets the cable go and opens it again, instead of staying on "connecting" until it's unplugged. Only Linksy reads the cable, and closing it no longer leaves a read waiting on it.
+- **Smaller download**: the app no longer carries two libraries it never used (about 1.4 MB on 64-bit phones).
+
+## [0.3.1] - 2026-11-02
+
+### Changed
+- **Update check**: Linksy now looks for a new version each time you open it, at most once an hour, instead of once a day when it starts. Linksy keeps running in the background, so a new version could go unnoticed for days. It still never downloads anything by itself: "Linksy X Is Available" shows at the top of the home page, and closing it hides that version.
+
+## [0.3.0] - 2026-11-02
+
+A new look across the app: calmer, with the same blue and the same island.
+
+### Added
+- **All files**: "Let computers browse files" can share all of the phone's storage instead of one folder. Choosing All files opens Android's own "All files access" page for Linksy; a folder you choose stays the default ([#17](https://github.com/LinkSy-mg/linksy-mobile/issues/17)).
+- **Device settings**: each device has its own settings page behind the gear on its page: its picture, photo backup, its clipboard, what it may do from away, and Forget.
+- **Settings search**: type what you're looking for and Linksy opens the right page with that setting lit up.
+
+### Changed
+- **Settings**: a short main page with a Recommended next step and four pages: Files, Connection, With your computers and This app. Check for Updates and Logs stay on the main page, permissions are in This app, and the relay server is set in a sheet from the bottom.
+- **Device pages**: Send files and the quick actions (Clipboard, Ping, Find it) share one card. Remote, the computer's screen and the Terminal are under Control; the webcam, microphone and second display are under "This phone as", as status only. Back and the gear stay at the top while you scroll. Watching a computer's screen asks Control or Watch in a sheet.
+- **Home**: calmer, with quieter headings and status, soft send and pair buttons, and a centred welcome when nothing is paired yet.
+- **Updates**: the update sheet shows what changed and the APK it installs, with a full-width Update Now that fills as it downloads.
+- **Launch**: the Linksy mark flies from the splash screen into the logo at the top.
+
+## [0.2.13] - 2026-11-01
+
+### Fixed
+- **Screen sharing on phones whose video encoder refuses the screen's size**: a Samsung Galaxy A70 on Android 11 refused its own portrait screen and sharing failed at once. Linksy now uses the largest size of the same shape the encoder takes, or Android's own encoder when it refuses anyway. The webcam does the same, and the Logs page says which encoder and size it uses ([releases#6](https://github.com/LinkSy-mg/linksy-releases/issues/6)).
+
+## [0.2.12] - 2026-11-01
+
+### Changed
+- **USB cable**: the phone's end of the cable now runs on linksy-core's own bridge, which speaks the cable's new version (Linksy 0.11 on the computer): it reads the cable the way Android expects, answers the computer's checks and lets go cleanly when the cable goes quiet. Computers with an older Linksy keep working as before.
+- Names of other devices are tidied by linksy-core: no invisible or direction-changing characters, at most 48 characters.
+
+### Added
+- **Controlled over the cable**: when a computer with Linksy 0.11 takes control of this phone's screen over the USB cable, the screen sharing notification says "Controlled from" that computer, and Stop ends it.
+- **Choose Screen**: watching or controlling a computer's screen, a button in the corner asks the computer to pick another monitor ([desktop#15](https://github.com/LinkSy-mg/linksy-desktop/issues/15)). Someone picks it on the computer.
+- **USB cable**: the phone says it's connecting while it reaches the computer through the cable, then opens that computer's page.
+- **Logs**: what the video encoder and the camera do (which encoder, the first frame, or none after 3 seconds), and each step of the USB cable, so a shared log says why a webcam or screen share shows no picture, or why the cable didn't connect.
+
+### Fixed
+- **USB cable on a phone that's already paired**: the phone tries the computer a few times before offering to pair over the cable, instead of offering pairing after one failed try.
+- **Webcam with the phone locked**: the phone keeps its processor and Wi-Fi awake while it shares its camera, microphone or screen, so the picture doesn't freeze when it locks.
+
+### Security
+- **Device keys stay on this phone**: Android backups and phone-to-phone transfers leave Linksy's data out, so the phone's identity can't be copied to another phone. After moving to a new phone, pair your computers again ([#18](https://github.com/LinkSy-mg/linksy-mobile/issues/18), [#19](https://github.com/LinkSy-mg/linksy-mobile/pull/19), thanks [@bearyjd](https://github.com/bearyjd)).
+
 ## [0.2.11] - 2026-10-27
 
 ### Added

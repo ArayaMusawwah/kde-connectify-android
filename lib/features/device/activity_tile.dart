@@ -9,6 +9,7 @@ import '../../ui/format.dart';
 import '../../ui/l10n.dart';
 import '../../ui/sig.dart';
 import '../sharing/webcam_screen.dart';
+import '../../ui/responsive.dart';
 
 IconData activityIcon(Activity a) => switch (a.kind) {
   ActivityKind.files when a.names.length > 1 =>
@@ -114,7 +115,9 @@ String activityDetail(Activity a) {
   final verb = switch (a.status) {
     ActivityStatus.declined => tr.activityDeclined,
     ActivityStatus.failed => a.reason ?? tr.activityFailed,
-    ActivityStatus.waiting || ActivityStatus.active => tr.activityInProgress,
+    // A transfer waiting for its connection says so.
+    ActivityStatus.waiting ||
+    ActivityStatus.active => a.reason ?? tr.activityInProgress,
     _ when a.kind == ActivityKind.clipboard && a.incoming =>
       tr.activityCopiedHere,
     _ => a.incoming ? tr.activityReceived : tr.activitySent,
@@ -209,7 +212,7 @@ class TimelineEntry extends StatelessWidget {
                           builder: (_) => WebcamScreen(share: webcam),
                         ),
                       )
-                    : () => _open(context, a),
+                    : () => open(context, a),
                 child: Row(
                   children: [
                     Icon(activityIcon(a), color: color, size: 22),
@@ -336,7 +339,8 @@ class TimelineEntry extends StatelessWidget {
     ActivityKind.watch,
   ].contains(a.kind);
 
-  static Future<void> _open(BuildContext context, Activity a) async {
+  /// Opens what it holds: its link, its file, or a choice of its files.
+  static Future<void> open(BuildContext context, Activity a) async {
     if (a.kind == ActivityKind.link) {
       if (!await LinksyPlatform.openUrl(a.text!) && context.mounted) {
         showMessage(context, context.l10n.activityNoAppForLink);
@@ -344,7 +348,7 @@ class TimelineEntry extends StatelessWidget {
       return;
     }
     if (a.saved.length == 1) return _openFile(context, a.saved.single);
-    await showModalBottomSheet<void>(
+    await showSheet<void>(
       context: context,
       builder: (sheet) {
         final s = Sig.of(sheet);

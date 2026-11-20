@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -10,6 +11,7 @@ import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../../ui/format.dart';
 import '../../ui/l10n.dart';
+import '../../ui/responsive.dart';
 import '../../ui/sig.dart';
 import '../device/activity_tile.dart' show openReceived;
 
@@ -43,38 +45,118 @@ class _Batch {
   }
 }
 
-/// Files on their way, as a circle: how many, ringed by their progress, and
-/// a check for a moment when they're all done. Tapping it opens
-/// [TransfersScreen].
-///
-/// On a device's page it floats at the bottom left only while files move.
-/// Home has it all the time, joined to Add a device: [TransfersButton].
-class TransferBubble extends StatelessWidget {
-  const TransferBubble({super.key});
+/// Files on their way, along the bottom like the Send bar: their lane and the
+/// way they go. A tap opens it up in place, to the top of [TransfersScreen],
+/// each file and Cancel. "All done" for a moment at the end.
+class TransferBar extends StatefulWidget {
+  const TransferBar({super.key});
+
+  /// What a page leaves free under its content while the bar is up.
+  static const room = 84.0;
 
   @override
-  Widget build(BuildContext context) => Positioned(
-    left: 16,
-    bottom: 16 + MediaQuery.paddingOf(context).bottom,
-    child: _Live(
-      builder: (files, progress, state) {
-        final visible = state != _BubbleState.idle;
-        return AnimatedScale(
-          scale: visible ? 1 : 0,
-          duration: const Duration(milliseconds: 220),
-          curve: visible ? Curves.easeOutBack : Curves.easeIn,
-          child: visible
-              ? _Bubble(
-                  files: files,
-                  progress: progress,
-                  state: state,
-                  size: 60,
-                  raised: true,
-                )
-              : const SizedBox.square(dimension: 60),
-        );
-      },
-    ),
+  State<TransferBar> createState() => _TransferBarState();
+}
+
+class _TransferBarState extends State<TransferBar> {
+  bool _open = false;
+
+  @override
+  Widget build(BuildContext context) => _Live(
+    builder: (files, _, state) {
+      final c = LinksyScope.of(context);
+      final s = Sig.of(context);
+      final l = context.l10n;
+      final batch = _Batch(c.liveTransfers);
+      final going = state == _BubbleState.going;
+      if (!going) _open = false;
+      return AnimatedSize(
+        duration: motion(context, 240),
+        curve: Curves.easeOutCubic,
+        alignment: Alignment.bottomCenter,
+        child: state == _BubbleState.idle
+            ? const SizedBox(width: double.infinity)
+            : SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: s.card,
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: const [
+                        BoxShadow(
+                          blurRadius: 10,
+                          offset: Offset(0, 3),
+                          color: Color(0x260A1024),
+                        ),
+                      ],
+                    ),
+                    child: going
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Pressable(
+                                onTap: () => setState(() => _open = !_open),
+                                semanticLabel: l.transfersBubble(files),
+                                child: Padding(
+                                  padding: _open
+                                      ? const EdgeInsets.fromLTRB(14, 16, 14, 0)
+                                      : const EdgeInsets.symmetric(
+                                          horizontal: 14,
+                                          vertical: 12,
+                                        ),
+                                  child: _open
+                                      ? _Speed(c: c, batch: batch, flat: true)
+                                      : _Slim(c: c, batch: batch),
+                                ),
+                              ),
+                              if (_open)
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxHeight:
+                                        MediaQuery.sizeOf(context).height * 0.5,
+                                  ),
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.fromLTRB(
+                                      14,
+                                      0,
+                                      14,
+                                      18,
+                                    ),
+                                    children: [
+                                      for (final a in batch.transfers)
+                                        _Transfer(c: c, activity: a),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  PhBold.check,
+                                  color: Sig.cyan,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l.transfersAllDone,
+                                  style: sora(16, color: s.ink),
+                                ),
+                              ],
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+      );
+    },
   );
 }
 
@@ -94,7 +176,7 @@ class TransfersButton extends StatelessWidget {
       final going = state == _BubbleState.going && progress != null;
       final wide = state != _BubbleState.idle;
       return AnimatedContainer(
-        duration: const Duration(milliseconds: 380),
+        duration: motion(context, 300),
         curve: Curves.easeOutCubic,
         decoration: BoxDecoration(
           color: wide
@@ -103,7 +185,7 @@ class TransfersButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(99),
         ),
         child: AnimatedSize(
-          duration: const Duration(milliseconds: 380),
+          duration: motion(context, 300),
           curve: Curves.easeOutCubic,
           // The ring stays put; the percentage slides out beside it.
           alignment: AlignmentDirectional.centerStart,
@@ -115,7 +197,6 @@ class TransfersButton extends StatelessWidget {
                 progress: progress,
                 state: state,
                 size: size,
-                raised: false,
                 onTap: onTap,
               ),
               if (going)
@@ -201,7 +282,6 @@ class _Bubble extends StatelessWidget {
     required this.progress,
     required this.state,
     required this.size,
-    required this.raised,
     this.onTap,
   });
 
@@ -209,9 +289,6 @@ class _Bubble extends StatelessWidget {
   final double? progress;
   final _BubbleState state;
   final double size;
-
-  /// Floating, with a shadow; else sitting in the pill.
-  final bool raised;
 
   final VoidCallback? onTap;
 
@@ -227,22 +304,9 @@ class _Bubble extends StatelessWidget {
       child: Container(
         width: size,
         height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: raised ? s.card : Colors.transparent,
-          boxShadow: raised
-              ? const [
-                  BoxShadow(
-                    color: Color(0x2E0A1024),
-                    blurRadius: 14,
-                    offset: Offset(0, 5),
-                  ),
-                ]
-              : null,
-        ),
         padding: const EdgeInsets.all(4),
         child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 220),
+          duration: motion(context, 220),
           child: state == _BubbleState.idle
               ? Icon(
                   Ph.arrowsDownUp,
@@ -257,26 +321,36 @@ class _Bubble extends StatelessWidget {
                     // Turning while the other side hasn't accepted yet.
                     TweenAnimationBuilder<double>(
                       tween: Tween(end: progress ?? 0),
-                      duration: const Duration(milliseconds: 400),
+                      duration: motion(context, 400),
                       builder: (context, value, _) => CircularProgressIndicator(
                         value: progress == null ? null : value,
-                        strokeWidth: size > 56 ? 4 : 3,
+                        strokeWidth: 3,
                         strokeCap: StrokeCap.round,
                         color: done ? Sig.cyan : Sig.blue,
                         backgroundColor: s.line,
                       ),
                     ),
                     Center(
-                      child: done
-                          ? const Icon(PhBold.check, color: Sig.cyan, size: 22)
-                          : Text(
-                              '$files',
-                              style: sora(
-                                files > 99 ? 13 : 17,
-                                weight: FontWeight.w700,
-                                color: s.ink,
+                      child: AnimatedSwitcher(
+                        duration: motion(context),
+                        transitionBuilder: popIn,
+                        child: done
+                            ? const Icon(
+                                PhBold.check,
+                                key: ValueKey(true),
+                                color: Sig.cyan,
+                                size: 22,
+                              )
+                            : Text(
+                                '$files',
+                                key: const ValueKey(false),
+                                style: sora(
+                                  files > 99 ? 13 : 17,
+                                  weight: FontWeight.w700,
+                                  color: s.ink,
+                                ),
                               ),
-                            ),
+                      ),
                     ),
                   ],
                 ),
@@ -303,7 +377,7 @@ class TransfersPeek extends StatelessWidget {
     final batch = _Batch(c.liveTransfers);
     final recent = c.recentTransfers;
     final Widget more = Center(
-      child: TextButton(onPressed: onMore, child: Text(l.islandSeeMore)),
+      child: SmallAction(label: l.islandSeeMore, onTap: onMore),
     );
     if (batch.transfers.isEmpty) {
       return Column(
@@ -365,9 +439,9 @@ class TransfersScreen extends StatelessWidget {
       appBar: AppBar(title: Text(l.transfersTitle)),
       body: ListView(
         padding: EdgeInsets.fromLTRB(
-          16,
+          readableSide(context),
           8,
-          16,
+          readableSide(context),
           24 + MediaQuery.paddingOf(context).bottom,
         ),
         children: [
@@ -446,6 +520,71 @@ class _Nothing extends StatelessWidget {
   }
 }
 
+/// How far a direct link has got for [a], if it's taking one.
+DirectStage? _stageOf(LinksyController c, Activity a) =>
+    c.direct[a.deviceId] ??
+    (c.routeOf(a.id)?.route == 'direct' ? DirectStage.up : null);
+
+/// The pill for the way files go.
+Widget _routeBadge(DirectStage? stage, DeviceView? device) => switch (stage) {
+  DirectStage.up => const _RoutePill.direct(key: ValueKey('direct')),
+  final DirectStage st => _RoutePill.step(
+    key: const ValueKey('step'),
+    stage: st,
+    name: device?.device.name ?? '',
+  ),
+  null when device != null => _RoutePill.network(
+    key: ValueKey(linkWords(device)),
+    view: device,
+  ),
+  null => const SizedBox.shrink(),
+};
+
+/// The lane on its own, with the way files go on it. The numbers are a tap
+/// away.
+class _Slim extends StatelessWidget {
+  const _Slim({required this.c, required this.batch});
+
+  final LinksyController c;
+  final _Batch batch;
+
+  @override
+  Widget build(BuildContext context) {
+    final first = batch.transfers.first;
+    final device = c.device(first.deviceId);
+    final stage = _stageOf(c, first);
+    final computer = _End(
+      kindIcon(device?.device.kind ?? DeviceKind.desktop),
+      Sig.incoming,
+    );
+    const phone = _End(Ph.deviceMobile, Sig.outgoing);
+    return Row(
+      children: [
+        if (first.incoming) computer else phone,
+        const SizedBox(width: 10),
+        Expanded(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                left: 0,
+                right: 0,
+                child: _Flow(
+                  speed: batch.waiting ? 0 : batch.speed,
+                  scanning: stage == DirectStage.find,
+                ),
+              ),
+              _routeBadge(stage, device),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        if (first.incoming) phone else computer,
+      ],
+    );
+  }
+}
+
 /// The speed of everything together, with files flowing between the two
 /// devices as fast as they really go.
 class _Speed extends StatelessWidget {
@@ -465,8 +604,13 @@ class _Speed extends StatelessWidget {
     final device = c.device(first.deviceId);
     final other = device?.device.kind ?? DeviceKind.desktop;
     final going = !batch.waiting && batch.speed > 0;
-    final stage = c.direct[first.deviceId];
-    final settingUp = stage != null && stage != DirectStage.up;
+    // The way it goes: both ends hear it (§4.22). This phone's own Wi-Fi steps
+    // say more while there are some.
+    final routed = c.routeOf(first.id);
+    final stage = _stageOf(c, first);
+    final settingUp =
+        routed?.settingUpDirect == true ||
+        stage != null && stage != DirectStage.up;
     final computer = _End(kindIcon(other), Sig.incoming);
     const phone = _End(Ph.deviceMobile, Sig.outgoing);
     final speed = formatSpeed(batch.speed).split(' ');
@@ -533,28 +677,14 @@ class _Speed extends StatelessWidget {
                       ),
                     ),
                     AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 260),
+                      duration: motion(context, 260),
                       transitionBuilder: (child, a) => ScaleTransition(
                         scale: Tween(begin: 0.8, end: 1.0).animate(
                           CurvedAnimation(parent: a, curve: Curves.easeOutBack),
                         ),
                         child: FadeTransition(opacity: a, child: child),
                       ),
-                      child: switch (stage) {
-                        DirectStage.up => const _RoutePill.direct(
-                          key: ValueKey('direct'),
-                        ),
-                        final DirectStage st => _RoutePill.step(
-                          key: const ValueKey('step'),
-                          stage: st,
-                          name: device?.device.name ?? '',
-                        ),
-                        null when device != null => _RoutePill.network(
-                          key: ValueKey(linkWords(device)),
-                          view: device,
-                        ),
-                        null => const SizedBox.shrink(),
-                      },
+                      child: _routeBadge(stage, device),
                     ),
                   ],
                 ),
@@ -564,6 +694,14 @@ class _Speed extends StatelessWidget {
             if (first.incoming) phone else computer,
           ],
         ),
+        if (routed?.whyNotDirect case final why?)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              l.routeNotDirect(why),
+              style: TextStyle(fontSize: 13.5, color: s.muted),
+            ),
+          ),
       ],
     );
     return flat
@@ -608,17 +746,25 @@ class _RoutePillState extends State<_RoutePill>
 
   bool get _settingUp => widget.stage != null && widget.stage != DirectStage.up;
 
+  /// Pulses while setting up, unless motion is reduced.
+  void _sync() {
+    if (_settingUp && !MediaQuery.disableAnimationsOf(context)) {
+      if (!_pulse.isAnimating) _pulse.repeat(reverse: true);
+    } else {
+      _pulse.stop();
+    }
+  }
+
   @override
-  void initState() {
-    super.initState();
-    if (_settingUp) _pulse.repeat(reverse: true);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _sync();
   }
 
   @override
   void didUpdateWidget(_RoutePill old) {
     super.didUpdateWidget(old);
-    if (_settingUp && !_pulse.isAnimating) _pulse.repeat(reverse: true);
-    if (!_settingUp) _pulse.stop();
+    _sync();
   }
 
   @override
@@ -638,7 +784,13 @@ class _RoutePillState extends State<_RoutePill>
       children = [
         const _DoubleBolt(),
         const SizedBox(width: 4),
-        Text(l.transfersRouteDirect),
+        Flexible(
+          child: Text(
+            l.transfersRouteDirect,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ];
     } else if (stage != null) {
       children = [
@@ -649,7 +801,7 @@ class _RoutePillState extends State<_RoutePill>
         const SizedBox(width: 6),
         Flexible(
           child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 220),
+            duration: motion(context, 220),
             child: Text(
               switch (stage) {
                 DirectStage.find => l.transfersDirectFinding(widget.name),
@@ -683,7 +835,13 @@ class _RoutePillState extends State<_RoutePill>
           color: s.muted,
         ),
         const SizedBox(width: 4),
-        Text(linkWords(v)),
+        Flexible(
+          child: Text(
+            linkWords(v),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ];
     }
     return Container(
@@ -758,11 +916,11 @@ class _End extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    width: 32,
-    height: 32,
+    width: 36,
+    height: 36,
     decoration: BoxDecoration(
       color: color.withValues(alpha: 0.13),
-      borderRadius: BorderRadius.circular(10),
+      shape: BoxShape.circle,
     ),
     child: Icon(icon, size: 18, color: color),
   );
@@ -797,6 +955,15 @@ class _FlowState extends State<_Flow> with SingleTickerProviderStateMixin {
   /// Where the sweep is, in lanes.
   double _scan = 0;
 
+  /// Motion is reduced: the lane stays still.
+  bool _still = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _still = MediaQuery.disableAnimationsOf(context);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -806,9 +973,14 @@ class _FlowState extends State<_Flow> with SingleTickerProviderStateMixin {
   void _tick(Duration now) {
     final dt = (now - _last).inMicroseconds / 1e6;
     _last = now;
-    // 1 MB/s crawls, 100 MB/s races; past that it stays readable.
+    if (_still) return;
+    // Lanes a second: racing (3.2) from about 70 MB/s, slower in step below
+    // it on a log scale: 35 MB/s runs (2.7), 10 MB/s jogs (1.8), 1 MB/s
+    // walks (0.5).
     final mb = widget.speed / 1e6;
-    final target = mb <= 0 ? 0.0 : (0.12 + mb / 80).clamp(0.12, 1.6);
+    final target = mb <= 0
+        ? 0.0
+        : (3.2 * math.log(1 + mb) / math.log(71)).clamp(0.3, 3.2);
     _pace += (target - _pace) * (dt * 3).clamp(0.0, 1.0);
     if (widget.scanning) _scan = (_scan + dt / 1.4) % 1;
     if (_pace < 0.001 && !widget.scanning) return;
@@ -961,7 +1133,7 @@ class _FeelsState extends State<_Feels> {
           const SizedBox(width: 7),
           Expanded(
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
+              duration: motion(context, 300),
               layoutBuilder: (current, previous) => Stack(
                 alignment: AlignmentDirectional.centerStart,
                 children: [...previous, ?current],
@@ -1017,10 +1189,10 @@ class _Transfer extends StatelessWidget {
                   ),
                 ),
               ),
-              TextButton(
-                onPressed: () => c.cancel(a.id),
-                style: TextButton.styleFrom(foregroundColor: s.muted),
-                child: Text(l.commonCancel),
+              SmallAction(
+                label: l.commonCancel,
+                onTap: () => c.cancel(a.id),
+                color: s.muted,
               ),
             ],
           ),
@@ -1086,7 +1258,7 @@ class _Round extends StatelessWidget {
           if (going)
             TweenAnimationBuilder<double>(
               tween: Tween(end: progress ?? 0),
-              duration: const Duration(milliseconds: 400),
+              duration: motion(context, 400),
               builder: (context, v, _) => CircularProgressIndicator(
                 value: progress == null ? null : v,
                 strokeWidth: 2.5,
@@ -1225,9 +1397,12 @@ class _RecentState extends State<_Recent> {
         widget.c.device(a.deviceId)?.device.name ?? shortDeviceId(a.deviceId);
     final today = DateUtils.isSameDay(a.time, DateTime.now());
     final group = a.names.length > 1;
+    // A tap opens the group or the file; a single sent or failed file has
+    // nothing to open, so the row doesn't pretend to.
+    final opens = group || _saved(0) != null;
     final row = Pressable(
-      onTap: _tap,
-      scale: 0.99,
+      onTap: opens ? _tap : null,
+      scale: 0.98,
       semanticLabel: a.names.length == 1
           ? a.names.first
           : l.activityItems(a.names.length),
@@ -1280,7 +1455,7 @@ class _RecentState extends State<_Recent> {
               const SizedBox(width: 10),
               AnimatedRotation(
                 turns: _open ? 0.5 : 0,
-                duration: const Duration(milliseconds: 260),
+                duration: motion(context, 260),
                 curve: Curves.easeOutCubic,
                 child: Icon(Ph.caretDown, size: 16, color: s.faint),
               ),
@@ -1295,7 +1470,7 @@ class _RecentState extends State<_Recent> {
       children: [
         row,
         AnimatedSize(
-          duration: const Duration(milliseconds: 300),
+          duration: motion(context, 300),
           curve: Curves.easeOutCubic,
           alignment: Alignment.topCenter,
           child: !_open

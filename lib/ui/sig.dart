@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'responsive.dart';
+
 /// "Signal", Linksy's own look. Blue is the sender, cyan the receiver
 /// (`brand/README.md` in linksy-desktop): outgoing things are blue, incoming
 /// things cyan, everywhere.
@@ -188,9 +190,7 @@ ThemeData buildTheme(Brightness brightness) {
       systemOverlayStyle: overlayFor(brightness),
     ),
     pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
-      },
+      builders: {TargetPlatform.android: _PageTransitions()},
     ),
     dialogTheme: DialogThemeData(
       elevation: 0,
@@ -206,6 +206,8 @@ ThemeData buildTheme(Brightness brightness) {
       backgroundColor: s.card,
       surfaceTintColor: Colors.transparent,
       modalBarrierColor: Colors.black.withValues(alpha: 0.45),
+      // A phone's width at most, centred on a wide screen (responsive.dart).
+      constraints: const BoxConstraints(maxWidth: sheetWidth),
       showDragHandle: true,
       dragHandleColor: s.line,
       shape: const RoundedRectangleBorder(
@@ -267,6 +269,31 @@ ThemeData buildTheme(Brightness brightness) {
       linearMinHeight: 5,
     ),
   );
+}
+
+/// Android's own page transition, with predictive back; a fade instead when
+/// motion is reduced.
+class _PageTransitions extends PageTransitionsBuilder {
+  const _PageTransitions();
+
+  static const _android = PredictiveBackPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) => MediaQuery.disableAnimationsOf(context)
+      ? FadeTransition(opacity: animation, child: child)
+      : _android.buildTransitions(
+          route,
+          context,
+          animation,
+          secondaryAnimation,
+          child,
+        );
 }
 
 SystemUiOverlayStyle overlayFor(Brightness brightness) => SystemUiOverlayStyle(

@@ -1736,7 +1736,7 @@ checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
 
 [[package]]
 name = "linksy-core"
-version = "0.12.4"
+version = "0.16.0"
 dependencies = [
  "blake3",
  "getrandom 0.4.3",

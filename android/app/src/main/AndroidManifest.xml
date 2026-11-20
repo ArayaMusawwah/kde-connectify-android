@@ -2,6 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools">
     <!-- QUIC over the local network, and mDNS presence (needs a multicast lock). -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- The phone's photos and videos in a computer's Gallery (docs/protocol.md
+         §4.18); asked when the user turns that on, never at start. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
@@ -13,6 +18,8 @@
         android:usesPermissionFlags="neverForLocation"/>
     <!-- Scanning the desktop's pairing QR code. -->
     <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- A computer changing Do Not Disturb, once the user allows it in Android's settings. -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <!-- Sharing the screen or camera with a desktop keeps going in other apps. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
@@ -45,9 +52,15 @@
     <!-- A computer controlling this phone: the input overlay is drawn over
          other apps (grant in Android's "Display over other apps" settings). -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <!-- Start When the Phone Starts (mobile#23): back in the background after a
+         restart, so computers see the phone without opening the app. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:label="KDE Connectify"
+        android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
@@ -85,6 +98,11 @@
                 <data android:scheme="connectify" android:host="pair"/>
                 <data android:scheme="linksy" android:host="pair"/>
             </intent-filter>
+            <!-- The app reads those links itself (the "link" call to Dart); Flutter's own
+                 deep linking would also push each one as a route, which doesn't exist. -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false"/>
             <!-- A computer running Linksy on the USB cable (docs/protocol.md §4.11). -->
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"/>
@@ -112,7 +130,29 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="*/*"/>
             </intent-filter>
+            <!-- "Copy to Computer" in Android's menu over selected text. -->
+            <intent-filter android:label="@string/copy_to_computer">
+                <action android:name="android.intent.action.PROCESS_TEXT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
         </activity>
+        <!-- "Snap to Computer": the camera, from the app or its tile. -->
+        <activity
+            android:name=".SnapActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <service
+            android:name=".SnapTile"
+            android:exported="true"
+            android:icon="@drawable/ic_snap"
+            android:label="@string/snap_to_computer"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
         <!-- Opens received files in other apps, read-only, without any storage permission. -->
         <provider
             android:name=".ReceivedFiles"
@@ -123,19 +163,43 @@
             android:name=".media.ShareService"
             android:exported="false"
             android:foregroundServiceType="mediaProjection|camera|microphone"/>
-        <!-- A computer driving this phone's touch/keyboard (§scrcpy-like): the
+        <!-- A computer driving this phone's touch/keyboard (scrcpy-like): the
              overlay is drawn over other apps and needs its own foreground service. -->
         <service
             android:name=".input.ControlOverlayService"
             android:exported="false"
             android:foregroundServiceType="mediaProjection"/>
+        <!-- This phone's notifications on its computers (4.5), once the user allows
+             Notification access and turns it on in Settings. -->
+        <service
+            android:name=".PhoneNotifications"
+            android:exported="true"
+            android:label="KDE Connectify"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+        </service>
         <service
             android:name=".KeepAlive"
             android:exported="false"
             android:foregroundServiceType="connectedDevice"/>
+        <!-- Starts KeepAlive (connectedDevice, allowed from boot on Android 15),
+             never the app's screen. -->
+        <receiver
+            android:name=".Boot"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
         <!-- Accept / Decline on the incoming-files notification. -->
         <receiver
             android:name=".TransferNotice$Answer"
+            android:exported="false"/>
+        <receiver
+            android:name=".AppInstaller$Status"
             android:exported="false"/>
         <receiver
             android:name=".Updater$Status"
@@ -201,6 +265,15 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE"/>
+        </intent>
+        <!-- Launchable apps, for sending them to another phone: no
+             QUERY_ALL_PACKAGES. -->
+        <intent>
+            <action android:name="android.intent.action.MAIN"/>
+            <category android:name="android.intent.category.LAUNCHER"/>
         </intent>
     </queries>
 </manifest>

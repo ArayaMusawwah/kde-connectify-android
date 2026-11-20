@@ -33,6 +33,11 @@ class DemoNode implements LinksyNode {
   DeviceInfo info;
 
   NodeSettings _settings;
+  static const _step = int.fromEnvironment(
+    'LINKSY_DEMO_STEP',
+    defaultValue: 300,
+  );
+
   final _events = StreamController<LinksyEvent>.broadcast();
   final _devices = <String, DeviceView>{};
   final _random = Random();
@@ -58,6 +63,7 @@ class DemoNode implements LinksyNode {
           'camera',
           'microphone',
           'terminal',
+          'deck',
         ],
       ),
       trusted: true,
@@ -85,6 +91,28 @@ class DemoNode implements LinksyNode {
       trusted: false,
       connected: false,
       nearby: true,
+    ),
+    // A second phone, to see the phone-to-phone page without hardware.
+    DeviceView(
+      device: DeviceInfo(
+        id: _fakeId('Pixel of Sam'),
+        name: 'Pixel of Sam',
+        kind: DeviceKind.phone,
+        os: 'android',
+        features: [
+          'files',
+          'clipboard',
+          'open_url',
+          'ring',
+          'locate',
+          'preflight',
+          'apps',
+        ],
+      ),
+      trusted: true,
+      connected: true,
+      nearby: true,
+      battery: const Battery(level: 64, charging: false),
     ),
   ];
 
@@ -229,6 +257,56 @@ class DemoNode implements LinksyNode {
     return transfer;
   }
 
+  /// A big send is worth a direct link; the rest stays on the Wi-Fi.
+  @override
+  SendPlan? planSend(String id, int bytes) {
+    final direct = bytes > 256 * 1024 * 1024;
+    return SendPlan(
+      route: 'lan',
+      direct: direct ? 'will' : 'not',
+      seconds: (10 * (direct ? 1 : 0) + bytes / (direct ? 75e6 : 20e6)).ceil(),
+    );
+  }
+
+  @override
+  Future<SendPlan?> prepareSend(String id, int bytes) async =>
+      planSend(id, bytes);
+
+  /// The second phone has 3 GB, asks first and doesn't take apps yet. What it
+  /// has of each app goes by its name, to show every mark.
+  @override
+  Future<PreflightReply?> preflight(
+    String id,
+    int bytes,
+    int files,
+    List<AppProbe> probes,
+  ) async => PreflightReply(
+    free: 3 * 1000 * 1000 * 1000,
+    auto: false,
+    canInstall: false,
+    direct: 'ready',
+    apps: {
+      for (final (i, p) in probes.indexed)
+        p.package: AppThere.values[i % (AppThere.values.length - 1)],
+    },
+  );
+
+  @override
+  Stream<PreflightCall> get preflightCalls => const Stream.empty();
+
+  @override
+  void answerPreflight(int call, Map<Object?, Object?> facts) {}
+
+  @override
+  Future<void> locate(String id) async {}
+
+  @override
+  Future<String> sendBundle(
+    String id,
+    List<String> paths,
+    List<AppBundle> apps,
+  ) => sendFiles(id, [...paths, for (final a in apps) ...a.apks]);
+
   int _sizeOf(String path) {
     try {
       return File(path).lengthSync();
@@ -254,9 +332,12 @@ class DemoNode implements LinksyNode {
         total: total,
       ),
     );
-    // About three seconds whatever the size, in ten steps.
+    // About three seconds whatever the size, in ten steps; a longer look with
+    // `--dart-define=LINKSY_DEMO_STEP=<ms>`.
     var sent = 0;
-    _timers[transfer] = Timer.periodic(const Duration(milliseconds: 300), (t) {
+    _timers[transfer] = Timer.periodic(const Duration(milliseconds: _step), (
+      t,
+    ) {
       sent = min(total, sent + (total / 10).ceil());
       _emit(TransferProgress(transfer: transfer, bytes: sent, total: total));
       if (sent >= total) {
@@ -318,14 +399,19 @@ class DemoNode implements LinksyNode {
         session: session,
         peer: _devices[id]!.device,
         kind: SessionKind.input,
-        sharing: true,
+        // As the core says: only a display's requester shares.
+        sharing: false,
       ),
     );
     return session;
   }
 
   @override
-  Future<String> startView(String id, {required bool control}) async {
+  Future<String> startView(
+    String id, {
+    required bool control,
+    bool choose = false,
+  }) async {
     _reachable(id);
     _setConnected(id, true);
     final session = _uuid();
@@ -344,7 +430,32 @@ class DemoNode implements LinksyNode {
   Future<bool> sessionWrite(String session, Uint8List bytes) async => true;
 
   @override
-  Future<void> watchMedia(String id, {required bool on}) async {}
+  Future<void> watchMedia(String id, {required bool on}) async {
+    final from = _devices[id]?.device;
+    if (!on || from == null) return;
+    _emit(
+      MediaStateReceived(
+        from: from,
+        state: const MediaState(
+          seq: 1,
+          players: [
+            MediaPlayer(
+              id: 'demo',
+              app: 'Music',
+              title: 'Night Drive',
+              artist: 'Nova Lane',
+              playing: true,
+              positionMs: 86000,
+              lengthMs: 214000,
+              canNext: true,
+              canPrevious: true,
+              canSeek: true,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Future<void> watchVolume(String id, {required bool on}) async {}
@@ -367,6 +478,114 @@ class DemoNode implements LinksyNode {
 
   @override
   Future<void> sendCallState(String id, String state) async {}
+
+  @override
+  Future<void> setFeatures(List<String> features) async {}
+
+  @override
+  Future<void> postNotification(
+    String id,
+    Map<String, Object?> notification,
+  ) async {}
+
+  @override
+  Future<void> removeNotification(
+    String id,
+    String key, {
+    bool replyKept = false,
+  }) async {}
+
+  @override
+  Future<void> inboxHistoryPage(
+    String id,
+    String app,
+    String conversation,
+    String messagesJson, {
+    required bool more,
+  }) async {}
+
+  // The deck (§4.19): what a desktop offers, and its state as it's run.
+
+  static const _deck = [
+    DeckAction(
+      id: 'media.play_pause',
+      name: 'Play or Pause',
+      kind: DeckKind.button,
+      group: 'Media',
+    ),
+    DeckAction(
+      id: 'media.previous',
+      name: 'Previous',
+      kind: DeckKind.button,
+      group: 'Media',
+    ),
+    DeckAction(
+      id: 'media.next',
+      name: 'Next',
+      kind: DeckKind.button,
+      group: 'Media',
+    ),
+    DeckAction(
+      id: 'sound.volume',
+      name: 'Volume',
+      kind: DeckKind.slider,
+      group: 'Sound',
+    ),
+    DeckAction(
+      id: 'sound.mute',
+      name: 'Mute',
+      kind: DeckKind.toggle,
+      group: 'Sound',
+    ),
+    DeckAction(
+      id: 'sound.mic_mute',
+      name: 'Mute microphone',
+      kind: DeckKind.toggle,
+      group: 'Sound',
+    ),
+    DeckAction(
+      id: 'system.lock',
+      name: 'Lock',
+      kind: DeckKind.button,
+      group: 'System',
+    ),
+    DeckAction(
+      id: 'command.backup',
+      name: 'Backup',
+      kind: DeckKind.button,
+      group: 'Commands',
+    ),
+  ];
+
+  final _deckState = <String, DeckState>{
+    'sound.volume': const DeckState(id: 'sound.volume', value: 0.42),
+    'sound.mute': const DeckState(id: 'sound.mute', on: false),
+    'sound.mic_mute': const DeckState(id: 'sound.mic_mute', on: false),
+  };
+
+  @override
+  Future<void> deckOpen(String id, {required bool open}) async {
+    final from = _devices[id]?.device;
+    if (!open || from == null) return;
+    _setConnected(id, true);
+    _emit(DeckActionsReceived(from: from, actions: _deck));
+    _emit(DeckStateReceived(from: from, states: _deckState.values.toList()));
+  }
+
+  @override
+  Future<void> deckRun(String id, String action, {double? value}) async {
+    final from = _devices[id]?.device;
+    if (from == null) return;
+    final now = _deckState[action];
+    if (value != null) {
+      _deckState[action] = DeckState(id: action, value: value);
+    } else if (now?.on != null) {
+      _deckState[action] = DeckState(id: action, on: !now!.on!);
+    } else {
+      return;
+    }
+    _emit(DeckStateReceived(from: from, states: [_deckState[action]!]));
+  }
 
   @override
   Future<void> directSend(String id, Map<String, Object?> step) async {}
@@ -471,6 +690,21 @@ class DemoNode implements LinksyNode {
 
   @override
   Future<void> watchClipboard(String id, {required bool on}) async {}
+
+  @override
+  Future<void> usbConnect(String id, String key) async {}
+
+  @override
+  Future<void> sendControlsState(String id, String stateJson) async {}
+
+  @override
+  Future<void> refuseControls(String id, String what, String reason) async {}
+
+  @override
+  Future<void> refuseSnap(String id, String reason) async {}
+
+  @override
+  Future<void> sendScreenRotation(String id, int degrees) async {}
 
   @override
   Future<String> sendClipboardFile(String id, String path) =>
@@ -597,6 +831,16 @@ class DemoNode implements LinksyNode {
         incoming: true,
       ),
     );
+  }
+
+  /// A computer's "Ask the Phone", in a moment: time to leave the app and
+  /// see its notification instead.
+  void simulateTurnOn(String feature) {
+    final from = _devices.values.firstWhere((v) => v.trusted).device;
+    _setConnected(from.id, true);
+    Timer(const Duration(seconds: 4), () {
+      _emit(TurnOnRequested(from: from, feature: feature));
+    });
   }
 
   void simulateClipboard() {

@@ -181,10 +181,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'KDE Connectify braucht die Mikrofonberechtigung, um als Mikrofon zu dienen.';
 
   @override
-  String get deviceControlNoOverlayPermission =>
-      'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.';
-
-  @override
   String get ctlTerminalTitle => 'Terminal';
 
   @override
@@ -454,18 +450,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get deviceSavedCommands => 'Saved Commands';
-
-  @override
-  String get deviceNoCommandsSaved => 'No commands saved on this computer yet';
-
-  @override
-  String get devicePcFiles => 'Computer Files';
-
-  @override
-  String get deviceNoPcFiles => 'Nothing to show here';
-
-  @override
   String get deviceFilterAll => 'Alles';
 
   @override
@@ -577,7 +561,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deviceAwayAllOff =>
-      'Von unterwegs: nur Zwischenablage, Links, Dateien und Klingeln';
+      'Von unterwegs: Zwischenablage, Links, Dateien, Klingeln, Fotos und Regler';
 
   @override
   String get deviceNothingShared => 'Noch nichts geteilt';
@@ -704,6 +688,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get activityInProgress => 'Läuft';
 
   @override
+  String get activityReconnecting =>
+      'Verbindung weg, geht weiter, sobald sie zurück ist';
+
+  @override
   String get activityCopiedHere => 'Hierher kopiert';
 
   @override
@@ -819,12 +807,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get homeConnectSubtitle =>
       'Direkt über dein Wi-Fi. Kein Konto, keine Cloud.';
-
-  @override
-  String get homeScanQr => 'QR-Code scannen';
-
-  @override
-  String get homePairByAddress => 'Stattdessen per Adresse koppeln';
 
   @override
   String get pairingAddDevice => 'Gerät hinzufügen';
@@ -1159,10 +1141,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsTitle => 'Einstellungen';
 
   @override
+  String get settingsSearch => 'Einstellungen durchsuchen';
+
+  @override
+  String settingsNothingMatches(String query) {
+    return 'Nichts passt zu „$query“';
+  }
+
+  @override
+  String get settingsRecommended => 'Empfohlen';
+
+  @override
   String get settingsReceiving => 'Empfangen';
 
   @override
+  String get settingsFiles => 'Dateien';
+
+  @override
   String get settingsSaveLocation => 'Speicherort';
+
+  @override
+  String settingsSaveLocationUse(String path) {
+    return '$path verwenden';
+  }
 
   @override
   String get settingsSaveLocationPath => 'Downloads › KDE Connectify';
@@ -1178,6 +1179,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsConnection => 'Verbindung';
 
   @override
+  String get settingsWays => 'Wie es deine Computer erreicht';
+
+  @override
   String get settingsStayConnected => 'Verbunden bleiben';
 
   @override
@@ -1190,6 +1194,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get settingsKeepRunningCaption =>
       'Dateien, Foto-Backup und Anrufe funktionieren auch, wenn KDE Connectify geschlossen ist. Zeigt eine dezente Mitteilung.';
+
+  @override
+  String get settingsStartAtBoot => 'Mit dem Telefon starten';
+
+  @override
+  String get settingsStartAtBootCaption =>
+      'Nach einem Neustart sehen deine Computer dieses Telefon, ohne dass du KDE Connectify öffnest. Zeigt eine dezente Benachrichtigung.';
 
   @override
   String get settingsAwayFromHome => 'Unterwegs';
@@ -1220,6 +1231,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsBrowseFiles => 'Computer dürfen Dateien durchsuchen';
+
+  @override
+  String get settingsFilesFolder => 'Ein Ordner deiner Wahl';
+
+  @override
+  String get settingsFilesAll => 'Alle Dateien';
+
+  @override
+  String get settingsFilesAllCaption =>
+      'Deine Computer können jede Datei auf diesem Handy öffnen.';
+
+  @override
+  String get settingsFilesAllAllow =>
+      'Erlaube KDE Connectify „Zugriff auf alle Dateien“ in den Android-Einstellungen.';
 
   @override
   String get settingsBrowseFilesChoose =>
@@ -1407,6 +1432,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Mit einem Finger bewegen, tippen zum Klicken\nZwei Finger scrollen, Tippen mit zwei Fingern = Rechtsklick';
 
   @override
+  String get remoteDragHint =>
+      'Doppelt tippen und wischen zum Ziehen, tippen zum Loslassen';
+
+  @override
+  String get remoteDragging =>
+      'Ziehen. Finger anheben und weitermachen, tippen zum Loslassen';
+
+  @override
   String get remoteLeftClick => 'Linksklick';
 
   @override
@@ -1436,6 +1469,75 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get remoteVolumeHint =>
       'Leiser: weiter · Lauter: zurück. Der Bildschirm bleibt an.';
+
+  @override
+  String get remoteBrowser => 'Browser';
+
+  @override
+  String get remoteWebBack => 'Zurück';
+
+  @override
+  String get remoteWebForward => 'Vor';
+
+  @override
+  String get remoteWebReload => 'Neu laden';
+
+  @override
+  String get remoteWebHome => 'Startseite';
+
+  @override
+  String get remoteWebNewTab => 'Neuer Tab';
+
+  @override
+  String get remoteWebCloseTab => 'Tab schließen';
+
+  @override
+  String get remoteWebNextTab => 'Nächster Tab';
+
+  @override
+  String get remoteWebPrevTab => 'Vorheriger Tab';
+
+  @override
+  String get remoteWebAddress => 'Adresse';
+
+  @override
+  String get remoteWebHint =>
+      'Steuert den Browser im Vordergrund des Computers.';
+
+  @override
+  String get remoteFirstSlide => 'Erste';
+
+  @override
+  String get remoteLastSlide => 'Letzte';
+
+  @override
+  String get remoteBlackScreen => 'Schwarz';
+
+  @override
+  String get remoteWhiteScreen => 'Weiß';
+
+  @override
+  String get remoteFromHere => 'Ab hier';
+
+  @override
+  String get remoteModHint =>
+      'Tippen: mit der nächsten Taste. Halten: allein drücken.';
+
+  @override
+  String get switchTitle => 'Wechseln zu';
+
+  @override
+  String get switchHere => 'Hier';
+
+  @override
+  String get switchOpen => 'Offen';
+
+  @override
+  String get settingsPointerSpeed => 'Touchpad-Tempo';
+
+  @override
+  String get settingsPointerSpeedCaption =>
+      'Wie weit der Zeiger des Computers bei gleicher Wischbewegung geht';
 
   @override
   String get ringTitle => 'Hier bin ich!';
@@ -1820,6 +1922,14 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get displayChooseScreen => 'Bildschirm wählen';
+
+  @override
+  String displayChooseOn(String name) {
+    return 'Wähle den Bildschirm auf $name…';
+  }
+
+  @override
   String terminalTabClosed(String title) {
     return '„$title“ geschlossen';
   }
@@ -1976,6 +2086,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get usbConnecting => 'Verbinde per USB-Kabel…';
+
+  @override
   String get usbPairTitle => 'Ein Computer hängt am Kabel';
 
   @override
@@ -2118,6 +2231,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get updateLater => 'Später';
+
+  @override
+  String updateWhatChanged(String version) {
+    return 'Was sich in $version ändert';
+  }
+
+  @override
+  String get updateToInstall => 'Zu installieren';
 
   @override
   String updateDownloading(String percent) {
@@ -2340,6 +2461,1085 @@ class AppLocalizationsDe extends AppLocalizations {
   String pairingUpdateOlder(String name) {
     return 'Ein Update von KDE Connectify auf $name macht das Koppeln noch sicherer.';
   }
+
+  @override
+  String get settingsPhoneNotifications =>
+      'Benachrichtigungen dieses Telefons zeigen';
+
+  @override
+  String get settingsPhoneNotificationsCaption =>
+      'Auf deinen Computern, mit Antworten für Nachrichten.';
+
+  @override
+  String get settingsPhoneNotificationsAllow =>
+      'Android hat es noch nicht erlaubt. Tippe, um den Benachrichtigungszugriff zu erlauben.';
+
+  @override
+  String get noticeAccessTitle => 'Benachrichtigungszugriff erlauben';
+
+  @override
+  String get noticeAccessGreyed =>
+      'Android graut diesen Schalter für Apps aus, die aus dem Web installiert wurden. So erlaubst du es:';
+
+  @override
+  String get noticeAccessStepInfo => 'Öffne die App-Info von KDE Connectify.';
+
+  @override
+  String get noticeAccessStepRestricted =>
+      'Tippe oben rechts auf ⋮, dann auf Eingeschränkte Einstellungen zulassen.';
+
+  @override
+  String get noticeAccessStepAgain =>
+      'Öffne den Benachrichtigungszugriff erneut und schalte KDE Connectify ein.';
+
+  @override
+  String get noticeAccessPlain =>
+      'Schalte KDE Connectify in Androids Benachrichtigungszugriff ein und komm dann zurück.';
+
+  @override
+  String get commonOpenAppInfo => 'App-Info öffnen';
+
+  @override
+  String get batteryGuide => 'KDE Connectify am Laufen halten';
+
+  @override
+  String batteryGuideCaption(String maker) {
+    return 'Was auf diesem $maker-Telefon zu ändern ist';
+  }
+
+  @override
+  String batteryIntro(String maker) {
+    return 'Um Akku zu sparen, schließen manche Telefone Apps im Hintergrund, und KDE Connectify verpasst dann Dateien und Benachrichtigungen. Auf diesem $maker-Telefon:';
+  }
+
+  @override
+  String get batteryAutostart => 'App-Info › Autostart: an.';
+
+  @override
+  String get batteryXiaomiSaver =>
+      'App-Info › Energiesparmodus: Keine Einschränkungen.';
+
+  @override
+  String get batteryLockRecents =>
+      'Halte KDE Connectify in den letzten Apps gedrückt und tippe auf das Schloss, damit es beim Leeren weiterläuft.';
+
+  @override
+  String get batterySamsungUnrestricted =>
+      'App-Info › Akku: Nicht eingeschränkt.';
+
+  @override
+  String get batterySamsungSleeping =>
+      'Einstellungen › Akku › Nutzungsbeschränkungen im Hintergrund: nimm KDE Connectify aus den Apps im Standby und im Tiefschlaf.';
+
+  @override
+  String get batteryOppoBackground =>
+      'App-Info › Akkunutzung: Aktivität im Hintergrund, im Vordergrund und automatischen Start erlauben.';
+
+  @override
+  String get batteryVivoBackground =>
+      'Einstellungen › Akku › Energieverbrauch im Hintergrund: KDE Connectify erlauben.';
+
+  @override
+  String get batteryHuaweiLaunch =>
+      'Einstellungen › Akku › App-Start › KDE Connectify: manuell verwalten, mit Automatischer Start, Sekundärer Start und Im Hintergrund ausführen an.';
+
+  @override
+  String get batteryUnrestricted =>
+      'App-Info › Akkunutzung der App: Nicht eingeschränkt.';
+
+  @override
+  String get batteryKeepRunning =>
+      'In KDE Connectify: Einstellungen › Verbindung › Im Hintergrund weiterlaufen.';
+
+  @override
+  String get batteryNames =>
+      'Die Namen unterscheiden sich je nach Android-Version etwas.';
+
+  @override
+  String get updatePlayProtect =>
+      'KDE Connectify kann deine Benachrichtigungen auf deinen Computern zeigen, deshalb kann Play Protect die Installation stoppen. Dann:';
+
+  @override
+  String get updateProtectStep1 => 'Play Store › dein Bild › Play Protect › ⚙.';
+
+  @override
+  String get updateProtectStep2 => 'Schalte Apps mit Play Protect scannen aus.';
+
+  @override
+  String get updateProtectStep3 =>
+      'Tippe noch einmal auf Jetzt aktualisieren und schalte das Scannen danach wieder ein.';
+
+  @override
+  String get news032NotificationsTitle =>
+      'Deine Benachrichtigungen auf dem Computer';
+
+  @override
+  String get news032NotificationsBody =>
+      'Nachrichten und andere Benachrichtigungen erscheinen auf deinen gekoppelten Computern, mit Antworten. Einschalten unter Einstellungen › Mit deinen Computern. Graut Android den Schalter aus: App-Info › ⋮ › Eingeschränkte Einstellungen zulassen.';
+
+  @override
+  String get news032BatteryTitle => 'KDE Connectify am Laufen halten';
+
+  @override
+  String get news032BatteryBody =>
+      'Einstellungen › Verbindung › KDE Connectify am Laufen halten zeigt, was du je nach Marke deines Telefons ändern musst, damit KDE Connectify im Hintergrund weiterläuft.';
+
+  @override
+  String get settingsReduceMotion => 'Bewegung reduzieren';
+
+  @override
+  String get settingsReduceMotionCaption =>
+      'Bildschirme blenden über, statt zu gleiten, und Tasten werden blasser, statt kleiner zu werden.';
+
+  @override
+  String get deviceDeck => 'Deck';
+
+  @override
+  String deviceDeckCaption(String name) {
+    return 'Deine eigenen Tasten für $name';
+  }
+
+  @override
+  String get deckEdit => 'Bearbeiten';
+
+  @override
+  String get deckDone => 'Fertig';
+
+  @override
+  String deckAsking(String name) {
+    return '$name wird gefragt, was das Deck darf…';
+  }
+
+  @override
+  String deckAway(String name) {
+    return '$name ist nicht verbunden. Das Deck geht, sobald es verbunden ist.';
+  }
+
+  @override
+  String deckNothingOffered(String name) {
+    return '$name erlaubt dem Deck noch nichts. Schalte die Aktionen in KDE Connectify auf dem Computer ein.';
+  }
+
+  @override
+  String get deckEmptyPage =>
+      'Hier ist noch nichts. Tippe auf Bearbeiten, dann auf Hinzufügen.';
+
+  @override
+  String get deckAdd => 'Hinzufügen';
+
+  @override
+  String get deckAddTitle => 'Zum Deck hinzufügen';
+
+  @override
+  String get deckUnavailable => 'Nicht verfügbar';
+
+  @override
+  String get deckGroupMedia => 'Medien';
+
+  @override
+  String get deckGroupSound => 'Ton';
+
+  @override
+  String get deckGroupSystem => 'System';
+
+  @override
+  String get deckGroupCommands => 'Befehle';
+
+  @override
+  String get deckKindButton => 'Taste';
+
+  @override
+  String get deckKindToggle => 'Ein oder aus';
+
+  @override
+  String get deckKindSlider => 'Schieberegler';
+
+  @override
+  String get deckSize => 'Größe';
+
+  @override
+  String get deckSizeSmall => 'Klein';
+
+  @override
+  String get deckSizeWide => 'Breit';
+
+  @override
+  String get deckSizeTall => 'Hoch';
+
+  @override
+  String get deckSizeBig => 'Groß';
+
+  @override
+  String get deckSizeRow => 'Ganze Zeile';
+
+  @override
+  String get deckColor => 'Farbe';
+
+  @override
+  String get deckIcon => 'Symbol';
+
+  @override
+  String get deckRemove => 'Vom Deck entfernen';
+
+  @override
+  String get deckNewPage => 'Neue Seite';
+
+  @override
+  String get deckRemovePage => 'Diese Seite entfernen';
+
+  @override
+  String get deckMoveHint =>
+      'Halte eine Taste gedrückt und ziehe sie, um sie zu verschieben.';
+
+  @override
+  String get settingsGallery => 'Fotos auf deinen Computern';
+
+  @override
+  String get settingsGalleryCaption =>
+      'Deine Computer können die Fotos und Videos dieses Telefons durchsehen und die gewählten speichern.';
+
+  @override
+  String get settingsGalleryDenied =>
+      'Erlaube KDE Connectify in den Android-Einstellungen, deine Fotos zu sehen.';
+
+  @override
+  String get deckGroupNetwork => 'Netzwerk';
+
+  @override
+  String get deckGroupPower => 'Energie';
+
+  @override
+  String get deckThemeTitle => 'Design';
+
+  @override
+  String deckThemeAsMade(String name) {
+    return 'Wie auf $name';
+  }
+
+  @override
+  String get deckThemesShared => 'Auch auf dem Computer';
+
+  @override
+  String get deckThemesPhone => 'Nur auf diesem Telefon';
+
+  @override
+  String get deckThemeStock => 'Standard';
+
+  @override
+  String get deckThemeDots => 'Punktmatrix';
+
+  @override
+  String get deckThemeEink => 'E-Ink';
+
+  @override
+  String get deckThemeTerm => 'Terminal';
+
+  @override
+  String get deckThemePixel => 'Pixel';
+
+  @override
+  String get deckThemeSignal => 'Signal';
+
+  @override
+  String get deckThemeGlass => 'Glas';
+
+  @override
+  String get deckThemeMidnight => 'Mitternacht';
+
+  @override
+  String deckNotAvailable(String name) {
+    return 'Auf $name nicht verfügbar';
+  }
+
+  @override
+  String get deckAwayShort => 'Nicht verbunden';
+
+  @override
+  String deckAwayNote(String name) {
+    return '$name ist nicht verbunden. Die Kacheln gehen, sobald es verbunden ist.';
+  }
+
+  @override
+  String get deckNothingPlaying => 'Es läuft nichts';
+
+  @override
+  String get deckPickPlayer => 'Welchen Player steuern';
+
+  @override
+  String get deckDisplay => 'Anzeige';
+
+  @override
+  String get deckFullScreen => 'Vollbild';
+
+  @override
+  String get deckFullScreenCaption =>
+      'Blendet Status- und Navigationsleiste aus. Vom Rand wischen, um sie zu sehen.';
+
+  @override
+  String get deckSwipeForMenu => 'Für das Menü von oben nach unten wischen';
+
+  @override
+  String get deckFromPhone => 'Von diesem Telefon';
+
+  @override
+  String get deckShortcut => 'Tastenkürzel';
+
+  @override
+  String get deckTypeText => 'Text tippen';
+
+  @override
+  String get deckOpenLink => 'Link öffnen';
+
+  @override
+  String get deckKeys => 'Tasten';
+
+  @override
+  String get deckKeyHint => 'Eine Taste: T, F5, Tab, Left…';
+
+  @override
+  String get deckTextHint => 'Was auf dem Computer getippt wird';
+
+  @override
+  String get deckLinkHint => 'Adresse, z. B. example.com';
+
+  @override
+  String get deckSetUpFirst =>
+      'Erst einrichten: zum Bearbeiten gedrückt halten';
+
+  @override
+  String get deckShow => 'Zeigt';
+
+  @override
+  String get deckShowBoth => 'Symbol und Name';
+
+  @override
+  String get deckShowIcon => 'Symbol';
+
+  @override
+  String get deckShowName => 'Name';
+
+  @override
+  String get deckLookSize => 'Größe des Inhalts';
+
+  @override
+  String get deckSmall => 'Klein';
+
+  @override
+  String get deckMedium => 'Mittel';
+
+  @override
+  String get deckLarge => 'Groß';
+
+  @override
+  String get deckRealCovers => 'Cover unverändert';
+
+  @override
+  String get deckRealCoversCaption => 'Nicht in Punkten oder Pixeln des Themes';
+
+  @override
+  String deckNoLayouts(String name) {
+    return '$name hat noch kein Deck für dieses Telefon. Erstelle eins in KDE Connectify auf dem Computer.';
+  }
+
+  @override
+  String get news034TurnOnBody =>
+      'Schalte sie über die Karte auf dem Startbildschirm ein, und Posteingang und Galerie des Computers füllen sich von selbst.';
+
+  @override
+  String get news034SaveTitle => 'Wähle, wohin Dateien gehen';
+
+  @override
+  String get news034SaveBody =>
+      'Einstellungen › Dateien › Speicherort: Tippe darauf, um einen anderen Ordner für Empfangenes zu wählen.';
+
+  @override
+  String get news033DeckTitle => 'Deck: Tasten für deinen Computer';
+
+  @override
+  String get news033DeckBody =>
+      'Wiedergabe, Lautstärke, Stumm, WLAN und deine eigenen Befehle, in KDE Connectify auf dem Computer angeordnet und von hier aus bedient: seine Seite › Steuern › Deck. Halte den Namen des Decks gedrückt, um sein Aussehen zu ändern. Braucht das neueste KDE Connectify auf dem Computer.';
+
+  @override
+  String get news033PhotosTitle => 'Deine Fotos auf deinem Computer';
+
+  @override
+  String get news033PhotosBody =>
+      'Die Galerie eines Computers blättert Seite für Seite durch die Fotos und Videos dieses Telefons und speichert die, die du auswählst. Einstellungen › Dateien › Fotos auf deinen Computern.';
+
+  @override
+  String get news033MessagesTitle => 'Frühere Nachrichten';
+
+  @override
+  String get news033MessagesBody =>
+      'Auf dem Computer zeigt ein Gespräch auch seine früheren Nachrichten, und Antworten geht noch einen Tag, nachdem die Benachrichtigung verschwunden ist.';
+
+  @override
+  String get onboardingMessages => 'Nachrichten auf deinen Computern';
+
+  @override
+  String get onboardingMessagesDetail =>
+      'Lies und beantworte deine Nachrichten und Benachrichtigungen im Posteingang des Computers.';
+
+  @override
+  String get onboardingGalleryDetail =>
+      'Sieh dir die Fotos und Videos dieses Telefons in der Galerie des Computers an. Wenn Android fragt, wähle Alle zulassen.';
+
+  @override
+  String get homeTurnOnTitle =>
+      'Deine Nachrichten und Fotos auf deinen Computern';
+
+  @override
+  String get homeTurnOnBody =>
+      'Sieh sie im Posteingang und in der Galerie des Computers.';
+
+  @override
+  String get homeTurnOnMessages => 'Nachrichten einschalten';
+
+  @override
+  String get homeTurnOnPhotos => 'Fotos einschalten';
+
+  @override
+  String turnOnAskMessages(String name) {
+    return '$name möchte die Nachrichten dieses Telefons anzeigen';
+  }
+
+  @override
+  String turnOnAskPhotos(String name) {
+    return '$name möchte die Fotos dieses Telefons anzeigen';
+  }
+
+  @override
+  String get turnOnNow => 'Einschalten';
+
+  @override
+  String get settingsDemoAsk => 'Ein Computer fragt danach, in 4 Sekunden';
+
+  @override
+  String get noticeAccessStepSwitch =>
+      'Öffne den Benachrichtigungszugriff und schalte KDE Connectify ein. Ist der Schalter ausgegraut, tippe trotzdem darauf: Android lehnt ab, und erst das macht den nächsten Schritt möglich.';
+
+  @override
+  String get noticeAccessOpen => 'Benachrichtigungszugriff öffnen';
+
+  @override
+  String get phoneClipboard => 'Zwischenablage senden';
+
+  @override
+  String phoneClipboardCaption(String name) {
+    return 'Was hier kopiert ist, geht an $name';
+  }
+
+  @override
+  String get phoneNoteHint => 'Eine Notiz oder ein Link';
+
+  @override
+  String get phoneSend => 'Senden';
+
+  @override
+  String phoneFind(String name) {
+    return '$name finden';
+  }
+
+  @override
+  String get phoneFindCaption => 'Klingelt laut, auch wenn es stumm ist';
+
+  @override
+  String get phoneWhere => 'Wo ist es?';
+
+  @override
+  String get phoneWhereCaption => 'Fragt einmal nach dem Standort';
+
+  @override
+  String phoneWhereRefused(String name, String reason) {
+    return '$name hat den Standort nicht genannt: $reason';
+  }
+
+  @override
+  String get phoneFromThis => 'Von diesem Telefon';
+
+  @override
+  String get phonePhotos => 'Fotos und Videos';
+
+  @override
+  String get phonePhotosCaption => 'Nach Tag oder Album';
+
+  @override
+  String get phoneAllowPhotos => 'Fotos erlauben';
+
+  @override
+  String get phoneAllowPhotosCaption =>
+      'KDE Connectify braucht das, um deine Fotos hier zu zeigen. Nichts geht weg, bis du es sendest.';
+
+  @override
+  String get phoneFiles => 'Dateien und Ordner';
+
+  @override
+  String get phoneFilesCaption => 'Mit der Dateiauswahl von Android';
+
+  @override
+  String get phoneChooseFiles => 'Dateien auswählen';
+
+  @override
+  String get phoneChooseFolder => 'Ordner auswählen';
+
+  @override
+  String get phoneApps => 'Apps';
+
+  @override
+  String get phoneAppsCaption => 'Eine App senden oder aktualisieren';
+
+  @override
+  String get phoneAppsNote =>
+      'Daten und Anmeldungen einer App ziehen nicht mit um. Apps, die eine Lizenz oder ein Konto prüfen, starten vielleicht nicht.';
+
+  @override
+  String get phoneAppsSearch => 'Apps suchen';
+
+  @override
+  String get phoneSortName => 'Name';
+
+  @override
+  String get phoneSortSize => 'Größe';
+
+  @override
+  String phoneAppNotThere(String name) {
+    return 'Nicht auf $name';
+  }
+
+  @override
+  String get phoneAppUpdate => 'Aktualisieren (dort älter)';
+
+  @override
+  String get phoneAppSame => 'Schon dort';
+
+  @override
+  String get phoneAppNewer => 'Dort neuer';
+
+  @override
+  String phoneAppOtherSigner(String name) {
+    return '$name hat sie von einem anderen Entwickler. Android kann sie nicht aktualisieren, nur ersetzen, und das löscht ihre Daten.';
+  }
+
+  @override
+  String get phoneAllAlbums => 'Alle';
+
+  @override
+  String get phoneNoPhotos => 'Noch keine Fotos hier';
+
+  @override
+  String get phoneNoApps => 'Keine Apps zum Senden';
+
+  @override
+  String phoneSelected(int count, String size) {
+    return '$count ausgewählt · $size';
+  }
+
+  @override
+  String phoneSendTo(String name) {
+    return 'An $name senden';
+  }
+
+  @override
+  String get phoneClear => 'Leeren';
+
+  @override
+  String get routeDirect => 'Direktverbindung';
+
+  @override
+  String get routeLan => 'Gleiches Netzwerk';
+
+  @override
+  String get routeAway => 'Über das Internet · nutzt mobile Daten';
+
+  @override
+  String get routeUsb => 'Kabel';
+
+  @override
+  String routeAbout(String time) {
+    return 'etwa $time';
+  }
+
+  @override
+  String get routeSettingUp => 'Direktverbindung wird eingerichtet…';
+
+  @override
+  String routeNotDirect(String reason) {
+    return 'Keine Direktverbindung: $reason. Wird über das Netzwerk gesendet.';
+  }
+
+  @override
+  String warnNoRoom(String name, String free, String size) {
+    return '$name hat $free frei und das sind $size';
+  }
+
+  @override
+  String warnWillAsk(String name) {
+    return '$name fragt, bevor es das annimmt';
+  }
+
+  @override
+  String warnCantInstall(String name) {
+    return '$name muss zuerst Installationen von KDE Connectify erlauben';
+  }
+
+  @override
+  String warnCantInstallHow(String name) {
+    return 'Auf $name: Android-Einstellungen › Apps › Spezieller App-Zugriff › Unbekannte Apps installieren › KDE Connectify.';
+  }
+
+  @override
+  String get mobileDataTitle => 'Über das Internet senden?';
+
+  @override
+  String mobileDataAsk(String size) {
+    return 'Das geht über das Internet und verbraucht etwa $size mobile Daten.';
+  }
+
+  @override
+  String phoneInstallAsk(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Apps von $name installieren?',
+      one: 'Eine App von $name installieren?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get phoneAppNew => 'Neu';
+
+  @override
+  String get phoneAppUpdateShort => 'Update';
+
+  @override
+  String get phoneInstall => 'Installieren';
+
+  @override
+  String get phoneInstallAllowBody =>
+      'Android braucht einmal dein OK, bevor KDE Connectify Apps installieren kann. Schalte „Aus dieser Quelle zulassen“ ein und komm zurück.';
+
+  @override
+  String get phoneInstallAllow => 'Installationen erlauben';
+
+  @override
+  String phoneInstalled(String app) {
+    return '$app ist installiert';
+  }
+
+  @override
+  String phoneInstallCancelled(String app) {
+    return '$app wurde nicht installiert';
+  }
+
+  @override
+  String phoneInstallMismatch(String app, String name) {
+    return '$app ist nicht das, was $name angegeben hat, und wurde deshalb nicht installiert.';
+  }
+
+  @override
+  String phoneInstallOtherSigner(String app) {
+    return '$app auf diesem Telefon stammt von einem anderen Entwickler. Android kann sie nicht aktualisieren.';
+  }
+
+  @override
+  String phoneInstallFailed(String app, String reason) {
+    return '$app wurde nicht installiert: $reason';
+  }
+
+  @override
+  String get news035PhonesTitle => 'Zwei Telefone, kein Computer';
+
+  @override
+  String get news035PhonesBody =>
+      'Öffne ein gekoppeltes Telefon: Sende, was du kopiert hast, eine Notiz oder einen Link, lass es klingeln oder wähle Fotos und Dateien nach Tag.';
+
+  @override
+  String get news035AppsTitle => 'Apps an ein anderes Telefon senden';
+
+  @override
+  String get news035AppsBody =>
+      'KDE Connectify zeigt, was dort fehlt oder älter ist, und Android fragt vor der Installation. Daten und Anmeldungen bleiben zurück.';
+
+  @override
+  String get phoneNote => 'Notiz';
+
+  @override
+  String get phoneWhereShort => 'Wo';
+
+  @override
+  String get phoneShelfPhotos => 'Fotos';
+
+  @override
+  String get phoneSeeAll => 'Alle ansehen';
+
+  @override
+  String get phoneSelectDay => 'Tag auswählen';
+
+  @override
+  String get phoneHistory => 'Verlauf';
+
+  @override
+  String get deviceSnap => 'Foto';
+
+  @override
+  String snapSent(String name) {
+    return 'Foto an $name gesendet';
+  }
+
+  @override
+  String copySent(String name) {
+    return 'Nach $name kopiert';
+  }
+
+  @override
+  String get usbConnectCable => 'Per USB-Kabel verbinden';
+
+  @override
+  String get settingsSendCopied => 'Kopiertes senden';
+
+  @override
+  String get settingsSendCopiedCaption =>
+      'Jedes Mal, wenn du zu KDE Connectify zurückkehrst, geht Kopiertes an verbundene Computer. Auch Passwörter, lass es also im Zweifel aus.';
+
+  @override
+  String get doctorTitle => 'Warum sehe ich meinen Computer nicht?';
+
+  @override
+  String get doctorCaption => 'Findet, was im Weg ist, und was zu tun ist';
+
+  @override
+  String get doctorAllGood => 'Auf diesem Telefon ist alles in Ordnung';
+
+  @override
+  String get doctorAllGoodDetail =>
+      'Wenn dein Computer weiter nicht erscheint, blockiert vielleicht seine Firewall, oder KDE Connectify läuft dort nicht.';
+
+  @override
+  String get doctorWifi => 'WLAN ist nicht verbunden';
+
+  @override
+  String get doctorWifiDetail =>
+      'Verbinde dich mit demselben Netzwerk wie dein Computer.';
+
+  @override
+  String get doctorHeard => 'In diesem Netzwerk ist kein Gerät zu hören';
+
+  @override
+  String get doctorHeardDetail =>
+      'Dein Computer schläft vielleicht oder ist in einem anderen Netzwerk, oder dieser Router trennt Geräte, wie Gastnetze es tun.';
+
+  @override
+  String get doctorVpn => 'Ein VPN ist aktiv';
+
+  @override
+  String get doctorVpnDetail =>
+      'Es kann deinen Computer vor diesem Telefon verbergen. Schalte es aus oder erlaube darin lokale Netzwerke.';
+
+  @override
+  String get doctorBattery => 'Akkusparen kann KDE Connectify stoppen';
+
+  @override
+  String doctorBatteryDetail(String maker) {
+    return '$maker-Telefone können KDE Connectify im Hintergrund schließen.';
+  }
+
+  @override
+  String get doctorPowerSave => 'Energiesparmodus ist an';
+
+  @override
+  String get doctorPowerSaveDetail =>
+      'Er begrenzt, was KDE Connectify bei ausgeschaltetem Bildschirm tun kann.';
+
+  @override
+  String get doctorDataSaver => 'Datensparmodus ist an';
+
+  @override
+  String get doctorDataSaverDetail =>
+      'Er kann verhindern, dass KDE Connectify sich im Hintergrund verbindet.';
+
+  @override
+  String get doctorOpenSettings => 'Einstellungen öffnen';
+
+  @override
+  String get doctorShowHow => 'Zeig mir wie';
+
+  @override
+  String get doctorCheckAgain => 'Erneut prüfen';
+
+  @override
+  String get news035DeckTitle => 'Dein Deck auf dem Handy bauen';
+
+  @override
+  String get news035DeckBody =>
+      'Tippe auf den Stift oder halte eine Kachel. Zieh sie an jede Stelle und auf jede Größe, die anderen machen Platz. Dreh das Handy für das Querformat-Deck.';
+
+  @override
+  String get news035SnapTitle => 'Foto an den Computer';
+
+  @override
+  String get news035SnapBody =>
+      'Mache ein Foto von der Seite eines Computers oder per Schnelleinstellung, und es landet direkt dort, bereit zum Einfügen.';
+
+  @override
+  String get news035CopyTitle => 'An Computer kopieren';
+
+  @override
+  String get news035CopyBody =>
+      'Wähle Text in einer App aus und tippe auf An Computer kopieren. Und wenn keine Verbindung klappt, sagt Einstellungen › Verbindung warum.';
+
+  @override
+  String get controlsNoDnd =>
+      'Erlaube KDE Connectify zuerst auf dem Telefon den Zugriff auf „Bitte nicht stören“';
+
+  @override
+  String get controlsNoFlashlight =>
+      'Die Taschenlampe kann gerade nicht benutzt werden';
+
+  @override
+  String get controlsDenied => 'Android hat das nicht erlaubt';
+
+  @override
+  String get snapNoCamera => 'KDE Connectify braucht die Kamera-Berechtigung';
+
+  @override
+  String snapAsked(String name) {
+    return 'Mach ein Foto für $name';
+  }
+
+  @override
+  String get settingsComputerNotifications =>
+      'Benachrichtigungen deines Computers';
+
+  @override
+  String get settingsComputerNotificationsCaption =>
+      'Zeigt sie hier, sobald du es auch am Computer für dieses Telefon einschaltest';
+
+  @override
+  String get settingsDndAccess => 'Zugriff auf „Bitte nicht stören“';
+
+  @override
+  String get settingsDndAccessCaption =>
+      'Lässt deine Computer „Bitte nicht stören“ hier ändern';
+
+  @override
+  String get settingsDndAccessOn => 'Erlaubt: deine Computer können es ändern';
+
+  @override
+  String get settingsTurnTaps => 'Tipps im Querformat drehen';
+
+  @override
+  String get settingsTurnTapsCaption =>
+      'Nur wenn Tipps vom Computer bei quer gehaltenem Telefon falsch landen';
+
+  @override
+  String get deckDiscardTitle => 'Änderungen verwerfen?';
+
+  @override
+  String get deckDiscard => 'Verwerfen';
+
+  @override
+  String get deckKeepEditing => 'Weiter bearbeiten';
+
+  @override
+  String get deckUndo => 'Rückgängig';
+
+  @override
+  String get deckRedo => 'Wiederholen';
+
+  @override
+  String get deckCopy => 'Kopieren';
+
+  @override
+  String get deckPage => 'Seite';
+
+  @override
+  String deckPageN(int n) {
+    return 'Seite $n';
+  }
+
+  @override
+  String deckPages(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n Seiten',
+      one: '1 Seite',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deckRemoveShort => 'Entfernen';
+
+  @override
+  String get deckNoRoom => 'Hier ist kein Platz dafür';
+
+  @override
+  String get deckFillForMe => 'Für mich füllen';
+
+  @override
+  String get deckTryIt => 'Ausprobieren';
+
+  @override
+  String get deckLayouts => 'Layouts';
+
+  @override
+  String get deckPortrait => 'Hochformat';
+
+  @override
+  String get deckLandscape => 'Querformat';
+
+  @override
+  String get deckAddSearch => 'Suchen, was er kann';
+
+  @override
+  String get deckLive => 'Live auf dem Deck';
+
+  @override
+  String get deckSuggested => 'Vorschläge';
+
+  @override
+  String get deckMusic => 'Musik';
+
+  @override
+  String get deckClock => 'Uhr';
+
+  @override
+  String get deckName => 'Name';
+
+  @override
+  String get deckDoes => 'Was sie tut';
+
+  @override
+  String get deckAccent => 'Akzent';
+
+  @override
+  String get deckRename => 'Umbenennen';
+
+  @override
+  String get deckNewLayout => 'Neu beginnen mit';
+
+  @override
+  String get deckBlank => 'Leer';
+
+  @override
+  String get deckPresenter => 'Präsentation';
+
+  @override
+  String get deckLandscapeFromPortrait => 'Querformat aus Hochformat machen';
+
+  @override
+  String get deckMade => 'Fertig, sieh im Querformat nach';
+
+  @override
+  String deckUseComputers(String name) {
+    return 'Das von $name verwenden';
+  }
+
+  @override
+  String deckSavedHere(String name) {
+    return 'Vorerst auf diesem Telefon gespeichert. $name behält sein eigenes, bis es dieses übernehmen kann.';
+  }
+
+  @override
+  String get deckWidth => 'Breite';
+
+  @override
+  String get deckHeight => 'Höhe';
+
+  @override
+  String get deckStartFromPortrait => 'Mit deinem Hochformat-Deck beginnen';
+
+  @override
+  String get deckStartEmpty => 'Leer beginnen';
+
+  @override
+  String get remoteMiddle => 'Mitte';
+
+  @override
+  String get remoteMiddleClick => 'Mittelklick';
+
+  @override
+  String get remoteSendText => 'Schreiben';
+
+  @override
+  String get remoteSendTextCaption =>
+      'Hier mit Wischen, Wortvorschlägen und Korrekturen deiner Tastatur schreiben, dann dorthin senden, wo der Cursor des Computers steht.';
+
+  @override
+  String get remoteSendTextHint =>
+      'Eine Nachricht, eine Suche, eine lange Zeile…';
+
+  @override
+  String get remoteSendTextGo => 'An den Computer senden';
+
+  @override
+  String get settingsEdgeScroll => 'Scrollleiste';
+
+  @override
+  String get settingsEdgeScrollCaption =>
+      'Ein Finger am rechten Rand des Touchpads scrollt, für die Bedienung mit einer Hand.';
+
+  @override
+  String get settingsKeyboardSuggestions => 'Tastaturvorschläge';
+
+  @override
+  String get settingsKeyboardSuggestionsCaption =>
+      'Wischen und Wortvorschläge auf der Tastatur der Fernbedienung. Aus, geht jede Taste beim Drücken raus.';
+
+  @override
+  String get deckGridTitle => 'Raster';
+
+  @override
+  String deckGridColumns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Spalten',
+      one: '1 Spalte',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String deckGridRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Zeilen',
+      one: '1 Zeile',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deckGridBigger => 'Größere Kacheln';
+
+  @override
+  String get deckGridSmaller => 'Kleinere Kacheln';
+
+  @override
+  String get deviceControlNoOverlayPermission =>
+      'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.';
+
+  @override
+  String get deviceSavedCommands => 'Saved Commands';
+
+  @override
+  String get deviceNoCommandsSaved => 'No commands saved on this computer yet';
+
+  @override
+  String get devicePcFiles => 'Computer Files';
+
+  @override
+  String get deviceNoPcFiles => 'Nothing to show here';
+
+  @override
+  String get homeScanQr => 'QR-Code scannen';
+
+  @override
+  String get homePairByAddress => 'Stattdessen per Adresse koppeln';
 
   @override
   String get deviceMenuMore => 'More actions';

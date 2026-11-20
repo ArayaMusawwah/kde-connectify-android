@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../app/activity.dart';
+import '../deck/deck_screen.dart';
 import '../../app/linksy_controller.dart';
 import '../../app/platform.dart';
 import '../../app/scope.dart';
@@ -13,22 +13,27 @@ import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../../ui/format.dart';
 import '../../ui/l10n.dart';
+import '../../ui/responsive.dart';
 import '../../ui/sig.dart';
+import '../phones/phone_page.dart';
+import '../phones/shelves.dart';
+import '../phones/thread.dart';
 import '../remote/remote_screen.dart';
+import '../settings/doctor.dart';
 import '../sharing/sharing.dart';
 import '../sharing/webcam_screen.dart';
 import '../terminal/terminal_screen.dart';
 import 'commands_screen.dart';
 import 'pc_files_screen.dart';
 import '../../app/terminals.dart';
-import 'activity_tile.dart';
+import 'device_settings.dart';
 import '../transfer/transfer_bubble.dart';
 
 /// Send files: photos and videos from the gallery, or any file. Whatever
 /// is picked goes as one offer, so the computer asks once.
 Future<void> pickAndSend(BuildContext context, String deviceId) async {
   final c = LinksyScope.read(context);
-  final media = await showModalBottomSheet<bool>(
+  final media = await showSheet<bool>(
     context: context,
     builder: (sheet) {
       final l10n = sheet.l10n;
@@ -86,8 +91,11 @@ class DeviceScreen extends StatefulWidget {
 class _DeviceScreenState extends State<DeviceScreen> {
   late final LinksyController _c;
 
-  /// The timeline's filter: null for everything.
-  ActivityKind? _filter;
+  /// The player opened up, to its bar and the volume.
+  bool _mediaOpen = false;
+
+  /// The page's scroll, for the bar that keeps back and settings in reach.
+  final _scroll = ScrollController();
 
   String get deviceId => widget.deviceId;
 
@@ -102,31 +110,9 @@ class _DeviceScreenState extends State<DeviceScreen> {
   @override
   void dispose() {
     _c.unwatchMedia(deviceId);
-    _volumeSteps(false);
+    _c.volumeKeysFor(this, null);
+    _scroll.dispose();
     super.dispose();
-  }
-
-  /// While this page is in front and shows the computer's volume, the
-  /// phone's volume keys step it (5 % a press) instead of the phone's.
-  bool _stepping = false;
-  StreamSubscription<bool>? _steps;
-
-  void _volumeSteps(bool on) {
-    if (on == _stepping) return;
-    _stepping = on;
-    LinksyPlatform.volumeSteps(on);
-    _steps?.cancel();
-    _steps = on
-        ? LinksyPlatform.volumeKeys.listen((up) {
-            final v = _c.volume[deviceId];
-            if (v == null) return;
-            _c.setVolume(
-              deviceId,
-              level: (v.level + (up ? 0.05 : -0.05)).clamp(0.0, 1.0),
-              muted: up && v.muted ? false : null,
-            );
-          })
-        : null;
   }
 
   @override
@@ -137,144 +123,135 @@ class _DeviceScreenState extends State<DeviceScreen> {
       // Forgotten while open.
       return const Scaffold(body: SizedBox.shrink());
     }
+    if (!_isComputer(view.device)) return PhonePage(deviceId: deviceId);
     final volume = view.connected ? c.volume[deviceId] : null;
     final front = ModalRoute.of(context)?.isCurrent ?? false;
+    // In front with the computer's volume: the phone's keys step it.
     scheduleMicrotask(() {
-      if (mounted) _volumeSteps(front && volume != null);
+      if (mounted) {
+        _c.volumeKeysFor(this, front && volume != null ? deviceId : null);
+      }
     });
-    final all = c.activityFor(deviceId);
-    final days = _byDay([
-      for (final a in all)
-        if (_filter == null || a.kind == _filter) a,
-    ]);
+    final recent = c.activityFor(deviceId).take(8).toList();
+    final players = c.media[deviceId]?.players ?? const <MediaPlayer>[];
+
+    // Top to bottom: what to do now, what's going on now, ways to control
+    // it, what this phone does for it. Its settings are behind the gear.
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: _Actions(view: view),
+        ),
+        // Its screen being shared from here, with Stop.
+        SharingBanners(
+          controller: c,
+          deviceId: deviceId,
+          kinds: const {SessionKind.screen, SessionKind.control},
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Players come and go: the page makes room.
+              AnimatedSize(
+                duration: motion(context, 220),
+                curve: Curves.easeOutCubic,
+                alignment: Alignment.topCenter,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final p in players)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: _NowPlaying(
+                          deviceId: deviceId,
+                          player: p,
+                          open: _mediaOpen,
+                          onToggle: () =>
+                              setState(() => _mediaOpen = !_mediaOpen),
+                        ),
+                      ),
+                    if (volume != null && (_mediaOpen || players.isEmpty))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: _Volume(deviceId: deviceId, volume: volume),
+                      ),
+                  ],
+                ),
+              ),
+              _Control(view: view),
+              if (_isComputer(view.device)) _PhoneAs(view: view),
+            ],
+          ),
+        ),
+        if (recent.isEmpty)
+          _NoActivity(name: view.device.name)
+        else ...[
+          ShelfTitle(
+            context.l10n.phoneHistory,
+            onSeeAll: () => openThread(context, view.device),
+          ),
+          HistoryThread(entries: recent, device: view.device),
+        ],
+      ],
+    );
+    final bottom = SizedBox(
+      height:
+          (c.liveTransfers.isEmpty ? 32 : TransferBar.room) +
+          MediaQuery.paddingOf(context).bottom,
+    );
+    // Sideways or on a tablet: the picture on the left, the page beside it.
+    final side = sideBySide(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: overlayFor(Brightness.dark),
+      value: overlayFor(side ? Theme.of(context).brightness : Brightness.dark),
       child: Scaffold(
         body: Stack(
           children: [
-            CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  pinned: true,
-                  toolbarHeight: 0,
-                  collapsedHeight: 0,
-                  systemOverlayStyle: overlayFor(Brightness.dark),
-                  // The banner's top under its shadow, so the two meet without
-                  // a seam.
-                  backgroundColor: Color.alphaBlend(
-                    const Color(0x590A1024),
-                    Sig.deep,
-                  ),
+            if (side)
+              SidePanes(
+                pane: _Hero(view: view, pane: true),
+                page: CustomScrollView(
+                  controller: _scroll,
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: content,
+                      ),
+                    ),
+                    SliverToBoxAdapter(child: bottom),
+                  ],
                 ),
-                // One box, so the actions paint over the hero they overlap.
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      _Hero(view: view),
-                      Transform.translate(
-                        offset: const Offset(0, -34),
-                        child: _Actions(view: view),
-                      ),
-                      // Its screen being shared from here, with Stop.
-                      Transform.translate(
-                        offset: const Offset(0, -34),
-                        child: SharingBanners(
-                          controller: c,
-                          deviceId: deviceId,
-                          kinds: const {
-                            SessionKind.screen,
-                            SessionKind.control,
-                          },
-                        ),
-                      ),
-                      if (_isComputer(view.device)) ...[
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                          child: _WatchScreen(view: view),
-                        ),
-                        // Only computers that announce it (desktop 0.7, §4.15).
-                        if (view.device.features.contains('terminal'))
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                            child: _TerminalCard(view: view),
-                          ),
-                        if (_isComputer(view.device))
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                            child: _SavedCommandsCard(view: view),
-                          ),
-                        if (_isComputer(view.device))
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                            child: _PcFilesCard(view: view),
-                          ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                          child: _PhoneAs(view: view),
+              )
+            else
+              CustomScrollView(
+                controller: _scroll,
+                slivers: [
+                  // One box, so the actions paint over the hero they overlap.
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        _Hero(view: view),
+                        Transform.translate(
+                          offset: const Offset(0, -34),
+                          child: content,
                         ),
                       ],
-                      if (c.media[deviceId]?.players case final players?
-                          when players.isNotEmpty)
-                        for (final p in players)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                            child: _NowPlaying(deviceId: deviceId, player: p),
-                          ),
-                      if (volume != null)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                          child: _Volume(deviceId: deviceId, volume: volume),
-                        ),
-                      if (_isComputer(view.device))
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                          child: _Switches(view: view),
-                        ),
-                    ],
-                  ),
-                ),
-                if (all.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: _Filters(
-                      selected: _filter,
-                      onSelected: (k) => setState(() => _filter = k),
                     ),
                   ),
-                if (all.isEmpty)
-                  SliverToBoxAdapter(child: _NoActivity(name: view.device.name))
-                else if (days.isEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                      child: Text(
-                        context.l10n.deviceNothingOfKind,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Sig.of(context).muted),
-                      ),
-                    ),
-                  )
-                else
-                  for (final (day, entries) in days) ...[
-                    SliverToBoxAdapter(child: SectionLabel(day)),
-                    SliverList.builder(
-                      itemCount: entries.length,
-                      itemBuilder: (context, i) => TimelineEntry(
-                        activity: entries[i],
-                        first: i == 0,
-                        last: i == entries.length - 1,
-                      ),
-                    ),
-                  ],
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 32 + MediaQuery.paddingOf(context).bottom,
-                  ),
-                ),
-              ],
-            ),
+                  SliverToBoxAdapter(child: bottom),
+                ],
+              ),
+            if (!side) _Bar(view: view, scroll: _scroll),
             // Files on their way, from any page.
-            const TransferBubble(),
+            const Align(
+              alignment: Alignment.bottomCenter,
+              child: TransferBar(),
+            ),
           ],
         ),
       ),
@@ -283,26 +260,31 @@ class _DeviceScreenState extends State<DeviceScreen> {
 
   static bool _isComputer(DeviceInfo d) =>
       d.kind == DeviceKind.desktop || d.kind == DeviceKind.laptop;
-
-  static List<(String, List<Activity>)> _byDay(List<Activity> entries) {
-    final days = <(String, List<Activity>)>[];
-    for (final a in entries) {
-      final day = formatDay(a.time);
-      if (days.isEmpty || days.last.$1 != day) days.add((day, []));
-      days.last.$2.add(a);
-    }
-    return days;
-  }
 }
 
 class _Hero extends StatelessWidget {
-  const _Hero({required this.view});
+  const _Hero({required this.view, this.pane = false});
 
   final DeviceView view;
+
+  /// The full height of a pane at the left, beside the page.
+  final bool pane;
 
   /// Tall enough for the name and its lines, plus the 64 px the action card
   /// overlaps at the bottom.
   static const height = 330.0;
+
+  /// A color matrix taking colors [t] of the way to gray.
+  static List<double> _gray(double t) {
+    final k = 1 - t;
+    double r(double own, double luma) => luma * t + own * k;
+    return [
+      r(1, .2126), r(0, .7152), r(0, .0722), 0, 0, //
+      r(0, .2126), r(1, .7152), r(0, .0722), 0, 0, //
+      r(0, .2126), r(0, .7152), r(1, .0722), 0, 0, //
+      0, 0, 0, 1, 0, //
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -313,12 +295,17 @@ class _Hero extends StatelessWidget {
 
     final notNearby = view.presence == Presence.notNearby;
     final chipColor = presenceColor(s, view.presence, onBlue: true);
+    // In a pane, read from the left like the cards beside it.
+    final align = pane ? TextAlign.start : TextAlign.center;
     final details = Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: pane
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.center,
       children: [
         Text(
           d.name,
-          textAlign: TextAlign.center,
+          textAlign: align,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: sora(30, weight: FontWeight.w700, color: Colors.white),
@@ -332,7 +319,7 @@ class _Hero extends StatelessWidget {
                   : context.l10n.deviceBattery(b.level),
             d.description,
           ].join(' · '),
-          textAlign: TextAlign.center,
+          textAlign: align,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 14, color: Colors.white70),
@@ -405,194 +392,162 @@ class _Hero extends StatelessWidget {
       ],
     );
 
-    Widget button(IconData icon, String tip, VoidCallback onTap) =>
-        RoundButton(icon: icon, tooltip: tip, onDark: true, onTap: onTap);
-
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
+      borderRadius: pane
+          ? BorderRadius.circular(Radii.lg)
+          : const BorderRadius.vertical(bottom: Radius.circular(36)),
       child: SizedBox(
-        height: height,
+        height: pane ? null : height + MediaQuery.paddingOf(context).top,
         child: Stack(
           fit: StackFit.expand,
           children: [
-            if (picture != null)
-              Image.file(
-                File(picture),
-                key: ValueKey(c.pictureVersion),
-                fit: BoxFit.cover,
-                gaplessPlayback: true,
-              )
-            else
-              const _GridBanner(),
-            // An inner shadow: deep at the bottom, where the name sits, and
-            // light at the top, under the buttons; the picture or the grid
-            // fades into it. (The one gradient in the app, on purpose.)
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0x590A1024),
-                    Color(0x000A1024),
-                    Color(0x000A1024),
-                    Color(0xCC0A1024),
-                    Color(0xF20A1024),
+            // Gray while it isn't around.
+            TweenAnimationBuilder<double>(
+              tween: Tween(end: view.reachable ? 0 : 1),
+              duration: motion(context, 300),
+              builder: (context, gray, child) => ColorFiltered(
+                colorFilter: ColorFilter.matrix(_gray(gray)),
+                child: child,
+              ),
+              child: picture != null
+                  ? Image.file(
+                      File(picture),
+                      key: ValueKey(c.pictureVersion),
+                      fit: BoxFit.cover,
+                      gaplessPlayback: true,
+                    )
+                  : const GridBanner(),
+            ),
+            const HeroFade(),
+            // Back and settings: in a pane, at its top; otherwise on
+            // [_Bar], over this.
+            if (pane)
+              Positioned(
+                left: 12,
+                top: 12,
+                right: 12,
+                child: Row(
+                  children: [
+                    RoundButton(
+                      icon: Ph.arrowLeft,
+                      tooltip: context.l10n.deviceBack,
+                      onDark: true,
+                      onTap: () => Navigator.of(context).maybePop(),
+                    ),
+                    const Spacer(),
+                    RoundButton(
+                      icon: Ph.gearSix,
+                      tooltip: context.l10n.settingsTitle,
+                      onDark: true,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => DeviceSettings(deviceId: d.id),
+                        ),
+                      ),
+                    ),
                   ],
-                  stops: [0, 0.22, 0.38, 0.72, 1],
                 ),
               ),
-            ),
             Positioned(
-              left: 16,
-              right: 16,
-              top: 8,
-              child: Row(
-                children: [
-                  button(
-                    Ph.arrowLeft,
-                    context.l10n.deviceBack,
-                    () => Navigator.of(context).maybePop(),
-                  ),
-                  const Spacer(),
-                  button(
-                    Ph.dotsThree,
-                    context.l10n.deviceMore,
-                    () => _more(context, d),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              left: 16,
-              right: 16,
-              bottom: 64,
-              child: Center(child: details),
+              left: pane ? 24 : 16,
+              right: pane ? 24 : 16,
+              bottom: pane ? 24 : 64,
+              child: pane ? details : Center(child: details),
             ),
           ],
         ),
       ),
     );
   }
+}
 
-  Future<void> _more(BuildContext context, DeviceInfo d) =>
-      showModalBottomSheet<void>(
-        context: context,
-        builder: (sheet) {
-          final s = Sig.of(sheet);
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    d.name,
-                    textAlign: TextAlign.center,
-                    style: sora(20, color: s.ink),
+/// Back and this device's settings, always in reach: over the banner at
+/// first, then on a bar with its name once the banner has scrolled away.
+class _Bar extends StatelessWidget {
+  const _Bar({required this.view, required this.scroll});
+
+  final DeviceView view;
+  final ScrollController scroll;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final top = MediaQuery.paddingOf(context).top;
+    return Positioned(
+      left: 0,
+      right: 0,
+      top: 0,
+      child: AnimatedBuilder(
+        animation: scroll,
+        builder: (context, _) {
+          final offset = scroll.hasClients ? scroll.offset : 0.0;
+          // In as the name goes under it, in the page's own color.
+          return TweenAnimationBuilder<double>(
+            tween: Tween(end: offset > 190 ? 1 : 0),
+            duration: motion(context, 160),
+            builder: (context, p, _) {
+              final past = p > 0.5;
+              Widget button(IconData icon, String tip, VoidCallback onTap) =>
+                  RoundButton(
+                    icon: icon,
+                    tooltip: tip,
+                    onDark: !past,
+                    onTap: onTap,
+                  );
+              return AnnotatedRegion<SystemUiOverlayStyle>(
+                value: overlayFor(
+                  past ? Theme.of(context).brightness : Brightness.dark,
+                ),
+                child: Container(
+                  color: s.bg.withValues(alpha: p),
+                  padding: EdgeInsets.fromLTRB(16, top + 8, 16, 8),
+                  child: Row(
+                    children: [
+                      button(
+                        Ph.arrowLeft,
+                        context.l10n.deviceBack,
+                        () => Navigator.of(context).maybePop(),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Opacity(
+                          opacity: p,
+                          child: Text(
+                            view.device.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: sora(
+                              17,
+                              weight: FontWeight.w700,
+                              color: s.ink,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      button(
+                        Ph.gearSix,
+                        context.l10n.settingsTitle,
+                        () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) =>
+                                DeviceSettings(deviceId: view.device.id),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    context.l10n.deviceShortId(d.shortId),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: s.muted, fontSize: 13),
-                  ),
-                  const SizedBox(height: 20),
-                  SigButton(
-                    label: LinksyScope.read(context).pictures.containsKey(d.id)
-                        ? context.l10n.deviceChangePicture
-                        : context.l10n.deviceAddPicture,
-                    icon: Ph.images,
-                    kind: SigButtonKind.secondary,
-                    expand: true,
-                    onTap: () {
-                      Navigator.of(sheet).pop();
-                      LinksyScope.read(context).pickPicture(d.id);
-                    },
-                  ),
-                  if (LinksyScope.read(context).pictures.containsKey(d.id)) ...[
-                    const SizedBox(height: 10),
-                    SigButton(
-                      label: context.l10n.deviceRemovePicture,
-                      kind: SigButtonKind.quiet,
-                      expand: true,
-                      onTap: () {
-                        Navigator.of(sheet).pop();
-                        LinksyScope.read(context).removePicture(d.id);
-                      },
-                    ),
-                  ],
-                  const SizedBox(height: 10),
-                  SigButton(
-                    label: context.l10n.deviceForgetThis,
-                    icon: Ph.linkBreak,
-                    kind: SigButtonKind.secondary,
-                    expand: true,
-                    onTap: () {
-                      Navigator.of(sheet).pop();
-                      _forget(context, d);
-                    },
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         },
-      );
-
-  Future<void> _forget(BuildContext context, DeviceInfo d) async {
-    final c = LinksyScope.read(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (dialog) {
-        final s = Sig.of(dialog);
-        return Dialog(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: IconCircle(icon: Ph.linkBreak, color: s.red, size: 56),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  dialog.l10n.deviceForgetTitle(d.name),
-                  textAlign: TextAlign.center,
-                  style: sora(21, color: s.ink),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  dialog.l10n.deviceForgetBody,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: s.muted, height: 1.4),
-                ),
-                const SizedBox(height: 24),
-                SigButton(
-                  label: dialog.l10n.deviceForget,
-                  kind: SigButtonKind.danger,
-                  expand: true,
-                  onTap: () => Navigator.of(dialog).pop(true),
-                ),
-                SigButton(
-                  label: dialog.l10n.deviceCancel,
-                  kind: SigButtonKind.quiet,
-                  expand: true,
-                  onTap: () => Navigator.of(dialog).pop(false),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+      ),
     );
-    if (ok != true || !context.mounted) return;
-    Navigator.of(context).pop();
-    await c.forget(d.id);
   }
 }
 
+/// What to do with it now: Send files, and under it the quick ones.
 class _Actions extends StatelessWidget {
   const _Actions({required this.view});
 
@@ -603,20 +558,20 @@ class _Actions extends StatelessWidget {
     final c = LinksyScope.read(context);
     final s = Sig.of(context);
     final id = view.device.id;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      // White on the blue header it overlaps; the blue is in the button.
+      decoration: BoxDecoration(
+        color: s.card,
+        borderRadius: BorderRadius.circular(Radii.lg),
+      ),
       child: Column(
         children: [
-          Pressable(
+          Pressable.builder(
             onTap: () => pickAndSend(context, id),
             semanticLabel: context.l10n.deviceSendFiles,
-            child: Container(
+            builder: (context, down) => Padding(
               padding: const EdgeInsets.fromLTRB(20, 18, 18, 18),
-              // White on the blue header it overlaps; the blue is in the button.
-              decoration: BoxDecoration(
-                color: s.card,
-                borderRadius: BorderRadius.circular(Radii.lg),
-              ),
               child: Row(
                 children: [
                   Expanded(
@@ -635,75 +590,211 @@ class _Actions extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Sig.blue,
-                    ),
-                    child: const Icon(
-                      PhFill.paperPlaneTilt,
-                      color: Colors.white,
-                      size: 24,
+                  // The round button darkens and dips a little more than
+                  // the row, so the press shows where the eye is.
+                  AnimatedScale(
+                    scale: down ? 0.92 : 1,
+                    duration: motion(context, 120),
+                    curve: Curves.easeOut,
+                    child: AnimatedContainer(
+                      duration: motion(context, 90),
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: down ? Sig.deep : Sig.blue,
+                      ),
+                      child: const Icon(
+                        PhFill.paperPlaneTilt,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: _SmallAction(
-                  icon: Ph.clipboardText,
-                  title: context.l10n.deviceClipboard,
-                  caption: context.l10n.deviceClipboardCaption,
-                  onTap: () => report(context, c.sendClipboard(id)),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _SmallAction(
-                  icon: Ph.bellRinging,
-                  title: context.l10n.devicePing,
-                  caption: context.l10n.devicePingCaption,
-                  onTap: () => report(context, c.ping(id)),
-                ),
-              ),
-            ],
+          Divider(
+            height: 1,
+            thickness: 1,
+            indent: 20,
+            endIndent: 20,
+            color: s.line,
           ),
-          const SizedBox(height: 10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _SmallAction(
-                  icon: Ph.mouseSimple,
-                  title: context.l10n.deviceRemote,
-                  caption: context.l10n.deviceRemoteCaption,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => RemoteScreen(device: view.device),
-                    ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              children: [
+                Expanded(
+                  child: QuickAction(
+                    icon: Ph.clipboardText,
+                    label: context.l10n.deviceClipboard,
+                    confirms: true,
+                    onTap: () => c.sendClipboard(id),
+                  ),
+                ),
+                Expanded(
+                  child: QuickAction(
+                    icon: Ph.bellRinging,
+                    label: context.l10n.devicePing,
+                    confirms: true,
+                    onTap: () => c.ping(id),
+                  ),
+                ),
+                Expanded(
+                  child: QuickAction(
+                    icon: Ph.camera,
+                    label: context.l10n.deviceSnap,
+                    onTap: () async {
+                      await LinksyPlatform.snap(id);
+                      return null;
+                    },
+                  ),
+                ),
+                Expanded(child: FindAction(view: view)),
+              ],
+            ),
+          ),
+          if (c.usbOffer(id) case final key?)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: SmallAction(
+                label: context.l10n.usbConnectCable,
+                icon: Ph.usb,
+                onTap: () => c.connectUsb(id, key),
+              ),
+            ),
+          if (!view.reachable)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: SmallAction(
+                label: context.l10n.doctorTitle,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const ConnectionDoctor(),
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(child: _FindAction(view: view)),
-            ],
-          ),
+            ),
         ],
       ),
     );
   }
 }
 
+/// A quick action: its icon in a soft circle over its name. Solid blue while
+/// it's going on (ringing); when it [confirms], a check and "Sent" for a
+/// moment once it went.
+class QuickAction extends StatefulWidget {
+  const QuickAction({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.active = false,
+    this.confirms = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final Future<String?> Function() onTap;
+  final bool active;
+  final bool confirms;
+
+  @override
+  State<QuickAction> createState() => _QuickActionState();
+}
+
+class _QuickActionState extends State<QuickAction> {
+  Timer? _sent;
+
+  Future<void> _tap() async {
+    final ok = await report(context, widget.onTap());
+    if (!ok || !widget.confirms || !mounted) return;
+    _sent?.cancel();
+    setState(() {
+      _sent = Timer(const Duration(milliseconds: 1500), () {
+        if (mounted) setState(() => _sent = null);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _sent?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final sent = _sent != null;
+    final label = sent ? context.l10n.activitySent : widget.label;
+    return Pressable(
+      onTap: _tap,
+      semanticLabel: widget.label,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          children: [
+            IconCircle(
+              icon: sent ? PhBold.check : widget.icon,
+              color: Sig.blue,
+              size: 46,
+              filled: widget.active,
+            ),
+            const SizedBox(height: 8),
+            AnimatedSwitcher(
+              duration: motion(context, 180),
+              child: Text(
+                label,
+                key: ValueKey(label),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: s.ink,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// An inner shadow: deep at the bottom, where the name sits, and light at the
+/// top, under the buttons; the picture or the grid fades into it. (The one
+/// gradient in the app, on purpose.)
+class HeroFade extends StatelessWidget {
+  const HeroFade({super.key});
+
+  @override
+  Widget build(BuildContext context) => const DecoratedBox(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color(0x590A1024),
+          Color(0x000A1024),
+          Color(0x000A1024),
+          Color(0xCC0A1024),
+          Color(0xF20A1024),
+        ],
+        stops: [0, 0.22, 0.38, 0.72, 1],
+      ),
+    ),
+  );
+}
+
 /// The banner without a picture: deep blue with a fine grid, which the
 /// banner's shadow fades out toward the name.
-class _GridBanner extends StatelessWidget {
-  const _GridBanner();
+class GridBanner extends StatelessWidget {
+  const GridBanner({super.key});
 
   @override
   Widget build(BuildContext context) =>
@@ -736,8 +827,8 @@ class _Grid extends CustomPainter {
 }
 
 /// "Find my computer": rings it until stopped (or 30 s), so it can be found.
-class _FindAction extends StatelessWidget {
-  const _FindAction({required this.view});
+class FindAction extends StatelessWidget {
+  const FindAction({super.key, required this.view});
 
   final DeviceView view;
 
@@ -746,14 +837,11 @@ class _FindAction extends StatelessWidget {
     final c = LinksyScope.of(context);
     final id = view.device.id;
     final ringing = c.isFinding(id);
-    return _SmallAction(
+    return QuickAction(
       icon: ringing ? PhFill.bellRinging : Ph.binoculars,
-      title: ringing ? context.l10n.deviceRinging : context.l10n.deviceFindIt,
-      caption: ringing
-          ? context.l10n.deviceTapToStop
-          : context.l10n.deviceFindItCaption,
+      label: ringing ? context.l10n.deviceTapToStop : context.l10n.deviceFindIt,
       active: ringing,
-      onTap: () => report(context, ringing ? c.stopFinding(id) : c.find(id)),
+      onTap: () => ringing ? c.stopFinding(id) : c.find(id),
     );
   }
 }
@@ -761,10 +849,19 @@ class _FindAction extends StatelessWidget {
 /// What a computer plays (its MPRIS players): play/pause and skip, and when
 /// it can seek, 10 seconds back and forward and where in the track.
 class _NowPlaying extends StatefulWidget {
-  const _NowPlaying({required this.deviceId, required this.player});
+  const _NowPlaying({
+    required this.deviceId,
+    required this.player,
+    required this.open,
+    required this.onToggle,
+  });
 
   final String deviceId;
   final MediaPlayer player;
+
+  /// Opened up: where in the track, and 10 seconds either way.
+  final bool open;
+  final VoidCallback onToggle;
 
   @override
   State<_NowPlaying> createState() => _NowPlayingState();
@@ -868,20 +965,29 @@ class _NowPlayingState extends State<_NowPlaying> {
       bool big = false,
     }) => Tooltip(
       message: tip,
-      child: Pressable(
+      child: Pressable.builder(
         onTap: onTap,
+        scale: 0.88,
         semanticLabel: tip,
-        child: Container(
+        builder: (context, down) => AnimatedContainer(
+          duration: motion(context, 90),
           width: big ? 48 : 40,
           height: big ? 48 : 40,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: big ? Sig.blue : Colors.transparent,
+            color: big
+                ? (down ? Sig.deep : Sig.blue)
+                : (down ? s.raised : s.raised.withValues(alpha: 0)),
           ),
-          child: Icon(
-            icon,
-            size: big ? 22 : 20,
-            color: big ? Colors.white : s.ink,
+          child: AnimatedSwitcher(
+            duration: motion(context, 160),
+            transitionBuilder: popIn,
+            child: Icon(
+              icon,
+              key: ValueKey(icon),
+              size: big ? 22 : 20,
+              color: big ? Colors.white : s.ink,
+            ),
           ),
         ),
       ),
@@ -921,58 +1027,82 @@ class _NowPlayingState extends State<_NowPlaying> {
           () => _seek(position + 10000),
         ),
     ];
+    final slim = [
+      if (p.canPrevious)
+        control(PhFill.skipBack, context.l10n.devicePrevious, 'previous'),
+      control(
+        p.playing ? PhFill.pause : PhFill.play,
+        p.playing ? context.l10n.devicePause : context.l10n.devicePlay,
+        'play_pause',
+        big: true,
+      ),
+      if (p.canNext)
+        control(PhFill.skipForward, context.l10n.deviceNext, 'next'),
+    ];
+    final full = seekable && widget.open;
     final info = Row(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(Radii.sm),
-          child: SizedBox(
-            width: 52,
-            height: 52,
-            child: cover != null
-                ? Image.memory(
-                    cover,
-                    // Decoded at the size shown, not the cover's own.
-                    cacheWidth: (52 * MediaQuery.devicePixelRatioOf(context))
-                        .round(),
-                    fit: BoxFit.cover,
-                    gaplessPlayback: true,
-                  )
-                : ColoredBox(
-                    color: s.raised,
-                    child: Icon(Ph.musicNotes, color: s.muted),
-                  ),
-          ),
-        ),
-        const SizedBox(width: 12),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                p.title.isEmpty ? p.app : p.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
-                  color: s.ink,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: widget.onToggle,
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(Radii.sm),
+                  child: SizedBox(
+                    width: 52,
+                    height: 52,
+                    child: cover != null
+                        ? Image.memory(
+                            cover,
+                            // Decoded at the size shown, not the cover's own.
+                            cacheWidth:
+                                (52 * MediaQuery.devicePixelRatioOf(context))
+                                    .round(),
+                            fit: BoxFit.cover,
+                            gaplessPlayback: true,
+                          )
+                        : ColoredBox(
+                            color: s.raised,
+                            child: Icon(Ph.musicNotes, color: s.muted),
+                          ),
+                  ),
                 ),
-              ),
-              Text(
-                [if (p.artist.isNotEmpty) p.artist, p.app].join(' · '),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 13, color: s.muted),
-              ),
-            ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        p.title.isEmpty ? p.app : p.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: s.ink,
+                        ),
+                      ),
+                      Text(
+                        [if (p.artist.isNotEmpty) p.artist, p.app].join(' · '),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 13, color: s.muted),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        if (!seekable) ...controls,
+        if (!full) ...slim,
       ],
     );
-    if (!seekable) {
+    if (!full) {
       return SigCard(
-        padding: const EdgeInsets.fromLTRB(12, 12, 10, 12),
+        padding: const EdgeInsets.fromLTRB(10, 10, 8, 10),
         child: info,
       );
     }
@@ -1086,17 +1216,23 @@ class _VolumeState extends State<_Volume> {
                     .setVolume(widget.deviceId, muted: !v.muted),
               ),
               semanticLabel: tip,
+              scale: 0.88,
               child: SizedBox(
                 width: 44,
                 height: 44,
-                child: Icon(
-                  silent
-                      ? Ph.speakerSlash
-                      : level < 0.5
-                      ? Ph.speakerLow
-                      : Ph.speakerHigh,
-                  size: 22,
-                  color: v.muted ? s.muted : Sig.blue,
+                child: AnimatedSwitcher(
+                  duration: motion(context, 160),
+                  transitionBuilder: popIn,
+                  child: Icon(
+                    silent
+                        ? Ph.speakerSlash
+                        : level < 0.5
+                        ? Ph.speakerLow
+                        : Ph.speakerHigh,
+                    key: ValueKey((silent, level < 0.5, v.muted)),
+                    size: 22,
+                    color: v.muted ? s.muted : Sig.blue,
+                  ),
                 ),
               ),
             ),
@@ -1126,19 +1262,172 @@ class _VolumeState extends State<_Volume> {
               ),
             ),
           ),
+          // One row at 100 % too, and with bigger text: never "100" over "%".
           SizedBox(
-            width: 40,
-            child: Text(
-              '${(level * 100).round()} %',
-              textAlign: TextAlign.end,
-              style: TextStyle(
-                fontSize: 13,
-                color: s.muted,
-                fontFeatures: const [FontFeature.tabularFigures()],
+            width: 48,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Text(
+                '${(level * 100).round()}\u202f%',
+                maxLines: 1,
+                softWrap: false,
+                textAlign: TextAlign.end,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: s.muted,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Ways to drive it from here, each on its own page: the touchpad, its
+/// screen, its terminal.
+class _Control extends StatelessWidget {
+  const _Control({required this.view});
+
+  final DeviceView view;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = LinksyScope.of(context);
+    final l10n = context.l10n;
+    final d = view.device;
+    final computer = _DeviceScreenState._isComputer(d);
+    final open = c.terminals
+        .of(d.id)
+        .where((t) => t.state != TabState.ended)
+        .length;
+    void push(Widget page) =>
+        Navigator.of(context)
+            .push(MaterialPageRoute<void>(builder: (_) => page));
+    final tiles = [
+      _Tile(
+        icon: Ph.mouseSimple,
+        title: l10n.deviceRemote,
+        caption: l10n.deviceRemoteCaption,
+        onTap: () => push(RemoteScreen(device: d)),
+      ),
+      if (computer)
+        _Tile(
+          icon: Ph.monitor,
+          title: l10n.deviceSeeScreen,
+          caption: l10n.deviceSeeScreenCaption,
+          onTap: () => _watchScreen(context, view),
+        ),
+      // Only computers that announce it (§4.19).
+      if (computer && d.can('deck'))
+        _Tile(
+          icon: Ph.squaresFour,
+          title: l10n.deviceDeck,
+          caption: l10n.deviceDeckCaption(d.name),
+          onTap: () => push(DeckScreen(device: d)),
+        ),
+      // Only computers that announce it (desktop 0.7, §4.15).
+      if (computer && d.can('terminal'))
+        _Tile(
+          icon: Ph.terminalWindow,
+          title: l10n.deviceTerminal,
+          caption: open == 0
+              ? l10n.deviceTerminalShell(d.name)
+              : l10n.deviceTerminalsOpen(open),
+          onTap: () => push(TerminalScreen(deviceId: d.id)),
+        ),
+      if (computer)
+        _Tile(
+          icon: Ph.terminalWindow,
+          title: l10n.deviceSavedCommands,
+          caption: l10n.deviceNoCommandsSaved,
+          onTap: () => push(CommandsScreen(deviceId: d.id)),
+        ),
+      if (computer)
+        _Tile(
+          icon: Ph.folderOpen,
+          title: l10n.devicePcFiles,
+          caption: 'Browse ${d.name} home folder',
+          onTap: () => push(PcFilesScreen(deviceId: d.id)),
+        ),
+    ];
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Column(
+        children: [
+          for (var i = 0; i < tiles.length; i += 2)
+            Padding(
+              padding: EdgeInsets.only(top: i == 0 ? 0 : 10),
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(child: tiles[i]),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: i + 1 < tiles.length
+                          ? tiles[i + 1]
+                          : const SizedBox.shrink(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One way to drive it: its icon over its name, half the page's width.
+class _Tile extends StatelessWidget {
+  const _Tile({
+    required this.icon,
+    required this.title,
+    required this.caption,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String caption;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    return Pressable(
+      onTap: onTap,
+      semanticLabel: title,
+      child: SigCard(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IconCircle(icon: icon, color: Sig.blue, size: 42),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 14.5,
+                fontWeight: FontWeight.w600,
+                color: s.ink,
+              ),
+            ),
+            const SizedBox(height: 1),
+            Text(
+              caption,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 12.5, height: 1.3, color: s.muted),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1146,183 +1435,60 @@ class _VolumeState extends State<_Volume> {
 
 /// A computer's screen on this phone: just watch it, or drive it with touch.
 /// Its user allows it and picks the screen there.
-class _WatchScreen extends StatelessWidget {
-  const _WatchScreen({required this.view});
+Future<void> _watchScreen(BuildContext context, DeviceView view) =>
+    showSheet<void>(
+      context: context,
+      builder: (sheet) {
+        final s = Sig.of(sheet);
+        final l10n = sheet.l10n;
+        void go(bool control) {
+          Navigator.of(sheet).pop();
+          showMessage(context, l10n.deviceAllowOn(view.device.name));
+          report(
+            context,
+            LinksyScope.read(context)
+                .watchScreen(view.device.id, control: control),
+          );
+        }
 
-  final DeviceView view;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    final c = LinksyScope.read(context);
-    final id = view.device.id;
-    Widget button(String label, bool control) => Expanded(
-      child: SigButton(
-        label: label,
-        kind: control ? SigButtonKind.primary : SigButtonKind.secondary,
-        height: 44,
-        onTap: () {
-          showMessage(context, context.l10n.deviceAllowOn(view.device.name));
-          report(context, c.watchScreen(id, control: control));
-        },
-      ),
-    );
-    return SigCard(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              IconCircle(icon: Ph.monitor, color: Sig.blue, size: 40),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.l10n.deviceSeeScreen,
-                      style: sora(16, color: s.ink),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      context.l10n.deviceSeeScreenCaption,
-                      style: TextStyle(fontSize: 12.5, color: s.muted),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              button(context.l10n.deviceWatch, false),
-              const SizedBox(width: 10),
-              button(context.l10n.deviceControl, true),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// A shell on the computer, behind its terminal code.
-class _TerminalCard extends StatelessWidget {
-  const _TerminalCard({required this.view});
-
-  final DeviceView view;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    final c = LinksyScope.of(context);
-    final open = c.terminals
-        .of(view.device.id)
-        .where((t) => t.state != TabState.ended)
-        .length;
-    return SigCard(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => TerminalScreen(deviceId: view.device.id),
-        ),
-      ),
-      padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
-      child: Row(
-        children: [
-          IconCircle(icon: Ph.terminalWindow, color: Sig.blue, size: 40),
-          const SizedBox(width: 14),
-          Expanded(
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Text(l10n.deviceSeeScreen, style: sora(24, color: s.ink)),
+                const SizedBox(height: 6),
                 Text(
-                  context.l10n.deviceTerminal,
-                  style: sora(16, color: s.ink),
+                  l10n.deviceSeeScreenCaption,
+                  style: TextStyle(color: s.muted, fontSize: 14.5, height: 1.4),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  open == 0
-                      ? context.l10n.deviceTerminalShell(view.device.name)
-                      : context.l10n.deviceTerminalsOpen(open),
-                  style: TextStyle(fontSize: 12.5, color: s.muted),
+                const SizedBox(height: 20),
+                SigButton(
+                  label: l10n.deviceControl,
+                  icon: Ph.handPointing,
+                  expand: true,
+                  onTap: () => go(true),
+                ),
+                const SizedBox(height: 10),
+                SigButton(
+                  label: l10n.deviceWatch,
+                  icon: Ph.monitor,
+                  kind: SigButtonKind.secondary,
+                  expand: true,
+                  onTap: () => go(false),
                 ),
               ],
             ),
           ),
-          Icon(Ph.caretRight, color: s.faint, size: 18),
-        ],
-      ),
+        );
+      },
     );
-  }
-}
-
-/// "Activity" and its filters: All, Files, Clipboard, Links.
-class _Filters extends StatelessWidget {
-  const _Filters({required this.selected, required this.onSelected});
-
-  final ActivityKind? selected;
-  final ValueChanged<ActivityKind?> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    final l10n = context.l10n;
-    final options = [
-      (l10n.deviceFilterAll, l10n.deviceFilterShowAll, null),
-      (l10n.deviceFilterFiles, l10n.deviceFilterShowFiles, ActivityKind.files),
-      (
-        l10n.deviceFilterClipboard,
-        l10n.deviceFilterShowClipboard,
-        ActivityKind.clipboard,
-      ),
-      (l10n.deviceFilterLinks, l10n.deviceFilterShowLinks, ActivityKind.link),
-    ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionLabel(l10n.deviceActivity),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final (label, semantic, kind) in options)
-                Pressable(
-                  onTap: () => onSelected(kind),
-                  semanticLabel: semantic,
-                  child: Container(
-                    height: 38,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: selected == kind ? Sig.blue : s.card,
-                      borderRadius: BorderRadius.circular(19),
-                    ),
-                    child: Center(
-                      widthFactor: 1,
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                          color: selected == kind ? Colors.white : s.ink,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
 
 /// What this phone is for the computer right now, or could be: its webcam,
-/// microphone and second display. The computer starts them.
+/// microphone and second display. The computer starts them, so the rows only
+/// say how they are; a button shows while one is in use.
 class _PhoneAs extends StatelessWidget {
   const _PhoneAs({required this.view});
 
@@ -1341,362 +1507,128 @@ class _PhoneAs extends StatelessWidget {
     final display = c.displays.values
         .where((e) => e.peer.id == d.id && e.kind == SessionKind.display)
         .firstOrNull;
-    final ready = context.l10n.deviceReadyWhenAsks(d.name);
-    final size = c.screenSize;
-
-    Widget action(String label, VoidCallback onTap, {bool primary = false}) =>
-        SizedBox(
-          height: 40,
-          child: TextButton(
-            onPressed: onTap,
-            style: TextButton.styleFrom(
-              backgroundColor: primary ? Sig.blue : s.raised,
-              foregroundColor: primary ? Colors.white : Sig.blue,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              shape: const StadiumBorder(),
-              textStyle: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            child: Text(label),
-          ),
-        );
-
-    final rows = [
+    final l = context.l10n;
+    final chips = [
       if (d.can('camera'))
-        _PhoneAsRow(
+        _PhoneAsChip(
           icon: Ph.videoCamera,
-          title: context.l10n.deviceWebcam,
-          live: camera != null,
-          detail: camera != null ? context.l10n.deviceInUseNow : ready,
-          action: camera == null
+          title: l.deviceWebcam,
+          live: camera == null ? null : l.deviceControls,
+          onTap: camera == null
               ? null
-              : action(
-                  context.l10n.deviceControls,
-                  () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => WebcamScreen(share: camera),
-                    ),
+              : () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => WebcamScreen(share: camera),
                   ),
                 ),
         ),
       if (d.can('microphone'))
-        _PhoneAsRow(
+        _PhoneAsChip(
           icon: Ph.microphone,
-          title: context.l10n.deviceMicrophone,
-          live: mic != null,
-          detail: mic != null ? context.l10n.deviceInUseNow : ready,
-          action: mic == null
-              ? null
-              : action(
-                  context.l10n.deviceStop,
-                  () => c.stopSharing(mic.session),
-                ),
+          title: l.deviceMicrophone,
+          live: mic == null ? null : l.deviceStop,
+          onTap: mic == null ? null : () => c.stopSharing(mic.session),
         ),
       if (d.can('display'))
-        _PhoneAsRow(
+        _PhoneAsChip(
           icon: Ph.monitor,
-          title: context.l10n.deviceSecondDisplay,
-          live: display != null,
-          detail: display != null
-              ? context.l10n.deviceShowingNow
-              : size == null
-              ? ready
-              : context.l10n.deviceReadySize(size.$1, size.$2),
+          title: l.deviceSecondDisplay,
+          live: display == null ? null : l.deviceShowingNow,
         ),
     ];
-    if (rows.isEmpty) return const SizedBox.shrink();
-    return SigCard(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
+    if (chips.isEmpty) return const SizedBox.shrink();
+    final note = TextStyle(fontSize: 12.5, color: s.muted, height: 1.4);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 18, bottom: 8),
+          child: Text(l.devicePhoneAs, style: sora(18, color: s.ink)),
+        ),
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: Text(
-                  context.l10n.devicePhoneAs,
-                  style: sora(16, color: s.ink),
-                ),
-              ),
-              Text(
-                context.l10n.deviceStartedOn(d.name),
-                style: TextStyle(fontSize: 12.5, color: s.muted),
-              ),
+              for (final (i, chip) in chips.indexed) ...[
+                if (i > 0) const SizedBox(width: 10),
+                Expanded(child: chip),
+              ],
             ],
           ),
-          const SizedBox(height: 6),
-          for (var i = 0; i < rows.length; i++) ...[
-            if (i > 0) Divider(height: 1, thickness: 1, color: s.line),
-            rows[i],
-          ],
-          if (!view.usb) ...[
-            const SizedBox(height: 4),
-            Text(
-              context.l10n.deviceFasterOverUsb,
-              style: TextStyle(fontSize: 12.5, color: s.muted),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _PhoneAsRow extends StatelessWidget {
-  const _PhoneAsRow({
-    required this.icon,
-    required this.title,
-    required this.detail,
-    required this.live,
-    this.action,
-  });
-
-  final IconData icon;
-  final String title;
-  final String detail;
-  final bool live;
-  final Widget? action;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    final cyanText = s.bg.computeLuminance() > 0.5
-        ? const Color(0xFF0E8FAE)
-        : Sig.cyanLight;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: live ? Sig.blue : s.raised,
-            ),
-            child: Icon(icon, size: 18, color: live ? Colors.white : Sig.blue),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: s.ink,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    if (live) ...[
-                      const PulseDot(color: Sig.cyan, size: 6),
-                      const SizedBox(width: 4),
-                    ],
-                    Flexible(
-                      child: Text(
-                        detail,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: live ? FontWeight.w600 : null,
-                          color: live ? cyanText : s.muted,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          ?action,
-        ],
-      ),
-    );
-  }
-}
-
-/// This computer's switches in one card: photo backup, its clipboard, what
-/// it may do from away.
-class _Switches extends StatelessWidget {
-  const _Switches({required this.view});
-
-  final DeviceView view;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    final c = LinksyScope.of(context);
-    final id = view.device.id;
-    final name = view.device.name;
-    final photos = c.backsUpPhotos(id);
-    final at = c.photosBackedUp(id);
-    final declined = photos && c.photosDeclined(id);
-    final rows = [
-      _SwitchRow(
-        icon: Ph.images,
-        title: context.l10n.deviceBackUpPhotos,
-        detail: !photos
-            ? context.l10n.devicePhotosGoTo(name)
-            : declined
-            ? context.l10n.devicePhotosDeclined(name)
-            : [
-                if (c.photosFolder case final folder?)
-                  context.l10n.devicePhotosFrom(folder)
-                else
-                  context.l10n.devicePhotosFromCamera,
-                if (at != null) context.l10n.devicePhotosLast(formatClock(at)),
-              ].join(' · '),
-        warn: declined,
-        value: photos,
-        onChanged: (v) => c.setPhotoBackup(id, v),
-      ),
-      if (view.device.features.contains('clipboard_watch'))
-        _SwitchRow(
-          icon: Ph.clipboard,
-          title: context.l10n.deviceGetClipboard,
-          detail: context.l10n.deviceGetClipboardDetail(name),
-          value: c.watchesClipboard(id),
-          onChanged: (v) => c.setClipboardWatch(id, v),
         ),
-      _SwitchRow(
-        icon: Ph.globeHemisphereWest,
-        title: context.l10n.deviceAwayAll,
-        detail: view.awayAll
-            ? context.l10n.deviceAwayAllOn
-            : context.l10n.deviceAwayAllOff,
-        value: view.awayAll,
-        onChanged: (v) => report(context, c.setAwayAll(id, v)),
-      ),
-    ];
-    return SigCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
-          for (var i = 0; i < rows.length; i++) ...[
-            if (i > 0) Divider(height: 1, thickness: 1, color: s.line),
-            rows[i],
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _SwitchRow extends StatelessWidget {
-  const _SwitchRow({
-    required this.icon,
-    required this.title,
-    required this.detail,
-    required this.value,
-    required this.onChanged,
-    this.warn = false,
-  });
-
-  final IconData icon;
-  final String title;
-  final String detail;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-  final bool warn;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
-      child: Row(
-        children: [
-          Icon(icon, color: Sig.blue, size: 22),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 15.5,
-                    fontWeight: FontWeight.w600,
-                    color: s.ink,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  detail,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: warn ? s.red : s.muted,
-                    height: 1.35,
-                  ),
-                ),
-              ],
-            ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+          child: Text(
+            [
+              l.deviceStartedOn(d.name),
+              if (!view.usb) l.deviceFasterOverUsb,
+            ].join('\n'),
+            style: note,
           ),
-          const SizedBox(width: 10),
-          Switch(value: value, onChanged: onChanged),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class _SmallAction extends StatelessWidget {
-  const _SmallAction({
+/// One thing this phone can be for it. The computer starts them, so no way in
+/// until one runs: then solid blue, with what a tap does.
+class _PhoneAsChip extends StatelessWidget {
+  const _PhoneAsChip({
     required this.icon,
     required this.title,
-    required this.caption,
-    required this.onTap,
-    this.active = false,
+    this.live,
+    this.onTap,
   });
 
   final IconData icon;
   final String title;
-  final String caption;
-  final VoidCallback onTap;
 
-  /// Blue while it's going on (ringing).
-  final bool active;
+  /// Said under it while in use.
+  final String? live;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
-    return SigCard(
-      onTap: onTap,
-      color: active ? Sig.blue : null,
-      padding: const EdgeInsets.all(16),
+    final on = live != null;
+    final ink = on ? Colors.white : s.ink;
+    final chip = AnimatedContainer(
+      duration: motion(context, 200),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+      decoration: BoxDecoration(
+        color: on ? Sig.blue : s.card,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          active
-              ? Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Sig.deep,
-                  ),
-                  child: Icon(icon, color: Colors.white, size: 20),
-                )
-              : IconCircle(icon: icon, color: Sig.blue, size: 40),
-          const SizedBox(height: 14),
-          Text(title, style: sora(16, color: active ? Colors.white : s.ink)),
-          const SizedBox(height: 2),
+          Icon(icon, size: 21, color: on ? Colors.white : Sig.blue),
+          const SizedBox(height: 6),
           Text(
-            caption,
+            title,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 12.5,
-              color: active ? Colors.white70 : s.muted,
+              fontWeight: FontWeight.w600,
+              color: ink,
             ),
           ),
+          if (live case final text?)
+            Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 11.5, color: Colors.white),
+            ),
         ],
       ),
     );
+    return onTap == null
+        ? chip
+        : Pressable(onTap: onTap, semanticLabel: title, child: chip);
   }
 }
 
@@ -1721,97 +1653,6 @@ class _NoActivity extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(color: s.muted, height: 1.4),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-/// "Computer Files": steps into [PcFilesScreen], where this phone browses
-/// the computer's shared folder ($HOME) through `node.fs`.
-class _PcFilesCard extends StatelessWidget {
-  const _PcFilesCard({required this.view});
-
-  final DeviceView view;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    final id = view.device.id;
-
-    return SigCard(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => PcFilesScreen(deviceId: id),
-        ),
-      ),
-      padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
-      child: Row(
-        children: [
-          IconCircle(icon: Ph.folderOpen, color: Sig.blue, size: 40),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(context.l10n.devicePcFiles, style: sora(16, color: s.ink)),
-                const SizedBox(height: 2),
-                Text(
-                  'Browse this computer\'s home folder',
-                  style: TextStyle(fontSize: 12.5, color: s.muted),
-                ),
-              ],
-            ),
-          ),
-          Icon(Ph.caretRight, color: s.faint, size: 18),
-        ],
-      ),
-    );
-  }
-}
-
-class _SavedCommandsCard extends StatelessWidget {
-  const _SavedCommandsCard({required this.view});
-
-  final DeviceView view;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = Sig.of(context);
-    final c = LinksyScope.of(context);
-    final id = view.device.id;
-    final list = c.commands[id] ?? const [];
-
-    return SigCard(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => CommandsScreen(deviceId: id),
-        ),
-      ),
-      padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
-      child: Row(
-        children: [
-          IconCircle(icon: Ph.terminalWindow, color: Sig.blue, size: 40),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.l10n.deviceSavedCommands,
-                  style: sora(16, color: s.ink),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  list.isEmpty
-                      ? context.l10n.deviceNoCommandsSaved
-                      : '${list.length} ${list.length == 1 ? "command" : "commands"}',
-                  style: TextStyle(fontSize: 12.5, color: s.muted),
-                ),
-              ],
-            ),
-          ),
-          Icon(Ph.caretRight, color: s.faint, size: 18),
         ],
       ),
     );

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'app/activity.dart';
@@ -19,14 +18,12 @@ import 'ui/l10n.dart';
 /// `--dart-define=LINKSY_DEMO=true` runs on made-up devices, for UI work.
 const _demo = bool.fromEnvironment('LINKSY_DEMO');
 
-/// What this phone does for computers (docs/protocol.md §4.10). Not
-/// `notifications` or `sms` (each needs a permission that gets sideloaded
-/// apps blocked at install), nor `media_state` or `clipboard_watch`
-/// (Android doesn't let apps watch either in the background).
-///
-/// `control` (a computer driving this phone's touch and keyboard) is offered
-/// through the "Display over other apps" overlay instead of an
-/// AccessibilityService, so it doesn't trip the same install-block.
+/// What this phone does for computers (docs/protocol.md §4.10). Not `control`
+/// or `sms` (each needs a permission that gets sideloaded apps blocked at
+/// install), nor `media_state` or `clipboard_watch` (Android doesn't let apps
+/// watch either in the background). `notifications` is added while they're
+/// mirrored: Notification access, the one such permission the user chose to
+/// give (Play Protect may stop the install over it).
 const _features = [
   'files',
   'clipboard',
@@ -48,6 +45,11 @@ const _features = [
   'microphone',
   'picture',
   'locate',
+  'deck_layout',
+  'turn_on',
+  'phone_controls',
+  'preflight',
+  'apps',
 ];
 
 Future<void> main() async {
@@ -57,7 +59,7 @@ Future<void> main() async {
   PaintingBinding.instance.imageCache.maximumSizeBytes = 24 << 20;
   // Day and month names in every language the app speaks.
   await initializeDateFormatting();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  LinksyPlatform.edgeToEdge();
 
   final paths = (await LinksyPlatform.paths())!;
   final support = Directory(paths.support);
@@ -71,6 +73,17 @@ Future<void> main() async {
   // Direct links (§4.17), unless turned off in Settings: a Wi-Fi Direct
   // group of its own for big transfers, or another phone's to join
   final direct = prefs['direct'] != 'off' && await LinksyPlatform.directHost();
+  // This phone's notifications on its computers (§4.5), told at the start;
+  // the controller tells them again when they're turned on or off.
+  final access = await LinksyPlatform.notificationAccess();
+  for (final MapEntry(:key, :value) in inboxDefaultPrefs(
+    prefs,
+    access: access,
+  ).entries) {
+    prefs[key] = value;
+    await LinksyPlatform.setPref(key, value);
+  }
+  final notifications = prefs['phone_notifications'] != 'off' && access;
 
   final LinksyNode node;
   if (_demo) {
@@ -85,6 +98,7 @@ Future<void> main() async {
         features: [
           ..._features,
           if (direct) ...['direct_host', 'direct_join', 'direct_group'],
+          if (notifications) 'notifications',
         ],
         away: true,
         relay: service.cached()?.relay ?? defaultRelay,
@@ -116,6 +130,7 @@ Future<void> main() async {
   controller.themeMode.value = LinksyController.themeFrom(
     controller.prefs['theme'],
   );
+  controller.reduceMotion.value = controller.prefs['motion'] == 'less';
   await controller.start();
   runApp(LinksyApp(controller: controller));
 }

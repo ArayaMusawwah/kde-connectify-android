@@ -396,12 +396,6 @@ abstract class AppLocalizations {
   /// **'KDE Connectify needs the microphone permission to be a microphone.'**
   String get ctlMicrophonePermission;
 
-  /// Error when the draw-over-apps permission was refused for a control session
-  ///
-  /// In en, this message translates to:
-  /// **'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.'**
-  String get deviceControlNoOverlayPermission;
-
   /// Default title of a remote terminal tab
   ///
   /// In en, this message translates to:
@@ -816,30 +810,6 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 terminal open} other{{count} terminals open}}'**
   String deviceTerminalsOpen(int count);
 
-  /// Card title: preset terminal commands from the computer
-  ///
-  /// In en, this message translates to:
-  /// **'Saved Commands'**
-  String get deviceSavedCommands;
-
-  /// Commands card caption when the computer has no saved commands
-  ///
-  /// In en, this message translates to:
-  /// **'No commands saved on this computer yet'**
-  String get deviceNoCommandsSaved;
-
-  /// Card title and screen title: browse the files a computer shares
-  ///
-  /// In en, this message translates to:
-  /// **'Computer Files'**
-  String get devicePcFiles;
-
-  /// Empty state when a shared folder has no entries
-  ///
-  /// In en, this message translates to:
-  /// **'Nothing to show here'**
-  String get deviceNoPcFiles;
-
   /// Timeline filter: everything
   ///
   /// In en, this message translates to:
@@ -1029,7 +999,7 @@ abstract class AppLocalizations {
   /// Detail of Allow everything from away, off
   ///
   /// In en, this message translates to:
-  /// **'From away: clipboard, links, files and ring only'**
+  /// **'From away: clipboard, links, files, ring, photos and controls'**
   String get deviceAwayAllOff;
 
   /// Empty device timeline title
@@ -1254,6 +1224,12 @@ abstract class AppLocalizations {
   /// **'In progress'**
   String get activityInProgress;
 
+  /// A file transfer whose connection dropped, waiting to continue
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost, continuing when it\'s back'**
+  String get activityReconnecting;
+
   /// Timeline status: clipboard received on this phone
   ///
   /// In en, this message translates to:
@@ -1445,18 +1421,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Straight over your Wi-Fi. No account, no cloud.'**
   String get homeConnectSubtitle;
-
-  /// Main button on the empty home screen that opens the QR scanner.
-  ///
-  /// In en, this message translates to:
-  /// **'Scan QR code'**
-  String get homeScanQr;
-
-  /// Secondary button on the empty home screen: pair by typing the computer's IP address.
-  ///
-  /// In en, this message translates to:
-  /// **'Pair by address instead'**
-  String get homePairByAddress;
 
   /// Title of the 'Add a device' bottom sheet.
   ///
@@ -1926,17 +1890,47 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settingsTitle;
 
+  /// Settings: placeholder of the search field
+  ///
+  /// In en, this message translates to:
+  /// **'Search settings'**
+  String get settingsSearch;
+
+  /// Settings search: no setting matches
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing matches “{query}”'**
+  String settingsNothingMatches(String query);
+
+  /// Settings: label of the card suggesting one thing to set up next
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get settingsRecommended;
+
   /// Settings section label: receiving files
   ///
   /// In en, this message translates to:
   /// **'Receiving'**
   String get settingsReceiving;
 
+  /// Settings: the page about received files, the shared folder and photo backup
+  ///
+  /// In en, this message translates to:
+  /// **'Files'**
+  String get settingsFiles;
+
   /// Settings row: where received files are saved
   ///
   /// In en, this message translates to:
   /// **'Save location'**
   String get settingsSaveLocation;
+
+  /// Button in the Save location card: back to the default folder
+  ///
+  /// In en, this message translates to:
+  /// **'Use {path}'**
+  String settingsSaveLocationUse(String path);
 
   /// Settings row caption: the folder received files go to (Downloads folder, then KDE Connectify subfolder)
   ///
@@ -1962,6 +1956,12 @@ abstract class AppLocalizations {
   /// **'Connection'**
   String get settingsConnection;
 
+  /// Connection page: label over the list of ways the phone reaches computers (Same Wi-Fi, Away from home, Wi-Fi Direct, USB cable); not buttons
+  ///
+  /// In en, this message translates to:
+  /// **'How it reaches your computers'**
+  String get settingsWays;
+
   /// Settings switch: keep connections to nearby devices open
   ///
   /// In en, this message translates to:
@@ -1985,6 +1985,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Files, photo backup and calls keep working when KDE Connectify is closed. Shows a quiet notification.'**
   String get settingsKeepRunningCaption;
+
+  /// Settings switch: start KDE Connectify in the background when the phone restarts
+  ///
+  /// In en, this message translates to:
+  /// **'Start when the phone starts'**
+  String get settingsStartAtBoot;
+
+  /// Caption of the start-at-boot switch
+  ///
+  /// In en, this message translates to:
+  /// **'After a restart, your computers see this phone without opening KDE Connectify. Shows a quiet notification.'**
+  String get settingsStartAtBootCaption;
 
   /// Settings switch: reach computers over the internet
   ///
@@ -2039,6 +2051,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Let computers browse files'**
   String get settingsBrowseFiles;
+
+  /// Browse files: computers see one folder the user picks
+  ///
+  /// In en, this message translates to:
+  /// **'A folder you choose'**
+  String get settingsFilesFolder;
+
+  /// Browse files: computers see all of the phone's files (Android's All files access)
+  ///
+  /// In en, this message translates to:
+  /// **'All files'**
+  String get settingsFilesAll;
+
+  /// Under All files, once allowed
+  ///
+  /// In en, this message translates to:
+  /// **'Your computers can open every file on this phone.'**
+  String get settingsFilesAllCaption;
+
+  /// Under All files, before Android allows it
+  ///
+  /// In en, this message translates to:
+  /// **'Allow “All files access” for KDE Connectify in Android’s settings.'**
+  String get settingsFilesAllAllow;
 
   /// Caption when no shared folder is chosen yet
   ///
@@ -2340,6 +2376,18 @@ abstract class AppLocalizations {
   /// **'Move with one finger, tap to click\nTwo fingers scroll, two-finger tap right-clicks'**
   String get remoteTouchpadHint;
 
+  /// Touchpad hint line: double tap and slide to drag
+  ///
+  /// In en, this message translates to:
+  /// **'Double-tap and slide to drag, tap to let go'**
+  String get remoteDragHint;
+
+  /// Touchpad while dragging (button held down)
+  ///
+  /// In en, this message translates to:
+  /// **'Dragging. Lift and keep going, tap to let go'**
+  String get remoteDragging;
+
   /// Touchpad button
   ///
   /// In en, this message translates to:
@@ -2399,6 +2447,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Volume down: next · Volume up: back. The screen stays on.'**
   String get remoteVolumeHint;
+
+  /// Remote mode tab: browser controls
+  ///
+  /// In en, this message translates to:
+  /// **'Browser'**
+  String get remoteBrowser;
+
+  /// Browser remote: go back a page
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get remoteWebBack;
+
+  /// Browser remote: go forward a page
+  ///
+  /// In en, this message translates to:
+  /// **'Forward'**
+  String get remoteWebForward;
+
+  /// Browser remote: reload the page
+  ///
+  /// In en, this message translates to:
+  /// **'Reload'**
+  String get remoteWebReload;
+
+  /// Browser remote: home page
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get remoteWebHome;
+
+  /// Browser remote: open a new tab
+  ///
+  /// In en, this message translates to:
+  /// **'New tab'**
+  String get remoteWebNewTab;
+
+  /// Browser remote: close the tab
+  ///
+  /// In en, this message translates to:
+  /// **'Close tab'**
+  String get remoteWebCloseTab;
+
+  /// Browser remote: next tab
+  ///
+  /// In en, this message translates to:
+  /// **'Next tab'**
+  String get remoteWebNextTab;
+
+  /// Browser remote: previous tab
+  ///
+  /// In en, this message translates to:
+  /// **'Previous tab'**
+  String get remoteWebPrevTab;
+
+  /// Browser remote: go to the address bar and type
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get remoteWebAddress;
+
+  /// Browser remote: hint under the buttons
+  ///
+  /// In en, this message translates to:
+  /// **'Works on the browser in front on the computer.'**
+  String get remoteWebHint;
+
+  /// Slides remote: go to the first slide (Home)
+  ///
+  /// In en, this message translates to:
+  /// **'First'**
+  String get remoteFirstSlide;
+
+  /// Slides remote: go to the last slide (End)
+  ///
+  /// In en, this message translates to:
+  /// **'Last'**
+  String get remoteLastSlide;
+
+  /// Slides remote: black screen (B)
+  ///
+  /// In en, this message translates to:
+  /// **'Black screen'**
+  String get remoteBlackScreen;
+
+  /// Slides remote: white screen (W)
+  ///
+  /// In en, this message translates to:
+  /// **'White screen'**
+  String get remoteWhiteScreen;
+
+  /// Slides remote: start the show from the current slide (Shift+F5)
+  ///
+  /// In en, this message translates to:
+  /// **'From here'**
+  String get remoteFromHere;
+
+  /// Tooltip of Ctrl/Alt/Shift/Super on the touchpad's key row
+  ///
+  /// In en, this message translates to:
+  /// **'Tap: with the next key. Hold: press it alone.'**
+  String get remoteModHint;
+
+  /// Sheet title: jump to another page for this computer
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to'**
+  String get switchTitle;
+
+  /// Switcher: the page you're on
+  ///
+  /// In en, this message translates to:
+  /// **'Here'**
+  String get switchHere;
+
+  /// Switcher: its session is still open
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get switchOpen;
+
+  /// Setting: touchpad pointer speed
+  ///
+  /// In en, this message translates to:
+  /// **'Touchpad speed'**
+  String get settingsPointerSpeed;
+
+  /// Setting caption: touchpad pointer speed
+  ///
+  /// In en, this message translates to:
+  /// **'How far the computer’s pointer goes for the same swipe'**
+  String get settingsPointerSpeedCaption;
 
   /// Big title while the phone rings because a computer is looking for it
   ///
@@ -3030,6 +3210,18 @@ abstract class AppLocalizations {
   /// **'{name}’s screen · go back to stop'**
   String displayWatchHint(String name);
 
+  /// Button on a computer's screen viewer: ask its user to pick another screen
+  ///
+  /// In en, this message translates to:
+  /// **'Choose screen'**
+  String get displayChooseScreen;
+
+  /// Shown after Choose screen, while the computer's user picks
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the screen on {name}…'**
+  String displayChooseOn(String name);
+
   /// Message: a terminal tab was closed here
   ///
   /// In en, this message translates to:
@@ -3288,6 +3480,12 @@ abstract class AppLocalizations {
   /// **'Connected to {name} by USB cable'**
   String usbConnectedTo(String name);
 
+  /// While the phone dials the computer through the USB cable
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting over the USB cable…'**
+  String get usbConnecting;
+
   /// Dialog title: an unpaired computer is on the USB cable
   ///
   /// In en, this message translates to:
@@ -3485,6 +3683,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Later'**
   String get updateLater;
+
+  /// Update sheet: title of the release notes card
+  ///
+  /// In en, this message translates to:
+  /// **'What changed in {version}'**
+  String updateWhatChanged(String version);
+
+  /// Update sheet: small label above the file that will be installed
+  ///
+  /// In en, this message translates to:
+  /// **'To be installed'**
+  String get updateToInstall;
 
   /// Download progress
   ///
@@ -3851,6 +4061,1818 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Updating KDE Connectify on {name} makes pairing even safer.'**
   String pairingUpdateOlder(String name);
+
+  /// Settings › With your computers: switch that mirrors this phone's notifications to paired computers
+  ///
+  /// In en, this message translates to:
+  /// **'Show this phone\'s notifications'**
+  String get settingsPhoneNotifications;
+
+  /// Caption of that switch
+  ///
+  /// In en, this message translates to:
+  /// **'On your computers, with Reply for messages.'**
+  String get settingsPhoneNotificationsCaption;
+
+  /// Caption (shown in red) when the switch is wanted but Android's Notification access isn't allowed
+  ///
+  /// In en, this message translates to:
+  /// **'Android hasn\'t allowed it yet. Tap to allow notification access.'**
+  String get settingsPhoneNotificationsAllow;
+
+  /// Sheet title: guide to allow Notification access
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notification access'**
+  String get noticeAccessTitle;
+
+  /// Android 13+: Notification access is greyed out for apps installed from a browser (restricted settings)
+  ///
+  /// In en, this message translates to:
+  /// **'Android greys out the switch for apps installed from the web. To allow it:'**
+  String get noticeAccessGreyed;
+
+  /// Step 1 of the restricted settings guide
+  ///
+  /// In en, this message translates to:
+  /// **'Open App info for KDE Connectify.'**
+  String get noticeAccessStepInfo;
+
+  /// Step 2: Android's own label is Allow restricted settings
+  ///
+  /// In en, this message translates to:
+  /// **'Tap ⋮ at the top right, then Allow restricted settings.'**
+  String get noticeAccessStepRestricted;
+
+  /// Step 3; Try again is the button below
+  ///
+  /// In en, this message translates to:
+  /// **'Open Notification access again and turn KDE Connectify on.'**
+  String get noticeAccessStepAgain;
+
+  /// Before Android 13: just turn KDE Connectify on in Notification access
+  ///
+  /// In en, this message translates to:
+  /// **'Turn KDE Connectify on in Android\'s Notification access, then come back.'**
+  String get noticeAccessPlain;
+
+  /// Button opening Android's App info page for KDE Connectify
+  ///
+  /// In en, this message translates to:
+  /// **'Open App info'**
+  String get commonOpenAppInfo;
+
+  /// Settings › Connection row and page title: per-brand steps so Android doesn't close KDE Connectify
+  ///
+  /// In en, this message translates to:
+  /// **'Keep KDE Connectify alive'**
+  String get batteryGuide;
+
+  /// Caption of that row; maker is the phone's maker as Android writes it (realme, Xiaomi, samsung)
+  ///
+  /// In en, this message translates to:
+  /// **'What to change on this {maker} phone'**
+  String batteryGuideCaption(String maker);
+
+  /// Intro of the battery guide page
+  ///
+  /// In en, this message translates to:
+  /// **'To save battery, some phones close apps in the background, and KDE Connectify then misses files and notifications. On this {maker} phone:'**
+  String batteryIntro(String maker);
+
+  /// Battery guide step (Xiaomi, vivo): Android's labels
+  ///
+  /// In en, this message translates to:
+  /// **'App info › Autostart: on.'**
+  String get batteryAutostart;
+
+  /// Battery guide step (Xiaomi)
+  ///
+  /// In en, this message translates to:
+  /// **'App info › Battery saver: No restrictions.'**
+  String get batteryXiaomiSaver;
+
+  /// Battery guide step (Xiaomi, OPPO, realme, OnePlus, vivo, Huawei): lock the app in the recent apps screen
+  ///
+  /// In en, this message translates to:
+  /// **'In recent apps, hold KDE Connectify and tap the lock, so clearing them leaves it running.'**
+  String get batteryLockRecents;
+
+  /// Battery guide step (Samsung)
+  ///
+  /// In en, this message translates to:
+  /// **'App info › Battery: Unrestricted.'**
+  String get batterySamsungUnrestricted;
+
+  /// Battery guide step (Samsung)
+  ///
+  /// In en, this message translates to:
+  /// **'Settings › Battery › Background usage limits: take KDE Connectify out of Sleeping and Deep sleeping apps.'**
+  String get batterySamsungSleeping;
+
+  /// Battery guide step (OPPO, realme, OnePlus)
+  ///
+  /// In en, this message translates to:
+  /// **'App info › Battery usage: allow background activity, foreground activity and auto launch.'**
+  String get batteryOppoBackground;
+
+  /// Battery guide step (vivo, iQOO)
+  ///
+  /// In en, this message translates to:
+  /// **'Settings › Battery › Background power consumption: allow KDE Connectify.'**
+  String get batteryVivoBackground;
+
+  /// Battery guide step (Huawei, Honor)
+  ///
+  /// In en, this message translates to:
+  /// **'Settings › Battery › App launch › KDE Connectify: manage manually, with Auto-launch, Secondary launch and Run in background on.'**
+  String get batteryHuaweiLaunch;
+
+  /// Battery guide step (Pixel and other phones)
+  ///
+  /// In en, this message translates to:
+  /// **'App info › App battery usage: Unrestricted.'**
+  String get batteryUnrestricted;
+
+  /// Last step of the battery guide, for every phone
+  ///
+  /// In en, this message translates to:
+  /// **'In KDE Connectify: Settings › Connection › Keep running in the background.'**
+  String get batteryKeepRunning;
+
+  /// Small note under the battery guide's steps
+  ///
+  /// In en, this message translates to:
+  /// **'The names change a little between versions of Android.'**
+  String get batteryNames;
+
+  /// Update sheet, Important box: Play Protect may block installing KDE Connectify (it can read notifications); steps follow
+  ///
+  /// In en, this message translates to:
+  /// **'KDE Connectify can show your notifications on your computers, so Play Protect may stop the install. If it does:'**
+  String get updatePlayProtect;
+
+  /// Step 1 of getting past Play Protect: where its settings are
+  ///
+  /// In en, this message translates to:
+  /// **'Play Store › your picture › Play Protect › ⚙.'**
+  String get updateProtectStep1;
+
+  /// Step 2: Play Protect's own label is Scan apps with Play Protect
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off Scan apps with Play Protect.'**
+  String get updateProtectStep2;
+
+  /// Step 3; Update Now is the button below
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Update Now again, then turn scanning back on.'**
+  String get updateProtectStep3;
+
+  /// What's New: this phone's notifications on its computers
+  ///
+  /// In en, this message translates to:
+  /// **'Your notifications on your computer'**
+  String get news032NotificationsTitle;
+
+  /// What's New body; mentions Android 13+ restricted settings
+  ///
+  /// In en, this message translates to:
+  /// **'Messages and other notifications show on your paired computers, with Reply. Turn it on in Settings › With your computers. If Android greys out the switch: App info › ⋮ › Allow restricted settings.'**
+  String get news032NotificationsBody;
+
+  /// What's New: the per-brand battery guide (same name as its Settings row)
+  ///
+  /// In en, this message translates to:
+  /// **'Keep KDE Connectify alive'**
+  String get news032BatteryTitle;
+
+  /// What's New body
+  ///
+  /// In en, this message translates to:
+  /// **'Settings › Connection › Keep KDE Connectify alive shows what to change on your phone\'s brand so KDE Connectify keeps running in the background.'**
+  String get news032BatteryBody;
+
+  /// Settings › This app: a switch for fewer animations (like the phone's own Remove animations)
+  ///
+  /// In en, this message translates to:
+  /// **'Reduce motion'**
+  String get settingsReduceMotion;
+
+  /// What Reduce motion changes
+  ///
+  /// In en, this message translates to:
+  /// **'Screens fade instead of sliding, and buttons dim instead of shrinking.'**
+  String get settingsReduceMotionCaption;
+
+  /// Device page, Control section: the deck, this phone as buttons for the computer (desktop's own name for the feature)
+  ///
+  /// In en, this message translates to:
+  /// **'Deck'**
+  String get deviceDeck;
+
+  /// Under Deck; name is the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Your own buttons for {name}'**
+  String deviceDeckCaption(String name);
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get deckEdit;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get deckDone;
+
+  /// Deck screen, waiting for the computer's list of actions
+  ///
+  /// In en, this message translates to:
+  /// **'Asking {name} what the deck may do…'**
+  String deckAsking(String name);
+
+  /// Deck screen when the computer isn't connected
+  ///
+  /// In en, this message translates to:
+  /// **'{name} isn\'t connected. The deck works once it is.'**
+  String deckAway(String name);
+
+  /// Deck screen when the computer turned on no actions for this phone
+  ///
+  /// In en, this message translates to:
+  /// **'{name} lets the deck do nothing yet. Turn its actions on in KDE Connectify on the computer.'**
+  String deckNothingOffered(String name);
+
+  /// An empty page of the deck
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet. Tap Edit, then Add.'**
+  String get deckEmptyPage;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get deckAdd;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Add to the deck'**
+  String get deckAddTitle;
+
+  /// On a deck button whose action the computer no longer offers
+  ///
+  /// In en, this message translates to:
+  /// **'Not available'**
+  String get deckUnavailable;
+
+  /// Group of deck actions sent by the computer as Media
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get deckGroupMedia;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get deckGroupSound;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get deckGroupSystem;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Commands'**
+  String get deckGroupCommands;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Button'**
+  String get deckKindButton;
+
+  /// A deck action that switches something on or off
+  ///
+  /// In en, this message translates to:
+  /// **'On or off'**
+  String get deckKindToggle;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Slider'**
+  String get deckKindSlider;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get deckSize;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get deckSizeSmall;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Wide'**
+  String get deckSizeWide;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Tall'**
+  String get deckSizeTall;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Big'**
+  String get deckSizeBig;
+
+  /// Deck button size: as wide as the whole row
+  ///
+  /// In en, this message translates to:
+  /// **'Full row'**
+  String get deckSizeRow;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get deckColor;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get deckIcon;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from the deck'**
+  String get deckRemove;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'New page'**
+  String get deckNewPage;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this page'**
+  String get deckRemovePage;
+
+  /// Deck, editing: how to move a button
+  ///
+  /// In en, this message translates to:
+  /// **'Hold a button and drag it to move it.'**
+  String get deckMoveHint;
+
+  /// Settings > Files: computers can browse this phone's photos (their Gallery)
+  ///
+  /// In en, this message translates to:
+  /// **'Photos on your computers'**
+  String get settingsGallery;
+
+  /// Deck
+  ///
+  /// In en, this message translates to:
+  /// **'Your computers can look through this phone\'s photos and videos, and save the ones you pick.'**
+  String get settingsGalleryCaption;
+
+  /// Snack bar when Android didn't allow photo access
+  ///
+  /// In en, this message translates to:
+  /// **'Allow KDE Connectify to see your photos in Android\'s settings.'**
+  String get settingsGalleryDenied;
+
+  /// Group of deck actions the computer offers (Wi-Fi, Bluetooth, airplane mode); the computer sends the group in English
+  ///
+  /// In en, this message translates to:
+  /// **'Network'**
+  String get deckGroupNetwork;
+
+  /// Group of deck actions the computer offers (power profiles)
+  ///
+  /// In en, this message translates to:
+  /// **'Power'**
+  String get deckGroupPower;
+
+  /// Sheet title: the deck's look, picked by holding the deck's name
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get deckThemeTitle;
+
+  /// First choice of the theme sheet: the theme picked in the computer's deck editor; name is the computer
+  ///
+  /// In en, this message translates to:
+  /// **'As on {name}'**
+  String deckThemeAsMade(String name);
+
+  /// Theme sheet section: the five themes the computer's editor also has
+  ///
+  /// In en, this message translates to:
+  /// **'On the computer too'**
+  String get deckThemesShared;
+
+  /// Theme sheet section: themes only the phone has; the choice stays on the phone
+  ///
+  /// In en, this message translates to:
+  /// **'Only on this phone'**
+  String get deckThemesPhone;
+
+  /// Deck theme: the GNOME look (the desktop's own translation)
+  ///
+  /// In en, this message translates to:
+  /// **'Stock'**
+  String get deckThemeStock;
+
+  /// Deck theme: black with lit dots (the desktop's own translation)
+  ///
+  /// In en, this message translates to:
+  /// **'Dot Matrix'**
+  String get deckThemeDots;
+
+  /// Deck theme: paper and ink (the desktop's own translation)
+  ///
+  /// In en, this message translates to:
+  /// **'E-Ink'**
+  String get deckThemeEink;
+
+  /// Deck theme: green terminal (the desktop's own translation)
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal'**
+  String get deckThemeTerm;
+
+  /// Deck theme: 16-colour pixel art (the desktop's own translation)
+  ///
+  /// In en, this message translates to:
+  /// **'Pixel'**
+  String get deckThemePixel;
+
+  /// Deck theme of the phone: KDE Connectify's own colours (Signal is the name of KDE Connectify's design)
+  ///
+  /// In en, this message translates to:
+  /// **'Signal'**
+  String get deckThemeSignal;
+
+  /// Deck theme of the phone: frosted glass tiles
+  ///
+  /// In en, this message translates to:
+  /// **'Glass'**
+  String get deckThemeGlass;
+
+  /// Deck theme of the phone: black, for a screen kept on at night
+  ///
+  /// In en, this message translates to:
+  /// **'Midnight'**
+  String get deckThemeMidnight;
+
+  /// Shown a moment after tapping a deck tile whose action the computer doesn't offer; name is the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Not available on {name}'**
+  String deckNotAvailable(String name);
+
+  /// Pill at the top of the deck while the computer isn't connected
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get deckAwayShort;
+
+  /// Shown a moment after tapping a deck tile while the computer isn't connected
+  ///
+  /// In en, this message translates to:
+  /// **'{name} isn\'t connected. The tiles work once it is.'**
+  String deckAwayNote(String name);
+
+  /// The deck's music tile when the computer plays nothing
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing playing'**
+  String get deckNothingPlaying;
+
+  /// Title of the sheet to choose which of the computer's media players the deck controls
+  ///
+  /// In en, this message translates to:
+  /// **'Control which player'**
+  String get deckPickPlayer;
+
+  /// Deck theme sheet section: how the deck shows
+  ///
+  /// In en, this message translates to:
+  /// **'Display'**
+  String get deckDisplay;
+
+  /// Deck switch: hide the status and navigation bars
+  ///
+  /// In en, this message translates to:
+  /// **'Full screen'**
+  String get deckFullScreen;
+
+  /// Caption of the deck full screen switch
+  ///
+  /// In en, this message translates to:
+  /// **'Hides the status and navigation bars. Swipe from the edge to see them.'**
+  String get deckFullScreenCaption;
+
+  /// Shown once on the full-screen deck: how to bring back its header and the bars
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe down from the top for the menu'**
+  String get deckSwipeForMenu;
+
+  /// Deck editor, Add: tiles the phone runs itself
+  ///
+  /// In en, this message translates to:
+  /// **'From this phone'**
+  String get deckFromPhone;
+
+  /// Deck tile: a key combination sent to the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Shortcut'**
+  String get deckShortcut;
+
+  /// Deck tile: types saved text on the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Type text'**
+  String get deckTypeText;
+
+  /// Deck tile: opens a link on the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Open link'**
+  String get deckOpenLink;
+
+  /// Deck editor: the keys of a shortcut tile
+  ///
+  /// In en, this message translates to:
+  /// **'Keys'**
+  String get deckKeys;
+
+  /// Deck editor: hint of the key field of a shortcut
+  ///
+  /// In en, this message translates to:
+  /// **'A key: T, F5, Tab, Left…'**
+  String get deckKeyHint;
+
+  /// Deck editor: hint of the text of a Type text tile
+  ///
+  /// In en, this message translates to:
+  /// **'What to type on the computer'**
+  String get deckTextHint;
+
+  /// Deck editor: hint of the address of an Open link tile
+  ///
+  /// In en, this message translates to:
+  /// **'Address, like example.com'**
+  String get deckLinkHint;
+
+  /// Deck: tapped a shortcut, text or link tile with nothing set
+  ///
+  /// In en, this message translates to:
+  /// **'Set it up first: hold it to edit'**
+  String get deckSetUpFirst;
+
+  /// Deck editor: what a tile shows
+  ///
+  /// In en, this message translates to:
+  /// **'Shows'**
+  String get deckShow;
+
+  /// Deck editor: icon and name
+  ///
+  /// In en, this message translates to:
+  /// **'Icon and name'**
+  String get deckShowBoth;
+
+  /// Deck editor: icon only
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get deckShowIcon;
+
+  /// Deck editor: name only
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get deckShowName;
+
+  /// Deck editor: how big the icon and words are
+  ///
+  /// In en, this message translates to:
+  /// **'Size of what it shows'**
+  String get deckLookSize;
+
+  /// Deck editor: small
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get deckSmall;
+
+  /// Deck editor: medium
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get deckMedium;
+
+  /// Deck editor: large
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get deckLarge;
+
+  /// Deck switch: show album art unchanged by the theme
+  ///
+  /// In en, this message translates to:
+  /// **'Album art as it is'**
+  String get deckRealCovers;
+
+  /// Caption of the album art switch
+  ///
+  /// In en, this message translates to:
+  /// **'Not redrawn in the theme\'s dots or pixels'**
+  String get deckRealCoversCaption;
+
+  /// Deck screen when the computer sent layouts but none for this phone
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has no deck for this phone yet. Make one in KDE Connectify on the computer.'**
+  String deckNoLayouts(String name);
+
+  /// What's New 0.3.4: the home card turns on the Inbox and Gallery
+  ///
+  /// In en, this message translates to:
+  /// **'Turn them on from the card on the home screen, and the computer\'s Inbox and Gallery fill by themselves.'**
+  String get news034TurnOnBody;
+
+  /// What's New 0.3.4: title, choosing the save folder
+  ///
+  /// In en, this message translates to:
+  /// **'Choose where files go'**
+  String get news034SaveTitle;
+
+  /// What's New 0.3.4: where to choose it
+  ///
+  /// In en, this message translates to:
+  /// **'Settings › Files › Save location: tap it to pick another folder for what you receive.'**
+  String get news034SaveBody;
+
+  /// What's New 0.3.3: the deck, the phone as buttons for the computer, laid out on the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Deck: buttons for your computer'**
+  String get news033DeckTitle;
+
+  /// Its page › Control › Deck are the app's own labels
+  ///
+  /// In en, this message translates to:
+  /// **'Play, volume, mute, Wi-Fi and your own commands, laid out in KDE Connectify on the computer and used from here: its page › Control › Deck. Hold the deck\'s name to change its look. Needs the newest KDE Connectify on the computer.'**
+  String get news033DeckBody;
+
+  /// What's New 0.3.3: the computer's Gallery shows this phone's photos
+  ///
+  /// In en, this message translates to:
+  /// **'Your photos on your computer'**
+  String get news033PhotosTitle;
+
+  /// Settings › Files › Photos on your computers are the app's own labels
+  ///
+  /// In en, this message translates to:
+  /// **'A computer\'s Gallery looks through this phone\'s photos and videos, page by page, and saves the ones you pick. Settings › Files › Photos on your computers.'**
+  String get news033PhotosBody;
+
+  /// What's New 0.3.3: earlier messages of a conversation, on the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier messages'**
+  String get news033MessagesTitle;
+
+  /// What's New 0.3.3
+  ///
+  /// In en, this message translates to:
+  /// **'On the computer, a conversation shows its earlier messages too, and Reply still works for a day after the notification is gone.'**
+  String get news033MessagesBody;
+
+  /// First-run setup row: this phone's messages and notifications in the computer's Inbox. Parallels settingsGallery
+  ///
+  /// In en, this message translates to:
+  /// **'Messages on your computers'**
+  String get onboardingMessages;
+
+  /// Under that row, and on a computer's ask. Inbox is the computer's tab, as the desktop translates it
+  ///
+  /// In en, this message translates to:
+  /// **'Read and answer your messages and notifications in the computer\'s Inbox.'**
+  String get onboardingMessagesDetail;
+
+  /// Under Photos on your computers in the first-run setup, and on a computer's ask. Gallery is the computer's tab; Allow all is Android's own label for photos and videos
+  ///
+  /// In en, this message translates to:
+  /// **'Look through this phone\'s photos and videos in the computer\'s Gallery. When Android asks, pick Allow all.'**
+  String get onboardingGalleryDetail;
+
+  /// One-time home card for people updating, when the computer's Inbox or Gallery isn't on
+  ///
+  /// In en, this message translates to:
+  /// **'Your messages and photos on your computers'**
+  String get homeTurnOnTitle;
+
+  /// Under that title
+  ///
+  /// In en, this message translates to:
+  /// **'See them in the computer\'s Inbox and Gallery.'**
+  String get homeTurnOnBody;
+
+  /// Button on that card
+  ///
+  /// In en, this message translates to:
+  /// **'Turn On Messages'**
+  String get homeTurnOnMessages;
+
+  /// Button on that card
+  ///
+  /// In en, this message translates to:
+  /// **'Turn On Photos'**
+  String get homeTurnOnPhotos;
+
+  /// A computer's Ask the Phone, as a sheet and a notification; name is the computer
+  ///
+  /// In en, this message translates to:
+  /// **'{name} asks to show this phone\'s messages'**
+  String turnOnAskMessages(String name);
+
+  /// A computer's Ask the Phone, as a sheet and a notification; name is the computer
+  ///
+  /// In en, this message translates to:
+  /// **'{name} asks to show this phone\'s photos'**
+  String turnOnAskPhotos(String name);
+
+  /// Button on that sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Turn On'**
+  String get turnOnNow;
+
+  /// Demo mode only: a computer's Ask the Phone comes 4 seconds after the tap
+  ///
+  /// In en, this message translates to:
+  /// **'A computer asks for it, in 4 seconds'**
+  String get settingsDemoAsk;
+
+  /// First step for a switch Android greys out: Allow restricted settings only appears in App info after Android refused once (tested on Android 15)
+  ///
+  /// In en, this message translates to:
+  /// **'Open Notification access and turn KDE Connectify on. If its switch is greyed out, tap it anyway: Android refuses, and that makes the next step possible.'**
+  String get noticeAccessStepSwitch;
+
+  /// Button opening Android's Notification access page for KDE Connectify
+  ///
+  /// In en, this message translates to:
+  /// **'Open Notification access'**
+  String get noticeAccessOpen;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Send clipboard'**
+  String get phoneClipboard;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s copied here goes to {name}'**
+  String phoneClipboardCaption(String name);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'A note or a link'**
+  String get phoneNoteHint;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get phoneSend;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Find {name}'**
+  String phoneFind(String name);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'It rings loud, even on silent'**
+  String get phoneFindCaption;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Where is it?'**
+  String get phoneWhere;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Asks for its location, once'**
+  String get phoneWhereCaption;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{name} didn\'t say where it is: {reason}'**
+  String phoneWhereRefused(String name, String reason);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'From this phone'**
+  String get phoneFromThis;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Photos and videos'**
+  String get phonePhotos;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'By day or album'**
+  String get phonePhotosCaption;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Allow photos'**
+  String get phoneAllowPhotos;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'KDE Connectify needs this to show your photos here. Nothing goes until you send it.'**
+  String get phoneAllowPhotosCaption;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Files and folders'**
+  String get phoneFiles;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'With Android\'s file picker'**
+  String get phoneFilesCaption;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Choose files'**
+  String get phoneChooseFiles;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a folder'**
+  String get phoneChooseFolder;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Apps'**
+  String get phoneApps;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Send an app, or update one'**
+  String get phoneAppsCaption;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'An app\'s data and logins don\'t move. Apps that check a licence or an account may refuse to run.'**
+  String get phoneAppsNote;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Search apps'**
+  String get phoneAppsSearch;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get phoneSortName;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get phoneSortSize;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Not on {name}'**
+  String phoneAppNotThere(String name);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Update (older there)'**
+  String get phoneAppUpdate;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Already there'**
+  String get phoneAppSame;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Newer there'**
+  String get phoneAppNewer;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has it from another developer. Android can\'t update it, only replace it, and that deletes its data.'**
+  String phoneAppOtherSigner(String name);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get phoneAllAlbums;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'No photos here yet'**
+  String get phoneNoPhotos;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'No apps to send'**
+  String get phoneNoApps;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected · {size}'**
+  String phoneSelected(int count, String size);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Send to {name}'**
+  String phoneSendTo(String name);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get phoneClear;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Direct link'**
+  String get routeDirect;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Same network'**
+  String get routeLan;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Over the internet · uses mobile data'**
+  String get routeAway;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Cable'**
+  String get routeUsb;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'about {time}'**
+  String routeAbout(String time);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Setting up a direct link…'**
+  String get routeSettingUp;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t go direct: {reason}. Sending over the network.'**
+  String routeNotDirect(String reason);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has {free} free and this is {size}'**
+  String warnNoRoom(String name, String free, String size);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{name} will ask before taking it'**
+  String warnWillAsk(String name);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{name} needs to allow installs from KDE Connectify first'**
+  String warnCantInstall(String name);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'On {name}: Android\'s Settings › Apps › Special app access › Install unknown apps › KDE Connectify.'**
+  String warnCantInstallHow(String name);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Send over the internet?'**
+  String get mobileDataTitle;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'This goes over the internet and uses about {size} of mobile data.'**
+  String mobileDataAsk(String size);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Install an app from {name}?} other{Install {count} apps from {name}?}}'**
+  String phoneInstallAsk(int count, String name);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get phoneAppNew;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get phoneAppUpdateShort;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Install'**
+  String get phoneInstall;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Android needs your OK once before KDE Connectify can install apps. Turn on Allow from this source, then come back.'**
+  String get phoneInstallAllowBody;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'Allow installs'**
+  String get phoneInstallAllow;
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{app} is installed'**
+  String phoneInstalled(String app);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{app} wasn\'t installed'**
+  String phoneInstallCancelled(String app);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{app} isn\'t what {name} said it was, so it wasn\'t installed.'**
+  String phoneInstallMismatch(String app, String name);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{app} on this phone is from another developer. Android can\'t update it.'**
+  String phoneInstallOtherSigner(String app);
+
+  /// Phone to phone (§4.22)
+  ///
+  /// In en, this message translates to:
+  /// **'{app} wasn\'t installed: {reason}'**
+  String phoneInstallFailed(String app, String reason);
+
+  /// What's New 0.3.5
+  ///
+  /// In en, this message translates to:
+  /// **'Two phones, no computer'**
+  String get news035PhonesTitle;
+
+  /// What's New 0.3.5
+  ///
+  /// In en, this message translates to:
+  /// **'Open a paired phone: send what you copied, a note or a link, make it ring, or pick photos and files by day.'**
+  String get news035PhonesBody;
+
+  /// What's New 0.3.5
+  ///
+  /// In en, this message translates to:
+  /// **'Send apps to another phone'**
+  String get news035AppsTitle;
+
+  /// What's New 0.3.5
+  ///
+  /// In en, this message translates to:
+  /// **'KDE Connectify shows what\'s missing or older there, and Android asks before installing. An app\'s data and logins stay behind.'**
+  String get news035AppsBody;
+
+  /// Phone to phone page
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get phoneNote;
+
+  /// Phone to phone page
+  ///
+  /// In en, this message translates to:
+  /// **'Where'**
+  String get phoneWhereShort;
+
+  /// Phone to phone page
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get phoneShelfPhotos;
+
+  /// Phone to phone page
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get phoneSeeAll;
+
+  /// Phone to phone page
+  ///
+  /// In en, this message translates to:
+  /// **'Select day'**
+  String get phoneSelectDay;
+
+  /// Phone to phone page
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get phoneHistory;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Snap'**
+  String get deviceSnap;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Picture sent to {name}'**
+  String snapSent(String name);
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to {name}'**
+  String copySent(String name);
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect by USB Cable'**
+  String get usbConnectCable;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Send what you copy'**
+  String get settingsSendCopied;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Each time you come back to KDE Connectify, what you copied goes to connected computers. Passwords too, so leave it off if unsure.'**
+  String get settingsSendCopiedCaption;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Why can\'t I see my computer?'**
+  String get doctorTitle;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Finds what\'s in the way, and what to do about it'**
+  String get doctorCaption;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing wrong on this phone'**
+  String get doctorAllGood;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'If your computer still doesn\'t show, its firewall may be in the way, or KDE Connectify isn\'t running there.'**
+  String get doctorAllGoodDetail;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi isn\'t connected'**
+  String get doctorWifi;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Join the same network as your computer.'**
+  String get doctorWifiDetail;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'No device heard on this network'**
+  String get doctorHeard;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Your computer may be asleep or on another network, or this router keeps devices apart, as guest networks do.'**
+  String get doctorHeardDetail;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'A VPN is on'**
+  String get doctorVpn;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'It can hide your computer from this phone. Turn it off, or let it allow local networks.'**
+  String get doctorVpnDetail;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery saving can stop KDE Connectify'**
+  String get doctorBattery;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'{maker} phones can close KDE Connectify in the background.'**
+  String doctorBatteryDetail(String maker);
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery Saver is on'**
+  String get doctorPowerSave;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'It limits what KDE Connectify can do while the screen is off.'**
+  String get doctorPowerSaveDetail;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Saver is on'**
+  String get doctorDataSaver;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'It can stop KDE Connectify from connecting in the background.'**
+  String get doctorDataSaverDetail;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get doctorOpenSettings;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Show me how'**
+  String get doctorShowHow;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Check again'**
+  String get doctorCheckAgain;
+
+  /// What's New 0.3.5
+  ///
+  /// In en, this message translates to:
+  /// **'Build your deck on the phone'**
+  String get news035DeckTitle;
+
+  /// What's New 0.3.5
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the pencil or hold a tile. Drag it, pull it to any size, and the others make room. Turn the phone for the landscape deck.'**
+  String get news035DeckBody;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Snap to Computer'**
+  String get news035SnapTitle;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a picture from a computer\'s page or the Quick Settings tile, and it goes straight there, ready to paste.'**
+  String get news035SnapBody;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to Computer'**
+  String get news035CopyTitle;
+
+  /// Snap, Copy to Computer, Connection Doctor or USB button.
+  ///
+  /// In en, this message translates to:
+  /// **'Select text in any app and pick Copy to Computer. And when something won\'t connect, Settings › Connection says why.'**
+  String get news035CopyBody;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Do Not Disturb access to KDE Connectify on the phone first'**
+  String get controlsNoDnd;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'The flashlight can\'t be used right now'**
+  String get controlsNoFlashlight;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'Android didn\'t allow this'**
+  String get controlsDenied;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'KDE Connectify needs the camera permission'**
+  String get snapNoCamera;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a picture for {name}'**
+  String snapAsked(String name);
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'Your computer\'s notifications'**
+  String get settingsComputerNotifications;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows them here, once you turn it on for this phone on the computer too'**
+  String get settingsComputerNotificationsCaption;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'Do Not Disturb access'**
+  String get settingsDndAccess;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'Lets your computers change Do Not Disturb here'**
+  String get settingsDndAccessCaption;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed: your computers can change it'**
+  String get settingsDndAccessOn;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn taps in landscape'**
+  String get settingsTurnTaps;
+
+  /// Phone controls, computer notifications, snap.
+  ///
+  /// In en, this message translates to:
+  /// **'Only if taps from a computer land in the wrong place with the phone on its side'**
+  String get settingsTurnTapsCaption;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard your changes?'**
+  String get deckDiscardTitle;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get deckDiscard;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get deckKeepEditing;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get deckUndo;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Redo'**
+  String get deckRedo;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get deckCopy;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Page'**
+  String get deckPage;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {n}'**
+  String deckPageN(int n);
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 page} other{{n} pages}}'**
+  String deckPages(int n);
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get deckRemoveShort;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'No room for it here'**
+  String get deckNoRoom;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill for me'**
+  String get deckFillForMe;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Try it'**
+  String get deckTryIt;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Layouts'**
+  String get deckLayouts;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Portrait'**
+  String get deckPortrait;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Landscape'**
+  String get deckLandscape;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Search what it can do'**
+  String get deckAddSearch;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Live on the deck'**
+  String get deckLive;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested'**
+  String get deckSuggested;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get deckMusic;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Clock'**
+  String get deckClock;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get deckName;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'What it does'**
+  String get deckDoes;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Accent'**
+  String get deckAccent;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get deckRename;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new one from'**
+  String get deckNewLayout;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Blank'**
+  String get deckBlank;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Presenter'**
+  String get deckPresenter;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Make landscape from portrait'**
+  String get deckLandscapeFromPortrait;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Done, have a look in Landscape'**
+  String get deckMade;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the one on {name}'**
+  String deckUseComputers(String name);
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this phone for now. {name} keeps its own until it can take this one.'**
+  String deckSavedHere(String name);
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Width'**
+  String get deckWidth;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Height'**
+  String get deckHeight;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Start from your portrait deck'**
+  String get deckStartFromPortrait;
+
+  /// The deck editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Start empty'**
+  String get deckStartEmpty;
+
+  /// Touchpad button between Left and Right click, short
+  ///
+  /// In en, this message translates to:
+  /// **'Middle'**
+  String get remoteMiddle;
+
+  /// Deck tile: a middle mouse click
+  ///
+  /// In en, this message translates to:
+  /// **'Middle click'**
+  String get remoteMiddleClick;
+
+  /// Remote: button and sheet title to write text and send it at once
+  ///
+  /// In en, this message translates to:
+  /// **'Write'**
+  String get remoteSendText;
+
+  /// Remote: under the Write sheet title
+  ///
+  /// In en, this message translates to:
+  /// **'Write here with your keyboard\'s swiping, words and corrections, then send it where the computer\'s cursor is.'**
+  String get remoteSendTextCaption;
+
+  /// Remote: Write sheet field hint
+  ///
+  /// In en, this message translates to:
+  /// **'A message, a search, a long line…'**
+  String get remoteSendTextHint;
+
+  /// Remote: Write sheet button
+  ///
+  /// In en, this message translates to:
+  /// **'Send to the computer'**
+  String get remoteSendTextGo;
+
+  /// Setting: one finger on the touchpad's right edge scrolls
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll strip'**
+  String get settingsEdgeScroll;
+
+  /// Setting caption
+  ///
+  /// In en, this message translates to:
+  /// **'One finger along the touchpad\'s right edge scrolls, for one-handed use.'**
+  String get settingsEdgeScrollCaption;
+
+  /// Setting: suggestions and swipe typing on the Remote keyboard
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard suggestions'**
+  String get settingsKeyboardSuggestions;
+
+  /// Setting caption
+  ///
+  /// In en, this message translates to:
+  /// **'Swiping and word suggestions on the Remote\'s keyboard. Off, each key goes as you press it.'**
+  String get settingsKeyboardSuggestionsCaption;
+
+  /// Deck editor theme sheet: section for the grid size
+  ///
+  /// In en, this message translates to:
+  /// **'Grid'**
+  String get deckGridTitle;
+
+  /// Deck grid: number of columns upright
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 column} other{{count} columns}}'**
+  String deckGridColumns(int count);
+
+  /// Deck grid: number of rows sideways
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 row} other{{count} rows}}'**
+  String deckGridRows(int count);
+
+  /// Deck grid: fewer cells, bigger tiles (minus button)
+  ///
+  /// In en, this message translates to:
+  /// **'Bigger tiles'**
+  String get deckGridBigger;
+
+  /// Deck grid: more cells, smaller tiles (plus button)
+  ///
+  /// In en, this message translates to:
+  /// **'Smaller tiles'**
+  String get deckGridSmaller;
+
+  /// Error when the draw-over-apps permission was refused for a control session
+  ///
+  /// In en, this message translates to:
+  /// **'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.'**
+  String get deviceControlNoOverlayPermission;
+
+  /// Card title: preset terminal commands from the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Commands'**
+  String get deviceSavedCommands;
+
+  /// Commands card caption when the computer has no saved commands
+  ///
+  /// In en, this message translates to:
+  /// **'No commands saved on this computer yet'**
+  String get deviceNoCommandsSaved;
+
+  /// Card title and screen title: browse the files a computer shares
+  ///
+  /// In en, this message translates to:
+  /// **'Computer Files'**
+  String get devicePcFiles;
+
+  /// Empty state when a shared folder has no entries
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to show here'**
+  String get deviceNoPcFiles;
+
+  /// Main button on the empty home screen that opens the QR scanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR code'**
+  String get homeScanQr;
+
+  /// Secondary button on the empty home screen: pair by typing the computer's IP address.
+  ///
+  /// In en, this message translates to:
+  /// **'Pair by address instead'**
+  String get homePairByAddress;
 
   /// Row overflow menu on a shared file
   ///

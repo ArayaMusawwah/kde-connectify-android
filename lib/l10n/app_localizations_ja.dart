@@ -173,10 +173,6 @@ class AppLocalizationsJa extends AppLocalizations {
       'マイクとして使うには、KDE Connectify にマイクの許可が必要です。';
 
   @override
-  String get deviceControlNoOverlayPermission =>
-      'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.';
-
-  @override
   String get ctlTerminalTitle => 'ターミナル';
 
   @override
@@ -445,18 +441,6 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get deviceSavedCommands => 'Saved Commands';
-
-  @override
-  String get deviceNoCommandsSaved => 'No commands saved on this computer yet';
-
-  @override
-  String get devicePcFiles => 'Computer Files';
-
-  @override
-  String get deviceNoPcFiles => 'Nothing to show here';
-
-  @override
   String get deviceFilterAll => 'すべて';
 
   @override
@@ -566,7 +550,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deviceAwayAllOn => '外出先からも: この画面、ウェブカメラ、マイク、ファイル';
 
   @override
-  String get deviceAwayAllOff => '外出先から: クリップボード、リンク、ファイル、呼び出しのみ';
+  String get deviceAwayAllOff => '外出先から: クリップボード、リンク、ファイル、呼び出し、写真、コントロール';
 
   @override
   String get deviceNothingShared => 'まだ何も共有していません';
@@ -692,6 +676,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get activityInProgress => '進行中';
 
   @override
+  String get activityReconnecting => '接続が切れました。戻りしだい続けます';
+
+  @override
   String get activityCopiedHere => 'ここにコピー済み';
 
   @override
@@ -804,12 +791,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get homeConnectSubtitle => 'Wi-Fi で直接つながります。アカウントもクラウドも不要です。';
-
-  @override
-  String get homeScanQr => 'QR コードを読み取る';
-
-  @override
-  String get homePairByAddress => 'アドレスでペアリング';
 
   @override
   String get pairingAddDevice => 'デバイスを追加';
@@ -1135,10 +1116,29 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsTitle => '設定';
 
   @override
+  String get settingsSearch => '設定を検索';
+
+  @override
+  String settingsNothingMatches(String query) {
+    return '「$query」に一致する設定はありません';
+  }
+
+  @override
+  String get settingsRecommended => 'おすすめ';
+
+  @override
   String get settingsReceiving => '受信';
 
   @override
+  String get settingsFiles => 'ファイル';
+
+  @override
   String get settingsSaveLocation => '保存先';
+
+  @override
+  String settingsSaveLocationUse(String path) {
+    return '$path を使う';
+  }
 
   @override
   String get settingsSaveLocationPath => 'ダウンロード › KDE Connectify';
@@ -1154,6 +1154,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsConnection => '接続';
 
   @override
+  String get settingsWays => 'パソコンとのつながり方';
+
+  @override
   String get settingsStayConnected => '接続を維持';
 
   @override
@@ -1166,6 +1169,13 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get settingsKeepRunningCaption =>
       'KDE Connectify を閉じても、ファイル、写真のバックアップ、通話の機能が動き続けます。控えめな通知が表示されます。';
+
+  @override
+  String get settingsStartAtBoot => 'スマートフォンの起動時に開始';
+
+  @override
+  String get settingsStartAtBootCaption =>
+      '再起動後、KDE Connectify を開かなくてもコンピューターからこのスマートフォンが見えます。控えめな通知が表示されます。';
 
   @override
   String get settingsAwayFromHome => '外出先から';
@@ -1195,6 +1205,19 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsBrowseFiles => 'コンピュータからファイルを閲覧';
+
+  @override
+  String get settingsFilesFolder => '選んだフォルダ';
+
+  @override
+  String get settingsFilesAll => 'すべてのファイル';
+
+  @override
+  String get settingsFilesAllCaption => 'パソコンからこのスマホのすべてのファイルを開けます。';
+
+  @override
+  String get settingsFilesAllAllow =>
+      'Android の設定で KDE Connectify に「すべてのファイルへのアクセス」を許可してください。';
 
   @override
   String get settingsBrowseFilesChoose =>
@@ -1377,6 +1400,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get remoteTouchpadHint => '1 本指で移動、タップでクリック\n2 本指でスクロール、2 本指タップで右クリック';
 
   @override
+  String get remoteDragHint => 'ダブルタップしてスライドでドラッグ、タップで離す';
+
+  @override
+  String get remoteDragging => 'ドラッグ中。指を離して続けられます。タップで離します';
+
+  @override
   String get remoteLeftClick => '左クリック';
 
   @override
@@ -1405,6 +1434,72 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get remoteVolumeHint => '音量ダウン: 次へ · 音量アップ: 戻る。画面はオンのままです。';
+
+  @override
+  String get remoteBrowser => 'ブラウザ';
+
+  @override
+  String get remoteWebBack => '戻る';
+
+  @override
+  String get remoteWebForward => '進む';
+
+  @override
+  String get remoteWebReload => '再読み込み';
+
+  @override
+  String get remoteWebHome => 'ホーム';
+
+  @override
+  String get remoteWebNewTab => '新しいタブ';
+
+  @override
+  String get remoteWebCloseTab => 'タブを閉じる';
+
+  @override
+  String get remoteWebNextTab => '次のタブ';
+
+  @override
+  String get remoteWebPrevTab => '前のタブ';
+
+  @override
+  String get remoteWebAddress => 'アドレス';
+
+  @override
+  String get remoteWebHint => 'コンピューターの前面にあるブラウザを操作します。';
+
+  @override
+  String get remoteFirstSlide => '最初';
+
+  @override
+  String get remoteLastSlide => '最後';
+
+  @override
+  String get remoteBlackScreen => '黒画面';
+
+  @override
+  String get remoteWhiteScreen => '白画面';
+
+  @override
+  String get remoteFromHere => 'ここから';
+
+  @override
+  String get remoteModHint => 'タップ：次のキーと一緒に。長押し：単独で押す。';
+
+  @override
+  String get switchTitle => '切り替え';
+
+  @override
+  String get switchHere => '表示中';
+
+  @override
+  String get switchOpen => '接続中';
+
+  @override
+  String get settingsPointerSpeed => 'タッチパッドの速度';
+
+  @override
+  String get settingsPointerSpeedCaption => '同じスワイプでコンピューターのポインターが動く距離';
 
   @override
   String get ringTitle => 'ここにいます！';
@@ -1781,6 +1876,14 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get displayChooseScreen => '画面を選ぶ';
+
+  @override
+  String displayChooseOn(String name) {
+    return '$name で画面を選んでください…';
+  }
+
+  @override
   String terminalTabClosed(String title) {
     return '「$title」を閉じました';
   }
@@ -1937,6 +2040,9 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get usbConnecting => 'USB ケーブルで接続中…';
+
+  @override
   String get usbPairTitle => 'ケーブルの先にコンピュータがあります';
 
   @override
@@ -2075,6 +2181,14 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get updateLater => '後で';
+
+  @override
+  String updateWhatChanged(String version) {
+    return '$version の変更点';
+  }
+
+  @override
+  String get updateToInstall => 'インストールされるもの';
 
   @override
   String updateDownloading(String percent) {
@@ -2289,6 +2403,1054 @@ class AppLocalizationsJa extends AppLocalizations {
   String pairingUpdateOlder(String name) {
     return '$name の KDE Connectify を更新すると、ペアリングがさらに安全になります。';
   }
+
+  @override
+  String get settingsPhoneNotifications => 'このスマホの通知を表示';
+
+  @override
+  String get settingsPhoneNotificationsCaption => 'コンピュータに表示し、メッセージには返信できます。';
+
+  @override
+  String get settingsPhoneNotificationsAllow =>
+      'まだ Android で許可されていません。タップして通知へのアクセスを許可します。';
+
+  @override
+  String get noticeAccessTitle => '通知へのアクセスを許可';
+
+  @override
+  String get noticeAccessGreyed =>
+      'ウェブからインストールしたアプリでは、Android がこのスイッチをグレー表示にします。許可するには：';
+
+  @override
+  String get noticeAccessStepInfo => 'KDE Connectify のアプリ情報を開きます。';
+
+  @override
+  String get noticeAccessStepRestricted => '右上の ⋮ をタップし、「制限付き設定を許可」をタップします。';
+
+  @override
+  String get noticeAccessStepAgain =>
+      'もう一度「通知へのアクセス」を開き、KDE Connectify をオンにします。';
+
+  @override
+  String get noticeAccessPlain =>
+      'Android の「通知へのアクセス」で KDE Connectify をオンにしてから戻ってきてください。';
+
+  @override
+  String get commonOpenAppInfo => 'アプリ情報を開く';
+
+  @override
+  String get batteryGuide => 'KDE Connectify を動かし続ける';
+
+  @override
+  String batteryGuideCaption(String maker) {
+    return 'この $maker のスマホで変更すること';
+  }
+
+  @override
+  String batteryIntro(String maker) {
+    return '電池を節約するため、バックグラウンドのアプリを終了するスマホがあり、KDE Connectify がファイルや通知を受け取れなくなります。この $maker のスマホでは：';
+  }
+
+  @override
+  String get batteryAutostart => 'アプリ情報 › 自動起動：オン。';
+
+  @override
+  String get batteryXiaomiSaver => 'アプリ情報 › バッテリーセーバー：制限なし。';
+
+  @override
+  String get batteryLockRecents =>
+      '最近使ったアプリで KDE Connectify を長押しして鍵をタップすると、まとめて閉じても動き続けます。';
+
+  @override
+  String get batterySamsungUnrestricted => 'アプリ情報 › 電池：制限なし。';
+
+  @override
+  String get batterySamsungSleeping =>
+      '設定 › 電池 › バックグラウンドでの使用制限：KDE Connectify をスリープ中アプリとディープスリープ中アプリから外します。';
+
+  @override
+  String get batteryOppoBackground =>
+      'アプリ情報 › 電池の使用：バックグラウンド、フォアグラウンドでの動作と自動起動を許可します。';
+
+  @override
+  String get batteryVivoBackground =>
+      '設定 › 電池 › バックグラウンドでの電力消費：KDE Connectify を許可します。';
+
+  @override
+  String get batteryHuaweiLaunch =>
+      '設定 › 電池 › アプリ起動 › KDE Connectify：手動で管理し、自動起動・二次起動・バックグラウンドで実行をオンにします。';
+
+  @override
+  String get batteryUnrestricted => 'アプリ情報 › アプリの電池使用量：制限なし。';
+
+  @override
+  String get batteryKeepRunning => 'KDE Connectify では：設定 › 接続 › バックグラウンドで実行。';
+
+  @override
+  String get batteryNames => '名前は Android のバージョンによって少し異なります。';
+
+  @override
+  String get updatePlayProtect =>
+      'KDE Connectify はコンピュータに通知を表示できるため、Play プロテクトがインストールを止めることがあります。その場合：';
+
+  @override
+  String get updateProtectStep1 => 'Play ストア › プロフィール写真 › Play プロテクト › ⚙。';
+
+  @override
+  String get updateProtectStep2 => '「Play プロテクトでアプリをスキャン」をオフにします。';
+
+  @override
+  String get updateProtectStep3 => 'もう一度「今すぐ更新」をタップし、その後スキャンをオンに戻します。';
+
+  @override
+  String get news032NotificationsTitle => '通知をコンピュータで';
+
+  @override
+  String get news032NotificationsBody =>
+      'メッセージなどの通知が、ペアリングしたコンピュータに返信ボタン付きで表示されます。設定 › コンピュータとの連携 でオンにします。スイッチがグレー表示なら：アプリ情報 › ⋮ › 制限付き設定を許可。';
+
+  @override
+  String get news032BatteryTitle => 'KDE Connectify を動かし続ける';
+
+  @override
+  String get news032BatteryBody =>
+      '設定 › 接続 › KDE Connectify を動かし続ける で、スマホのメーカーごとに変更する設定がわかり、KDE Connectify がバックグラウンドで動き続けます。';
+
+  @override
+  String get settingsReduceMotion => '動きを減らす';
+
+  @override
+  String get settingsReduceMotionCaption => '画面はスライドせずにフェードし、ボタンは縮まずに薄くなります。';
+
+  @override
+  String get deviceDeck => 'デッキ';
+
+  @override
+  String deviceDeckCaption(String name) {
+    return '$name 用のあなたのボタン';
+  }
+
+  @override
+  String get deckEdit => '編集';
+
+  @override
+  String get deckDone => '完了';
+
+  @override
+  String deckAsking(String name) {
+    return 'デッキでできることを $name に確認しています…';
+  }
+
+  @override
+  String deckAway(String name) {
+    return '$name は接続されていません。接続するとデッキが使えます。';
+  }
+
+  @override
+  String deckNothingOffered(String name) {
+    return '$name はまだデッキに何も許可していません。コンピュータの KDE Connectify で操作をオンにしてください。';
+  }
+
+  @override
+  String get deckEmptyPage => 'まだ何もありません。「編集」→「追加」をタップします。';
+
+  @override
+  String get deckAdd => '追加';
+
+  @override
+  String get deckAddTitle => 'デッキに追加';
+
+  @override
+  String get deckUnavailable => '利用できません';
+
+  @override
+  String get deckGroupMedia => 'メディア';
+
+  @override
+  String get deckGroupSound => 'サウンド';
+
+  @override
+  String get deckGroupSystem => 'システム';
+
+  @override
+  String get deckGroupCommands => 'コマンド';
+
+  @override
+  String get deckKindButton => 'ボタン';
+
+  @override
+  String get deckKindToggle => 'オン／オフ';
+
+  @override
+  String get deckKindSlider => 'スライダー';
+
+  @override
+  String get deckSize => 'サイズ';
+
+  @override
+  String get deckSizeSmall => '小';
+
+  @override
+  String get deckSizeWide => '横長';
+
+  @override
+  String get deckSizeTall => '縦長';
+
+  @override
+  String get deckSizeBig => '大';
+
+  @override
+  String get deckSizeRow => '1 行';
+
+  @override
+  String get deckColor => '色';
+
+  @override
+  String get deckIcon => 'アイコン';
+
+  @override
+  String get deckRemove => 'デッキから削除';
+
+  @override
+  String get deckNewPage => '新しいページ';
+
+  @override
+  String get deckRemovePage => 'このページを削除';
+
+  @override
+  String get deckMoveHint => 'ボタンを長押ししてドラッグすると移動できます。';
+
+  @override
+  String get settingsGallery => 'コンピュータで写真を見る';
+
+  @override
+  String get settingsGalleryCaption => 'コンピュータからこのスマホの写真や動画を見て、選んだものを保存できます。';
+
+  @override
+  String get settingsGalleryDenied =>
+      'Android の設定で KDE Connectify に写真へのアクセスを許可してください。';
+
+  @override
+  String get deckGroupNetwork => 'ネットワーク';
+
+  @override
+  String get deckGroupPower => '電源';
+
+  @override
+  String get deckThemeTitle => 'テーマ';
+
+  @override
+  String deckThemeAsMade(String name) {
+    return '$name と同じ';
+  }
+
+  @override
+  String get deckThemesShared => 'コンピュータにもあり';
+
+  @override
+  String get deckThemesPhone => 'このスマホのみ';
+
+  @override
+  String get deckThemeStock => '標準';
+
+  @override
+  String get deckThemeDots => 'ドットマトリックス';
+
+  @override
+  String get deckThemeEink => 'E-Ink';
+
+  @override
+  String get deckThemeTerm => 'ターミナル';
+
+  @override
+  String get deckThemePixel => 'ピクセル';
+
+  @override
+  String get deckThemeSignal => 'Signal';
+
+  @override
+  String get deckThemeGlass => 'ガラス';
+
+  @override
+  String get deckThemeMidnight => 'ミッドナイト';
+
+  @override
+  String deckNotAvailable(String name) {
+    return '$name では利用できません';
+  }
+
+  @override
+  String get deckAwayShort => '未接続';
+
+  @override
+  String deckAwayNote(String name) {
+    return '$name は接続されていません。接続するとタイルが使えます。';
+  }
+
+  @override
+  String get deckNothingPlaying => '再生中のものはありません';
+
+  @override
+  String get deckPickPlayer => '操作するプレーヤー';
+
+  @override
+  String get deckDisplay => '表示';
+
+  @override
+  String get deckFullScreen => '全画面';
+
+  @override
+  String get deckFullScreenCaption =>
+      'ステータスバーとナビゲーションバーを隠します。端からスワイプすると表示されます。';
+
+  @override
+  String get deckSwipeForMenu => '上からスワイプでメニュー';
+
+  @override
+  String get deckFromPhone => 'このスマホから';
+
+  @override
+  String get deckShortcut => 'ショートカット';
+
+  @override
+  String get deckTypeText => 'テキスト入力';
+
+  @override
+  String get deckOpenLink => 'リンクを開く';
+
+  @override
+  String get deckKeys => 'キー';
+
+  @override
+  String get deckKeyHint => 'キー：T、F5、Tab、Left…';
+
+  @override
+  String get deckTextHint => 'コンピューターで入力する内容';
+
+  @override
+  String get deckLinkHint => 'アドレス（例：example.com）';
+
+  @override
+  String get deckSetUpFirst => '先に設定してください：長押しで編集';
+
+  @override
+  String get deckShow => '表示';
+
+  @override
+  String get deckShowBoth => 'アイコンと名前';
+
+  @override
+  String get deckShowIcon => 'アイコン';
+
+  @override
+  String get deckShowName => '名前';
+
+  @override
+  String get deckLookSize => '表示の大きさ';
+
+  @override
+  String get deckSmall => '小';
+
+  @override
+  String get deckMedium => '中';
+
+  @override
+  String get deckLarge => '大';
+
+  @override
+  String get deckRealCovers => 'アルバムアートをそのまま表示';
+
+  @override
+  String get deckRealCoversCaption => 'テーマのドットやピクセルで描き直しません';
+
+  @override
+  String deckNoLayouts(String name) {
+    return '$name にはまだこのスマホ用のデッキがありません。コンピュータの KDE Connectify で作成してください。';
+  }
+
+  @override
+  String get news034TurnOnBody =>
+      'ホーム画面のカードからオンにすると、コンピュータの受信トレイとギャラリーに自動で表示されます。';
+
+  @override
+  String get news034SaveTitle => 'ファイルの保存先を選べます';
+
+  @override
+  String get news034SaveBody =>
+      '設定 › ファイル › 保存先：タップすると、受信したファイルの保存先フォルダを変更できます。';
+
+  @override
+  String get news033DeckTitle => 'デッキ：コンピュータ用のボタン';
+
+  @override
+  String get news033DeckBody =>
+      '再生、音量、ミュート、Wi-Fi、自分のコマンドをコンピュータの KDE Connectify で並べ、ここから使えます：そのページ › 操作 › デッキ。デッキの名前を長押しすると見た目を変えられます。コンピュータに最新の KDE Connectify が必要です。';
+
+  @override
+  String get news033PhotosTitle => 'コンピュータであなたの写真を';
+
+  @override
+  String get news033PhotosBody =>
+      'コンピュータのギャラリーがこのスマホの写真と動画を 1 ページずつ表示し、選んだものを保存します。設定 › ファイル › コンピュータで写真を見る。';
+
+  @override
+  String get news033MessagesTitle => '以前のメッセージ';
+
+  @override
+  String get news033MessagesBody =>
+      'コンピュータで、会話に以前のメッセージも表示され、通知が消えてから 1 日は返信できます。';
+
+  @override
+  String get onboardingMessages => 'コンピュータでメッセージを見る';
+
+  @override
+  String get onboardingMessagesDetail => 'メッセージや通知をコンピュータの受信トレイで読み、返信できます。';
+
+  @override
+  String get onboardingGalleryDetail =>
+      'このスマホの写真と動画をコンピュータのギャラリーで見られます。Android に聞かれたら「すべて許可」を選んでください。';
+
+  @override
+  String get homeTurnOnTitle => 'メッセージと写真をコンピュータで';
+
+  @override
+  String get homeTurnOnBody => 'コンピュータの受信トレイとギャラリーに表示されます。';
+
+  @override
+  String get homeTurnOnMessages => 'メッセージをオンにする';
+
+  @override
+  String get homeTurnOnPhotos => '写真をオンにする';
+
+  @override
+  String turnOnAskMessages(String name) {
+    return '$name がこのスマホのメッセージの表示を求めています';
+  }
+
+  @override
+  String turnOnAskPhotos(String name) {
+    return '$name がこのスマホの写真の表示を求めています';
+  }
+
+  @override
+  String get turnOnNow => 'オンにする';
+
+  @override
+  String get settingsDemoAsk => '4 秒後にコンピュータが求めます';
+
+  @override
+  String get noticeAccessStepSwitch =>
+      '「通知へのアクセス」を開いて KDE Connectify をオンにします。スイッチがグレーでもタップしてください。Android に拒否されると、次の手順ができるようになります。';
+
+  @override
+  String get noticeAccessOpen => '「通知へのアクセス」を開く';
+
+  @override
+  String get phoneClipboard => 'クリップボードを送る';
+
+  @override
+  String phoneClipboardCaption(String name) {
+    return 'ここでコピーした内容を $name に送ります';
+  }
+
+  @override
+  String get phoneNoteHint => 'メモまたはリンク';
+
+  @override
+  String get phoneSend => '送信';
+
+  @override
+  String phoneFind(String name) {
+    return '$name を探す';
+  }
+
+  @override
+  String get phoneFindCaption => 'マナーモードでも大きな音で鳴ります';
+
+  @override
+  String get phoneWhere => 'どこにある?';
+
+  @override
+  String get phoneWhereCaption => '位置情報を一度だけ尋ねます';
+
+  @override
+  String phoneWhereRefused(String name, String reason) {
+    return '$name は位置を教えませんでした: $reason';
+  }
+
+  @override
+  String get phoneFromThis => 'このスマートフォンから';
+
+  @override
+  String get phonePhotos => '写真と動画';
+
+  @override
+  String get phonePhotosCaption => '日付やアルバムで';
+
+  @override
+  String get phoneAllowPhotos => '写真を許可';
+
+  @override
+  String get phoneAllowPhotosCaption => 'ここに写真を表示するために必要です。送信するまで何も送られません。';
+
+  @override
+  String get phoneFiles => 'ファイルとフォルダ';
+
+  @override
+  String get phoneFilesCaption => 'Android のファイル選択から';
+
+  @override
+  String get phoneChooseFiles => 'ファイルを選ぶ';
+
+  @override
+  String get phoneChooseFolder => 'フォルダを選ぶ';
+
+  @override
+  String get phoneApps => 'アプリ';
+
+  @override
+  String get phoneAppsCaption => 'アプリを送る、または更新する';
+
+  @override
+  String get phoneAppsNote =>
+      'アプリのデータとログイン情報は移動しません。ライセンスやアカウントを確認するアプリは起動しないことがあります。';
+
+  @override
+  String get phoneAppsSearch => 'アプリを検索';
+
+  @override
+  String get phoneSortName => '名前';
+
+  @override
+  String get phoneSortSize => 'サイズ';
+
+  @override
+  String phoneAppNotThere(String name) {
+    return '$name にはありません';
+  }
+
+  @override
+  String get phoneAppUpdate => '更新 (あちらは古い版)';
+
+  @override
+  String get phoneAppSame => 'すでにあります';
+
+  @override
+  String get phoneAppNewer => 'あちらの方が新しい';
+
+  @override
+  String phoneAppOtherSigner(String name) {
+    return '$name には別の開発者のものがあります。Android は更新できず置き換えのみ可能で、データは削除されます。';
+  }
+
+  @override
+  String get phoneAllAlbums => 'すべて';
+
+  @override
+  String get phoneNoPhotos => 'まだ写真はありません';
+
+  @override
+  String get phoneNoApps => '送れるアプリはありません';
+
+  @override
+  String phoneSelected(int count, String size) {
+    return '$count 件選択 · $size';
+  }
+
+  @override
+  String phoneSendTo(String name) {
+    return '$name に送る';
+  }
+
+  @override
+  String get phoneClear => 'クリア';
+
+  @override
+  String get routeDirect => 'ダイレクトリンク';
+
+  @override
+  String get routeLan => '同じネットワーク';
+
+  @override
+  String get routeAway => 'インターネット経由 · モバイルデータを使用';
+
+  @override
+  String get routeUsb => 'ケーブル';
+
+  @override
+  String routeAbout(String time) {
+    return '約 $time';
+  }
+
+  @override
+  String get routeSettingUp => 'ダイレクトリンクを準備中…';
+
+  @override
+  String routeNotDirect(String reason) {
+    return '直接接続できませんでした: $reason。ネットワーク経由で送信します。';
+  }
+
+  @override
+  String warnNoRoom(String name, String free, String size) {
+    return '$name の空きは $free、これは $size です';
+  }
+
+  @override
+  String warnWillAsk(String name) {
+    return '$name は受け取る前に確認します';
+  }
+
+  @override
+  String warnCantInstall(String name) {
+    return '$name で先に KDE Connectify からのインストールを許可してください';
+  }
+
+  @override
+  String warnCantInstallHow(String name) {
+    return '$name で: Android の設定 › アプリ › 特別なアプリアクセス › 不明なアプリのインストール › KDE Connectify。';
+  }
+
+  @override
+  String get mobileDataTitle => 'インターネット経由で送りますか?';
+
+  @override
+  String mobileDataAsk(String size) {
+    return 'インターネット経由で、モバイルデータを約 $size 使用します。';
+  }
+
+  @override
+  String phoneInstallAsk(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$name から $count 個のアプリをインストールしますか?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get phoneAppNew => '新規';
+
+  @override
+  String get phoneAppUpdateShort => '更新';
+
+  @override
+  String get phoneInstall => 'インストール';
+
+  @override
+  String get phoneInstallAllowBody =>
+      'KDE Connectify がアプリをインストールするには、一度だけ許可が必要です。「この提供元を許可」をオンにして戻ってください。';
+
+  @override
+  String get phoneInstallAllow => 'インストールを許可';
+
+  @override
+  String phoneInstalled(String app) {
+    return '$app をインストールしました';
+  }
+
+  @override
+  String phoneInstallCancelled(String app) {
+    return '$app はインストールされませんでした';
+  }
+
+  @override
+  String phoneInstallMismatch(String app, String name) {
+    return '$app は $name の説明と異なるため、インストールしませんでした。';
+  }
+
+  @override
+  String phoneInstallOtherSigner(String app) {
+    return 'このスマートフォンの $app は別の開発者のものです。Android は更新できません。';
+  }
+
+  @override
+  String phoneInstallFailed(String app, String reason) {
+    return '$app をインストールできませんでした: $reason';
+  }
+
+  @override
+  String get news035PhonesTitle => '2 台のスマートフォン、コンピュータなしで';
+
+  @override
+  String get news035PhonesBody =>
+      'ペアリング済みのスマートフォンを開くと、コピーした内容やメモ、リンクを送ったり、鳴らしたり、写真やファイルを日付で選べます。';
+
+  @override
+  String get news035AppsTitle => 'アプリを別のスマートフォンへ';
+
+  @override
+  String get news035AppsBody =>
+      'あちらにないものや古いものを表示し、インストール前に Android が確認します。データとログイン情報は移動しません。';
+
+  @override
+  String get phoneNote => 'メモ';
+
+  @override
+  String get phoneWhereShort => '場所';
+
+  @override
+  String get phoneShelfPhotos => '写真';
+
+  @override
+  String get phoneSeeAll => 'すべて見る';
+
+  @override
+  String get phoneSelectDay => 'この日を選択';
+
+  @override
+  String get phoneHistory => '履歴';
+
+  @override
+  String get deviceSnap => '撮影';
+
+  @override
+  String snapSent(String name) {
+    return '$name に写真を送信しました';
+  }
+
+  @override
+  String copySent(String name) {
+    return '$name にコピーしました';
+  }
+
+  @override
+  String get usbConnectCable => 'USB ケーブルで接続';
+
+  @override
+  String get settingsSendCopied => 'コピーした内容を送信';
+
+  @override
+  String get settingsSendCopiedCaption =>
+      'KDE Connectify に戻るたびに、コピーした内容が接続中のコンピュータに送られます。パスワードも送られるため、不安な場合はオフのままにしてください。';
+
+  @override
+  String get doctorTitle => 'コンピュータが表示されないのはなぜ?';
+
+  @override
+  String get doctorCaption => '原因と対処方法を調べます';
+
+  @override
+  String get doctorAllGood => 'このスマートフォンに問題はありません';
+
+  @override
+  String get doctorAllGoodDetail =>
+      'それでも表示されない場合は、コンピュータのファイアウォールが妨げているか、KDE Connectify が動作していない可能性があります。';
+
+  @override
+  String get doctorWifi => 'Wi-Fi に接続されていません';
+
+  @override
+  String get doctorWifiDetail => 'コンピュータと同じネットワークに接続してください。';
+
+  @override
+  String get doctorHeard => 'このネットワークでデバイスが見つかりません';
+
+  @override
+  String get doctorHeardDetail =>
+      'コンピュータがスリープ中か別のネットワークにあるか、ゲストネットワークのようにルーターがデバイスを分離している可能性があります。';
+
+  @override
+  String get doctorVpn => 'VPN がオンです';
+
+  @override
+  String get doctorVpnDetail =>
+      'コンピュータがこのスマートフォンから見えなくなることがあります。オフにするか、ローカルネットワークを許可してください。';
+
+  @override
+  String get doctorBattery => 'バッテリー節約で KDE Connectify が停止することがあります';
+
+  @override
+  String doctorBatteryDetail(String maker) {
+    return '$maker のスマートフォンはバックグラウンドで KDE Connectify を閉じることがあります。';
+  }
+
+  @override
+  String get doctorPowerSave => 'バッテリーセーバーがオンです';
+
+  @override
+  String get doctorPowerSaveDetail => '画面がオフの間、KDE Connectify の動作が制限されます。';
+
+  @override
+  String get doctorDataSaver => 'データセーバーがオンです';
+
+  @override
+  String get doctorDataSaverDetail =>
+      'バックグラウンドで KDE Connectify が接続できなくなることがあります。';
+
+  @override
+  String get doctorOpenSettings => '設定を開く';
+
+  @override
+  String get doctorShowHow => '方法を見る';
+
+  @override
+  String get doctorCheckAgain => 'もう一度確認';
+
+  @override
+  String get news035DeckTitle => 'デッキをスマホで作る';
+
+  @override
+  String get news035DeckBody =>
+      '鉛筆をタップするか、タイルを長押し。ドラッグして好きな大きさに広げると、ほかのタイルが場所を空けます。スマホを横にすると横向きのデッキも作れます。';
+
+  @override
+  String get news035SnapTitle => 'コンピュータへ撮影';
+
+  @override
+  String get news035SnapBody => 'コンピュータのページやクイック設定タイルから撮影すると、すぐに届いて貼り付けられます。';
+
+  @override
+  String get news035CopyTitle => 'コンピュータへコピー';
+
+  @override
+  String get news035CopyBody =>
+      '任意のアプリでテキストを選択して「コンピュータへコピー」を選びます。接続できないときは、設定 › 接続で理由がわかります。';
+
+  @override
+  String get controlsNoDnd =>
+      '先にスマートフォンで KDE Connectify にサイレントモードへのアクセスを許可してください';
+
+  @override
+  String get controlsNoFlashlight => '今はライトを使用できません';
+
+  @override
+  String get controlsDenied => 'Android で許可されませんでした';
+
+  @override
+  String get snapNoCamera => 'KDE Connectify にはカメラの権限が必要です';
+
+  @override
+  String snapAsked(String name) {
+    return '$name のために撮影';
+  }
+
+  @override
+  String get settingsComputerNotifications => 'コンピュータの通知';
+
+  @override
+  String get settingsComputerNotificationsCaption =>
+      'コンピュータ側でもこのスマートフォン向けにオンにすると、ここに表示されます';
+
+  @override
+  String get settingsDndAccess => 'サイレントモードへのアクセス';
+
+  @override
+  String get settingsDndAccessCaption => 'コンピュータからここのサイレントモードを変更できるようにします';
+
+  @override
+  String get settingsDndAccessOn => '許可済み: コンピュータから変更できます';
+
+  @override
+  String get settingsTurnTaps => '横向きでタップを回転';
+
+  @override
+  String get settingsTurnTapsCaption => 'スマートフォンが横向きのとき、コンピュータからのタップがずれる場合のみ';
+
+  @override
+  String get deckDiscardTitle => '変更を破棄しますか?';
+
+  @override
+  String get deckDiscard => '破棄';
+
+  @override
+  String get deckKeepEditing => '編集を続ける';
+
+  @override
+  String get deckUndo => '元に戻す';
+
+  @override
+  String get deckRedo => 'やり直す';
+
+  @override
+  String get deckCopy => 'コピー';
+
+  @override
+  String get deckPage => 'ページ';
+
+  @override
+  String deckPageN(int n) {
+    return 'ページ $n';
+  }
+
+  @override
+  String deckPages(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n ページ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deckRemoveShort => '削除';
+
+  @override
+  String get deckNoRoom => 'ここには入りません';
+
+  @override
+  String get deckFillForMe => '自動で埋める';
+
+  @override
+  String get deckTryIt => '試す';
+
+  @override
+  String get deckLayouts => 'レイアウト';
+
+  @override
+  String get deckPortrait => '縦向き';
+
+  @override
+  String get deckLandscape => '横向き';
+
+  @override
+  String get deckAddSearch => 'できることを検索';
+
+  @override
+  String get deckLive => 'デッキにライブ表示';
+
+  @override
+  String get deckSuggested => 'おすすめ';
+
+  @override
+  String get deckMusic => '音楽';
+
+  @override
+  String get deckClock => '時計';
+
+  @override
+  String get deckName => '名前';
+
+  @override
+  String get deckDoes => '動作';
+
+  @override
+  String get deckAccent => 'アクセント';
+
+  @override
+  String get deckRename => '名前を変更';
+
+  @override
+  String get deckNewLayout => '新規作成の元';
+
+  @override
+  String get deckBlank => '空白';
+
+  @override
+  String get deckPresenter => 'プレゼンター';
+
+  @override
+  String get deckLandscapeFromPortrait => '縦向きから横向きを作成';
+
+  @override
+  String get deckMade => '完了しました。横向きで確認してください';
+
+  @override
+  String deckUseComputers(String name) {
+    return '$name のものを使う';
+  }
+
+  @override
+  String deckSavedHere(String name) {
+    return '今はこのスマートフォンに保存されます。$name は受け取れるようになるまで自身のものを保持します。';
+  }
+
+  @override
+  String get deckWidth => '幅';
+
+  @override
+  String get deckHeight => '高さ';
+
+  @override
+  String get deckStartFromPortrait => '縦向きのデッキから始める';
+
+  @override
+  String get deckStartEmpty => '空から始める';
+
+  @override
+  String get remoteMiddle => '中央';
+
+  @override
+  String get remoteMiddleClick => '中クリック';
+
+  @override
+  String get remoteSendText => '入力';
+
+  @override
+  String get remoteSendTextCaption =>
+      'キーボードのスワイプ入力、予測変換、修正を使ってここに書き、コンピューターのカーソルの位置に送信します。';
+
+  @override
+  String get remoteSendTextHint => 'メッセージ、検索語、長い行…';
+
+  @override
+  String get remoteSendTextGo => 'コンピューターに送信';
+
+  @override
+  String get settingsEdgeScroll => 'スクロールストリップ';
+
+  @override
+  String get settingsEdgeScrollCaption =>
+      'タッチパッドの右端を指1本でなぞるとスクロールします。片手で使うときに便利です。';
+
+  @override
+  String get settingsKeyboardSuggestions => 'キーボードの候補';
+
+  @override
+  String get settingsKeyboardSuggestionsCaption =>
+      'リモートのキーボードでスワイプ入力と予測変換を使います。オフにすると、押したキーがそのまま送られます。';
+
+  @override
+  String get deckGridTitle => 'グリッド';
+
+  @override
+  String deckGridColumns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 列',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String deckGridRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 行',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deckGridBigger => 'タイルを大きく';
+
+  @override
+  String get deckGridSmaller => 'タイルを小さく';
+
+  @override
+  String get deviceControlNoOverlayPermission =>
+      'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.';
+
+  @override
+  String get deviceSavedCommands => 'Saved Commands';
+
+  @override
+  String get deviceNoCommandsSaved => 'No commands saved on this computer yet';
+
+  @override
+  String get devicePcFiles => 'Computer Files';
+
+  @override
+  String get deviceNoPcFiles => 'Nothing to show here';
+
+  @override
+  String get homeScanQr => 'QR コードを読み取る';
+
+  @override
+  String get homePairByAddress => 'アドレスでペアリング';
 
   @override
   String get deviceMenuMore => 'More actions';

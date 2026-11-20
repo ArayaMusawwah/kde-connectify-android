@@ -7,20 +7,24 @@ import '../core/models.dart';
 
 /// Something another app shared to Linksy: text (maybe a link) or files.
 sealed class SharedIn {
-  const SharedIn({this.device});
+  const SharedIn({this.device, this.quick = false});
 
   /// The device picked in Android's share sheet, if one was: send straight
   /// to it, without asking.
   final String? device;
+
+  /// A snap or copied text: to the one connected computer without asking,
+  /// then back to what was on screen.
+  final bool quick;
 }
 
 class SharedText extends SharedIn {
-  const SharedText(this.text, {super.device});
+  const SharedText(this.text, {super.device, super.quick});
   final String text;
 }
 
 class SharedFiles extends SharedIn {
-  const SharedFiles(this.paths, {super.device});
+  const SharedFiles(this.paths, {super.device, super.quick});
 
   /// Copies in the app's cache.
   final List<String> paths;
@@ -38,23 +42,39 @@ abstract final class LinksyPlatform {
   static final _shares = StreamController<SharedIn>.broadcast();
   static final _batteries = StreamController<Battery>.broadcast();
   static final _callStates = StreamController<String>.broadcast();
+  static final _phoneNotifications =
+      StreamController<Map<String, Object?>>.broadcast();
+  static final _phoneNotificationsGone =
+      StreamController<(String, bool)>.broadcast();
   static final _volumeKeys = StreamController<bool>.broadcast();
   static final _webcamChanges =
       StreamController<(String, Map<String, Object?>)>.broadcast();
   static final _openWebcam = StreamController<String>.broadcast();
   static final _transferAnswers = StreamController<(String, bool)>.broadcast();
   static final _usbPorts = StreamController<int>.broadcast();
-  static final _networkChanges = StreamController<void>.broadcast();
+  static final _controlsChanges = StreamController<void>.broadcast();
+  static final _screenRotations = StreamController<(String, int)>.broadcast();
+  static final _networkChanges =
+      StreamController<Map<String, Object?>>.broadcast();
 
-  /// This phone's networks changed (at most once a second).
-  static Stream<void> get networkChanges {
+  /// What this phone's networks are, when they may have changed (at most once
+  /// a second); `NetworkState` says whether anything a link uses did.
+  static Stream<Map<String, Object?>> get networkChanges {
     _listen();
     return _networkChanges.stream;
   }
 
   static final _directSteps =
       StreamController<(String, Map<String, Object?>)>.broadcast();
+  static final _turnOnAsks = StreamController<void>.broadcast();
+  static final _appInstalls = StreamController<(String?, String)>.broadcast();
   static var _listening = false;
+
+  /// Content under the status and navigation bars. Nothing answers with no
+  /// window (Linksy started with the phone): the app asks again once shown.
+  static void edgeToEdge() =>
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge)
+          .catchError((Object _) {});
 
   /// Calls from Android: pairing links, second-display size and end, and
   /// the QR scanner's results.
@@ -65,6 +85,8 @@ abstract final class LinksyPlatform {
       switch (call.method) {
         case 'link' when call.arguments is String:
           _links.add(call.arguments as String);
+        case 'log' when call.arguments is String:
+          _logs.add(call.arguments as String);
         case 'displaySize':
           final a = call.arguments as Map;
           _displaySizes.add((
@@ -83,6 +105,16 @@ abstract final class LinksyPlatform {
           if (share != null) _shares.add(share);
         case 'callState' when call.arguments is String:
           _callStates.add(call.arguments as String);
+        case 'phoneNotification' when call.arguments is Map:
+          _phoneNotifications.add(
+            (call.arguments as Map).cast<String, Object?>(),
+          );
+        case 'phoneNotificationGone':
+          final a = call.arguments as Map;
+          _phoneNotificationsGone.add((
+            a['key'] as String,
+            a['kept'] as bool? ?? false,
+          ));
         case 'webcamChanged':
           final a = call.arguments as Map;
           _webcamChanges.add((
@@ -91,8 +123,17 @@ abstract final class LinksyPlatform {
           ));
         case 'openWebcam' when call.arguments is String:
           _openWebcam.add(call.arguments as String);
-        case 'networkChanged':
-          _networkChanges.add(null);
+        case 'turnOn':
+          _turnOnAsks.add(null);
+        case 'shown':
+          // The app opened on Linksy started with the phone, which had no
+          // window to lay out edge to edge.
+          edgeToEdge();
+        case 'appInstall' when call.arguments is Map:
+          final a = call.arguments as Map;
+          _appInstalls.add((a['package'] as String?, a['status'] as String));
+        case 'networkChanged' when call.arguments is Map:
+          _networkChanges.add((call.arguments as Map).cast<String, Object?>());
         case 'directStep' when call.arguments is Map:
           final a = (call.arguments as Map).cast<String, Object?>();
           final device = a.remove('device');
@@ -102,6 +143,11 @@ abstract final class LinksyPlatform {
           _transferAnswers.add((a['transfer'] as String, a['accept'] == true));
         case 'volumeKey' when call.arguments is String:
           _volumeKeys.add(call.arguments == 'up');
+        case 'controlsChanged':
+          _controlsChanges.add(null);
+        case 'screenRotation' when call.arguments is Map:
+          final m = call.arguments as Map;
+          _screenRotations.add((m['session'] as String, m['degrees'] as int));
         case 'usbPort' when call.arguments is int:
           _usbPorts.add(call.arguments as int);
         case 'updateStatus' when call.arguments is String:
@@ -121,13 +167,14 @@ abstract final class LinksyPlatform {
   static SharedIn? _shared(Object? args) {
     if (args is! Map) return null;
     final device = args['device'] as String?;
+    final quick = args['quick'] == true;
     final files = (args['files'] as List?)?.cast<String>();
     if (files != null && files.isNotEmpty) {
-      return SharedFiles(files, device: device);
+      return SharedFiles(files, device: device, quick: quick);
     }
     final text = args['text'];
     return text is String && text.trim().isNotEmpty
-        ? SharedText(text, device: device)
+        ? SharedText(text, device: device, quick: quick)
         : null;
   }
 
@@ -200,13 +247,24 @@ abstract final class LinksyPlatform {
   static Future<String?> pickFolder(String kind) =>
       _call<String>('pickFolder', {'kind': kind});
 
+  /// Forgets a folder from [pickFolder], and Android's grant for it.
+  static Future<void> forgetFolder(String kind) =>
+      _call<void>('forgetFolder', {'kind': kind});
+
   /// The name of the folder picked for [kind], if still allowed.
   static Future<String?> folder(String kind) =>
       _call<String>('folder', {'kind': kind});
 
-  /// Lets paired computers browse the `files` folder (or not).
-  static Future<void> shareFiles(bool on) =>
-      _call<void>('shareFiles', {'on': on});
+  /// Lets paired computers browse the `files` folder, or with [all] the
+  /// phone's whole storage (once All files access is allowed), or nothing.
+  static Future<void> shareFiles(bool on, {bool all = false}) =>
+      _call<void>('shareFiles', {'on': on, 'all': all});
+
+  /// All files access: `allowed`, `denied`, or `unsupported` (before Android 11).
+  static Future<String?> allFilesState() => _call<String>('allFilesState');
+
+  /// Android's page that allows All files access for Linksy.
+  static Future<void> allowAllFiles() => _call<void>('allowAllFiles');
 
   /// True when the user granted MANAGE_EXTERNAL_STORAGE for free browsing.
   static Future<bool> isStoragePermissionGranted() async =>
@@ -241,6 +299,88 @@ abstract final class LinksyPlatform {
   static Stream<String> get callStates {
     _listen();
     return _callStates.stream;
+  }
+
+  /// This phone's notifications while [mirrorNotifications] is on and
+  /// Android lets Linksy read them: each new or changed one, in the core's
+  /// shape (docs/protocol.md §4.5).
+  static Stream<Map<String, Object?>> get phoneNotifications {
+    _listen();
+    return _phoneNotifications.stream;
+  }
+
+  /// …and the keys of those that went away.
+  /// The key of one that went, and whether its conversation's reply is kept
+  /// (it can still be answered from a computer).
+  static Stream<(String, bool)> get phoneNotificationsGone {
+    _listen();
+    return _phoneNotificationsGone.stream;
+  }
+
+  /// Whether Android lets Linksy read notifications (Notification access).
+  static Future<bool> notificationAccess() async =>
+      await _call<bool>('notificationAccess') ?? false;
+
+  /// Android's Notification access page for Linksy; whether it's allowed
+  /// once the user comes back.
+  static Future<bool> askNotificationAccess() async =>
+      await _call<bool>('askNotificationAccess') ?? false;
+
+  /// Sends this phone's notifications to [phoneNotifications], or stops.
+  static Future<void> mirrorNotifications(bool on) =>
+      _call<void>('mirrorNotifications', {'on': on});
+
+  /// What the listener kept of a conversation (§4.5): its messages older than
+  /// [before] (ms), oldest first, as a JSON list; and whether there are more.
+  static Future<(String, bool)> inboxHistory(
+    String app,
+    String conversation,
+    int before,
+    int limit,
+  ) async {
+    final page = await _call<Map>('inboxHistory', {
+      'app': app,
+      'conversation': conversation,
+      'before': before,
+      'limit': limit,
+    });
+    final messages = (page?['messages'] as List?)?.cast<String>() ?? const [];
+    return ('[${messages.join(',')}]', page?['more'] as bool? ?? false);
+  }
+
+  /// Lets computers look through the photos ([on]) while Android allows it;
+  /// whether it does (the photo permission, or All files access).
+  static Future<bool> shareGallery(bool on) async =>
+      await _call<bool>('shareGallery', {'on': on}) ?? false;
+
+  /// Forgets every conversation the listener kept.
+  static Future<void> forgetInbox() => _call<void>('forgetInbox');
+
+  /// Answers notification [key] through its own reply; false if it's gone.
+  static Future<bool> replyNotification(String key, String text) async =>
+      await _call<bool>('replyNotification', {'key': key, 'text': text}) ??
+      false;
+
+  /// Presses its button [action] (the id it was sent with).
+  static Future<bool> notificationAction(String key, String action) async =>
+      await _call<bool>('notificationAction', {'key': key, 'action': action}) ??
+      false;
+
+  /// Takes it away, as if swiped.
+  static Future<bool> dismissNotification(String key) async =>
+      await _call<bool>('dismissNotification', {'key': key}) ?? false;
+
+  /// Linksy's App info page in Android's settings.
+  static Future<void> openAppInfo() => _call<void>('openAppInfo');
+
+  /// Who made this phone (`Build.MANUFACTURER`, as written) and its Android
+  /// API level.
+  static Future<({String maker, int sdk})> phoneMaker() async {
+    final m = await _call<Map>('phoneMaker');
+    return (
+      maker: m?['maker'] as String? ?? '',
+      sdk: (m?['sdk'] as num?)?.toInt() ?? 0,
+    );
   }
 
   /// New photos in the `photos` folder after [sinceMs], copied into month
@@ -340,12 +480,50 @@ abstract final class LinksyPlatform {
     'body': body,
   });
 
+  /// A computer's ask while Linksy isn't on screen: a notification whose tap
+  /// opens its sheet ([turnOnAsks], [takeTurnOn]).
+  static Future<void> noticeTurnOn({
+    required String device,
+    required String name,
+    required String feature,
+    required String title,
+    required String body,
+  }) => _call<void>('noticeTurnOn', {
+    'id': 'turn-on-$device-$feature',
+    'name': name,
+    'feature': feature,
+    'title': title,
+    'body': body,
+  });
+
+  /// Such a tap while the app runs: [takeTurnOn] has it.
+  static Stream<void> get turnOnAsks {
+    _listen();
+    return _turnOnAsks.stream;
+  }
+
+  /// The computer's name and the feature of such a tap, once. Android keeps
+  /// it until asked, so a tap that started the app isn't lost.
+  static Future<(String, String)?> takeTurnOn() async {
+    final ask = await _call<Object?>('takeTurnOn');
+    if (ask is! Map) return null;
+    return (ask['name'] as String? ?? '', ask['feature'] as String? ?? '');
+  }
+
+  /// A ping or a link from a computer while Linksy isn't on screen: a
+  /// notification that buzzes and opens the app.
+  static Future<void> noticeArrived(String id, String title, String body) =>
+      _call<void>('noticeArrived', {'id': id, 'title': title, 'body': body});
+
   static Future<void> cancelNotice(String transfer) =>
       _call<void>('cancelNotice', {'transfer': transfer});
 
   /// Whether this phone can host a direct link (Wi-Fi Direct, Android 10+).
   static Future<Map<String, String>> deviceReport() async =>
       (await _call<Map>('deviceReport'))?.cast<String, String>() ?? {};
+
+  /// What Linksy takes of the phone's memory, as one line for the log.
+  static Future<String?> memory() => _call<String>('memory');
 
   static Future<bool> directHost() async =>
       await _call<bool>('directHost') ?? false;
@@ -382,13 +560,188 @@ abstract final class LinksyPlatform {
     return _transferAnswers.stream;
   }
 
-  /// Moves received files into Downloads/Linksy (Android 10+); returns where
+  /// Moves received files into the chosen folder, else Downloads/Linksy
+  /// (Android 10+); returns where
   /// each one is now (a `content://` URI, or the same path if it stayed).
   static Future<List<String>> publishDownloads(List<String> paths) async =>
       (await _call<List<Object?>>('publishDownloads', {
         'paths': paths,
       }))?.cast<String>() ??
       paths;
+
+  /// This phone's apps that can travel (§4.22).
+  static Future<List<Map<Object?, Object?>>> phoneApps() async =>
+      (await _call<List<Object?>>('phoneApps'))?.cast() ?? const [];
+
+  /// Its photo albums, newest first.
+  static Future<List<Map<Object?, Object?>>> phoneAlbums() async =>
+      (await _call<List<Object?>>('phoneAlbums'))?.cast() ?? const [];
+
+  /// A page of its photos and videos older than [before], newest first.
+  static Future<List<Map<Object?, Object?>>> phoneMedia({
+    String? album,
+    int? before,
+    int limit = 200,
+  }) async =>
+      (await _call<List<Object?>>('phoneMedia', {
+        'album': album,
+        'before': before,
+        'limit': limit,
+      }))?.cast() ??
+      const [];
+
+  /// A small JPEG of one of them.
+  static Future<Uint8List?> phoneThumb(int id, {required bool video}) =>
+      _call<Uint8List>('phoneThumb', {'id': id, 'video': video});
+
+  /// This phone's volumes, ringer, Do Not Disturb and flashlight (§4.24).
+  static Future<Map<String, Object?>?> controlsRead() async =>
+      (await _call<Map<Object?, Object?>>('controlsRead'))
+          ?.cast<String, Object?>();
+
+  /// Applies [change]; what couldn't be done comes back with why: `dnd`,
+  /// `flashlight` or `denied`.
+  static Future<Map<String, String>> controlsSet(
+    Map<String, Object?> change,
+  ) async =>
+      (await _call<Map<Object?, Object?>>(
+        'controlsSet',
+        change,
+      ))?.cast<String, String>() ??
+      const {};
+
+  /// Tells [controlsChanges] about changes, by the phone's own buttons too.
+  static Future<void> controlsWatch({required bool on}) =>
+      _call<void>('controlsWatch', on);
+
+  static Stream<void> get controlsChanges {
+    _listen();
+    return _controlsChanges.stream;
+  }
+
+  /// Android lets Linksy change Do Not Disturb.
+  static Future<bool> dndAccess() async =>
+      await _call<bool>('dndAccess') ?? false;
+
+  static Future<void> openDndAccess() => _call<void>('openDndAccess');
+
+  /// A computer's own notification, in its own channel (§4.25).
+  static Future<void> computerNotice({
+    required String computer,
+    required String key,
+    required String app,
+    required String title,
+    required String body,
+    required int atMs,
+  }) => _call<void>('computerNotice', {
+    'computer': computer,
+    'key': key,
+    'app': app,
+    'title': title,
+    'body': body,
+    'at': atMs,
+  });
+
+  /// Out of sight, a computer's snap asks through a notification: Android
+  /// won't start the camera from the background.
+  static Future<void> snapNotice(String device, String title) =>
+      _call<void>('snapNotice', {'device': device, 'title': title});
+
+  /// A smaller copy of a picture for a clipboard; null if it can't be made.
+  static Future<String?> shrinkPicture(String path) =>
+      _call<String>('shrinkPicture', path);
+
+  /// (session, degrees) when the display turns while it's shared.
+  static Stream<(String, int)> get screenRotations {
+    _listen();
+    return _screenRotations.stream;
+  }
+
+  /// Opens the camera, and sends the picture to [device], or asks where.
+  static Future<void> snap([String? device]) => _call<void>('snap', device);
+
+  /// The deck over the whole screen, past a camera cut-out too.
+  static Future<void> fullScreen({required bool on}) =>
+      _call<void>('fullScreen', on);
+
+  /// The display at its fastest while a screen is shown.
+  static Future<void> highRefresh({required bool on}) =>
+      _call<void>('highRefresh', on);
+
+  /// Plugged into something by USB that isn't only a charger, as far as
+  /// Android says.
+  static Future<bool> usbPlugged() async =>
+      await _call<bool>('usbPlugged') ?? false;
+
+  /// Who made this phone, and its model.
+  static Future<(String, String)> phoneModel() async {
+    final m = await _call<Map<Object?, Object?>>('phoneModel');
+    return (m?['maker'] as String? ?? '', m?['model'] as String? ?? '');
+  }
+
+  /// What the Connection Doctor looks at.
+  static Future<Map<String, bool>> connectionFacts() async =>
+      (await _call<Map<Object?, Object?>>('connectionFacts'))
+          ?.cast<String, bool>() ??
+      const {};
+
+  /// A page of Android's settings: `wifi`, `vpn`, `saver` or `data`.
+  static Future<void> openSystem(String page) =>
+      _call<void>('openSystem', page);
+
+  /// A small JPEG of a file, by its path or `content://` URI; null if gone.
+  static Future<Uint8List?> thumbOf(String ref) =>
+      _call<Uint8List>('thumbOf', {'ref': ref});
+
+  /// Starts an installed app.
+  static Future<void> openApp(String package) =>
+      _call<void>('openApp', {'package': package});
+
+  /// An installed app's icon; null if it isn't here.
+  static Future<Uint8List?> appIcon(String package) =>
+      _call<Uint8List>('appIcon', {'package': package});
+
+  /// What only this phone knows for a preflight's answer, ready to send.
+  static Future<Map<Object?, Object?>> preflightFacts(
+    List<Map<String, Object?>> probes,
+  ) async =>
+      await _call<Map<Object?, Object?>>('preflightFacts', {
+        'probes': probes,
+      }) ??
+      const {};
+
+  /// Installs apps one after the other, Android asking each time. The
+  /// outcomes come on [appInstalls], and the files go.
+  static Future<void> installApps(List<Map<String, Object?>> apps) =>
+      _call<void>('installApps', {'apps': apps});
+
+  /// `(package, status)`: `installed`, `cancelled`, `mismatch`, `other_signer`
+  /// or `failed:…`, and `(null, done)` at the end.
+  static Stream<(String?, String)> get appInstalls {
+    _listen();
+    return _appInstalls.stream;
+  }
+
+  static Future<void> deleteFiles(List<String> paths) =>
+      _call<void>('deleteFiles', {'paths': paths});
+
+  /// A folder to send, copied where the core can read it; null if cancelled.
+  static Future<String?> pickSendFolder() => _call<String>('pickSendFolder');
+
+  /// Shows a place in the phone's own map app. False if there's none.
+  static Future<bool> openMap(double lat, double lon) async =>
+      await _call<bool>('openMap', {'lat': lat, 'lon': lon}) ?? false;
+
+  /// Leaves the screen with Linksy running, as Home does.
+  static Future<void> toBackground() => _call<void>('toBackground');
+
+  /// Moves files the core finished with nobody there to move them, all but
+  /// [keep]; returns where they went.
+  static Future<List<String>> publishLeftovers(List<String> keep) async =>
+      (await _call<List<Object?>>('publishLeftovers', {
+        'keep': keep,
+      }))?.cast<String>() ??
+      const [];
 
   /// A running webcam's capabilities and controls (see CameraShare.kt).
   static Future<Map<String, Object?>?> webcamState(String session) async {
@@ -496,6 +849,11 @@ abstract final class LinksyPlatform {
   static Future<void> keepScreenOn(String session, {required bool on}) =>
       _call<void>('keepScreenOn', {'session': session, 'on': on});
 
+  /// This window at [level] of full brightness (never brighter than the
+  /// user's own), or back to the phone's own with null.
+  static Future<void> dimScreen(double? level) =>
+      _call<void>('dimScreen', {'level': level});
+
   /// Android 15's screen share protections: `on`, `off`, `unknown`, or null
   /// before Android 15.
   static Future<String?> shareProtections() =>
@@ -542,6 +900,15 @@ abstract final class LinksyPlatform {
   static Stream<int> get usbPorts {
     _listen();
     return _usbPorts.stream;
+  }
+
+  static final _logs = StreamController<String>.broadcast();
+
+  /// Lines for the Logs page from Android's side: the video encoder, the
+  /// camera, the screen capture.
+  static Stream<String> get logs {
+    _listen();
+    return _logs.stream;
   }
 
   /// A cable plugged in before the app was listening.

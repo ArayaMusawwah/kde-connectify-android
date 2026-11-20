@@ -178,6 +178,83 @@ class RustNode implements LinksyNode {
     name: tr.errorComputerOnCable,
   );
 
+  static SendPlan? _plan(String? json) =>
+      json == null ? null : SendPlan.fromJson((jsonDecode(json) as Map).cast());
+
+  @override
+  SendPlan? planSend(String id, int bytes) {
+    try {
+      return _plan(_node.planSend(id: id, bytes: BigInt.from(bytes)));
+    } on Object {
+      return null;
+    }
+  }
+
+  @override
+  Future<SendPlan?> prepareSend(String id, int bytes) async {
+    try {
+      return _plan(await _node.prepareSend(id: id, bytes: BigInt.from(bytes)));
+    } on Object {
+      return null;
+    }
+  }
+
+  @override
+  Future<PreflightReply?> preflight(
+    String id,
+    int bytes,
+    int files,
+    List<AppProbe> probes,
+  ) async {
+    try {
+      final json = await _node.preflight(
+        id: id,
+        bytes: BigInt.from(bytes),
+        files: files,
+        probesJson: jsonEncode([for (final p in probes) p.toJson()]),
+      );
+      return PreflightReply.fromJson((jsonDecode(json) as Map).cast());
+    } on Object {
+      // An older device, or no answer in time: send anyway.
+      return null;
+    }
+  }
+
+  @override
+  Stream<PreflightCall> get preflightCalls => _node.preflightCalls().map(
+    (json) => PreflightCall.fromJson((jsonDecode(json) as Map).cast()),
+  );
+
+  @override
+  void answerPreflight(int call, Map<Object?, Object?> facts) {
+    try {
+      _node.answerPreflight(
+        call: BigInt.from(call),
+        answerJson: jsonEncode(facts),
+      );
+    } on Object {
+      // Gone: the core has answered.
+    }
+  }
+
+  @override
+  Future<void> locate(String id) =>
+      _guard(() => _node.locate(id: id), name: _nameOf(id));
+
+  @override
+  Future<String> sendBundle(
+    String id,
+    List<String> paths,
+    List<AppBundle> apps,
+  ) => _guard(
+    () => _node.sendBundle(
+      id: id,
+      paths: paths,
+      appsJson: jsonEncode([for (final a in apps) a.toJson()]),
+    ),
+    name: _nameOf(id),
+  );
+
   @override
   Future<String> sendFiles(String id, List<String> paths) => _guard(
     () => _node.sendFiles(id: id, paths: paths),
@@ -218,6 +295,36 @@ class RustNode implements LinksyNode {
   );
 
   @override
+  Future<void> sendControlsState(String id, String stateJson) => _guard(
+    () => _node.sendControlsState(id: id, stateJson: stateJson),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> refuseControls(String id, String what, String reason) => _guard(
+    () => _node.refuseControls(id: id, what: what, reason: reason),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> refuseSnap(String id, String reason) => _guard(
+    () => _node.refuseSnap(id: id, reason: reason),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> sendScreenRotation(String id, int degrees) => _guard(
+    () => _node.sendScreenRotation(id: id, degrees: degrees),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> usbConnect(String id, String key) => _guard(
+    () => _node.usbConnect(id: id, key: key),
+    name: _nameOf(id),
+  );
+
+  @override
   Future<void> ring(String id, {required bool on}) => _guard(
     () => _node.ring(id: id, on_: on),
     name: _nameOf(id),
@@ -228,8 +335,12 @@ class RustNode implements LinksyNode {
       _guard(() => _node.startInput(id: id), name: _nameOf(id));
 
   @override
-  Future<String> startView(String id, {required bool control}) => _guard(
-    () => _node.startView(id: id, control: control),
+  Future<String> startView(
+    String id, {
+    required bool control,
+    bool choose = false,
+  }) => _guard(
+    () => _node.startView(id: id, control: control, choose: choose),
     name: _nameOf(id),
   );
 
@@ -299,6 +410,60 @@ class RustNode implements LinksyNode {
   @override
   Future<void> sendCallState(String id, String state) => _guard(
     () => _node.sendCallState(id: id, state: state),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> setFeatures(List<String> features) =>
+      _node.setFeatures(features: features);
+
+  @override
+  Future<void> postNotification(String id, Map<String, Object?> notification) =>
+      _guard(
+        () => _node.postNotification(
+          id: id,
+          notificationJson: jsonEncode(notification),
+        ),
+        name: _nameOf(id),
+      );
+
+  @override
+  Future<void> removeNotification(
+    String id,
+    String key, {
+    bool replyKept = false,
+  }) => _guard(
+    () => _node.removeNotification(id: id, key: key, replyKept: replyKept),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> inboxHistoryPage(
+    String id,
+    String app,
+    String conversation,
+    String messagesJson, {
+    required bool more,
+  }) => _guard(
+    () => _node.inboxHistoryPage(
+      id: id,
+      app: app,
+      conversation: conversation,
+      messagesJson: messagesJson,
+      more: more,
+    ),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> deckOpen(String id, {required bool open}) => _guard(
+    () => _node.deckOpen(id: id, open: open),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> deckRun(String id, String action, {double? value}) => _guard(
+    () => _node.deckRun(id: id, action: action, value: value),
     name: _nameOf(id),
   );
 
@@ -514,8 +679,10 @@ class RustNode implements LinksyNode {
     } on LinksyException {
       rethrow;
     } on Object catch (e) {
+      final error = e is String ? e : '$e';
       throw LinksyException(
-        describeCoreError(e is String ? e : '$e', name ?? tr.errorOtherDevice),
+        describeCoreError(error, name ?? tr.errorOtherDevice),
+        kind: error.split(':').first,
       );
     }
   }

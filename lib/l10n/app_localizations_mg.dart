@@ -180,10 +180,6 @@ class AppLocalizationsMg extends AppLocalizations {
       'Mila alalana hampiasa ny mikrô i KDE Connectify mba ho mikrô.';
 
   @override
-  String get deviceControlNoOverlayPermission =>
-      'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.';
-
-  @override
   String get ctlTerminalTitle => 'Terminal';
 
   @override
@@ -454,18 +450,6 @@ class AppLocalizationsMg extends AppLocalizations {
   }
 
   @override
-  String get deviceSavedCommands => 'Saved Commands';
-
-  @override
-  String get deviceNoCommandsSaved => 'No commands saved on this computer yet';
-
-  @override
-  String get devicePcFiles => 'Computer Files';
-
-  @override
-  String get deviceNoPcFiles => 'Nothing to show here';
-
-  @override
   String get deviceFilterAll => 'Rehetra';
 
   @override
@@ -579,7 +563,7 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get deviceAwayAllOff =>
-      'Avy lavitra: clipboard, rohy, rakitra ary feo fiantsoana ihany';
+      'Avy lavitra: clipboard, rohy, rakitra, feo fiantsoana, sary ary fanaraha-maso';
 
   @override
   String get deviceNothingShared => 'Mbola tsy misy nozaraina';
@@ -706,6 +690,10 @@ class AppLocalizationsMg extends AppLocalizations {
   String get activityInProgress => 'Mandeha';
 
   @override
+  String get activityReconnecting =>
+      'Tapaka ny fifandraisana, hitohy rehefa miverina';
+
+  @override
   String get activityCopiedHere => 'Voadika eto';
 
   @override
@@ -820,12 +808,6 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get homeConnectSubtitle =>
       'Mivantana amin\'ny Wi-Fi-nao. Tsy mila kaonty, tsy misy cloud.';
-
-  @override
-  String get homeScanQr => 'Vakio ny QR code';
-
-  @override
-  String get homePairByAddress => 'Ampifandraiso amin\'ny adiresy';
 
   @override
   String get pairingAddDevice => 'Hanampy fitaovana';
@@ -1160,10 +1142,29 @@ class AppLocalizationsMg extends AppLocalizations {
   String get settingsTitle => 'Fikirana';
 
   @override
+  String get settingsSearch => 'Hikaroka ao amin\'ny fikirana';
+
+  @override
+  String settingsNothingMatches(String query) {
+    return 'Tsy misy mifanaraka amin\'ny « $query »';
+  }
+
+  @override
+  String get settingsRecommended => 'Soso-kevitra';
+
+  @override
   String get settingsReceiving => 'Fandraisana';
 
   @override
+  String get settingsFiles => 'Rakitra';
+
+  @override
   String get settingsSaveLocation => 'Toerana itahirizana';
+
+  @override
+  String settingsSaveLocationUse(String path) {
+    return 'Ampiasao $path';
+  }
 
   @override
   String get settingsSaveLocationPath => 'Downloads › KDE Connectify';
@@ -1179,6 +1180,9 @@ class AppLocalizationsMg extends AppLocalizations {
   String get settingsConnection => 'Fifandraisana';
 
   @override
+  String get settingsWays => 'Ny fomba hifandraisany amin\'ny solosainanao';
+
+  @override
   String get settingsStayConnected => 'Mifandray foana';
 
   @override
@@ -1191,6 +1195,13 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get settingsKeepRunningCaption =>
       'Mbola mandeha ny rakitra, ny fitahirizana sary ary ny antso na dia mikatona aza i KDE Connectify. Misy fampahafantarana mangina.';
+
+  @override
+  String get settingsStartAtBoot => 'Mandeha rehefa mandeha ny finday';
+
+  @override
+  String get settingsStartAtBootCaption =>
+      'Aorian\'ny famerenana alefa, hitan\'ny solosainao ity finday ity na tsy sokafana aza i KDE Connectify. Mampiseho fampahafantarana mangina.';
 
   @override
   String get settingsAwayFromHome => 'Lavitra ny trano';
@@ -1221,6 +1232,20 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get settingsBrowseFiles => 'Avelao hijery rakitra ny solosaina';
+
+  @override
+  String get settingsFilesFolder => 'Lahatahiry nofidinao';
+
+  @override
+  String get settingsFilesAll => 'Ny rakitra rehetra';
+
+  @override
+  String get settingsFilesAllCaption =>
+      'Afaka manokatra ny rakitra rehetra amin\'ity finday ity ny solosainanao.';
+
+  @override
+  String get settingsFilesAllAllow =>
+      'Avelao ny « Fidirana amin\'ny rakitra rehetra » ho an\'i KDE Connectify ao amin\'ny fikirana Android.';
 
   @override
   String get settingsBrowseFilesChoose =>
@@ -1409,6 +1434,14 @@ class AppLocalizationsMg extends AppLocalizations {
       'Rantsantanana iray hanetsehana, tsindrio hipihana\nRantsantanana roa hanakodiavana, tsindrio amin\'ny roa ho an\'ny pitika havanana';
 
   @override
+  String get remoteDragHint =>
+      'Tsindrio indroa dia asosay mba hitarihana, tsindrio raha hamela';
+
+  @override
+  String get remoteDragging =>
+      'Mitarika. Aingao ny rantsantanana dia tohizo, tsindrio raha hamela';
+
+  @override
   String get remoteLeftClick => 'Pitika havia';
 
   @override
@@ -1438,6 +1471,75 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get remoteVolumeHint =>
       'Feo midina: manaraka · Feo miakatra: hiverina. Mijanona mirehitra ny efijery.';
+
+  @override
+  String get remoteBrowser => 'Navigatera';
+
+  @override
+  String get remoteWebBack => 'Hiverina';
+
+  @override
+  String get remoteWebForward => 'Mandroso';
+
+  @override
+  String get remoteWebReload => 'Avaozina';
+
+  @override
+  String get remoteWebHome => 'Fandraisana';
+
+  @override
+  String get remoteWebNewTab => 'Tabilao vaovao';
+
+  @override
+  String get remoteWebCloseTab => 'Hidio ny tabilao';
+
+  @override
+  String get remoteWebNextTab => 'Tabilao manaraka';
+
+  @override
+  String get remoteWebPrevTab => 'Tabilao teo aloha';
+
+  @override
+  String get remoteWebAddress => 'Adiresy';
+
+  @override
+  String get remoteWebHint =>
+      'Mifehy ny navigatera eo anoloana amin’ny solosaina.';
+
+  @override
+  String get remoteFirstSlide => 'Voalohany';
+
+  @override
+  String get remoteLastSlide => 'Farany';
+
+  @override
+  String get remoteBlackScreen => 'Efijery mainty';
+
+  @override
+  String get remoteWhiteScreen => 'Efijery fotsy';
+
+  @override
+  String get remoteFromHere => 'Manomboka eto';
+
+  @override
+  String get remoteModHint =>
+      'Tsindrio: miaraka amin’ny lakile manaraka. Tazony: irery.';
+
+  @override
+  String get switchTitle => 'Hifindra amin’ny';
+
+  @override
+  String get switchHere => 'Eto';
+
+  @override
+  String get switchOpen => 'Misokatra';
+
+  @override
+  String get settingsPointerSpeed => 'Hafainganan’ny touchpad';
+
+  @override
+  String get settingsPointerSpeedCaption =>
+      'Hatraiza no mandeha ny tondro amin’ny solosaina amin’ny fikasihana iray ihany';
 
   @override
   String get ringTitle => 'Ato aho!';
@@ -1826,6 +1928,14 @@ class AppLocalizationsMg extends AppLocalizations {
   }
 
   @override
+  String get displayChooseScreen => 'Hifidy efijery';
+
+  @override
+  String displayChooseOn(String name) {
+    return 'Fidio ny efijery ao amin\'i $name…';
+  }
+
+  @override
   String terminalTabClosed(String title) {
     return 'Nikatona “$title”';
   }
@@ -1982,6 +2092,9 @@ class AppLocalizationsMg extends AppLocalizations {
   }
 
   @override
+  String get usbConnecting => 'Mampifandray amin’ny tariby USB…';
+
+  @override
   String get usbPairTitle => 'Misy solosaina amin’ny tariby';
 
   @override
@@ -2122,6 +2235,14 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get updateLater => 'Any aoriana';
+
+  @override
+  String updateWhatChanged(String version) {
+    return 'Ny niova ao amin\'ny $version';
+  }
+
+  @override
+  String get updateToInstall => 'Hapetraka';
 
   @override
   String updateDownloading(String percent) {
@@ -2343,6 +2464,1089 @@ class AppLocalizationsMg extends AppLocalizations {
   String pairingUpdateOlder(String name) {
     return 'Rehefa havaozina ny KDE Connectify ao amin\'ny $name, vao mainka azo antoka ny fampifandraisana.';
   }
+
+  @override
+  String get settingsPhoneNotifications =>
+      'Asehoy ny fampandrenesan\'ity finday ity';
+
+  @override
+  String get settingsPhoneNotificationsCaption =>
+      'Ao amin\'ny solosainao, miaraka amin\'ny Valio ho an\'ny hafatra.';
+
+  @override
+  String get settingsPhoneNotificationsAllow =>
+      'Mbola tsy nanome alalana ny Android. Tsindrio mba hanomezana alalana hamaky ny fampandrenesana.';
+
+  @override
+  String get noticeAccessTitle => 'Omeo alalana hamaky ny fampandrenesana';
+
+  @override
+  String get noticeAccessGreyed =>
+      'Manamaizina io bokotra io ny Android ho an\'ny app nampidirina avy amin\'ny tranonkala. Mba hanomezana alalana:';
+
+  @override
+  String get noticeAccessStepInfo =>
+      'Sokafy ny Mombamomba ny app ho an\'ny KDE Connectify.';
+
+  @override
+  String get noticeAccessStepRestricted =>
+      'Tsindrio ny ⋮ eo ambony havanana, avy eo Avelao ny fikirana voafetra.';
+
+  @override
+  String get noticeAccessStepAgain =>
+      'Sokafy indray ny Fidirana amin\'ny fampandrenesana ary alefaso ny KDE Connectify.';
+
+  @override
+  String get noticeAccessPlain =>
+      'Alefaso ny KDE Connectify ao amin\'ny Fidirana amin\'ny fampandrenesana an\'ny Android, dia miverena.';
+
+  @override
+  String get commonOpenAppInfo => 'Sokafy ny Mombamomba ny app';
+
+  @override
+  String get batteryGuide => 'Tazomy ho velona ny KDE Connectify';
+
+  @override
+  String batteryGuideCaption(String maker) {
+    return 'Izay ovaina amin\'ity finday $maker ity';
+  }
+
+  @override
+  String batteryIntro(String maker) {
+    return 'Mba hitsitsiana bateria, misy finday manidy ny app ao ambadika, ka tsy mahazo rakitra sy fampandrenesana ny KDE Connectify. Amin\'ity finday $maker ity:';
+  }
+
+  @override
+  String get batteryAutostart =>
+      'Mombamomba ny app › Fanombohana ho azy: alefa.';
+
+  @override
+  String get batteryXiaomiSaver =>
+      'Mombamomba ny app › Fitsitsiana bateria: Tsy misy fetra.';
+
+  @override
+  String get batteryLockRecents =>
+      'Ao amin\'ny app vao nampiasaina, tazony ny KDE Connectify ary tsindrio ny hidy, mba tsy hikatona izy rehefa diovinao ireo.';
+
+  @override
+  String get batterySamsungUnrestricted =>
+      'Mombamomba ny app › Bateria: Tsy voafetra.';
+
+  @override
+  String get batterySamsungSleeping =>
+      'Fikirana › Bateria › Fetran\'ny fampiasana ao ambadika: esory amin\'ny app matory sy matory lalina ny KDE Connectify.';
+
+  @override
+  String get batteryOppoBackground =>
+      'Mombamomba ny app › Fampiasana bateria: avelao ny asa ao ambadika, ny asa eo anoloana ary ny fanombohana ho azy.';
+
+  @override
+  String get batteryVivoBackground =>
+      'Fikirana › Bateria › Fanjifana herinaratra ao ambadika: avelao ny KDE Connectify.';
+
+  @override
+  String get batteryHuaweiLaunch =>
+      'Fikirana › Bateria › Fanombohana app › KDE Connectify: tantano tanana, ka alefaso ny Fanombohana ho azy, Fanombohana faharoa ary Mandeha ao ambadika.';
+
+  @override
+  String get batteryUnrestricted =>
+      'Mombamomba ny app › Fampiasana bateria an\'ny app: Tsy voafetra.';
+
+  @override
+  String get batteryKeepRunning =>
+      'Ao amin\'ny KDE Connectify: Fikirana › Fifandraisana › Mandeha foana ao ambadika.';
+
+  @override
+  String get batteryNames =>
+      'Miova kely ny anarana arakaraka ny dikan\'ny Android.';
+
+  @override
+  String get updatePlayProtect =>
+      'Afaka mampiseho ny fampandrenesanao ao amin\'ny solosainao ny KDE Connectify, ka mety hanakana ny fametrahana ny Play Protect. Raha izany:';
+
+  @override
+  String get updateProtectStep1 =>
+      'Play Store › ny sarinao › Play Protect › ⚙.';
+
+  @override
+  String get updateProtectStep2 =>
+      'Vonoy ny Hamaky ny app amin\'ny Play Protect.';
+
+  @override
+  String get updateProtectStep3 =>
+      'Tsindrio indray ny Havaozy izao, dia avereno alefa ny famakiana.';
+
+  @override
+  String get news032NotificationsTitle =>
+      'Ny fampandrenesanao ao amin\'ny solosainao';
+
+  @override
+  String get news032NotificationsBody =>
+      'Miseho ao amin\'ny solosaina mifandray aminao ny hafatra sy ny fampandrenesana hafa, miaraka amin\'ny Valio. Alefaso ao amin\'ny Fikirana › Miaraka amin\'ny solosainao. Raha manamaizina ny bokotra ny Android: Mombamomba ny app › ⋮ › Avelao ny fikirana voafetra.';
+
+  @override
+  String get news032BatteryTitle => 'Tazomy ho velona ny KDE Connectify';
+
+  @override
+  String get news032BatteryBody =>
+      'Fikirana › Fifandraisana › Tazomy ho velona ny KDE Connectify dia mampiseho izay ovaina arakaraka ny marika findainao mba hijanonan\'ny KDE Connectify mandeha ao ambadika.';
+
+  @override
+  String get settingsReduceMotion => 'Ahenoy ny fihetsiketsehana';
+
+  @override
+  String get settingsReduceMotionCaption =>
+      'Miseho moramora ny efijery fa tsy mitsoaka, ary manjavozavo ny bokotra fa tsy mihena.';
+
+  @override
+  String get deviceDeck => 'Deck';
+
+  @override
+  String deviceDeckCaption(String name) {
+    return 'Ny bokotrao manokana ho an\'i $name';
+  }
+
+  @override
+  String get deckEdit => 'Ovay';
+
+  @override
+  String get deckDone => 'Vita';
+
+  @override
+  String deckAsking(String name) {
+    return 'Manontany an\'i $name izay azon\'ny deck atao…';
+  }
+
+  @override
+  String deckAway(String name) {
+    return 'Tsy mifandray i $name. Mandeha ny deck rehefa mifandray izy.';
+  }
+
+  @override
+  String deckNothingOffered(String name) {
+    return 'Mbola tsy mamela ny deck hanao na inona na inona i $name. Alefaso ny asany ao amin\'ny KDE Connectify eo amin\'ny solosaina.';
+  }
+
+  @override
+  String get deckEmptyPage =>
+      'Mbola tsy misy na inona na inona eto. Tsindrio ny Ovay, avy eo Ampio.';
+
+  @override
+  String get deckAdd => 'Ampio';
+
+  @override
+  String get deckAddTitle => 'Ampio amin\'ny deck';
+
+  @override
+  String get deckUnavailable => 'Tsy misy';
+
+  @override
+  String get deckGroupMedia => 'Haino aman-jery';
+
+  @override
+  String get deckGroupSound => 'Feo';
+
+  @override
+  String get deckGroupSystem => 'Rafitra';
+
+  @override
+  String get deckGroupCommands => 'Baiko';
+
+  @override
+  String get deckKindButton => 'Bokotra';
+
+  @override
+  String get deckKindToggle => 'Mandeha na tsia';
+
+  @override
+  String get deckKindSlider => 'Slider';
+
+  @override
+  String get deckSize => 'Habe';
+
+  @override
+  String get deckSizeSmall => 'Kely';
+
+  @override
+  String get deckSizeWide => 'Midadasika';
+
+  @override
+  String get deckSizeTall => 'Lava';
+
+  @override
+  String get deckSizeBig => 'Lehibe';
+
+  @override
+  String get deckSizeRow => 'Andalana iray manontolo';
+
+  @override
+  String get deckColor => 'Loko';
+
+  @override
+  String get deckIcon => 'Sary famantarana';
+
+  @override
+  String get deckRemove => 'Esory amin\'ny deck';
+
+  @override
+  String get deckNewPage => 'Pejy vaovao';
+
+  @override
+  String get deckRemovePage => 'Esory ity pejy ity';
+
+  @override
+  String get deckMoveHint =>
+      'Tazony ny bokotra ary sintony hanetsiketsehana azy.';
+
+  @override
+  String get settingsGallery => 'Sary ao amin\'ny solosainao';
+
+  @override
+  String get settingsGalleryCaption =>
+      'Afaka mijery ny sary sy horonan-tsarin\'ity finday ity ny solosainao, ary mitahiry izay safidinao.';
+
+  @override
+  String get settingsGalleryDenied =>
+      'Avelao ny KDE Connectify hahita ny sarinao ao amin\'ny fikirana Android.';
+
+  @override
+  String get deckGroupNetwork => 'Tambajotra';
+
+  @override
+  String get deckGroupPower => 'Herinaratra';
+
+  @override
+  String get deckThemeTitle => 'Endrika';
+
+  @override
+  String deckThemeAsMade(String name) {
+    return 'Toy ny ao amin\'i $name';
+  }
+
+  @override
+  String get deckThemesShared => 'Ao amin\'ny solosaina koa';
+
+  @override
+  String get deckThemesPhone => 'Amin\'ity finday ity ihany';
+
+  @override
+  String get deckThemeStock => 'Fenitra';
+
+  @override
+  String get deckThemeDots => 'Teboka';
+
+  @override
+  String get deckThemeEink => 'E-Ink';
+
+  @override
+  String get deckThemeTerm => 'Terminal';
+
+  @override
+  String get deckThemePixel => 'Pixel';
+
+  @override
+  String get deckThemeSignal => 'Signal';
+
+  @override
+  String get deckThemeGlass => 'Fitaratra';
+
+  @override
+  String get deckThemeMidnight => 'Misasakalina';
+
+  @override
+  String deckNotAvailable(String name) {
+    return 'Tsy misy ao amin\'i $name';
+  }
+
+  @override
+  String get deckAwayShort => 'Tsy mifandray';
+
+  @override
+  String deckAwayNote(String name) {
+    return 'Tsy mifandray i $name. Mandeha ny bokotra rehefa mifandray izy.';
+  }
+
+  @override
+  String get deckNothingPlaying => 'Tsy misy mandeha';
+
+  @override
+  String get deckPickPlayer => 'Mpamaky inona no fehezina';
+
+  @override
+  String get deckDisplay => 'Fisehoana';
+
+  @override
+  String get deckFullScreen => 'Efijery feno';
+
+  @override
+  String get deckFullScreenCaption =>
+      'Manafina ny bara ambony sy ambany. Asosay avy eo amin\'ny sisiny raha hijery azy.';
+
+  @override
+  String get deckSwipeForMenu => 'Asosay avy any ambony ho an\'ny menio';
+
+  @override
+  String get deckFromPhone => 'Avy amin\'ity finday ity';
+
+  @override
+  String get deckShortcut => 'Hitsin-dalana';
+
+  @override
+  String get deckTypeText => 'Manoratra lahatsoratra';
+
+  @override
+  String get deckOpenLink => 'Sokafy rohy';
+
+  @override
+  String get deckKeys => 'Lakile';
+
+  @override
+  String get deckKeyHint => 'Lakile iray: T, F5, Tab, Left…';
+
+  @override
+  String get deckTextHint => 'Izay hosoratana amin\'ny solosaina';
+
+  @override
+  String get deckLinkHint => 'Adiresy, toy ny example.com';
+
+  @override
+  String get deckSetUpFirst => 'Amboary aloha: tazony mba hanovana';
+
+  @override
+  String get deckShow => 'Asehony';
+
+  @override
+  String get deckShowBoth => 'Kisary sy anarana';
+
+  @override
+  String get deckShowIcon => 'Kisary';
+
+  @override
+  String get deckShowName => 'Anarana';
+
+  @override
+  String get deckLookSize => 'Haben\'ny asehony';
+
+  @override
+  String get deckSmall => 'Kely';
+
+  @override
+  String get deckMedium => 'Antonony';
+
+  @override
+  String get deckLarge => 'Lehibe';
+
+  @override
+  String get deckRealCovers => 'Sarin\'ny rakikira tsy ovaina';
+
+  @override
+  String get deckRealCoversCaption =>
+      'Tsy averina ho teboka na piksely araka ny lohahevitra';
+
+  @override
+  String deckNoLayouts(String name) {
+    return 'Mbola tsy manana deck ho an\'ity finday ity i $name. Mamorona iray ao amin\'ny KDE Connectify eo amin\'ny solosaina.';
+  }
+
+  @override
+  String get news034TurnOnBody =>
+      'Alefaso avy amin\'ny karatra eo amin\'ny efijery fandraisana, dia feno ho azy ny Hafatra voaray sy Sary an\'ny solosaina.';
+
+  @override
+  String get news034SaveTitle => 'Fidio izay hitehirizana ny rakitra';
+
+  @override
+  String get news034SaveBody =>
+      'Fikirana › Rakitra › Toerana itahirizana: tsindrio mba hisafidianana lahatahiry hafa ho an\'izay voarainao.';
+
+  @override
+  String get news033DeckTitle => 'Deck: bokotra ho an\'ny solosainao';
+
+  @override
+  String get news033DeckBody =>
+      'Alefa, feo, mangina, Wi-Fi ary ny baikonao manokana, alahatra ao amin\'ny KDE Connectify eo amin\'ny solosaina ary ampiasaina avy eto: ny pejiny › Fehezo › Deck. Tazony ny anaran\'ny deck raha hanova ny endriny. Mila ny KDE Connectify farany eo amin\'ny solosaina.';
+
+  @override
+  String get news033PhotosTitle => 'Ny sarinao ao amin\'ny solosainao';
+
+  @override
+  String get news033PhotosBody =>
+      'Mijery ny sary sy horonan-tsarin\'ity finday ity pejy tsirairay ny Galerie an\'ny solosaina, ary mitahiry izay fidinao. Fikirana › Rakitra › Sary ao amin\'ny solosainao.';
+
+  @override
+  String get news033MessagesTitle => 'Hafatra teo aloha';
+
+  @override
+  String get news033MessagesBody =>
+      'Ao amin\'ny solosaina, asehon\'ny resaka koa ny hafatra teo aloha, ary mbola mandeha mandritra ny iray andro ny Valio na efa lasa aza ny fampandrenesana.';
+
+  @override
+  String get onboardingMessages => 'Hafatra ao amin\'ny solosainao';
+
+  @override
+  String get onboardingMessagesDetail =>
+      'Vakio sy valio ny hafatra sy fampandrenesanao ao amin\'ny Hafatra voaray an\'ny solosaina.';
+
+  @override
+  String get onboardingGalleryDetail =>
+      'Jereo ny sary sy horonan-tsarin\'ity finday ity ao amin\'ny Sary an\'ny solosaina. Rehefa manontany ny Android, fidio ny Avelao daholo.';
+
+  @override
+  String get homeTurnOnTitle => 'Ny hafatra sy sarinao ao amin\'ny solosainao';
+
+  @override
+  String get homeTurnOnBody =>
+      'Jereo ao amin\'ny Hafatra voaray sy Sary an\'ny solosaina.';
+
+  @override
+  String get homeTurnOnMessages => 'Alefaso ny hafatra';
+
+  @override
+  String get homeTurnOnPhotos => 'Alefaso ny sary';
+
+  @override
+  String turnOnAskMessages(String name) {
+    return 'Mangataka ny hampiseho ny hafatr\'ity finday ity i $name';
+  }
+
+  @override
+  String turnOnAskPhotos(String name) {
+    return 'Mangataka ny hampiseho ny sarin\'ity finday ity i $name';
+  }
+
+  @override
+  String get turnOnNow => 'Alefaso';
+
+  @override
+  String get settingsDemoAsk =>
+      'Mangataka izany ny solosaina, afaka 4 segondra';
+
+  @override
+  String get noticeAccessStepSwitch =>
+      'Sokafy ny Fidirana amin\'ny fampandrenesana ary alefaso ny KDE Connectify. Raha maizina ilay bokotra, tsindrio ihany: mandà ny Android, ary izany no ahafahana manao ny dingana manaraka.';
+
+  @override
+  String get noticeAccessOpen => 'Sokafy ny Fidirana amin\'ny fampandrenesana';
+
+  @override
+  String get phoneClipboard => 'Alefaso ny clipboard';
+
+  @override
+  String phoneClipboardCaption(String name) {
+    return 'Izay nadika eto dia mankany amin\'i $name';
+  }
+
+  @override
+  String get phoneNoteHint => 'Fanamarihana na rohy';
+
+  @override
+  String get phoneSend => 'Alefaso';
+
+  @override
+  String phoneFind(String name) {
+    return 'Tadiavo i $name';
+  }
+
+  @override
+  String get phoneFindCaption => 'Maneno mafy, na dia mangina aza';
+
+  @override
+  String get phoneWhere => 'Aiza izy?';
+
+  @override
+  String get phoneWhereCaption =>
+      'Manontany ny toerana misy azy, indray mandeha';
+
+  @override
+  String phoneWhereRefused(String name, String reason) {
+    return 'Tsy nilaza ny toerana misy azy i $name: $reason';
+  }
+
+  @override
+  String get phoneFromThis => 'Avy amin\'ity finday ity';
+
+  @override
+  String get phonePhotos => 'Sary sy horonan-tsary';
+
+  @override
+  String get phonePhotosCaption => 'Isan\'andro na isaky ny album';
+
+  @override
+  String get phoneAllowPhotos => 'Avelao ny sary';
+
+  @override
+  String get phoneAllowPhotosCaption =>
+      'Ilain\'i KDE Connectify izany mba hasehoana ny sarinao eto. Tsy misy lasa raha tsy alefanao.';
+
+  @override
+  String get phoneFiles => 'Rakitra sy lahatahiry';
+
+  @override
+  String get phoneFilesCaption => 'Amin\'ny mpisafidy rakitra an\'i Android';
+
+  @override
+  String get phoneChooseFiles => 'Misafidiana rakitra';
+
+  @override
+  String get phoneChooseFolder => 'Misafidiana lahatahiry';
+
+  @override
+  String get phoneApps => 'Fampiharana';
+
+  @override
+  String get phoneAppsCaption => 'Alefaso na havaozy ny fampiharana';
+
+  @override
+  String get phoneAppsNote =>
+      'Tsy mifindra ny angon-drakitra sy ny fidirana. Mety tsy handeha ny fampiharana manamarina lisansa na kaonty.';
+
+  @override
+  String get phoneAppsSearch => 'Karohy ny fampiharana';
+
+  @override
+  String get phoneSortName => 'Anarana';
+
+  @override
+  String get phoneSortSize => 'Habe';
+
+  @override
+  String phoneAppNotThere(String name) {
+    return 'Tsy ao amin\'i $name';
+  }
+
+  @override
+  String get phoneAppUpdate => 'Fanavaozana (taloha kokoa any)';
+
+  @override
+  String get phoneAppSame => 'Efa any';
+
+  @override
+  String get phoneAppNewer => 'Vaovao kokoa any';
+
+  @override
+  String phoneAppOtherSigner(String name) {
+    return 'Avy amin\'ny mpamorona hafa no an\'i $name. Tsy afaka manavao azy i Android, afaka manolo fotsiny, ary mamafa ny angon-drakiny izany.';
+  }
+
+  @override
+  String get phoneAllAlbums => 'Rehetra';
+
+  @override
+  String get phoneNoPhotos => 'Mbola tsy misy sary eto';
+
+  @override
+  String get phoneNoApps => 'Tsy misy fampiharana halefa';
+
+  @override
+  String phoneSelected(int count, String size) {
+    return '$count voafidy · $size';
+  }
+
+  @override
+  String phoneSendTo(String name) {
+    return 'Alefaso any amin\'i $name';
+  }
+
+  @override
+  String get phoneClear => 'Fafao';
+
+  @override
+  String get routeDirect => 'Rohy mivantana';
+
+  @override
+  String get routeLan => 'Tambajotra iray ihany';
+
+  @override
+  String get routeAway => 'Amin\'ny aterineto · mampiasa angona finday';
+
+  @override
+  String get routeUsb => 'Tariby';
+
+  @override
+  String routeAbout(String time) {
+    return 'manodidina ny $time';
+  }
+
+  @override
+  String get routeSettingUp => 'Manomana rohy mivantana…';
+
+  @override
+  String routeNotDirect(String reason) {
+    return 'Tsy afaka nivantana: $reason. Alefa amin\'ny tambajotra.';
+  }
+
+  @override
+  String warnNoRoom(String name, String free, String size) {
+    return '$free no malalaka ao amin\'i $name ary $size ity';
+  }
+
+  @override
+  String warnWillAsk(String name) {
+    return 'Hanontany i $name alohan\'ny handraisana azy';
+  }
+
+  @override
+  String warnCantInstall(String name) {
+    return 'Mila avelan\'i $name aloha ny fametrahana avy amin\'i KDE Connectify';
+  }
+
+  @override
+  String warnCantInstallHow(String name) {
+    return 'Ao amin\'i $name: Fikirana Android › Fampiharana › Fidirana manokana › Fametrahana fampiharana tsy fantatra › KDE Connectify.';
+  }
+
+  @override
+  String get mobileDataTitle => 'Halefa amin\'ny aterineto ve?';
+
+  @override
+  String mobileDataAsk(String size) {
+    return 'Mandeha amin\'ny aterineto izy ary mampiasa angona finday manodidina ny $size.';
+  }
+
+  @override
+  String phoneInstallAsk(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Hametraka fampiharana $count avy amin\'i $name?',
+      one: 'Hametraka fampiharana avy amin\'i $name?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get phoneAppNew => 'Vaovao';
+
+  @override
+  String get phoneAppUpdateShort => 'Fanavaozana';
+
+  @override
+  String get phoneInstall => 'Apetraho';
+
+  @override
+  String get phoneInstallAllowBody =>
+      'Mila ny fanekenao indray mandeha i Android vao afaka mametraka fampiharana i KDE Connectify. Alefaso ny Avelao avy amin\'ity loharano ity, dia miverena.';
+
+  @override
+  String get phoneInstallAllow => 'Avelao ny fametrahana';
+
+  @override
+  String phoneInstalled(String app) {
+    return 'Tafapetraka i $app';
+  }
+
+  @override
+  String phoneInstallCancelled(String app) {
+    return 'Tsy tafapetraka i $app';
+  }
+
+  @override
+  String phoneInstallMismatch(String app, String name) {
+    return 'Tsy mitovy amin\'izay nolazain\'i $name i $app, ka tsy napetraka.';
+  }
+
+  @override
+  String phoneInstallOtherSigner(String app) {
+    return 'Avy amin\'ny mpamorona hafa i $app amin\'ity finday ity. Tsy afaka manavao azy i Android.';
+  }
+
+  @override
+  String phoneInstallFailed(String app, String reason) {
+    return 'Tsy tafapetraka i $app: $reason';
+  }
+
+  @override
+  String get news035PhonesTitle => 'Finday roa, tsy mila solosaina';
+
+  @override
+  String get news035PhonesBody =>
+      'Sokafy ny finday mifandray: alefaso izay nadikanao, fanamarihana na rohy, ampanenoy, na misafidiana sary sy rakitra isan\'andro.';
+
+  @override
+  String get news035AppsTitle =>
+      'Alefaso any amin\'ny finday hafa ny fampiharana';
+
+  @override
+  String get news035AppsBody =>
+      'Asehon\'i KDE Connectify izay tsy ao na taloha kokoa any, ary manontany i Android alohan\'ny hametrahana. Tsy mifindra ny angon-drakitra sy ny fidirana.';
+
+  @override
+  String get phoneNote => 'Fanamarihana';
+
+  @override
+  String get phoneWhereShort => 'Aiza';
+
+  @override
+  String get phoneShelfPhotos => 'Sary';
+
+  @override
+  String get phoneSeeAll => 'Jereo daholo';
+
+  @override
+  String get phoneSelectDay => 'Fidio ilay andro';
+
+  @override
+  String get phoneHistory => 'Tantara';
+
+  @override
+  String get deviceSnap => 'Sary';
+
+  @override
+  String snapSent(String name) {
+    return 'Nalefa any amin\'i $name ny sary';
+  }
+
+  @override
+  String copySent(String name) {
+    return 'Voadika any amin\'i $name';
+  }
+
+  @override
+  String get usbConnectCable => 'Ampifandraiso amin\'ny tariby USB';
+
+  @override
+  String get settingsSendCopied => 'Alefaso izay adika';
+
+  @override
+  String get settingsSendCopiedCaption =>
+      'Isaky ny miverina amin\'i KDE Connectify ianao dia alefa any amin\'ny solosaina mifandray izay nadikanao. Tafiditra ao ny teny miafina, koa avelao ho maty raha misalasala.';
+
+  @override
+  String get doctorTitle => 'Nahoana no tsy hitako ny solosainako?';
+
+  @override
+  String get doctorCaption => 'Mitady izay manakana sy izay atao';
+
+  @override
+  String get doctorAllGood => 'Tsy misy olana amin\'ity finday ity';
+
+  @override
+  String get doctorAllGoodDetail =>
+      'Raha mbola tsy miseho ny solosainao, mety manakana ny firewall-ny, na tsy mandeha ao aminy i KDE Connectify.';
+
+  @override
+  String get doctorWifi => 'Tsy mifandray ny Wi-Fi';
+
+  @override
+  String get doctorWifiDetail =>
+      'Midira amin\'ny tambajotra iray amin\'ny solosainao.';
+
+  @override
+  String get doctorHeard => 'Tsy misy fitaovana re amin\'ity tambajotra ity';
+
+  @override
+  String get doctorHeardDetail =>
+      'Mety matory na amin\'ny tambajotra hafa ny solosainao, na mampisaraka ny fitaovana ity router ity, toy ny tambajotra ho an\'ny vahiny.';
+
+  @override
+  String get doctorVpn => 'Mandeha ny VPN';
+
+  @override
+  String get doctorVpnDetail =>
+      'Mety hanafina ny solosainao amin\'ity finday ity izy. Vonoy, na avelao hanaiky tambajotra eo an-toerana.';
+
+  @override
+  String get doctorBattery =>
+      'Mety hampiato an\'i KDE Connectify ny fitsitsiana bateria';
+
+  @override
+  String doctorBatteryDetail(String maker) {
+    return 'Mety hanidy an\'i KDE Connectify ao ambadika ny finday $maker.';
+  }
+
+  @override
+  String get doctorPowerSave => 'Mandeha ny Battery Saver';
+
+  @override
+  String get doctorPowerSaveDetail =>
+      'Mametra izay azon\'i KDE Connectify atao rehefa maty ny efijery izy.';
+
+  @override
+  String get doctorDataSaver => 'Mandeha ny Data Saver';
+
+  @override
+  String get doctorDataSaverDetail =>
+      'Mety hanakana an\'i KDE Connectify tsy hifandray ao ambadika izy.';
+
+  @override
+  String get doctorOpenSettings => 'Sokafy ny fikirana';
+
+  @override
+  String get doctorShowHow => 'Asehoy ahy';
+
+  @override
+  String get doctorCheckAgain => 'Hamarino indray';
+
+  @override
+  String get news035DeckTitle => 'Amboary amin\'ny finday ny deck-nao';
+
+  @override
+  String get news035DeckBody =>
+      'Tsindrio ny pensily na tazony ny tile iray. Afindrao, sintony amin\'izay habe tianao, dia manome toerana ny hafa. Ahodino ny finday ho an\'ny deck mitsivalana.';
+
+  @override
+  String get news035SnapTitle => 'Sary mankany amin\'ny solosaina';
+
+  @override
+  String get news035SnapBody =>
+      'Maka sary avy amin\'ny pejin\'ny solosaina na ny tile Quick Settings, ary mankany avy hatrany, vonona hapetaka.';
+
+  @override
+  String get news035CopyTitle => 'Adikao any amin\'ny solosaina';
+
+  @override
+  String get news035CopyBody =>
+      'Fidio ny soratra amin\'ny app rehetra ary safidio ny Adikao any amin\'ny solosaina. Ary raha tsy mifandray, lazain\'ny Fikirana › Fifandraisana ny antony.';
+
+  @override
+  String get controlsNoDnd =>
+      'Avelao aloha i KDE Connectify hiditra amin\'ny Do Not Disturb eo amin\'ny finday';
+
+  @override
+  String get controlsNoFlashlight => 'Tsy azo ampiasaina izao ny jiro';
+
+  @override
+  String get controlsDenied => 'Tsy navelan\'i Android izany';
+
+  @override
+  String get snapNoCamera =>
+      'Mila alalana amin\'ny fakan-tsary i KDE Connectify';
+
+  @override
+  String snapAsked(String name) {
+    return 'Maka sary ho an\'i $name';
+  }
+
+  @override
+  String get settingsComputerNotifications =>
+      'Fampandrenesana avy amin\'ny solosainao';
+
+  @override
+  String get settingsComputerNotificationsCaption =>
+      'Aseho eto izy ireo, rehefa alefanao koa ao amin\'ny solosaina ho an\'ity finday ity';
+
+  @override
+  String get settingsDndAccess => 'Fidirana amin\'ny Do Not Disturb';
+
+  @override
+  String get settingsDndAccessCaption =>
+      'Mamela ny solosainao hanova ny Do Not Disturb eto';
+
+  @override
+  String get settingsDndAccessOn => 'Navela: afaka manova izany ny solosainao';
+
+  @override
+  String get settingsTurnTaps => 'Ahodino ny tsindry rehefa mitsivalana';
+
+  @override
+  String get settingsTurnTapsCaption =>
+      'Raha diso toerana fotsiny ny tsindry avy amin\'ny solosaina rehefa mitsivalana ny finday';
+
+  @override
+  String get deckDiscardTitle => 'Hariana ve ny fanovana?';
+
+  @override
+  String get deckDiscard => 'Hariana';
+
+  @override
+  String get deckKeepEditing => 'Tohizo';
+
+  @override
+  String get deckUndo => 'Averina';
+
+  @override
+  String get deckRedo => 'Ataovy indray';
+
+  @override
+  String get deckCopy => 'Adikao';
+
+  @override
+  String get deckPage => 'Pejy';
+
+  @override
+  String deckPageN(int n) {
+    return 'Pejy $n';
+  }
+
+  @override
+  String deckPages(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Pejy $n',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deckRemoveShort => 'Esory';
+
+  @override
+  String get deckNoRoom => 'Tsy misy toerana eto';
+
+  @override
+  String get deckFillForMe => 'Fenoy ho ahy';
+
+  @override
+  String get deckTryIt => 'Andramo';
+
+  @override
+  String get deckLayouts => 'Fandaharana';
+
+  @override
+  String get deckPortrait => 'Mitsangana';
+
+  @override
+  String get deckLandscape => 'Mitsivalana';
+
+  @override
+  String get deckAddSearch => 'Karohy izay azony atao';
+
+  @override
+  String get deckLive => 'Mivantana eo amin\'ny deck';
+
+  @override
+  String get deckSuggested => 'Soso-kevitra';
+
+  @override
+  String get deckMusic => 'Mozika';
+
+  @override
+  String get deckClock => 'Famantaranandro';
+
+  @override
+  String get deckName => 'Anarana';
+
+  @override
+  String get deckDoes => 'Izay ataony';
+
+  @override
+  String get deckAccent => 'Loko manokana';
+
+  @override
+  String get deckRename => 'Ovay anarana';
+
+  @override
+  String get deckNewLayout => 'Manomboka vaovao avy amin\'ny';
+
+  @override
+  String get deckBlank => 'Banga';
+
+  @override
+  String get deckPresenter => 'Mpanolotra';
+
+  @override
+  String get deckLandscapeFromPortrait =>
+      'Amboary mitsivalana avy amin\'ny mitsangana';
+
+  @override
+  String get deckMade => 'Vita, jereo amin\'ny Mitsivalana';
+
+  @override
+  String deckUseComputers(String name) {
+    return 'Ampiasao ilay ao amin\'i $name';
+  }
+
+  @override
+  String deckSavedHere(String name) {
+    return 'Voatahiry amin\'ity finday ity aloha izao. Mitazona ny azy i $name mandra-pahazoany ity.';
+  }
+
+  @override
+  String get deckWidth => 'Sakany';
+
+  @override
+  String get deckHeight => 'Haavo';
+
+  @override
+  String get deckStartFromPortrait => 'Manomboka amin\'ny deck mitsangana';
+
+  @override
+  String get deckStartEmpty => 'Manomboka banga';
+
+  @override
+  String get remoteMiddle => 'Afovoany';
+
+  @override
+  String get remoteMiddleClick => 'Pitika afovoany';
+
+  @override
+  String get remoteSendText => 'Hanoratra';
+
+  @override
+  String get remoteSendTextCaption =>
+      'Soraty eto amin\'ny fikitikitihana, ny teny atolotra ary ny fanitsiana ataon\'ny fitendry, dia alefaso any amin\'izay misy ny cursor amin\'ny solosaina.';
+
+  @override
+  String get remoteSendTextHint => 'Hafatra, fikarohana, andalana lava…';
+
+  @override
+  String get remoteSendTextGo => 'Alefa any amin\'ny solosaina';
+
+  @override
+  String get settingsEdgeScroll => 'Tsipika fampidinana';
+
+  @override
+  String get settingsEdgeScrollCaption =>
+      'Rantsantanana iray manaraka ny sisiny ankavanan\'ny touchpad dia mampidina sy mampiakatra, ampiasaina amin\'ny tanana iray.';
+
+  @override
+  String get settingsKeyboardSuggestions => 'Teny atolotry ny fitendry';
+
+  @override
+  String get settingsKeyboardSuggestionsCaption =>
+      'Fanoratana amin\'ny fikitikitihana sy teny atolotra amin\'ny fitendrin\'ny Remote. Raha maty, mandeha avy hatrany ny fanalahidy tsindrianao.';
+
+  @override
+  String get deckGridTitle => 'Takelaka';
+
+  @override
+  String deckGridColumns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Andry $count',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String deckGridRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Andalana $count',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deckGridBigger => 'Bokotra lehibe kokoa';
+
+  @override
+  String get deckGridSmaller => 'Bokotra kely kokoa';
+
+  @override
+  String get deviceControlNoOverlayPermission =>
+      'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.';
+
+  @override
+  String get deviceSavedCommands => 'Saved Commands';
+
+  @override
+  String get deviceNoCommandsSaved => 'No commands saved on this computer yet';
+
+  @override
+  String get devicePcFiles => 'Computer Files';
+
+  @override
+  String get deviceNoPcFiles => 'Nothing to show here';
+
+  @override
+  String get homeScanQr => 'Vakio ny QR code';
+
+  @override
+  String get homePairByAddress => 'Ampifandraiso amin\'ny adiresy';
 
   @override
   String get deviceMenuMore => 'More actions';

@@ -5,6 +5,7 @@ import '../../app/platform.dart';
 import '../../core/updates.dart';
 import '../../ui/components.dart';
 import '../../ui/l10n.dart';
+import '../../ui/responsive.dart';
 import '../../ui/sig.dart';
 
 /// What's New: the few things each version brings, shown once the first time
@@ -28,6 +29,82 @@ const _most = 5;
 
 /// Newest first.
 final List<(String, List<Highlight>)> _releases = [
+  (
+    '0.3.5',
+    [
+      Highlight(
+        Ph.deviceMobile,
+        (l) => l.news035PhonesTitle,
+        (l) => l.news035PhonesBody,
+      ),
+      Highlight(
+        Ph.squaresFour,
+        (l) => l.news035AppsTitle,
+        (l) => l.news035AppsBody,
+      ),
+      Highlight(
+        Ph.squaresFour,
+        (l) => l.news035DeckTitle,
+        (l) => l.news035DeckBody,
+      ),
+      Highlight(Ph.camera, (l) => l.news035SnapTitle, (l) => l.news035SnapBody),
+      Highlight(
+        Ph.clipboardText,
+        (l) => l.news035CopyTitle,
+        (l) => l.news035CopyBody,
+      ),
+    ],
+  ),
+  (
+    '0.3.4',
+    [
+      Highlight(
+        Ph.chatCircleText,
+        (l) => l.homeTurnOnTitle,
+        (l) => l.news034TurnOnBody,
+      ),
+      Highlight(
+        Ph.folderOpen,
+        (l) => l.news034SaveTitle,
+        (l) => l.news034SaveBody,
+      ),
+    ],
+  ),
+  (
+    '0.3.3',
+    [
+      Highlight(
+        Ph.squaresFour,
+        (l) => l.news033DeckTitle,
+        (l) => l.news033DeckBody,
+      ),
+      Highlight(
+        Ph.imagesSquare,
+        (l) => l.news033PhotosTitle,
+        (l) => l.news033PhotosBody,
+      ),
+      Highlight(
+        Ph.clockCounterClockwise,
+        (l) => l.news033MessagesTitle,
+        (l) => l.news033MessagesBody,
+      ),
+    ],
+  ),
+  (
+    '0.3.2',
+    [
+      Highlight(
+        Ph.bellRinging,
+        (l) => l.news032NotificationsTitle,
+        (l) => l.news032NotificationsBody,
+      ),
+      Highlight(
+        Ph.batteryCharging,
+        (l) => l.news032BatteryTitle,
+        (l) => l.news032BatteryBody,
+      ),
+    ],
+  ),
   (
     '0.2.9',
     [
@@ -167,7 +244,12 @@ class WhatsNewScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
+          padding: EdgeInsets.fromLTRB(
+            readableSide(context, least: 24),
+            40,
+            readableSide(context, least: 24),
+            24,
+          ),
           children: [
             const Center(child: AppIcon(size: 64)),
             const SizedBox(height: 20),
@@ -214,9 +296,9 @@ class WhatsNewScreen extends StatelessWidget {
                 ),
               ),
             Center(
-              child: TextButton(
-                onPressed: () => LinksyPlatform.openUrl(notesUrl(version)),
-                child: Text(l10n.newsAllChanges(version)),
+              child: SmallAction(
+                label: l10n.newsAllChanges(version),
+                onTap: () => LinksyPlatform.openUrl(notesUrl(version)),
               ),
             ),
             const SizedBox(height: 20),

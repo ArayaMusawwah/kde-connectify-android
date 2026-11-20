@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -9,7 +12,9 @@ import '../../app/scope.dart';
 import '../../core/models.dart';
 import '../../ui/components.dart';
 import '../../ui/l10n.dart';
+import '../../ui/responsive.dart';
 import '../../ui/sig.dart';
+import '../device/page_switcher.dart';
 
 /// X11 keysyms the computer understands (docs/protocol.md §4.8).
 abstract final class Keysym {
@@ -21,7 +26,38 @@ abstract final class Keysym {
   static const f5 = 0xffc2;
   static const shiftLeft = 0xffe1;
   static const shiftRight = 0xffe2;
+  static const up = 0xff52;
+  static const down = 0xff54;
+  static const home = 0xff50;
+  static const end = 0xff57;
+  static const pageUp = 0xff55;
+  static const pageDown = 0xff56;
+  static const tab = 0xff09;
+  static const delete = 0xffff;
+  static const insert = 0xff63;
+  static const print = 0xff61;
+  static const controlLeft = 0xffe3;
+  static const altLeft = 0xffe9;
+  static const superLeft = 0xffeb;
+
+  /// F1 to F12: [f1] + 0 to 11.
+  static const f1 = 0xffbe;
+
+  /// The keysym a typed character has: Latin-1's are their code point
+  /// (letters lower case, as the key is), the rest 0x01000000 + it.
+  static int ofChar(String char) {
+    final code = char.toLowerCase().runes.first;
+    return code < 0x100 ? code : 0x01000000 + code;
+  }
 }
+
+/// The modifiers on the touchpad's key row, in the order they're pressed.
+const _modifiers = [
+  (Keysym.controlLeft, 'Ctrl'),
+  (Keysym.altLeft, 'Alt'),
+  (Keysym.shiftLeft, 'Shift'),
+  (Keysym.superLeft, 'Super'),
+];
 
 /// This phone as a computer's touchpad, keyboard and presentation remote
 /// (session kind `input`). Asks the computer when it opens; its user allows
@@ -35,7 +71,7 @@ class RemoteScreen extends StatefulWidget {
   State<RemoteScreen> createState() => _RemoteScreenState();
 }
 
-enum _Mode { touchpad, slides }
+enum _Mode { touchpad, slides, browser }
 
 class _RemoteScreenState extends State<RemoteScreen> {
   late final LinksyController _c;
@@ -43,6 +79,9 @@ class _RemoteScreenState extends State<RemoteScreen> {
   String? _error;
   bool _asking = true;
   StreamSubscription<bool>? _volume;
+
+  /// Modifiers tapped on the key row: held for the next key, then let go.
+  final Set<int> _mods = {};
 
   String get _id => widget.device.id;
 
@@ -70,7 +109,8 @@ class _RemoteScreenState extends State<RemoteScreen> {
   void dispose() {
     _volume?.cancel();
     LinksyPlatform.presentation(false);
-    _c.stopRemote(_id);
+    // Open a minute longer: Deck and back doesn't ask the computer again.
+    _c.leaveRemote(_id);
     super.dispose();
   }
 
@@ -80,10 +120,28 @@ class _RemoteScreenState extends State<RemoteScreen> {
     });
   }
 
-  void _key(int keysym) => _send([
+  /// [keysym] pressed and let go, with the modifiers tapped before it.
+  void _key(int keysym) {
+    final mods = [
+      for (final (m, _) in _modifiers)
+        if (_mods.contains(m)) m,
+    ];
+    if (mods.isNotEmpty) setState(_mods.clear);
+    _chord(mods, keysym);
+  }
+
+  /// [keysym] with [mods] held around it (Alt+Left, Ctrl+T).
+  void _chord(List<int> mods, int keysym) => _send([
+    for (final m in mods) {'type': 'key', 'keysym': m, 'pressed': true},
     {'type': 'key', 'keysym': keysym, 'pressed': true},
     {'type': 'key', 'keysym': keysym, 'pressed': false},
+    for (final m in mods.reversed)
+      {'type': 'key', 'keysym': m, 'pressed': false},
   ]);
+
+  void _toggleMod(int keysym) => setState(
+    () => _mods.contains(keysym) ? _mods.remove(keysym) : _mods.add(keysym),
+  );
 
   void _setMode(_Mode mode) {
     setState(() => _mode = mode);
@@ -105,6 +163,9 @@ class _RemoteScreenState extends State<RemoteScreen> {
     // Read above the Scaffold, which takes the keyboard out of its body's.
     final typing = MediaQuery.viewInsetsOf(context).bottom > 0;
     final name = widget.device.name;
+    // Sideways the height is short: the modes go up beside the title.
+    final side = sideBySide(context);
+    final modes = _ModeSwitch(mode: _mode, onChanged: _setMode);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayFor(Theme.of(context).brightness),
       child: Scaffold(
@@ -132,33 +193,68 @@ class _RemoteScreenState extends State<RemoteScreen> {
                           ),
                           Text(
                             name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(color: s.muted, fontSize: 13),
                           ),
                         ],
                       ),
                     ),
+                    if (side && live) ...[
+                      const SizedBox(width: 16),
+                      SizedBox(width: 420, child: modes),
+                      const SizedBox(width: 16),
+                    ],
+                    PageSwitchButton(deviceId: _id, current: DevicePage.remote),
                   ],
                 ),
-                const SizedBox(height: 16),
-                if (!live)
-                  Expanded(
-                    child: _Waiting(
-                      name: name,
-                      asking: _asking,
-                      error: _error,
-                      ended: !_asking && _error == null,
-                      onRetry: _connect,
-                    ),
-                  )
-                else ...[
-                  _ModeSwitch(mode: _mode, onChanged: _setMode),
-                  const SizedBox(height: 14),
-                  Expanded(
-                    child: _mode == _Mode.touchpad
-                        ? _Touchpad(send: _send, onKey: _key)
-                        : _Slides(send: _send, onKey: _key, typing: typing),
+                SizedBox(height: side ? 12 : 16),
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: motion(context),
+                    child: !live
+                        ? _Waiting(
+                            key: const ValueKey(false),
+                            name: name,
+                            asking: _asking,
+                            error: _error,
+                            ended: !_asking && _error == null,
+                            onRetry: _connect,
+                          )
+                        : Column(
+                            key: const ValueKey(true),
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (!side) ...[modes, const SizedBox(height: 14)],
+                              Expanded(
+                                child: _Sliding(
+                                  index: _mode.index,
+                                  children: [
+                                    _Touchpad(
+                                      send: _send,
+                                      onKey: _key,
+                                      mods: _mods,
+                                      onMod: _toggleMod,
+                                      onModAlone: (m) => _chord(const [], m),
+                                    ),
+                                    _Slides(
+                                      send: _send,
+                                      onKey: _key,
+                                      onChord: _chord,
+                                      typing: typing,
+                                    ),
+                                    _Browser(
+                                      send: _send,
+                                      onKey: _key,
+                                      onChord: _chord,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                   ),
-                ],
+                ),
               ],
             ),
           ),
@@ -170,6 +266,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
 
 class _Waiting extends StatelessWidget {
   const _Waiting({
+    super.key,
     required this.name,
     required this.asking,
     required this.error,
@@ -225,66 +322,94 @@ class _ModeSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
-    Widget tab(_Mode m, IconData icon, String label) {
-      final on = mode == m;
-      return Expanded(
-        child: Pressable(
-          onTap: () => onChanged(m),
-          semanticLabel: label,
-          child: Container(
-            height: 44,
-            decoration: BoxDecoration(
-              color: on ? Sig.blue : Colors.transparent,
-              borderRadius: BorderRadius.circular(99),
+    final tabs = [
+      (Ph.mouseSimple, context.l10n.remoteTouchpad),
+      (Ph.presentation, context.l10n.remoteSlides),
+      (Ph.globe, context.l10n.remoteBrowser),
+    ];
+    return Segments(
+      labels: [for (final (_, label) in tabs) label],
+      selected: mode.index,
+      onChanged: (i) => onChanged(_Mode.values[i]),
+      builder: (context, i, on) {
+        final (icon, label) = tabs[i];
+        final color = Color.lerp(s.muted, Colors.white, on);
+        // Three to a narrow phone: the name gives way, the icon stays.
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontWeight: FontWeight.w600, color: color),
+              ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 18, color: on ? Colors.white : s.muted),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: on ? Colors.white : s.muted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
+          ],
+        );
+      },
+    );
+  }
+}
 
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: s.card,
-        borderRadius: BorderRadius.circular(99),
-      ),
-      child: Row(
-        children: [
-          tab(_Mode.touchpad, Ph.mouseSimple, context.l10n.remoteTouchpad),
-          tab(_Mode.slides, Ph.presentation, context.l10n.remoteSlides),
-        ],
+/// The modes side by side: switching slides from one to the next, the way
+/// the pill above moves. Only the one that's on is kept once it settles.
+class _Sliding extends StatelessWidget {
+  const _Sliding({required this.index, required this.children});
+
+  final int index;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final rtl = Directionality.of(context) == TextDirection.rtl;
+    return ClipRect(
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(end: index.toDouble()),
+        duration: motion(context, 260),
+        curve: Curves.easeOutCubic,
+        builder: (context, t, _) => Stack(
+          fit: StackFit.expand,
+          children: [
+            for (final (i, child) in children.indexed)
+              if ((i - t).abs() < 1)
+                FractionalTranslation(
+                  key: ValueKey(i),
+                  translation: Offset((rtl ? t - i : i - t), 0),
+                  child: child,
+                ),
+          ],
+        ),
       ),
     );
   }
 }
 
 /// One finger moves the pointer, a tap clicks, a two-finger tap right-clicks,
-/// two fingers scroll. The keyboard types into whatever has focus there.
-class _Touchpad extends StatefulWidget {
-  const _Touchpad({required this.send, required this.onKey});
+/// two fingers scroll. Double-tap and slide drags (mobile#22): the button
+/// stays down when the finger lifts, so the drag goes on with the next
+/// stroke, until a tap lets go. The keyboard types into whatever has focus
+/// there.
+/// The touchpad itself, on the remote's page and as a deck tile: one finger
+/// moves the pointer, a tap clicks, a two-finger tap right-clicks, a
+/// three-finger tap middle-clicks, two fingers scroll, and one finger along
+/// the right edge scrolls too, as on a ThinkPad (turned off in Settings). Double-tap and slide drags (mobile#22): the button stays
+/// down when the finger lifts, so the drag goes on with the next stroke,
+/// until a tap lets go. [builder] draws it, with whether it's dragging.
+class TouchpadSurface extends StatefulWidget {
+  const TouchpadSurface({super.key, required this.send, required this.builder});
 
   final void Function(List<Map<String, Object>>) send;
-  final void Function(int keysym) onKey;
+  final Widget Function(BuildContext context, bool dragging) builder;
 
   @override
-  State<_Touchpad> createState() => _TouchpadState();
+  State<TouchpadSurface> createState() => _TouchpadSurfaceState();
 }
 
-class _TouchpadState extends State<_Touchpad> {
+class _TouchpadSurfaceState extends State<TouchpadSurface> {
   final _pointers = <int, Offset>{};
   int _maxFingers = 0;
   DateTime _downAt = DateTime.now();
@@ -293,9 +418,29 @@ class _TouchpadState extends State<_Touchpad> {
   Offset _pending = Offset.zero;
   Timer? _flush;
 
+  /// The last tap, for a double-tap that turns into a drag.
+  DateTime? _tappedAt;
+
+  /// This touch came right after a tap: moving drags.
+  bool _armed = false;
+
+  /// The left button is held down on the computer.
+  bool _dragging = false;
+
+  /// This touch began on the scroll strip at the right edge.
+  bool _edge = false;
+
+  /// The surface's width, for where the strip is.
+  double _width = 0;
+
+  /// How wide the scroll strip is.
+  static const strip = 28.0;
+
   @override
   void dispose() {
     _flush?.cancel();
+    // Never leave the computer's button held down.
+    if (_dragging) _button('left', pressed: false);
     super.dispose();
   }
 
@@ -307,6 +452,16 @@ class _TouchpadState extends State<_Touchpad> {
       _downAt = DateTime.now();
       _travel = 0;
       _maxFingers = 0;
+      _edge =
+          !_dragging &&
+          LinksyScope.read(context).edgeScroll &&
+          _width > 4 * strip &&
+          e.localPosition.dx >= _width - strip;
+      final tapped = _tappedAt;
+      _armed =
+          !_dragging &&
+          tapped != null &&
+          _downAt.difference(tapped) < const Duration(milliseconds: 300);
     }
     _pointers[e.pointer] = e.localPosition;
     _maxFingers = _pointers.length > _maxFingers
@@ -319,10 +474,31 @@ class _TouchpadState extends State<_Touchpad> {
     if (!_pointers.containsKey(e.pointer)) return;
     _travel += e.delta.distance;
     _pointers[e.pointer] = e.localPosition;
-    if (_pointers.length == 1 && _maxFingers == 1) {
+    if (_edge && _pointers.length == 1 && _maxFingers == 1) {
+      // Down the strip scrolls down, as a scroll bar does.
+      final sign = LinksyScope.read(context).scrollReversed ? -1 : 1;
+      widget.send([
+        {
+          'type': 'scroll',
+          'dx': 0.0,
+          'dy': sign * e.delta.dy * 2,
+          'discrete': false,
+        },
+      ]);
+    } else if (_pointers.length == 1 && _maxFingers == 1) {
+      if (_armed && !_dragging && _travel >= 12) {
+        // Double-tap and slide: hold the button down, then move.
+        _armed = false;
+        _sendMove();
+        _button('left', pressed: true);
+        HapticFeedback.mediumImpact();
+        setState(() => _dragging = true);
+      }
       // Faster swipes go further, as on a laptop's touchpad.
       final speed = e.delta.distance;
-      final gain = 1.4 + (speed / 12).clamp(0.0, 1.6);
+      final gain =
+          (1.4 + (speed / 12).clamp(0.0, 1.6)) *
+          LinksyScope.read(context).pointerSpeed;
       _pending += e.delta * gain;
       _flush ??= Timer(const Duration(milliseconds: 12), _sendMove);
     } else if (_pointers.length >= 2 && _scrollFrom != null) {
@@ -358,12 +534,33 @@ class _TouchpadState extends State<_Touchpad> {
       return;
     }
     _scrollFrom = null;
+    _armed = false;
     final quick =
         DateTime.now().difference(_downAt) < const Duration(milliseconds: 220);
     if (quick && _travel < 12) {
-      _click(_maxFingers >= 2 ? 'right' : 'left');
+      if (_dragging) {
+        // A tap ends the drag: the button comes up where the pointer is.
+        _sendMove();
+        _button('left', pressed: false);
+        HapticFeedback.selectionClick();
+        setState(() => _dragging = false);
+        _tappedAt = null;
+        return;
+      }
+      _click(switch (_maxFingers) {
+        1 => 'left',
+        2 => 'right',
+        _ => 'middle',
+      });
+      _tappedAt = _maxFingers >= 2 ? null : DateTime.now();
+    } else {
+      _tappedAt = null;
     }
   }
+
+  void _button(String button, {required bool pressed}) => widget.send([
+    {'type': 'button', 'button': button, 'pressed': pressed},
+  ]);
 
   void _click(String button) {
     HapticFeedback.selectionClick();
@@ -374,43 +571,128 @@ class _TouchpadState extends State<_Touchpad> {
   }
 
   @override
+  // A touch that starts here is the touchpad's from its first moment: on a
+  // deck page, sliding a finger would otherwise turn the page instead.
+  Widget build(BuildContext context) => RawGestureDetector(
+    behavior: HitTestBehavior.opaque,
+    gestures: {
+      EagerGestureRecognizer:
+          GestureRecognizerFactoryWithHandlers<EagerGestureRecognizer>(
+            EagerGestureRecognizer.new,
+            (_) {},
+          ),
+    },
+    child: Listener(
+      behavior: HitTestBehavior.opaque,
+      onPointerDown: _down,
+      onPointerMove: _move,
+      onPointerUp: _up,
+      onPointerCancel: _up,
+      child: LayoutBuilder(
+        builder: (context, box) {
+          _width = box.maxWidth;
+          final edge = LinksyScope.of(context).edgeScroll && _width > 4 * strip;
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              widget.builder(context, _dragging),
+              // Where the scroll strip is: a quiet bar along the edge.
+              if (edge)
+                Positioned(
+                  right: (strip - 4) / 2,
+                  top: box.maxHeight * .3,
+                  bottom: box.maxHeight * .3,
+                  width: 4,
+                  child: const IgnorePointer(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Color(0x40808080),
+                        borderRadius: BorderRadius.all(Radius.circular(2)),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    ),
+  );
+}
+
+class _Touchpad extends StatelessWidget {
+  const _Touchpad({
+    required this.send,
+    required this.onKey,
+    required this.mods,
+    required this.onMod,
+    required this.onModAlone,
+  });
+
+  final void Function(List<Map<String, Object>>) send;
+  final void Function(int keysym) onKey;
+
+  /// The modifiers tapped for the next key.
+  final Set<int> mods;
+  final ValueChanged<int> onMod;
+  final ValueChanged<int> onModAlone;
+
+  void _click(String button) {
+    HapticFeedback.selectionClick();
+    send([
+      {'type': 'button', 'button': button, 'pressed': true},
+      {'type': 'button', 'button': button, 'pressed': false},
+    ]);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: Listener(
-            behavior: HitTestBehavior.opaque,
-            onPointerDown: _down,
-            onPointerMove: _move,
-            onPointerUp: _up,
-            onPointerCancel: _up,
-            child: Container(
-              decoration: BoxDecoration(
-                color: s.card,
-                borderRadius: BorderRadius.circular(Radii.xl),
+    return _Split(
+      main: TouchpadSurface(
+        send: send,
+        builder: (context, dragging) => Container(
+          decoration: BoxDecoration(
+            color: s.card,
+            borderRadius: BorderRadius.circular(Radii.xl),
+          ),
+          alignment: Alignment.center,
+          foregroundDecoration: dragging
+              ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(Radii.xl),
+                  border: Border.all(color: Sig.blue, width: 2),
+                )
+              : null,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                dragging ? Ph.handGrabbing : Ph.handPointing,
+                size: 34,
+                color: dragging ? Sig.blue : s.faint,
               ),
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Ph.handPointing, size: 34, color: s.faint),
-                  const SizedBox(height: 10),
-                  Text(
-                    context.l10n.remoteTouchpadHint,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: s.faint, height: 1.5),
-                  ),
-                ],
+              const SizedBox(height: 10),
+              Text(
+                dragging
+                    ? context.l10n.remoteDragging
+                    : '${context.l10n.remoteTouchpadHint}\n'
+                          '${context.l10n.remoteDragHint}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: dragging ? Sig.blue : s.faint,
+                  height: 1.5,
+                  fontWeight: dragging ? FontWeight.w600 : null,
+                ),
               ),
-            ),
+            ],
           ),
         ),
-        const SizedBox(height: 10),
+      ),
+      controls: [
         Row(
           children: [
             Expanded(
+              flex: 2,
               child: _PadButton(
                 label: context.l10n.remoteLeftClick,
                 onTap: () => _click('left'),
@@ -419,6 +701,14 @@ class _TouchpadState extends State<_Touchpad> {
             const SizedBox(width: 10),
             Expanded(
               child: _PadButton(
+                label: context.l10n.remoteMiddle,
+                onTap: () => _click('middle'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 2,
+              child: _PadButton(
                 label: context.l10n.remoteRightClick,
                 onTap: () => _click('right'),
               ),
@@ -426,25 +716,148 @@ class _TouchpadState extends State<_Touchpad> {
           ],
         ),
         const SizedBox(height: 10),
-        _Keyboard(send: widget.send, onKey: widget.onKey),
+        _KeyRow(mods: mods, onMod: onMod, onModAlone: onModAlone, onKey: onKey),
+        const SizedBox(height: 10),
+        RemoteKeyboard(send: send, onKey: onKey, modded: mods.isNotEmpty),
       ],
+    );
+  }
+}
+
+/// The keys a phone's keyboard hasn't got, in one row that scrolls: Ctrl,
+/// Alt, Shift and Super stay down for the next key (or a typed letter:
+/// Ctrl, then c), held they press alone (Super opens the launcher). Then
+/// Esc, Tab, the arrows, Home to Insert, PrtSc and F1 to F12.
+class _KeyRow extends StatelessWidget {
+  const _KeyRow({
+    required this.mods,
+    required this.onMod,
+    required this.onModAlone,
+    required this.onKey,
+  });
+
+  final Set<int> mods;
+  final ValueChanged<int> onMod;
+  final ValueChanged<int> onModAlone;
+  final void Function(int keysym) onKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    Widget key(
+      String label,
+      VoidCallback onTap, {
+      IconData? icon,
+      bool on = false,
+      VoidCallback? onHold,
+      String? tooltip,
+    }) {
+      final face = Pressable.builder(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        onLongPress: onHold == null
+            ? null
+            : () {
+                HapticFeedback.mediumImpact();
+                onHold();
+              },
+        semanticLabel: label,
+        builder: (context, down) => AnimatedContainer(
+          duration: motion(context, 90),
+          height: 44,
+          constraints: const BoxConstraints(minWidth: 48),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: on ? Sig.blue : (down ? s.raised : s.card),
+            borderRadius: BorderRadius.circular(Radii.md),
+          ),
+          child: icon != null
+              ? Icon(icon, size: 18, color: on ? Colors.white : s.ink)
+              : Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13.5,
+                    color: on ? Colors.white : s.ink,
+                  ),
+                ),
+        ),
+      );
+      return Padding(
+        padding: const EdgeInsetsDirectional.only(end: 6),
+        child: tooltip == null ? face : Tooltip(message: tooltip, child: face),
+      );
+    }
+
+    final hint = context.l10n.remoteModHint;
+    return SizedBox(
+      height: 44,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          for (final (m, label) in _modifiers)
+            key(
+              label,
+              () => onMod(m),
+              on: mods.contains(m),
+              onHold: () => onModAlone(m),
+              tooltip: hint,
+            ),
+          key('Esc', () => onKey(Keysym.escape)),
+          key('Tab', () => onKey(Keysym.tab)),
+          key('←', () => onKey(Keysym.left), icon: Ph.arrowLeft),
+          key('↑', () => onKey(Keysym.up), icon: Ph.arrowUp),
+          key('↓', () => onKey(Keysym.down), icon: Ph.arrowDown),
+          key('→', () => onKey(Keysym.right), icon: Ph.arrowRight),
+          key('Home', () => onKey(Keysym.home)),
+          key('End', () => onKey(Keysym.end)),
+          key('PgUp', () => onKey(Keysym.pageUp)),
+          key('PgDn', () => onKey(Keysym.pageDown)),
+          key('Del', () => onKey(Keysym.delete)),
+          key('Ins', () => onKey(Keysym.insert)),
+          key('PrtSc', () => onKey(Keysym.print)),
+          for (var i = 0; i < 12; i++)
+            key('F${i + 1}', () => onKey(Keysym.f1 + i)),
+        ],
+      ),
     );
   }
 }
 
 /// A button that brings up the phone's keyboard, which types into whatever
 /// has focus on the computer.
-class _Keyboard extends StatefulWidget {
-  const _Keyboard({required this.send, required this.onKey});
+class RemoteKeyboard extends StatefulWidget {
+  const RemoteKeyboard({
+    super.key,
+    required this.send,
+    required this.onKey,
+    this.modded = false,
+    this.focus,
+    this.builder,
+  });
 
   final void Function(List<Map<String, Object>>) send;
   final void Function(int keysym) onKey;
 
+  /// A modifier is down for the next key: a typed letter goes as its key
+  /// (Ctrl, then c), not as text.
+  final bool modded;
+
+  /// Given by a page that brings the keyboard up itself (Address).
+  final FocusNode? focus;
+
+  /// What to tap to bring it up or put it away (a deck tile); the Keyboard
+  /// button when none.
+  final Widget Function(BuildContext context, VoidCallback toggle)? builder;
+
   @override
-  State<_Keyboard> createState() => _KeyboardState();
+  State<RemoteKeyboard> createState() => _RemoteKeyboardState();
 }
 
-class _KeyboardState extends State<_Keyboard> {
+class _RemoteKeyboardState extends State<RemoteKeyboard> {
   // The keyboard: a hidden field that always holds one placeholder, so
   // Backspace on an empty field still shows up as a change.
   static const _placeholder = '​';
@@ -452,77 +865,259 @@ class _KeyboardState extends State<_Keyboard> {
   /// What a US keyboard types with Shift, besides capitals.
   static final _shifted = RegExp(r'[~!@#$%^&*()_+{}|:"<>?]');
   final _field = TextEditingController(text: _placeholder);
-  final _focus = FocusNode();
+  late final FocusNode _focus = widget.focus ?? FocusNode();
 
   @override
   void dispose() {
     _field.dispose();
-    _focus.dispose();
+    if (widget.focus == null) _focus.dispose();
     super.dispose();
   }
 
-  void _typed(String value) {
-    if (value.length < _placeholder.length || !value.startsWith(_placeholder)) {
-      widget.onKey(Keysym.backspace);
-    } else if (value.length > _placeholder.length) {
-      final text = value.substring(_placeholder.length);
-      widget.send([
-        {'type': 'text', 'text': text},
-        // Some computers (KDE's) hold Shift down to type a capital and
-        // never let go: let go of it here.
-        if (text.toLowerCase() != text || _shifted.hasMatch(text)) ...[
-          {'type': 'key', 'keysym': Keysym.shiftLeft, 'pressed': false},
-          {'type': 'key', 'keysym': Keysym.shiftRight, 'pressed': false},
-        ],
-      ]);
+  void _toggle() {
+    if (_focus.hasFocus) {
+      _focus.unfocus();
+    } else {
+      _focus.requestFocus();
+      SystemChannels.textInput.invokeMethod<void>('TextInput.show');
     }
+  }
+
+  /// What the field held last, as the computer has it typed.
+  String _last = _placeholder;
+
+  void _reset() {
+    _last = _placeholder;
     _field.value = const TextEditingValue(
       text: _placeholder,
       selection: TextSelection.collapsed(offset: _placeholder.length),
     );
   }
 
+  void _typeText(String text) => widget.send([
+    {'type': 'text', 'text': text},
+    // Some computers (KDE's) hold Shift down to type a capital and
+    // never let go: let go of it here.
+    if (text.toLowerCase() != text || _shifted.hasMatch(text)) ...[
+      {'type': 'key', 'keysym': Keysym.shiftLeft, 'pressed': false},
+      {'type': 'key', 'keysym': Keysym.shiftRight, 'pressed': false},
+    ],
+  ]);
+
+  void _typed(String value) {
+    final suggestions = LinksyScope.read(context).keyboardSuggestions;
+    if (!suggestions) {
+      if (value.length < _placeholder.length ||
+          !value.startsWith(_placeholder)) {
+        widget.onKey(Keysym.backspace);
+      } else if (value.length > _placeholder.length) {
+        final text = value.substring(_placeholder.length);
+        if (widget.modded && text.runes.length == 1) {
+          widget.onKey(Keysym.ofChar(text));
+        } else {
+          _typeText(text);
+        }
+      }
+      _reset();
+      return;
+    }
+    // With suggestions and swipe typing the keyboard rewrites what it has
+    // written (a word swiped, then corrected): the computer gets the
+    // difference, Backspace for what went and the text that came.
+    final edit = keyboardEdit(_last, value);
+    if (widget.modded &&
+        edit.back == 0 &&
+        edit.text.runes.length == 1 &&
+        value.startsWith(_placeholder)) {
+      widget.onKey(Keysym.ofChar(edit.text));
+      _reset();
+      return;
+    }
+    for (var i = 0; i < edit.back; i++) {
+      widget.onKey(Keysym.backspace);
+    }
+    if (edit.text.isNotEmpty) _typeText(edit.text);
+    _last = value;
+    // Backspace past the start, or a long run: start the field over, once
+    // the keyboard has nothing half-written in it.
+    if (!value.startsWith(_placeholder) ||
+        (value.length > 400 && _field.value.composing.isCollapsed)) {
+      _reset();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final suggestions = LinksyScope.of(context).keyboardSuggestions;
+    // Off screen, but focusable: it brings up the keyboard.
+    final field = SizedBox(
+      height: 0,
+      child: Opacity(
+        opacity: 0,
+        child: TextField(
+          controller: _field,
+          focusNode: _focus,
+          // Suggestions on: swipe typing and the keyboard's words.
+          autocorrect: suggestions,
+          enableSuggestions: suggestions,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.send,
+          onChanged: _typed,
+          onSubmitted: (_) {
+            widget.onKey(Keysym.enter);
+            _reset();
+            _focus.requestFocus();
+          },
+        ),
+      ),
+    );
+    // A deck tile: the whole tile to tap, the field out of sight behind it.
+    if (widget.builder case final builder?) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          Positioned(left: 0, top: 0, width: 1, child: field),
+          builder(context, _toggle),
+        ],
+      );
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Off screen, but focusable: it brings up the keyboard.
-        SizedBox(
-          height: 0,
-          child: Opacity(
-            opacity: 0,
-            child: TextField(
-              controller: _field,
-              focusNode: _focus,
-              autocorrect: false,
-              enableSuggestions: false,
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.send,
-              onChanged: _typed,
-              onSubmitted: (_) {
-                widget.onKey(Keysym.enter);
-                _focus.requestFocus();
-              },
-            ),
-          ),
-        ),
-        SigButton(
-          label: context.l10n.remoteKeyboard,
-          icon: Ph.keyboard,
-          kind: SigButtonKind.secondary,
-          expand: true,
-          onTap: () {
-            if (_focus.hasFocus) {
-              _focus.unfocus();
-            } else {
-              _focus.requestFocus();
-              SystemChannels.textInput.invokeMethod<void>('TextInput.show');
-            }
+        field,
+        LayoutBuilder(
+          builder: (context, box) {
+            void write() => sendTextSheet(context, _typeText);
+            return Row(
+              children: [
+                Expanded(
+                  child: SigButton(
+                    label: context.l10n.remoteKeyboard,
+                    icon: Ph.keyboard,
+                    kind: SigButtonKind.secondary,
+                    expand: true,
+                    onTap: _toggle,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                // Write it all here, then send it in one go; just the icon
+                // where the row is narrow.
+                if (box.maxWidth >= 300)
+                  SigButton(
+                    label: context.l10n.remoteSendText,
+                    icon: Ph.textAa,
+                    kind: SigButtonKind.secondary,
+                    onTap: write,
+                  )
+                else
+                  RoundButton(
+                    icon: Ph.textAa,
+                    tooltip: context.l10n.remoteSendText,
+                    onTap: write,
+                  ),
+              ],
+            );
           },
         ),
       ],
+    );
+  }
+}
+
+/// What a keyboard's edit did to the text: [back] characters taken off the
+/// end, then [text] written. From the text before and after, whatever the
+/// keyboard did in between (a key, a swiped word, a correction).
+({int back, String text}) keyboardEdit(String before, String after) {
+  final a = before.runes.toList(), b = after.runes.toList();
+  var same = 0;
+  while (same < a.length && same < b.length && a[same] == b[same]) {
+    same++;
+  }
+  return (back: a.length - same, text: String.fromCharCodes(b.sublist(same)));
+}
+
+/// A box to write a message in with the phone's own keyboard, words,
+/// corrections and all, then Send types it where the computer's cursor is.
+Future<void> sendTextSheet(
+  BuildContext context,
+  void Function(String text) type,
+) => showSheet<void>(
+  context: context,
+  isScrollControlled: true,
+  showDragHandle: true,
+  builder: (sheet) => _SendText(type: type),
+);
+
+class _SendText extends StatefulWidget {
+  const _SendText({required this.type});
+
+  final void Function(String text) type;
+
+  @override
+  State<_SendText> createState() => _SendTextState();
+}
+
+class _SendTextState extends State<_SendText> {
+  final _field = TextEditingController();
+
+  @override
+  void dispose() {
+    _field.dispose();
+    super.dispose();
+  }
+
+  void _send() {
+    final text = _field.text;
+    if (text.isEmpty) return;
+    HapticFeedback.selectionClick();
+    widget.type(text);
+    _field.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final l = context.l10n;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        20,
+        0,
+        20,
+        16 + MediaQuery.viewInsetsOf(context).bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l.remoteSendText, style: sora(22, color: s.ink)),
+          const SizedBox(height: 4),
+          Text(
+            l.remoteSendTextCaption,
+            style: TextStyle(fontSize: 13.5, color: s.muted, height: 1.35),
+          ),
+          const SizedBox(height: 14),
+          TextField(
+            controller: _field,
+            autofocus: true,
+            minLines: 3,
+            maxLines: 8,
+            keyboardType: TextInputType.multiline,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(hintText: l.remoteSendTextHint),
+          ),
+          const SizedBox(height: 12),
+          ListenableBuilder(
+            listenable: _field,
+            builder: (context, _) => SigButton(
+              label: l.remoteSendTextGo,
+              icon: PhFill.paperPlaneTilt,
+              expand: true,
+              onTap: _field.text.isEmpty ? null : _send,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -536,14 +1131,15 @@ class _PadButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = Sig.of(context);
-    return Pressable(
+    return Pressable.builder(
       onTap: onTap,
       semanticLabel: label,
-      child: Container(
+      builder: (context, down) => AnimatedContainer(
+        duration: motion(context, 90),
         height: 56,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: s.card,
+          color: down ? s.raised : s.card,
           borderRadius: BorderRadius.circular(Radii.md),
         ),
         child: Text(
@@ -562,11 +1158,13 @@ class _Slides extends StatelessWidget {
   const _Slides({
     required this.send,
     required this.onKey,
+    required this.onChord,
     required this.typing,
   });
 
   final void Function(List<Map<String, Object>>) send;
   final void Function(int keysym) onKey;
+  final void Function(List<int> mods, int keysym) onChord;
 
   /// Whether the phone's keyboard is up.
   final bool typing;
@@ -578,73 +1176,102 @@ class _Slides extends StatelessWidget {
     // The keyboard and the number pad don't both fit: the pad steps aside
     // while the keyboard is up, and comes back when it goes.
     final numpad = c.slidesNumpad && !typing;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          flex: 3,
-          child: Pressable(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              onKey(Keysym.right);
-            },
-            semanticLabel: context.l10n.remoteNextSlide,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Sig.blue,
-                borderRadius: BorderRadius.circular(Radii.xl),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Ph.caretRight,
-                    color: Colors.white,
-                    size: numpad ? 40 : 56,
+    return _Split(
+      main: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            flex: 3,
+            child: Pressable.builder(
+              onTap: () => onKey(Keysym.right),
+              semanticLabel: context.l10n.remoteNextSlide,
+              builder: (context, down) => AnimatedContainer(
+                duration: motion(context, 90),
+                decoration: BoxDecoration(
+                  color: down ? Sig.deep : Sig.blue,
+                  borderRadius: BorderRadius.circular(Radii.xl),
+                ),
+                // Smaller while the number pad takes room.
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween(end: numpad ? 0 : 1),
+                  duration: motion(context, 220),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, big, _) => Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Ph.caretRight,
+                        color: Colors.white,
+                        size: 40 + 16 * big,
+                      ),
+                      Text(
+                        context.l10n.remoteNext,
+                        style: sora(
+                          20 + 6 * big,
+                          weight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    context.l10n.remoteNext,
-                    style: sora(
-                      numpad ? 20 : 26,
-                      weight: FontWeight.w700,
-                      color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            flex: 2,
+            child: Pressable.builder(
+              onTap: () => onKey(Keysym.left),
+              semanticLabel: context.l10n.remotePreviousSlide,
+              builder: (context, down) => AnimatedContainer(
+                duration: motion(context, 90),
+                decoration: BoxDecoration(
+                  color: down ? s.raised : s.card,
+                  borderRadius: BorderRadius.circular(Radii.xl),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Ph.caretLeft, color: s.ink, size: 32),
+                    const SizedBox(width: 6),
+                    Text(
+                      context.l10n.remoteSlideBack,
+                      style: sora(20, color: s.ink),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 12),
-        Expanded(
-          flex: 2,
-          child: Pressable(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              onKey(Keysym.left);
-            },
-            semanticLabel: context.l10n.remotePreviousSlide,
-            child: Container(
-              decoration: BoxDecoration(
-                color: s.card,
-                borderRadius: BorderRadius.circular(Radii.xl),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Ph.caretLeft, color: s.ink, size: 32),
-                  const SizedBox(width: 6),
-                  Text(
-                    context.l10n.remoteSlideBack,
-                    style: sora(20, color: s.ink),
-                  ),
-                ],
-              ),
+        ],
+      ),
+      controls: [
+        // The keys Impress, PowerPoint and most PDF viewers share.
+        _ChipRow(
+          chips: [
+            (context.l10n.remoteFirstSlide, () => onKey(Keysym.home)),
+            (context.l10n.remoteLastSlide, () => onKey(Keysym.end)),
+            (context.l10n.remoteBlackScreen, () => onKey(Keysym.ofChar('b'))),
+            (context.l10n.remoteWhiteScreen, () => onKey(Keysym.ofChar('w'))),
+            (
+              context.l10n.remoteFromHere,
+              () => onChord(const [Keysym.shiftLeft], Keysym.f5),
             ),
-          ),
+          ],
         ),
-        const SizedBox(height: 12),
-        if (numpad) ...[_Numpad(onKey: onKey), const SizedBox(height: 12)],
+        const SizedBox(height: 10),
+        AnimatedSize(
+          duration: motion(context, 220),
+          curve: Curves.easeOutCubic,
+          alignment: Alignment.topCenter,
+          child: numpad
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _Numpad(onKey: onKey),
+                )
+              : const SizedBox(width: double.infinity),
+        ),
         Row(
           children: [
             Expanded(
@@ -683,18 +1310,25 @@ class _Slides extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _Keyboard(send: send, onKey: onKey),
+              child: RemoteKeyboard(send: send, onKey: onKey),
             ),
           ],
         ),
-        if (!numpad && !typing) ...[
-          const SizedBox(height: 10),
-          Text(
-            context.l10n.remoteVolumeHint,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: s.muted, fontSize: 13),
-          ),
-        ],
+        AnimatedSize(
+          duration: motion(context, 220),
+          curve: Curves.easeOutCubic,
+          alignment: Alignment.topCenter,
+          child: !numpad && !typing
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(
+                    context.l10n.remoteVolumeHint,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: s.muted, fontSize: 13),
+                  ),
+                )
+              : const SizedBox(width: double.infinity),
+        ),
       ],
     );
   }
@@ -713,17 +1347,15 @@ class _Numpad extends StatelessWidget {
     Widget key(int keysym, String label, {IconData? icon}) => Expanded(
       child: Padding(
         padding: const EdgeInsets.all(4),
-        child: Pressable(
-          onTap: () {
-            HapticFeedback.selectionClick();
-            onKey(keysym);
-          },
+        child: Pressable.builder(
+          onTap: () => onKey(keysym),
           semanticLabel: label,
-          child: Container(
+          builder: (context, down) => AnimatedContainer(
+            duration: motion(context, 90),
             height: 48,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: s.card,
+              color: down ? s.raised : s.card,
               borderRadius: BorderRadius.circular(Radii.md),
             ),
             child: icon != null
@@ -756,6 +1388,296 @@ class _Numpad extends StatelessWidget {
               icon: Ph.arrowElbowDownLeft,
             ),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Small buttons in one row that scrolls when they don't fit.
+class _ChipRow extends StatelessWidget {
+  const _ChipRow({required this.chips});
+
+  final List<(String, VoidCallback)> chips;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    return SizedBox(
+      height: 40,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          for (final (label, onTap) in chips)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: Pressable.builder(
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  onTap();
+                },
+                semanticLabel: label,
+                builder: (context, down) => AnimatedContainer(
+                  duration: motion(context, 90),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: down ? s.raised : s.card,
+                    borderRadius: BorderRadius.circular(Radii.md),
+                  ),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13.5,
+                      color: s.ink,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The browser in front on the computer, by its shortcuts (Chrome, Firefox,
+/// Edge and most others share them): Back and Forward big, then Reload,
+/// Home, tabs, and Address, which goes to the address bar and brings up the
+/// keyboard to type there.
+class _Browser extends StatefulWidget {
+  const _Browser({
+    required this.send,
+    required this.onKey,
+    required this.onChord,
+  });
+
+  final void Function(List<Map<String, Object>>) send;
+  final void Function(int keysym) onKey;
+  final void Function(List<int> mods, int keysym) onChord;
+
+  @override
+  State<_Browser> createState() => _BrowserState();
+}
+
+class _BrowserState extends State<_Browser> {
+  final _focus = FocusNode();
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    super.dispose();
+  }
+
+  void _chord(List<int> mods, int keysym) {
+    HapticFeedback.selectionClick();
+    widget.onChord(mods, keysym);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final l = context.l10n;
+    const alt = [Keysym.altLeft];
+    const ctrl = [Keysym.controlLeft];
+    Widget big(IconData icon, String label, VoidCallback onTap, bool main) =>
+        Expanded(
+          child: Pressable.builder(
+            onTap: onTap,
+            semanticLabel: label,
+            builder: (context, down) => AnimatedContainer(
+              duration: motion(context, 90),
+              decoration: BoxDecoration(
+                color: main
+                    ? (down ? Sig.deep : Sig.blue)
+                    : (down ? s.raised : s.card),
+                borderRadius: BorderRadius.circular(Radii.xl),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, size: 36, color: main ? Colors.white : s.ink),
+                  const SizedBox(height: 4),
+                  Text(
+                    label,
+                    style: sora(18, color: main ? Colors.white : s.ink),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+    Widget small(IconData icon, String label, VoidCallback onTap) => Expanded(
+      child: Pressable.builder(
+        onTap: onTap,
+        semanticLabel: label,
+        builder: (context, down) => AnimatedContainer(
+          duration: motion(context, 90),
+          height: 64,
+          decoration: BoxDecoration(
+            color: down ? s.raised : s.card,
+            borderRadius: BorderRadius.circular(Radii.md),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 20, color: s.ink),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: s.ink,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    const gap = SizedBox(width: 10);
+    return _Split(
+      main: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          big(
+            Ph.arrowLeft,
+            l.remoteWebBack,
+            () => _chord(alt, Keysym.left),
+            false,
+          ),
+          gap,
+          big(
+            Ph.arrowRight,
+            l.remoteWebForward,
+            () => _chord(alt, Keysym.right),
+            false,
+          ),
+        ],
+      ),
+      controls: [
+        Row(
+          children: [
+            small(
+              Ph.arrowClockwise,
+              l.remoteWebReload,
+              () => _chord(const [], Keysym.f5),
+            ),
+            gap,
+            small(Ph.house, l.remoteWebHome, () => _chord(alt, Keysym.home)),
+            gap,
+            small(Ph.plus, l.remoteWebNewTab, () => _chord(ctrl, 0x74)),
+            gap,
+            small(Ph.x, l.remoteWebCloseTab, () => _chord(ctrl, 0x77)),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            small(
+              Ph.caretLeft,
+              l.remoteWebPrevTab,
+              () => _chord(ctrl, Keysym.pageUp),
+            ),
+            gap,
+            small(
+              Ph.caretRight,
+              l.remoteWebNextTab,
+              () => _chord(ctrl, Keysym.pageDown),
+            ),
+            gap,
+            small(Ph.arrowUp, 'PgUp', () => _chord(const [], Keysym.pageUp)),
+            gap,
+            small(
+              Ph.arrowDown,
+              'PgDn',
+              () => _chord(const [], Keysym.pageDown),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: SigButton(
+                label: l.remoteWebAddress,
+                icon: Ph.globe,
+                kind: SigButtonKind.secondary,
+                expand: true,
+                onTap: () {
+                  // Ctrl+L selects the address; what's typed replaces it.
+                  _chord(ctrl, 0x6c);
+                  _focus.requestFocus();
+                  SystemChannels.textInput.invokeMethod<void>('TextInput.show');
+                },
+              ),
+            ),
+            gap,
+            Expanded(
+              child: RemoteKeyboard(
+                send: widget.send,
+                onKey: widget.onKey,
+                focus: _focus,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Text(
+          l.remoteWebHint,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: s.muted, fontSize: 13),
+        ),
+      ],
+    );
+  }
+}
+
+/// A mode's main surface and its controls: the controls under it on a phone
+/// held upright; sideways, beside it on the right, in a column that scrolls
+/// when it must, so the surface keeps the height.
+class _Split extends StatelessWidget {
+  const _Split({required this.main, required this.controls});
+
+  final Widget main;
+  final List<Widget> controls;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!sideBySide(context)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: main),
+          const SizedBox(height: 10),
+          ...controls,
+        ],
+      );
+    }
+    final width = math.min(MediaQuery.sizeOf(context).width * .42, 400.0);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(child: main),
+        const SizedBox(width: 14),
+        SizedBox(
+          width: width,
+          child: LayoutBuilder(
+            builder: (context, box) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: box.maxHeight),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: controls,
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
