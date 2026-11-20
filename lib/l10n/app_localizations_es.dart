@@ -180,6 +180,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'KDE Connectify necesita el permiso de micrófono para funcionar como micrófono.';
 
   @override
+  String get deviceControlNoOverlayPermission =>
+      'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.';
+
+  @override
   String get ctlTerminalTitle => 'Terminal';
 
   @override
@@ -453,6 +457,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deviceNoCommandsSaved => 'No commands saved on this computer yet';
+
+  @override
+  String get devicePcFiles => 'Computer Files';
+
+  @override
+  String get deviceNoPcFiles => 'Nothing to show here';
 
   @override
   String get deviceFilterAll => 'Todo';
@@ -2335,4 +2345,153 @@ class AppLocalizationsEs extends AppLocalizations {
   String pairingUpdateOlder(String name) {
     return 'Actualizar KDE Connectify en $name hace el emparejamiento aún más seguro.';
   }
+
+  @override
+  String get deviceMenuMore => 'More actions';
+
+  @override
+  String get deviceRename => 'Rename';
+
+  @override
+  String get deviceDelete => 'Delete';
+
+  @override
+  String get deviceNewFolder => 'New folder';
+
+  @override
+  String get deviceDownload => 'Download';
+
+  @override
+  String get deviceUpload => 'Upload';
+
+  @override
+  String get deviceOpenOnPc => 'Open on computer';
+
+  @override
+  String deviceDeleteConfirm(Object name) {
+    return 'Delete \"$name\"?';
+  }
+
+  @override
+  String get deviceRenameTo => 'New name';
+
+  @override
+  String deviceRenamed(Object name) {
+    return 'Renamed to $name';
+  }
+
+  @override
+  String deviceDeleted(Object name) {
+    return 'Deleted $name';
+  }
+
+  @override
+  String deviceDownloaded(Object name) {
+    return 'Saved $name';
+  }
+
+  @override
+  String deviceUploadedTo(Object name) {
+    return 'Uploaded to $name';
+  }
+
+  @override
+  String deviceOpened(Object name) {
+    return 'Opening $name on the computer';
+  }
+
+  @override
+  String get deviceCannotOpenFolder => 'Could not open that folder.';
+
+  @override
+  String get deviceDeleteCantUndo => 'This can\'t be undone.';
+
+  @override
+  String deviceFolderCreated(String name) {
+    return 'Created $name';
+  }
+
+  @override
+  String get transfersQueueTitle => 'Downloads & uploads';
+
+  @override
+  String get transfersActiveNow => 'Active';
+
+  @override
+  String transfersQueuedNow(Object n) {
+    return 'Up next ($n)';
+  }
+
+  @override
+  String get transfersDoneNow => 'Finished';
+
+  @override
+  String get transfersPausing => 'Pause';
+
+  @override
+  String get transfersResuming => 'Resume';
+
+  @override
+  String transfersCancelledMsg(Object name) {
+    return 'Cancelled $name';
+  }
+
+  @override
+  String transfersPausedMsg(Object name) {
+    return 'Paused $name';
+  }
+
+  @override
+  String transfersResumedMsg(Object name) {
+    return 'Resumed $name';
+  }
+
+  @override
+  String transfersFailedMsg(Object name) {
+    return 'Failed $name';
+  }
+
+  @override
+  String get transfersQueueEmpty => 'Nothing in the queue';
+
+  @override
+  String get transfersMoveUp => 'Move up';
+
+  @override
+  String get transfersMoveDown => 'Move down';
+
+  @override
+  String get deviceSearchHint => 'Search files & folders';
+
+  @override
+  String get deviceFilterAllShow => 'Show all';
+
+  @override
+  String get deviceFilterDirs => 'Folders';
+
+  @override
+  String get deviceFilterFilesOnly => 'Files';
+
+  @override
+  String deviceNoSearchResults(Object q) {
+    return 'No results for \"$q\"';
+  }
+
+  @override
+  String get deviceSortByName => 'Name';
+
+  @override
+  String get deviceSortByDate => 'Newest first';
+
+  @override
+  String get deviceSortBySize => 'Largest first';
+
+  @override
+  String get deviceSortByDirFirst => 'Folders first';
+
+  @override
+  String get deviceUploadsHere => 'Uploads to this folder';
+
+  @override
+  String get deviceDownloadsHere => 'Downloads from this folder';
 }

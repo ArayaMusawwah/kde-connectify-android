@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_item_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/widget_item_bg"
+    android:paddingStart="12dp"
+    android:paddingTop="9dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="9dp">
+
+    <!-- Terminal Prompt Accent Indicator -->
+    <TextView
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:gravity="center"
+        android:background="#222563FF"
+        android:text="&gt;_"
+        android:textColor="#22C3E6"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_command_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#EEF2FA"
+            android:textSize="13.5sp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/item_command_script"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:textColor="#8B95AC"
+            android:textSize="11sp"
+            android:typeface="monospace"
+            android:singleLine="true"
+            android:ellipsize="end" />
+    </LinearLayout>
+
+    <!-- Run arrow -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="▶"
+        android:textColor="#2563FF"
+        android:textSize="10sp" />
+</LinearLayout>

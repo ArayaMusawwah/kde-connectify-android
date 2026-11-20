@@ -974,6 +974,79 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
   Future<void> requestCommands(String id) =>
       node.requestCommands(id).catchError((Object _) {});
 
+  Future<List<PcFileEntry>> fsList(String id, String path) =>
+      node.fsList(id, path);
+
+  Future<Uint8List> fsRead(String id, String path, {int offset = 0, int? length}) =>
+      node.fsRead(id, path, offset: offset, length: length);
+
+  Future<int?> fsStat(String id, String path) => node.fsStat(id, path);
+
+  Future<void> fsMkdir(String id, String path) =>
+      node.fsMkdir(id, path);
+
+  Future<void> fsDelete(String id, String path) =>
+      node.fsDelete(id, path);
+
+  Future<void> fsRename(String id, String path, String to) =>
+      node.fsRename(id, path, to);
+
+  Future<void> fsOpen(String id, String path) => node.fsOpen(id, path);
+
+  /// Uploads a local file to [dir] on the computer, 4 MiB per request, and
+  /// answers the path it was written to there.
+  Future<String> fsUpload(
+    String id,
+    String dir,
+    String localPath, {
+    void Function(int done, int total)? onProgress,
+    bool Function()? shouldCancel,
+  }) async {
+    final file = File(localPath);
+    final name = file.uri.pathSegments.last;
+    final remote = dir == '/' ? '/$name' : '$dir/$name';
+    final size = await file.length();
+    final reader = await file.open();
+    try {
+      var offset = 0;
+      do {
+        if (shouldCancel?.call() ?? false) break;
+        final bytes = await reader.read(_fsChunk);
+        await node.fsWrite(id, remote, offset, offset == 0, bytes);
+        offset += bytes.length;
+        onProgress?.call(offset, size);
+      } while (offset < size);
+    } finally {
+      await reader.close();
+    }
+    return remote;
+  }
+
+  /// Saves a file from the computer into Downloads/KDE Connectify, where the
+  /// file manager finds it; answers where it landed.
+  Future<String> fsDownloadToPhone(
+    String id,
+    String path, {
+    void Function(int done, int total)? onProgress,
+    bool Function()? shouldCancel,
+  }) async {
+    final name = path.split('/').last;
+    final dir = await LinksyPlatform.paths();
+    final base = dir?.external ?? dir?.support;
+    if (base == null) throw 'No storage for the file.';
+    final saved = await node.fsDownload(
+      id,
+      path,
+      '$base/Received/$name',
+      onProgress: onProgress,
+      shouldCancel: shouldCancel,
+    );
+    final moved = await LinksyPlatform.publishDownloads([saved]);
+    return moved.isEmpty ? saved : moved.first;
+  }
+
+  static const _fsChunk = 1 << 20;
+
   // Media (§4.5): a computer's players, while a page or the media
   // notification shows them.
 
@@ -1826,6 +1899,14 @@ class LinksyController extends ChangeNotifier with WidgetsBindingObserver {
           allowed = await LinksyPlatform.requestScreenCapture(request.request);
           if (!allowed) {
             error = tr.ctlScreenPermission;
+          }
+          if (request.kind == SessionKind.control && allowed) {
+            // The computer drives this phone: needs the overlay to inject
+            // touch, so the "draw over apps" permission is required too.
+            allowed = await LinksyPlatform.requestPermission('drawOverApps');
+            if (!allowed) {
+              error = tr.deviceControlNoOverlayPermission;
+            }
           }
         case SessionKind.camera:
           allowed = await LinksyPlatform.requestCamera();

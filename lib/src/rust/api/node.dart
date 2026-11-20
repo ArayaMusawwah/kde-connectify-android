@@ -4,7 +4,6 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
-
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `fingerprint`, `json`, `kind`, `rt`, `run`, `running`
@@ -66,6 +65,53 @@ abstract class LinksyNode implements RustOpaqueInterface {
 
   void forget({required String id});
 
+  /// The most `fs_read` returns, and the stride a reader should ask in: the caller uses
+  /// this exact number, so its offsets can't drift from what the file server hands out.
+  BigInt fsChunk();
+
+  /// Delete a file or folder on the computer.
+  Future<void> fsDelete({required String id, required String path});
+
+  /// What is shared (the label), to use as the root directory name.
+  Future<String> fsInfo({required String id});
+
+  /// Browse a computer's shared folder: list the directory at `path` (root is "/").
+  Future<String> fsList({required String id, required String path});
+
+  /// Create a directory on the computer.
+  Future<void> fsMkdir({required String id, required String path});
+
+  /// Open a file on the computer with its default application (`xdg-open`).
+  Future<void> fsOpen({required String id, required String path});
+
+  /// Read up to `length` bytes of a file (at most MAX_CHUNK), returned as raw bytes.
+  /// `length` is explicit so a caller reading ahead knows where each chunk starts.
+  Future<Uint8List> fsRead({
+    required String id,
+    required String path,
+    required BigInt offset,
+    required BigInt length,
+  });
+
+  /// Rename a file or folder on the computer.
+  Future<void> fsRename({
+    required String id,
+    required String path,
+    required String to,
+  });
+
+  /// Stat one entry (its size, whether it's a dir).
+  Future<String> fsStat({required String id, required String path});
+
+  /// Write one chunk (at most 4 MiB) at [offset]; [truncate] empties the file first.
+  Future<void> fsWrite({
+    required String id,
+    required String path,
+    required BigInt offset,
+    required bool truncate,
+    required List<int> bytes,
+  });
+
   /// Photo auto-import: offers files into the computer's picture library.
   Future<String> importFiles({required String id, required List<String> paths});
 
@@ -124,8 +170,16 @@ abstract class LinksyNode implements RustOpaqueInterface {
   /// The port this node listens on, for "pair by address" from elsewhere.
   int port();
 
+  /// Have a direct link (Wi-Fi Direct) coming up for `bytes` on its way, when both
+  /// devices can make one and it would pay for itself. Answers at once: the reads go
+  /// over it by themselves once it is up, and stay on the usual way until then.
+  Future<bool> prepareLink({required String id, required BigInt bytes});
+
   /// Answers `locate` with why not.
   Future<void> refuseLocation({required String id, required String reason});
+
+  /// Request commands list from the computer.
+  Future<void> requestCommands({required String id});
 
   /// Answer a pairing or transfer request. False if it already expired.
   bool respond({required String request, required bool accept});
@@ -141,6 +195,9 @@ abstract class LinksyNode implements RustOpaqueInterface {
 
   /// "Find my computer": makes it ring (`on`), or stops it.
   Future<void> ring({required String id, required bool on_});
+
+  /// Execute a command preset on the computer.
+  Future<void> runCommand({required String id, required String key});
 
   /// This phone's battery, `level` in percent.
   Future<void> sendBattery({
@@ -168,6 +225,9 @@ abstract class LinksyNode implements RustOpaqueInterface {
     double? accuracyM,
     required BigInt atMs,
   });
+
+  /// Send this phone's media players to another device.
+  Future<void> sendMediaState({required String id, required String stateJson});
 
   /// This phone's own picture (base64 JPEG/PNG ≤ 128 KiB) to a computer.
   Future<void> sendPicture({required String id, required String image});

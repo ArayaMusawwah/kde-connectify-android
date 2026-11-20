@@ -19,6 +19,7 @@ import '../sharing/sharing.dart';
 import '../sharing/webcam_screen.dart';
 import '../terminal/terminal_screen.dart';
 import 'commands_screen.dart';
+import 'pc_files_screen.dart';
 import '../../app/terminals.dart';
 import 'activity_tile.dart';
 import '../transfer/transfer_bubble.dart';
@@ -202,6 +203,11 @@ class _DeviceScreenState extends State<DeviceScreen> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                             child: _SavedCommandsCard(view: view),
+                          ),
+                        if (_isComputer(view.device))
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                            child: _PcFilesCard(view: view),
                           ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
@@ -1721,7 +1727,49 @@ class _NoActivity extends StatelessWidget {
   }
 }
 
-/// Card linking to the saved commands screen for this computer.
+/// "Computer Files": steps into [PcFilesScreen], where this phone browses
+/// the computer's shared folder ($HOME) through `node.fs`.
+class _PcFilesCard extends StatelessWidget {
+  const _PcFilesCard({required this.view});
+
+  final DeviceView view;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Sig.of(context);
+    final id = view.device.id;
+
+    return SigCard(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => PcFilesScreen(deviceId: id),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+      child: Row(
+        children: [
+          IconCircle(icon: Ph.folderOpen, color: Sig.blue, size: 40),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(context.l10n.devicePcFiles, style: sora(16, color: s.ink)),
+                const SizedBox(height: 2),
+                Text(
+                  'Browse this computer\'s home folder',
+                  style: TextStyle(fontSize: 12.5, color: s.muted),
+                ),
+              ],
+            ),
+          ),
+          Icon(Ph.caretRight, color: s.faint, size: 18),
+        ],
+      ),
+    );
+  }
+}
+
 class _SavedCommandsCard extends StatelessWidget {
   const _SavedCommandsCard({required this.view});
 

@@ -42,6 +42,9 @@
          shows an explicit user consent screen; grant is per-app in Settings. -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage"/>
+    <!-- A computer controlling this phone: the input overlay is drawn over
+         other apps (grant in Android's "Display over other apps" settings). -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:label="KDE Connectify"
@@ -120,6 +123,12 @@
             android:name=".media.ShareService"
             android:exported="false"
             android:foregroundServiceType="mediaProjection|camera|microphone"/>
+        <!-- A computer driving this phone's touch/keyboard (§scrcpy-like): the
+             overlay is drawn over other apps and needs its own foreground service. -->
+        <service
+            android:name=".input.ControlOverlayService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection"/>
         <service
             android:name=".KeepAlive"
             android:exported="false"

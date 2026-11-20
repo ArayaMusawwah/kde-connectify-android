@@ -9,8 +9,10 @@ use std::path::PathBuf;
 use std::sync::OnceLock;
 
 use flutter_rust_bridge::frb;
+use linksy_core::fs::{FsAnswer, MAX_CHUNK};
 use linksy_core::{Battery, CallState, Config, DeviceKind, Error, Fingerprint, MediaCommand, Node, SessionKind, Settings, Uuid};
-use linksy_core::{Event, Link, TerminalOpen};
+use linksy_core::{Event, FsRequest, Link, TerminalOpen};
+use linksy_core::route::DirectPlan;
 use tokio::runtime::Runtime;
 use tokio::sync::broadcast::error::RecvError;
 
@@ -378,6 +380,18 @@ impl LinksyNode {
         run(async move { node.direct_link(&id).await }).await
     }
 
+    /// Have a direct link (Wi-Fi Direct) coming up for `bytes` on its way, when both
+    /// devices can make one and it would pay for itself. Answers at once: the reads go
+    /// over it by themselves once it is up, and stay on the usual way until then.
+    pub async fn prepare_link(&self, id: String, bytes: u64) -> Result<bool, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move {
+            Ok(matches!(node.prepare_send(&id, bytes).await.map(|p| p.direct), Some(DirectPlan::Up) | Some(DirectPlan::Will)))
+        })
+        .await
+    }
+
     /// `ringing`, `active` or `idle`.
     pub async fn send_call_state(&self, id: String, state: String) -> Result<(), String> {
         let id = fingerprint(&id)?;
@@ -549,6 +563,120 @@ impl LinksyNode {
     #[frb(sync)]
     pub fn end_session(&self, session: String) {
         crate::sessions::end(&session);
+    }
+
+    /// Browse a computer's shared folder: list the directory at `path` (root is "/").
+    pub async fn fs_list(&self, id: String, path: String) -> Result<String, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move {
+            let ans = node.fs(&id, FsRequest::List { path: path }, &[]).await?;
+            match ans {
+                FsAnswer::Entries(entries) => Ok(json(&entries)),
+                _ => Err(linksy_core::Error::Declined.into()),
+            }
+        })
+        .await
+    }
+
+    /// Stat one entry (its size, whether it's a dir).
+    pub async fn fs_stat(&self, id: String, path: String) -> Result<String, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move {
+            let ans = node.fs(&id, FsRequest::Stat { path: path }, &[]).await?;
+            match ans {
+                FsAnswer::Entry(e) => Ok(json(&e)),
+                _ => Err(linksy_core::Error::Declined.into()),
+            }
+        })
+        .await
+    }
+
+    /// The most `fs_read` returns, and the stride a reader should ask in: the caller uses
+    /// this exact number, so its offsets can't drift from what the file server hands out.
+    #[frb(sync)]
+    pub fn fs_chunk(&self) -> u64 {
+        MAX_CHUNK
+    }
+
+    /// Read up to `length` bytes of a file (at most MAX_CHUNK), returned as raw bytes.
+    /// `length` is explicit so a caller reading ahead knows where each chunk starts.
+    pub async fn fs_read(&self, id: String, path: String, offset: u64, length: u64) -> Result<Vec<u8>, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        let length = length.min(MAX_CHUNK);
+        run(async move {
+            let ans = node.fs(&id, FsRequest::Read { path, offset, length }, &[]).await?;
+            match ans {
+                FsAnswer::Data(data) => Ok(data),
+                _ => Err(linksy_core::Error::Declined.into()),
+            }
+        })
+        .await
+    }
+
+    /// Create a directory on the computer.
+    pub async fn fs_mkdir(&self, id: String, path: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.fs(&id, FsRequest::Mkdir { path }, &[]).await })
+            .await
+            .map(|_| ())
+    }
+
+    /// Delete a file or folder on the computer.
+    pub async fn fs_delete(&self, id: String, path: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.fs(&id, FsRequest::Delete { path }, &[]).await })
+            .await
+            .map(|_| ())
+    }
+
+    /// Write one chunk (at most 4 MiB) at [offset]; [truncate] empties the file first.
+    pub async fn fs_write(&self, id: String, path: String, offset: u64, truncate: bool, bytes: Vec<u8>) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move {
+            let length = bytes.len() as u64;
+            let req = FsRequest::Write { path, offset, length, truncate };
+            node.fs(&id, req, &bytes).await
+        })
+        .await
+        .map(|_| ())
+    }
+
+    /// Rename a file or folder on the computer.
+    pub async fn fs_rename(&self, id: String, path: String, to: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.fs(&id, FsRequest::Rename { path, to }, &[]).await })
+            .await
+            .map(|_| ())
+    }
+
+    /// Open a file on the computer with its default application (`xdg-open`).
+    pub async fn fs_open(&self, id: String, path: String) -> Result<(), String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move { node.fs(&id, FsRequest::Open { path }, &[]).await })
+            .await
+            .map(|_| ())
+    }
+
+    /// What is shared (the label), to use as the root directory name.
+    pub async fn fs_info(&self, id: String) -> Result<String, String> {
+        let id = fingerprint(&id)?;
+        let node = self.node.clone();
+        run(async move {
+            let ans = node.fs(&id, FsRequest::Info, &[]).await?;
+            match ans {
+                FsAnswer::Info { name } => Ok(name),
+                _ => Ok(String::new()),
+            }
+        })
+        .await
     }
 
     pub async fn shutdown(&self) -> Result<(), String> {

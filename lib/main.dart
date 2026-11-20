@@ -19,10 +19,14 @@ import 'ui/l10n.dart';
 /// `--dart-define=LINKSY_DEMO=true` runs on made-up devices, for UI work.
 const _demo = bool.fromEnvironment('LINKSY_DEMO');
 
-/// What this phone does for computers (docs/protocol.md §4.10). Not `control`,
+/// What this phone does for computers (docs/protocol.md §4.10). Not
 /// `notifications` or `sms` (each needs a permission that gets sideloaded
 /// apps blocked at install), nor `media_state` or `clipboard_watch`
 /// (Android doesn't let apps watch either in the background).
+///
+/// `control` (a computer driving this phone's touch and keyboard) is offered
+/// through the "Display over other apps" overlay instead of an
+/// AccessibilityService, so it doesn't trip the same install-block.
 const _features = [
   'files',
   'clipboard',
@@ -36,6 +40,7 @@ const _features = [
   'fs',
   'input',
   'screen',
+  'control',
   'display',
   'camera',
   'watch',

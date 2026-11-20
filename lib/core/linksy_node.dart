@@ -92,6 +92,43 @@ abstract interface class LinksyNode {
   /// `ip` and `port`, or `end` with a `reason`.
   Future<void> directSend(String id, Map<String, Object?> step);
 
+  /// Browse the shared folder of computer [id]: what's at [path] ("/" is its
+  /// root, a folder inside the computer the user picked).
+  Future<List<PcFileEntry>> fsList(String id, String path);
+
+  /// Up to [length] bytes (at most 4 MiB) of a file on [id] from [offset]. The whole
+  /// file is read in strides of [chunkSize], so a reader asking ahead knows where each
+  /// piece starts without waiting for the one before it.
+  Future<Uint8List> fsRead(String id, String path, {int offset = 0, int? length});
+
+  /// The most [fsRead] returns: the stride to read a file in.
+  int get chunkSize;
+
+  /// Make a folder [path] on [id].
+  Future<void> fsMkdir(String id, String path);
+
+  /// Delete [path] on [id], with everything in it if it's a folder.
+  Future<void> fsDelete(String id, String path);
+
+  /// Rename [path] to [to] on [id]; both are paths in the same shared folder.
+  Future<void> fsRename(String id, String path, String to);
+
+  /// Write [bytes] over [path] on [id], creating it (4 MiB per call).
+  Future<void> fsWrite(String id, String path, int offset, bool truncate, Uint8List bytes);
+
+  /// Open [path] on [id] with the computer's default application.
+  Future<void> fsOpen(String id, String path);
+
+  /// Download [path] from [id] into [into] (a local file path); returns that path.
+  /// [onProgress] is called with (doneBytes, totalBytes) per chunk.
+  Future<String> fsDownload(String id, String path, String into, {
+    void Function(int done, int total)? onProgress,
+    bool Function()? shouldCancel,
+  });
+
+  /// Size of [path] on [id]; null when it isn't known.
+  Future<int?> fsStat(String id, String path);
+
   /// This phone's networks changed: check the links, dial again, tell iroh
   /// (docs/protocol.md §4.13).
   void networkChanged();

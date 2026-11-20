@@ -396,6 +396,12 @@ abstract class AppLocalizations {
   /// **'KDE Connectify needs the microphone permission to be a microphone.'**
   String get ctlMicrophonePermission;
 
+  /// Error when the draw-over-apps permission was refused for a control session
+  ///
+  /// In en, this message translates to:
+  /// **'Letting a computer control this phone needs the \'Display over other apps\' permission. Enable it in Android settings for KDE Connectify.'**
+  String get deviceControlNoOverlayPermission;
+
   /// Default title of a remote terminal tab
   ///
   /// In en, this message translates to:
@@ -821,6 +827,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No commands saved on this computer yet'**
   String get deviceNoCommandsSaved;
+
+  /// Card title and screen title: browse the files a computer shares
+  ///
+  /// In en, this message translates to:
+  /// **'Computer Files'**
+  String get devicePcFiles;
+
+  /// Empty state when a shared folder has no entries
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to show here'**
+  String get deviceNoPcFiles;
 
   /// Timeline filter: everything
   ///
@@ -3833,6 +3851,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Updating KDE Connectify on {name} makes pairing even safer.'**
   String pairingUpdateOlder(String name);
+
+  /// Row overflow menu on a shared file
+  ///
+  /// In en, this message translates to:
+  /// **'More actions'**
+  String get deviceMenuMore;
+
+  /// Rename a file or folder on the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get deviceRename;
+
+  /// Delete a file or folder on the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deviceDelete;
+
+  /// Create a folder on the computer
+  ///
+  /// In en, this message translates to:
+  /// **'New folder'**
+  String get deviceNewFolder;
+
+  /// Download this file to the phone
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get deviceDownload;
+
+  /// Upload a file from the phone to this folder
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get deviceUpload;
+
+  /// Open this file on the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Open on computer'**
+  String get deviceOpenOnPc;
+
+  /// Delete a file or folder on the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"?'**
+  String deviceDeleteConfirm(Object name);
+
+  /// New name for the file or folder
+  ///
+  /// In en, this message translates to:
+  /// **'New name'**
+  String get deviceRenameTo;
+
+  /// Rename done
+  ///
+  /// In en, this message translates to:
+  /// **'Renamed to {name}'**
+  String deviceRenamed(Object name);
+
+  /// Delete done
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted {name}'**
+  String deviceDeleted(Object name);
+
+  /// File saved into Downloads/KDE Connectify
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {name}'**
+  String deviceDownloaded(Object name);
+
+  /// Upload done
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded to {name}'**
+  String deviceUploadedTo(Object name);
+
+  /// Open on computer requested
+  ///
+  /// In en, this message translates to:
+  /// **'Opening {name} on the computer'**
+  String deviceOpened(Object name);
+
+  /// Shown when listing a folder on the computer fails
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open that folder.'**
+  String get deviceCannotOpenFolder;
+
+  /// Line under the delete confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'This can\'t be undone.'**
+  String get deviceDeleteCantUndo;
+
+  /// Folder created on the computer
+  ///
+  /// In en, this message translates to:
+  /// **'Created {name}'**
+  String deviceFolderCreated(String name);
+
+  /// Transfer-center title: PC Files queue
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads & uploads'**
+  String get transfersQueueTitle;
+
+  /// Tab label: transfers moving now
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get transfersActiveNow;
+
+  /// Tab label: queued transfers
+  ///
+  /// In en, this message translates to:
+  /// **'Up next ({n})'**
+  String transfersQueuedNow(Object n);
+
+  /// Tab label: finished transfers
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get transfersDoneNow;
+
+  /// Pause a transfer
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get transfersPausing;
+
+  /// Resume a paused transfer
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get transfersResuming;
+
+  /// Transfer was cancelled
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled {name}'**
+  String transfersCancelledMsg(Object name);
+
+  /// Transfer was paused
+  ///
+  /// In en, this message translates to:
+  /// **'Paused {name}'**
+  String transfersPausedMsg(Object name);
+
+  /// Transfer was resumed
+  ///
+  /// In en, this message translates to:
+  /// **'Resumed {name}'**
+  String transfersResumedMsg(Object name);
+
+  /// Transfer failed
+  ///
+  /// In en, this message translates to:
+  /// **'Failed {name}'**
+  String transfersFailedMsg(Object name);
+
+  /// Empty-state line
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing in the queue'**
+  String get transfersQueueEmpty;
+
+  /// Reorder an uploaded file up
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get transfersMoveUp;
+
+  /// Reorder an uploaded file down
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get transfersMoveDown;
+
+  /// Search box hint on PC Files
+  ///
+  /// In en, this message translates to:
+  /// **'Search files & folders'**
+  String get deviceSearchHint;
+
+  /// Search result filter: everything
+  ///
+  /// In en, this message translates to:
+  /// **'Show all'**
+  String get deviceFilterAllShow;
+
+  /// Search result filter: folders only
+  ///
+  /// In en, this message translates to:
+  /// **'Folders'**
+  String get deviceFilterDirs;
+
+  /// Search result filter: files only
+  ///
+  /// In en, this message translates to:
+  /// **'Files'**
+  String get deviceFilterFilesOnly;
+
+  /// No search results
+  ///
+  /// In en, this message translates to:
+  /// **'No results for \"{q}\"'**
+  String deviceNoSearchResults(Object q);
+
+  /// Sort by name
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get deviceSortByName;
+
+  /// Sort by modification date
+  ///
+  /// In en, this message translates to:
+  /// **'Newest first'**
+  String get deviceSortByDate;
+
+  /// Sort by size
+  ///
+  /// In en, this message translates to:
+  /// **'Largest first'**
+  String get deviceSortBySize;
+
+  /// Sort: folders first (like a file manager)
+  ///
+  /// In en, this message translates to:
+  /// **'Folders first'**
+  String get deviceSortByDirFirst;
+
+  /// Section label for Uploads queue on PC Files
+  ///
+  /// In en, this message translates to:
+  /// **'Uploads to this folder'**
+  String get deviceUploadsHere;
+
+  /// Section label for Downloads queue on PC Files
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads from this folder'**
+  String get deviceDownloadsHere;
 }
 
 class _AppLocalizationsDelegate

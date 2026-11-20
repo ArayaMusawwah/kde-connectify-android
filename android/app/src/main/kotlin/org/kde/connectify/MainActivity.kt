@@ -331,6 +331,20 @@ class MainActivity : FlutterActivity() {
                         "microphone" -> requestPermission(Manifest.permission.RECORD_AUDIO, REQUEST_MICROPHONE, result)
                         "location" -> requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_LOCATION, result)
                         "nearby" -> requestPermission(DirectHost.permission(), REQUEST_NEARBY, result)
+                        "drawOverApps" -> {
+                            // "Display over other apps": opens Android's own
+                            // settings screen; the user flips it on manually.
+                            if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this@MainActivity)) {
+                                val intent = Intent(
+                                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    android.net.Uri.parse("package:${packageName}"),
+                                )
+                                startActivity(intent)
+                                result.success(false)
+                            } else {
+                                result.success(true)
+                            }
+                        }
                         "notifications" -> if (Build.VERSION.SDK_INT >= 33) {
                             requestPermission(Manifest.permission.POST_NOTIFICATIONS, REQUEST_NOTIFICATIONS, result)
                         } else {

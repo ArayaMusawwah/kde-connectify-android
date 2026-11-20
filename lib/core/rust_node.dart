@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import '../app/platform.dart';
@@ -19,15 +20,13 @@ class RustNode implements LinksyNode {
         .map((raw) {
           final j = jsonDecode(raw) as Json;
           final event = eventFromJson(j);
-          // Being controlled needs an accessibility service on Android, which
-          // gets sideloaded apps blocked at install; this phone doesn't offer
-          // it. That, or a kind this app doesn't know: say "can't" straight
-          // away rather than leave the other device waiting.
-          // `input` goes the other way (this phone drives a computer).
+          // `input` goes the other way (this phone drives a computer): this
+          // app has no way to receive it, so say "can't" straight away.
+          // `control` (a computer driving this phone) is now supported through
+          // the system-overlay input injector, so it goes to the user instead
+          // of being declined here.
           if (j['type'] == 'session_request' &&
-              (event == null ||
-                  j['kind'] == 'control' ||
-                  j['kind'] == 'input')) {
+              (event == null || j['kind'] == 'input')) {
             _node.declineUnsupported(request: j['request'] as String);
             return null;
           }
@@ -306,6 +305,123 @@ class RustNode implements LinksyNode {
   @override
   Future<String> importFiles(String id, List<String> paths) => _guard(
     () => _node.importFiles(id: id, paths: paths),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<List<PcFileEntry>> fsList(String id, String path) => _guard(
+    () async {
+      final raw = await _node.fsList(id: id, path: path);
+      final list = (jsonDecode(raw) as List).cast<Json>();
+      return [for (final e in list) PcFileEntry.fromJson(e)];
+    },
+    name: _nameOf(id),
+  );
+
+  @override
+  int get chunkSize => _node.fsChunk().toInt();
+
+  @override
+  Future<Uint8List> fsRead(String id, String path, {int offset = 0, int? length}) => _guard(
+    () => _node.fsRead(id: id, path: path, offset: BigInt.from(offset), length: BigInt.from(length ?? chunkSize)),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> fsMkdir(String id, String path) => _guard(
+    () => _node.fsMkdir(id: id, path: path),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> fsDelete(String id, String path) => _guard(
+    () => _node.fsDelete(id: id, path: path),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> fsRename(String id, String path, String to) => _guard(
+    () => _node.fsRename(id: id, path: path, to: to),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> fsWrite(String id, String path, int offset, bool truncate, Uint8List bytes) => _guard(
+    () => _node.fsWrite(id: id, path: path, offset: BigInt.from(offset), truncate: truncate, bytes: bytes),
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<void> fsOpen(String id, String path) => _guard(
+    () => _node.fsOpen(id: id, path: path),
+    name: _nameOf(id),
+  );
+
+  /// Reads the file from the computer in [chunkSize] strides, writing them out in order
+  /// as they come, so a big file never sits in memory whole and the round trips overlap
+  /// instead of queueing: several reads are in flight at once. The size feeds a progress
+  /// bar. Offsets advance by exactly the stride asked for, which is what keeps the pieces
+  /// in order.
+  @override
+  Future<String> fsDownload(
+    String id,
+    String path,
+    String into, {
+    void Function(int done, int total)? onProgress,
+    bool Function()? shouldCancel,
+  }) => _guard(
+    () async {
+      final total = await fsStat(id, path) ?? 0;
+      // A big file is worth a Wi-Fi Direct link: ask for one now if it would pay for
+      // itself, and the reads move over to it by themselves once it is up. Small ones
+      // stay on the usual way. Best effort: a failure here changes nothing.
+      if (total > 0) {
+        try {
+          await _node.prepareLink(id: id, bytes: BigInt.from(total));
+        } on Object {
+          // Only an optimization.
+        }
+      }
+      final file = File(into);
+      await file.parent.create(recursive: true);
+      final sink = file.openWrite();
+      final stride = chunkSize;
+      try {
+        // How many reads to keep going at once. Enough to cover the round trip without
+        // holding much of the file.
+        const ahead = 4;
+        final pending = <Future<Uint8List>>[];
+        var asked = 0;
+        var written = 0;
+        while (true) {
+          while (pending.length < ahead && (total == 0 || asked < total)) {
+            pending.add(fsRead(id, path, offset: asked, length: stride));
+            asked += stride;
+          }
+          if (pending.isEmpty) break;
+          if (shouldCancel?.call() ?? false) break;
+          final chunk = await pending.removeAt(0);
+          if (chunk.isEmpty) break;
+          sink.add(chunk);
+          written += chunk.length;
+          onProgress?.call(written, total);
+        }
+        await sink.flush();
+      } finally {
+        await sink.close();
+      }
+      return into;
+    },
+    name: _nameOf(id),
+  );
+
+  @override
+  Future<int?> fsStat(String id, String path) => _guard(
+    () async {
+      final stat = await _node.fsStat(id: id, path: path);
+      final size = (jsonDecode(stat) as Map<String, dynamic>)['size'];
+      return size is num ? size.toInt() : null;
+    },
     name: _nameOf(id),
   );
 

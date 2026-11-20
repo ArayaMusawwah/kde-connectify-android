@@ -388,6 +388,40 @@ class DemoNode implements LinksyNode {
       sendFiles(id, paths);
 
   @override
+  Future<List<PcFileEntry>> fsList(String id, String path) async => const [
+    PcFileEntry(name: 'Documents', dir: true, size: 4096),
+    PcFileEntry(name: 'Downloads', dir: true, size: 8192),
+  ];
+
+  @override
+  int get chunkSize => 4 << 20;
+
+  @override
+  Future<Uint8List> fsRead(String id, String path, {int offset = 0, int? length}) async =>
+      Uint8List(0);
+
+  @override
+  Future<void> fsMkdir(String id, String path) async {}
+
+  @override
+  Future<void> fsDelete(String id, String path) async {}
+
+  @override
+  Future<void> fsRename(String id, String path, String to) async {}
+
+  @override
+  Future<void> fsWrite(String id, String path, int offset, bool truncate, Uint8List bytes) async {}
+
+  @override
+  Future<void> fsOpen(String id, String path) async {}
+
+  @override
+  Future<String> fsDownload(String id, String path, String into, {void Function(int done, int total)? onProgress, bool Function()? shouldCancel}) async => into;
+
+  @override
+  Future<int?> fsStat(String id, String path) async => 0;
+
+  @override
   Future<NodeSettings> settings() async => _settings;
 
   @override

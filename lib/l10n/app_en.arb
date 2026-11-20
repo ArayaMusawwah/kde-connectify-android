@@ -158,6 +158,10 @@
   "@ctlMicrophonePermission": {
     "description": "Error when the microphone permission was refused"
   },
+  "deviceControlNoOverlayPermission": "Letting a computer control this phone needs the 'Display over other apps' permission. Enable it in Android settings for KDE Connectify.",
+  "@deviceControlNoOverlayPermission": {
+    "description": "Error when the draw-over-apps permission was refused for a control session"
+  },
   "ctlTerminalTitle": "Terminal",
   "@ctlTerminalTitle": {
     "description": "Default title of a remote terminal tab"
@@ -564,6 +568,14 @@
   "deviceNoCommandsSaved": "No commands saved on this computer yet",
   "@deviceNoCommandsSaved": {
     "description": "Commands card caption when the computer has no saved commands"
+  },
+  "devicePcFiles": "Computer Files",
+  "@devicePcFiles": {
+    "description": "Card title and screen title: browse the files a computer shares"
+  },
+  "deviceNoPcFiles": "Nothing to show here",
+  "@deviceNoPcFiles": {
+    "description": "Empty state when a shared folder has no entries"
   },
   "deviceFilterAll": "All",
   "@deviceFilterAll": {
@@ -3123,5 +3135,174 @@
         "type": "String"
       }
     }
+  },
+  "deviceMenuMore": "More actions",
+  "@deviceMenuMore": {
+    "description": "Row overflow menu on a shared file"
+  },
+  "deviceRename": "Rename",
+  "@deviceRename": {
+    "description": "Rename a file or folder on the computer"
+  },
+  "deviceDelete": "Delete",
+  "@deviceDelete": {
+    "description": "Delete a file or folder on the computer"
+  },
+  "deviceNewFolder": "New folder",
+  "@deviceNewFolder": {
+    "description": "Create a folder on the computer"
+  },
+  "deviceDownload": "Download",
+  "@deviceDownload": {
+    "description": "Download this file to the phone"
+  },
+  "deviceUpload": "Upload",
+  "@deviceUpload": {
+    "description": "Upload a file from the phone to this folder"
+  },
+  "deviceOpenOnPc": "Open on computer",
+  "@deviceOpenOnPc": {
+    "description": "Open this file on the computer"
+  },
+  "deviceDeleteConfirm": "Delete \"{name}\"?",
+  "@deviceDeleteConfirm": {
+    "description": "Delete a file or folder on the computer"
+  },
+  "deviceRenameTo": "New name",
+  "@deviceRenameTo": {
+    "description": "New name for the file or folder"
+  },
+  "deviceRenamed": "Renamed to {name}",
+  "@deviceRenamed": {
+    "description": "Rename done"
+  },
+  "deviceDeleted": "Deleted {name}",
+  "@deviceDeleted": {
+    "description": "Delete done"
+  },
+  "deviceDownloaded": "Saved {name}",
+  "@deviceDownloaded": {
+    "description": "File saved into Downloads/KDE Connectify"
+  },
+  "deviceUploadedTo": "Uploaded to {name}",
+  "@deviceUploadedTo": {
+    "description": "Upload done"
+  },
+  "deviceOpened": "Opening {name} on the computer",
+  "@deviceOpened": {
+    "description": "Open on computer requested"
+  },
+  "deviceCannotOpenFolder": "Could not open that folder.",
+  "@deviceCannotOpenFolder": {
+    "description": "Shown when listing a folder on the computer fails"
+  },
+  "deviceDeleteCantUndo": "This can't be undone.",
+  "@deviceDeleteCantUndo": {
+    "description": "Line under the delete confirmation"
+  },
+  "deviceFolderCreated": "Created {name}",
+  "@deviceFolderCreated": {
+    "description": "Folder created on the computer",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersQueueTitle": "Downloads & uploads",
+  "@transfersQueueTitle": {
+    "description": "Transfer-center title: PC Files queue"
+  },
+  "transfersActiveNow": "Active",
+  "@transfersActiveNow": {
+    "description": "Tab label: transfers moving now"
+  },
+  "transfersQueuedNow": "Up next ({n})",
+  "@transfersQueuedNow": {
+    "description": "Tab label: queued transfers"
+  },
+  "transfersDoneNow": "Finished",
+  "@transfersDoneNow": {
+    "description": "Tab label: finished transfers"
+  },
+  "transfersPausing": "Pause",
+  "@transfersPausing": {
+    "description": "Pause a transfer"
+  },
+  "transfersResuming": "Resume",
+  "@transfersResuming": {
+    "description": "Resume a paused transfer"
+  },
+  "transfersCancelledMsg": "Cancelled {name}",
+  "@transfersCancelledMsg": {
+    "description": "Transfer was cancelled"
+  },
+  "transfersPausedMsg": "Paused {name}",
+  "@transfersPausedMsg": {
+    "description": "Transfer was paused"
+  },
+  "transfersResumedMsg": "Resumed {name}",
+  "@transfersResumedMsg": {
+    "description": "Transfer was resumed"
+  },
+  "transfersFailedMsg": "Failed {name}",
+  "@transfersFailedMsg": {
+    "description": "Transfer failed"
+  },
+  "transfersQueueEmpty": "Nothing in the queue",
+  "@transfersQueueEmpty": {
+    "description": "Empty-state line"
+  },
+  "transfersMoveUp": "Move up",
+  "@transfersMoveUp": {
+    "description": "Reorder an uploaded file up"
+  },
+  "transfersMoveDown": "Move down",
+  "@transfersMoveDown": {
+    "description": "Reorder an uploaded file down"
+  },
+  "deviceSearchHint": "Search files & folders",
+  "@deviceSearchHint": {
+    "description": "Search box hint on PC Files"
+  },
+  "deviceFilterAllShow": "Show all",
+  "@deviceFilterAllShow": {
+    "description": "Search result filter: everything"
+  },
+  "deviceFilterDirs": "Folders",
+  "@deviceFilterDirs": {
+    "description": "Search result filter: folders only"
+  },
+  "deviceFilterFilesOnly": "Files",
+  "@deviceFilterFilesOnly": {
+    "description": "Search result filter: files only"
+  },
+  "deviceNoSearchResults": "No results for \"{q}\"",
+  "@deviceNoSearchResults": {
+    "description": "No search results"
+  },
+  "deviceSortByName": "Name",
+  "@deviceSortByName": {
+    "description": "Sort by name"
+  },
+  "deviceSortByDate": "Newest first",
+  "@deviceSortByDate": {
+    "description": "Sort by modification date"
+  },
+  "deviceSortBySize": "Largest first",
+  "@deviceSortBySize": {
+    "description": "Sort by size"
+  },
+  "deviceSortByDirFirst": "Folders first",
+  "@deviceSortByDirFirst": {
+    "description": "Sort: folders first (like a file manager)"
+  },
+  "deviceUploadsHere": "Uploads to this folder",
+  "@deviceUploadsHere": {
+    "description": "Section label for Uploads queue on PC Files"
+  },
+  "deviceDownloadsHere": "Downloads from this folder",
+  "@deviceDownloadsHere": {
+    "description": "Section label for Downloads queue on PC Files"
   }
 }

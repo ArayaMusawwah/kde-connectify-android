@@ -492,6 +492,29 @@ class CommandEntry {
   };
 }
 
+/// One entry of a computer's shared folder, from this phone browsing it
+/// (`FsRequest::List`). Paths are relative to the computer's `$HOME`.
+class PcFileEntry {
+  const PcFileEntry({
+    required this.name,
+    required this.dir,
+    this.size = 0,
+    this.modifiedMs = 0,
+  });
+
+  final String name;
+  final bool dir;
+  final int size;
+  final int modifiedMs;
+
+  factory PcFileEntry.fromJson(Map<String, Object?> j) => PcFileEntry(
+    name: j['name'] as String? ?? '',
+    dir: j['dir'] as bool? ?? false,
+    size: (j['size'] as num?)?.toInt() ?? 0,
+    modifiedMs: (j['modified_ms'] as num?)?.toInt() ?? 0,
+  );
+}
+
 /// A computer sent its list of saved commands.
 class CommandsReceived extends LinksyEvent {
   const CommandsReceived({required this.from, required this.list});

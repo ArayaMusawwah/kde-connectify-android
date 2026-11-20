@@ -57,7 +57,14 @@ class ShareService : Service() {
                     val data = consents.remove(session) ?: error("no screen capture consent")
                     val manager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
                     val projection = manager.getMediaProjection(data.first, data.second) ?: error("screen capture refused")
-                    ScreenShare(this, projection, session, onEnded)
+                    ScreenShare(this, projection, session, onEnded).also { share ->
+                        // When the computer drives this phone, the input overlay
+                        // rides alongside the video so `ControlMsg` frames can be
+                        // injected into the focused app underneath.
+                        if (kind == "control") {
+                            org.kde.connectify.input.ControlOverlayService.start(this, session)
+                        }
+                    }
                 }
                 mic -> MicShare(session, onEnded)
                 else -> CameraShare(this, session, onEnded).also { camera ->
@@ -100,6 +107,7 @@ class ShareService : Service() {
         active.remove(session)
         kinds.remove(session)
         shares.remove(session)?.let { runCatching { it.stop() } }
+        org.kde.connectify.input.ControlOverlayService.stop(this, session)
         NativeSession.finish(session)
         if (shares.isEmpty()) {
             stopForeground(STOP_FOREGROUND_REMOVE)

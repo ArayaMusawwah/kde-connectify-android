@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="180dp"
+    android:minHeight="140dp"
+    android:targetCellWidth="3"
+    android:targetCellHeight="3"
+    android:maxResizeWidth="512dp"
+    android:maxResizeHeight="512dp"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:initialLayout="@layout/widget_commands"
+    android:description="@string/widget_commands_description"
+    android:previewImage="@mipmap/ic_launcher" />
