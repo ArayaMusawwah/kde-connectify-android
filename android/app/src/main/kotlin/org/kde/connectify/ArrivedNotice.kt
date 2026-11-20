@@ -30,7 +30,7 @@ object ArrivedNotice {
         @Suppress("DEPRECATION")
         val builder = if (Build.VERSION.SDK_INT >= 26) Notification.Builder(context, CHANNEL) else Notification.Builder(context)
         val note = builder
-            .setSmallIcon(R.drawable.ic_stat_linksy)
+            .setSmallIcon(R.drawable.ic_stat_connectify)
             .setContentTitle(title)
             .setContentText(body)
             .setStyle(Notification.BigTextStyle().bigText(body))

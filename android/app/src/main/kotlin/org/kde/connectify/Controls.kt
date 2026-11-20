@@ -155,7 +155,7 @@ object ComputerNotices {
             android.app.Notification.Builder(context)
         }
         val note = builder
-            .setSmallIcon(R.drawable.ic_stat_linksy)
+            .setSmallIcon(R.drawable.ic_stat_connectify)
             .setContentTitle(title.take(200))
             .setContentText(body.take(1000))
             .setStyle(android.app.Notification.BigTextStyle().bigText(body.take(1000)))

@@ -13,7 +13,7 @@ mod jni_api {
     /// Takes `fd` (from `ParcelFileDescriptor.detachFd()`, now owned here); the bridge's
     /// port, or -1.
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_NativeCable_bridge(mut env: JNIEnv, _this: JClass, fd: jint, version: JString) -> jint {
+    pub extern "system" fn Java_org_kde_connectify_NativeCable_bridge(mut env: JNIEnv, _this: JClass, fd: jint, version: JString) -> jint {
         let version: String = if version.is_null() { String::new() } else { env.get_string(&version).map(Into::into).unwrap_or_default() };
         // SAFETY: Kotlin detached the descriptor and never touches it again.
         let accessory = unsafe { std::fs::File::from_raw_fd(fd) };

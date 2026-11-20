@@ -18,7 +18,7 @@ Future<void> showUpdate(BuildContext context) => showSheet<void>(
 );
 
 /// The APK's own id: the update is always the regular app.
-const _package = 'app.linksy.mg';
+const _package = 'org.kde.connectify';
 
 class _UpdateSheet extends StatelessWidget {
   const _UpdateSheet();

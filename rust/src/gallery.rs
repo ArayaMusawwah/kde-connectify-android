@@ -1,5 +1,5 @@
 //! Showing this phone's photos to a computer (docs/protocol.md §4.18). Android's
-//! side (`app.linksy.files.GalleryServer`) answers through JNI, pulling one request
+//! side (`org.kde.connectify.files.GalleryServer`) answers through JNI, pulling one request
 //! at a time as files do. Without photo access, requests are turned down here.
 
 use std::collections::HashMap;
@@ -140,7 +140,7 @@ mod jni_api {
     use jni::sys::{jboolean, jlong, jstring};
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeGallery_next(env: JNIEnv, _this: JClass) -> jstring {
+    pub extern "system" fn Java_org_kde_connectify_files_NativeGallery_next(env: JNIEnv, _this: JClass) -> jstring {
         match super::next() {
             Some(s) => env.new_string(s).map(|s| s.into_raw()).unwrap_or(std::ptr::null_mut()),
             None => std::ptr::null_mut(),
@@ -148,7 +148,7 @@ mod jni_api {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeGallery_reply(
+    pub extern "system" fn Java_org_kde_connectify_files_NativeGallery_reply(
         mut env: JNIEnv,
         _this: JClass,
         id: jlong,
@@ -161,7 +161,7 @@ mod jni_api {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeGallery_send(
+    pub extern "system" fn Java_org_kde_connectify_files_NativeGallery_send(
         mut env: JNIEnv,
         _this: JClass,
         to: JString,
@@ -181,12 +181,12 @@ mod jni_api {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeGallery_sharing(_env: JNIEnv, _this: JClass, on: jboolean) {
+    pub extern "system" fn Java_org_kde_connectify_files_NativeGallery_sharing(_env: JNIEnv, _this: JClass, on: jboolean) {
         super::set_sharing(on != 0);
     }
 
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeGallery_changed(_env: JNIEnv, _this: JClass) {
+    pub extern "system" fn Java_org_kde_connectify_files_NativeGallery_changed(_env: JNIEnv, _this: JClass) {
         super::changed();
     }
 }

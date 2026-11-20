@@ -1,5 +1,5 @@
 //! Serving this phone's files to a computer ("phone in the Files sidebar",
-//! docs/protocol.md §4.9). Android's side (`app.linksy.files.FileServer`) answers
+//! docs/protocol.md §4.9). Android's side (`org.kde.connectify.files.FileServer`) answers
 //! through JNI, pulling one request at a time as sessions do: Rust never calls
 //! into Java. While sharing is off, requests are turned down here.
 
@@ -146,32 +146,5 @@ mod jni_api {
     #[unsafe(no_mangle)]
     pub extern "system" fn Java_org_kde_connectify_files_NativeFiles_sharing(_env: JNIEnv, _this: JClass, on: jboolean) {
         super::set_sharing(on != 0);
-    }
-
-    // Dual-export fallback stubs
-    #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeFiles_next(env: JNIEnv, this: JClass) -> jstring {
-        Java_org_kde_connectify_files_NativeFiles_next(env, this)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeFiles_body(env: JNIEnv, this: JClass, id: jlong) -> jbyteArray {
-        Java_org_kde_connectify_files_NativeFiles_body(env, this, id)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeFiles_reply(
-        env: JNIEnv,
-        this: JClass,
-        id: jlong,
-        json: JString,
-        data: JByteArray,
-    ) {
-        Java_org_kde_connectify_files_NativeFiles_reply(env, this, id, json, data)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "system" fn Java_app_linksy_files_NativeFiles_sharing(env: JNIEnv, this: JClass, on: jboolean) {
-        Java_org_kde_connectify_files_NativeFiles_sharing(env, this, on)
     }
 }
